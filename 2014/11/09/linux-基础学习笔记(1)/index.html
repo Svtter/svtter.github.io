@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linux – 基础学习笔记(1) // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="Linux – 基础学习笔记(1)" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2014/11/09/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%281%29/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">Linux – 基础学习笔记(1)</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2014/11/09/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%281%29/" class="article-date">
+                <time datetime='2014-11-09T01:00:00.000&#43;08:00' itemprop="datePublished">2014-11-09</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/linux">Linux</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2014/11/09/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%281%29/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <h1 id="linux基础学习笔记">Linux基础学习笔记</h1>
+<p>以鸟哥的私房菜为基础进行学习。</p>
+<p>用Linux有接近两年的时间了，还是很水，于是决定从头开始，认真学习基础。</p>
+<h2 id="date的基础用法">date的基础用法</h2>
+<ul>
+<li><code>date +%H:%M</code> 显示<code>19:54</code></li>
+<li><code>date +%Y/%m/%d</code> 显示<code>2014/11/09</code></li>
+</ul>
+<h2 id="使用man进行查询">使用man进行查询</h2>
+<p><code>man + (command)</code></p>
+<p>一般，2代表系统内核可调用的函数与工具，3代表一些常用的函数，7代表惯例与协议，例如Linux文件系统，网络协议，ASCcode，8代表系统管理员可用命令，9</p>
+<p>代表与kernel有关的文件。</p>
+<p>man的操作方式和vi差不多，而info的操作方式则更接近于emacs（= =莫非又是两大党的斗争？！）</p>
+<h2 id="数据同步写入磁盘sync">数据同步写入磁盘：sync</h2>
+<p>在Linux中为了避免过多对磁盘的I/O，所以很多操作并未马上写入硬盘，所以使用sync进行写入。对于root而言，则是更新整个磁盘的数据了。</p>
+<h2 id="shutdown命令关机">shutdown命令关机</h2>
+<ul>
+<li>
+<p>立即关机<code>shutdown -h now</code></p>
+</li>
+<li>
+<p>定时关机<code>shutdown -h 20:25</code> —会在20:25分关机，如果超过了这个时间使用这个命令，则会在第二天的这个时间关机。</p>
+</li>
+<li>
+<p>再过10分钟关机<code>shutdown -h +10</code></p>
+</li>
+<li>
+<p>警告所有用户<code>shutdown -k 'this system will reboot.'</code></p>
+</li>
+<li>
+<p>重启，并警告所有用户<code>shutdown -r +30 'The system will reboot.'</code></p>
+</li>
+</ul>
+<h2 id="三种执行等级">三种执行等级</h2>
+<blockquote>
+<p>因为CentOS7使用systemd启动，所以可能并不支持。</p>
+</blockquote>
+<ul>
+<li>run level 0 关机</li>
+<li>run level 3 纯命令行</li>
+<li>run level 5 含有图形界面</li>
+<li>run level 6 重启</li>
+</ul>
+<p>因此，可以使用<code>init 0</code>来关闭系统。</p>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#date的基础用法">date的基础用法</a></li>
+    <li><a href="#使用man进行查询">使用man进行查询</a></li>
+    <li><a href="#数据同步写入磁盘sync">数据同步写入磁盘：sync</a></li>
+    <li><a href="#shutdown命令关机">shutdown命令关机</a></li>
+    <li><a href="#三种执行等级">三种执行等级</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2014/11/09/linux-centos-%E5%AE%89%E8%A3%85%E6%9B%B4%E6%96%B0%E5%B9%B6%E9%87%8D%E5%90%AF/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            Linux – CentOS-安装更新并重启
+        </div>
+    </a>
+    
+    
+    <a href="/2014/11/08/acm-hdu5086-water/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">ACM – hdu5086-water&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

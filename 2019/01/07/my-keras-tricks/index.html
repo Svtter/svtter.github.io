@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Keras tricks. // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="My Keras tricks." />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2019/01/07/my-keras-tricks/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">My Keras tricks.</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2019/01/07/my-keras-tricks/" class="article-date">
+                <time datetime='2019-01-07T01:00:00.000&#43;08:00' itemprop="datePublished">2019-01-07</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0">深度学习</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2019/01/07/my-keras-tricks/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>记录了一些使用 keras 的技巧。</p>
+<h2 id="categorical_crossentropy-vs-sparse_categorical_crossentropy">categorical_crossentropy vs sparse_categorical_crossentropy.</h2>
+<h4 id="3-the-answernbspin-a-nutshell">3. The Answer, In a Nutshell</h4>
+<ul>
+<li>
+<p>If your targets are one-hot encoded, use categorical_crossentropy.</p>
+</li>
+<li>
+<p>Examples of <!-- raw HTML omitted -->one-hot encodings<!-- raw HTML omitted -->:</p>
+</li>
+<li>
+<p>[1,0,0]</p>
+</li>
+<li>
+<p>[0,1,0]</p>
+</li>
+<li>
+<p>[0,0,1]</p>
+</li>
+<li>
+<p>But if your targets are integers, use sparse_categorical_crossentropy.</p>
+</li>
+<li>
+<p>Examples of integer encodings (<em>for the sake of completion</em>):</p>
+<ul>
+<li>1, 2, 3</li>
+</ul>
+</li>
+</ul>
+<h2 id="clip-norm"><strong>clip norm</strong></h2>
+<!-- raw HTML omitted -->
+<h2 id="multiple-gpu"><strong>Multiple GPU</strong></h2>
+<p># <a href="https://keras.io/utils/#multi">https://keras.io/utils/#multi</a>_gpu_model#</p>
+<p>使用多GPU，注意使用 save 的时候，传参传 model (multi_gpu_model的model参数)</p>
+<h2 id="encode-labels"><strong>Encode Labels</strong></h2>
+<p>可以把不同的字符[‘aa’, ‘bb’, ‘cc’, ‘aa’] 编码成 [0, 1, 2, 0]</p>
+<!-- raw HTML omitted -->
+<pre><code>&lt;td&gt;
+  # encode class values as integers&lt;br /&gt;encoder&amp;nbsp;=&amp;nbsp;LabelEncoder()&lt;br /&gt;encoder.fit(Y)&lt;br /&gt;encoded_Y&amp;nbsp;=&amp;nbsp;encoder.transform(Y)&lt;br /&gt;# convert integers to dummy variables (i.e. one hot encoded)&lt;br /&gt;dummy_y&amp;nbsp;=&amp;nbsp;np_utils.to_categorical(encoded_Y)
+&lt;/td&gt;
+</code></pre>
+<!-- raw HTML omitted -->
+<h2 id="训练中存在的问题">训练中存在的问题</h2>
+<p>训练性能低了别急着调参，首先看看数据预处理有没有问题，评价指标是不是写错了。再一个，batch norm 要勤快点加上。</p>
+<p>相似的文章还有：<a href="https://svtter.cn/2018/02/01/keras%e5%9d%91/">https://svtter.cn/2018/02/01/keras%e5%9d%91/</a></p>
+
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#categorical_crossentropy-vs-sparse_categorical_crossentropy">categorical_crossentropy vs sparse_categorical_crossentropy.</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#clip-norm"><strong>clip norm</strong></a></li>
+    <li><a href="#multiple-gpu"><strong>Multiple GPU</strong></a></li>
+    <li><a href="#encode-labels"><strong>Encode Labels</strong></a></li>
+    <li><a href="#训练中存在的问题">训练中存在的问题</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+        <footer class="article-footer">
+            <ul class="article-tag-list">
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/keras">Keras
+                    </a>
+                </li>
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/tricks">Tricks
+                    </a>
+                </li>
+                
+            </ul>
+        </footer>
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2019/01/08/django-tricks/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            Django tricks
+        </div>
+    </a>
+    
+    
+    <a href="/2019/01/07/ubuntu-%E5%A4%9A%E6%98%BE%E7%A4%BA%E5%99%A8%E6%96%B9%E6%A1%88/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Ubuntu 多显示器方案&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

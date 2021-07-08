@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>备份自己的博客内容 // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="备份自己的博客内容" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2016/08/07/%E5%A4%87%E4%BB%BD%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%86%85%E5%AE%B9/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">备份自己的博客内容</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2016/08/07/%E5%A4%87%E4%BB%BD%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%86%85%E5%AE%B9/" class="article-date">
+                <time datetime='2016-08-07T01:00:00.000&#43;08:00' itemprop="datePublished">2016-08-07</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E9%BB%98%E8%AE%A4">默认</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2016/08/07/%E5%A4%87%E4%BB%BD%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%86%85%E5%AE%B9/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>由于博客经常更换，好的坏的文章，无意中丢失了不少。打算以后好好备份自己的博客文件，设置一下备份频率。</p>
+<p>考虑一下，需要备份的文件主要是post。行文至此，猛然想到其实可以直接用git实现，但是既然已经配置了邮件服务，那么就这样吧。</p>
+<h2 id="使用mail服务实现">使用mail服务实现</h2>
+<p>这种方法相对简单一些。</p>
+<p>首先是需要配置一下<code>mail.rc</code>。</p>
+<!-- raw HTML omitted -->
+<p>首先要压缩一下，节省流量</p>
+<!-- raw HTML omitted -->
+<p>发送邮件</p>
+<!-- raw HTML omitted -->
+<p>然后就可以在邮件中接收到备份的邮件了。</p>
+<p>如果把这个简单脚本加入到自己的<code>hexo_deploy.sh</code>中，则可以在更新博客的同时备份自己的hexo博客文章。</p>
+<h2 id="使用git实现">使用git实现</h2>
+<p>使用git实现其实挺简单，因为使用的是<code>Hexo-admin</code>插件，可以自行配置脚本，在脚本中加入自动推送git更新即可。其中，使用git推送有两种方案：</p>
+<p>**git方案还是容易出问题的。**如果在source文件中建立git-repo，会把<code>.git</code>文件也<code>deploy</code>上去。如果添加<code>ignore</code>的类似选项，又未免有些麻烦。当然，如果能够使用git进行一劳永逸的方法，应该是将<code>post</code>文件直接复制另一个不与pages相关的文件夹中去，来进行更新。git比直接发送邮件要节省流量。</p>
+<ol>
+<li>一种是添加ssh公钥，实现无需验证密码，直接将更新push到git仓库。</li>
+</ol>
+<pre><code>（待定）
+</code></pre>
+<ol start="2">
+<li>使用<a href="http://gitpython.readthedocs.io/en/stable/intro.html"><code>Gitpython</code></a>进行push，可操作性更强。关于<code>Gitpython</code>，参见后方。</li>
+</ol>
+<pre><code>（待定）
+</code></pre>
+<h2 id="使用rsync实现">使用rsync实现</h2>
+<p>增量备份服务。因为是增量备份，所以不需要考虑每次上传的流量问题，相对来说是最节省流量的方案。</p>
+<p>仅仅考虑Linux。此外，Win可以通过Linux-subsystem实现，以此来备份到本地。</p>
+<p>rsync是通过ssh进行备份的命令。其算法在<code>coolshell.cn</code>上有所讲述。</p>
+<h2 id="使用lftp实现">使用lftp实现</h2>
+<p>(待续）</p>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#使用mail服务实现">使用mail服务实现</a></li>
+    <li><a href="#使用git实现">使用git实现</a></li>
+    <li><a href="#使用rsync实现">使用rsync实现</a></li>
+    <li><a href="#使用lftp实现">使用lftp实现</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2016/08/07/python%E5%9C%A8ubuntu%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%BD%A2%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            Python在Ubuntu中使用形式
+        </div>
+    </a>
+    
+    
+    <a href="/2016/08/02/%E6%9C%80%E8%BF%91%E7%9C%8B%E5%88%B0%E7%9A%84%E9%82%A3%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E4%B8%9C%E8%A5%BF/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">最近看到的那些有意思的东西&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

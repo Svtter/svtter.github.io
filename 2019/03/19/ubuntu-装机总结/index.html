@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ubuntu 装机总结 // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="Ubuntu 装机总结" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2019/03/19/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">Ubuntu 装机总结</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2019/03/19/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/" class="article-date">
+                <time datetime='2019-03-19T01:00:00.000&#43;08:00' itemprop="datePublished">2019-03-19</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/ubuntu">Ubuntu</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2019/03/19/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>本以为常年 Ubuntu 装机小达人的我不会再出现重装的失败的情况，不想，竟然成功将自己的重装次数刷新到30次（仔细想想，不应该是30次，应该是50次都有了吧）。</p>
+<p>绝望之余，打算记录一下自己装机的心路历程。</p>
+<ul>
+<li>首先很恶心的一件事，Ubuntu 安装的时候如果网络环境不好，那么安装程序会闪退。基于 Ubuntu 的 mint 就没有这个问题。可见 Ubuntu的安装程序写的有多么不鲁棒。。（WTF）。</li>
+<li>再一个事情，cuda 最近（2019-03-19）安装不上了。我不知道是内核的原因，还是 header 的问题，反正就是安装不上了。我想尝试一下 runfile，看看能不能安装上，如果不能安装，那么我打算在网上找一个教程。我连 cuda 都没能装上，真不知道是哪里出了问题。</li>
+<li>装不上的表现是，mint 无法进入图形界面，并且键盘和鼠标都没有反应。-.- 我的天啊。</li>
+<li></li>
+</ul>
+<!-- raw HTML omitted -->
+<p>放弃了，真是老狗，只要安装 nvidia 驱动电脑就启动不了，闹呢，浪费这么多时间。<br>
+我也想只安装 cuda 然后直接上 docker 然后上 deepo 啊。</p>
+<!-- raw HTML omitted -->
+<p>19日晚：明天再试试自带的驱动。</p>
+<p>为啥重装呢？</p>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p>With third-party driver ( nvidia – 390 ) I finally success. ALL HAIL MINT !</p>
+<p>最后通过 Mint 安装了一下第三方的 nvidia 驱动，390版本，终于成功了。看来以后还是要搜索相关的博客才行了。</p>
+<p>Cuda 装好了，但是没有办法跑深度。这是最尴尬的。</p>
+<!-- raw HTML omitted -->
+<p>可能是 nomodeset 的问题，我尝试一下。</p>
+<!-- raw HTML omitted -->
+<p>原来是 gdm3 与 nvidia-driver-410 冲突的bug，现在已经解决了。这个问题最终是看了一篇 CSDN 博客得到的，博主查了 launchpad 里面的 bug report，做的十分不错。这也提供了一个思路，就是在排查类似问题的时候，可以首先查一下 launchpad，随后，可以根据排查错误的过程，学习更多的东西。受教了。</p>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents"></nav>
+        </div>
+        
+        
+
+        
+
+
+        
+        <footer class="article-footer">
+            <ul class="article-tag-list">
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/cuda">CUDA
+                    </a>
+                </li>
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/gpu">GPU
+                    </a>
+                </li>
+                
+            </ul>
+        </footer>
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2019/04/14/%E7%A9%B7%E7%88%B8%E7%88%B8%E5%AF%8C%E7%88%B8%E7%88%B8-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            穷爸爸富爸爸 – 阅读笔记
+        </div>
+    </a>
+    
+    
+    <a href="/2019/01/31/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">编程语言与知识基础&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>如何更新自己的主题 // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="如何更新自己的主题" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2017/07/16/%E5%A6%82%E4%BD%95%E6%9B%B4%E6%96%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%BB%E9%A2%98/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">如何更新自己的主题</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2017/07/16/%E5%A6%82%E4%BD%95%E6%9B%B4%E6%96%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%BB%E9%A2%98/" class="article-date">
+                <time datetime='2017-07-16T01:00:00.000&#43;08:00' itemprop="datePublished">2017-07-16</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E9%BB%98%E8%AE%A4">默认</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2017/07/16/%E5%A6%82%E4%BD%95%E6%9B%B4%E6%96%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%BB%E9%A2%98/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>在使用hexo的主题的时候，许多人经常把主题fork到自己的repo，对我而言，这是没有必要的。</p>
+<p>一般情况下，我不需要修改很多关于主题的内容，只需要改改配置文件就可以了，但是每次</p>
+<p>更新，<code>git pull</code>的时候都提示需要提交自己的修改，这个时候应该怎么做呢？</p>
+<h2 id="使用git-stash">使用<code>git stash</code></h2>
+<p><code>git stash</code>的作用是，保存当前的工作进度，此外会分别对暂存区和工作区的状态进行保存。</p>
+<p>我们此时保存的状态，就是我们修改的<code>_config.yml</code>。</p>
+<p>如此一来，我们使用git stash进行保存，这样，repo的状态返回到最近的一次提交；此时，</p>
+<p>进行版本更新即可，我们就可以在没有修改<code>_config.yml</code>的情况下更新我们的主题。</p>
+<h2 id="如何恢复">如何恢复</h2>
+<p>但是现在问题也出现了，我们既然保存了，如何恢复呢？此时，使用<code>git stash pop</code>命令，</p>
+<p>我们就可以恢复最新保存的工作进度，并且将恢复的工作进度从存储的工作进度列表中清除。</p>
+<p>此时，我们进行的修改，就可以重新作用于<code>_config.yml</code>文件上。不过一般情况下，会出现</p>
+<p>几个conflicts，我们手动修改一下即可。</p>
+<h2 id="为什么不直接commit">为什么不直接commit</h2>
+<p>如果commit了自己的改动，再进行pull的时候，如果出现了不能<code>auto merge</code>的冲突，会很难受，</p>
+<p>需要<code>fetch</code>然后手动进行处理。</p>
+<p>而且一旦<code>commit</code>，难免<code>auto merge</code>，我们的代码就会领先<code>origin repo</code>一个<code>commit</code>，</p>
+<p>在拉取代码时会造成不必要的麻烦。</p>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#使用git-stash">使用<code>git stash</code></a></li>
+    <li><a href="#如何恢复">如何恢复</a></li>
+    <li><a href="#为什么不直接commit">为什么不直接commit</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2017/07/20/javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            Javascript中变量的作用域
+        </div>
+    </a>
+    
+    
+    <a href="/2017/07/12/%E5%AF%B9baas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">对BaaS的一些思考&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>4道算法题目 // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="4道算法题目" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2017/11/26/4%E9%81%93%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">4道算法题目</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2017/11/26/4%E9%81%93%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE/" class="article-date">
+                <time datetime='2017-11-26T01:00:00.000&#43;08:00' itemprop="datePublished">2017-11-26</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E7%BC%96%E7%A8%8B">编程</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2017/11/26/4%E9%81%93%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>四道做的比较走心的算法题目。</p>
+<h2 id="最接近的数字">最接近的数字</h2>
+<h3 id="题目">题目</h3>
+<p>一个K位的数N</p>
+<p>$$</p>
+<p>(K\leq2000，N\leq10^{20})</p>
+<p>$$</p>
+<p>找出一个比N大且最接近的数，这个数的每位之和与N相同，用代码实现之。</p>
+<p>例如：0050 所求书数字为0104；112 所求数为121；</p>
+<h3 id="算法分析-算法思想">算法分析 算法思想</h3>
+<p>直接暴力求这个数字是不可以的，数字的量级太大，有K位的数字，不可能直接用int，或者float来表示，使用数组来存储。应该分析这个数字，step1，从右边开始的最小位数开始，分解最后一位数字，分解出1来拿给前面的一位。9和0比较特殊，因此从左往右扫描的开始，遇到0就跳过，遇到第一个非0的数字，就把这个数字-1，然后移到最后面去，然后，step2，开始找第一个非9的数字，如果遇到9，就把9放到最后面去，遇到非9，就+1，结束运算。</p>
+<p>一个般的例子：</p>
+<p>1999000 -&gt; 1990008-&gt; 2000899</p>
+<p>要注意一个问题，就是如果是 999000 这种情况，在数字的最开头补1，结果是1000899</p>
+<p>几个刁蛮的数据：29399 -&gt; 29489</p>
+<h3 id="伪代码">伪代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="分析时间复杂度o">分析时间复杂度O</h3>
+<p>因为reverse操作，2K，加上最后整理最小数到最前面，最坏情况接近K，3K，在循环中的操作看运气，但是最糟糕的情况也只有5K，所以时间复杂度为</p>
+<p>$$</p>
+<p>O(3K) \approx O(K)</p>
+<p>$$</p>
+<h3 id="源代码">源代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="测试结果">测试结果</h3>
+<p>使用<code>python</code>生成测试数据进行测试：</p>
+<!-- raw HTML omitted -->
+<p>存在错误的情况：</p>
+<p><!-- raw HTML omitted --></p>
+<p>通过：</p>
+<p><!-- raw HTML omitted --></p>
+<h3 id="后期改善优化的地方">后期改善优化的地方</h3>
+<ol>
+<li>reverse 是为了编程方便进行的处理，但是如果数字太大，速度肯定会受影响，这个时候就不要使用reverse了。</li>
+<li>用链表来做可以简化代码，减少分析的，更加节省时间</li>
+<li>处理移位的时候考虑几个问题</li>
+</ol>
+<h2 id="寻找发帖水王">寻找发帖水王</h2>
+<h3 id="题目-1">题目</h3>
+<p>如果“水王”没有了，但有三个发帖很多的ID，发帖的数目都超过了帖子做数的1/4，又如何快速找出他们的ID。</p>
+<h3 id="算法分析-算法思想-1">算法分析 算法思想</h3>
+<p>从0-n扫描ID数组，记录3个数字的个数，如果出现第四个数字，就把三个数字的个数减少1，如果有一个数字的个数减少到0，那么把新来的数字作为原本三个数字之一进行记录。</p>
+<p>如此一来，扫描完ID数组之后，剩下记录的3个数字的个数便是需要求的三个数字。</p>
+<h3 id="伪代码-1">伪代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="分析时间复杂度o-1">分析时间复杂度O</h3>
+<p>数列的大小为N，记录数字的数组大小为3，每次判断记录数组count是否存在0，以及找到已存在的数字++，都会花费3个单位时间，因此其时间复杂度为</p>
+<p>$$</p>
+<p>O(3n) \approx O(n)</p>
+<p>$$</p>
+<h3 id="源代码-1">源代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="测试结果-1">测试结果</h3>
+<p>本测试数据采用<code>Python</code>自动生成。</p>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --></p>
+<h3 id="后期改善优化的地方-1">后期改善优化的地方</h3>
+<ol>
+<li>对于N比较小的情况可以在内存中进行查找，但是一旦涉及到更大的数据，这个方法可能就没有那么简单了，不能在内部建立数组，需要一部分一部分的从磁盘中读数；</li>
+<li>如果需要查找的id数量变多，那么需要的临时保存的数列可能更大；</li>
+<li>这个实现没有使用STL中的map，如果使用map，还能进一步使得代码见解易懂，map使用hash来做内部实现，可以使得面对数据量更大的数据的时候，加快查找数据的速度。</li>
+</ol>
+<h2 id="山西煤老板">山西煤老板</h2>
+<h3 id="题目-2">题目</h3>
+<p>你是山西的一个煤老板，你在矿区开采了有3000吨煤需要运送到市场上去卖，从你的矿区到市场有1000公里，你手里有一列烧煤的火车，这个火车只能装1000吨煤，且能耗比较大——每一公里需要耗一吨煤。请问，作为一个懂编程的煤老板，你会怎么运送才能运最多的煤到集市？</p>
+<h3 id="算法分析-算法思想-2">算法分析 算法思想</h3>
+<p>从动态规划的角度求最优解：</p>
+<p>假设起始运送货物量为t，终点路程为s，火车容量为c，可以运抵终点的最多货物量为函数 F(t, s)。</p>
+<p>3种基本情况：</p>
+<p>（1）t &lt; s：货物量不足以运送到此距离，所以F(t, s) = 0;</p>
+<p>（2）s &lt; t &lt; c：火车一次就可以装完货物，所以F(t, s) = t – s;</p>
+<p>（3）2s &lt; c 使得火车一次无法运完，但可以采用往返的方式多次运输，这种情况下最有的方式就是减少总共往返的次数，也就是直接运到终点而不在中间卸货，所以</p>
+<p>$$</p>
+<p>F(t, s) = (t / c – 1) * (c – 2s) + (c – s)</p>
+<p>$$</p>
+<p>可得递归式：</p>
+<p>$$</p>
+<p>F(t, s) = max{ F( F(t, i), s – i)} (1 &lt;= i &lt; s)</p>
+<p>$$</p>
+<p>分析了一下这个方程是有问题的，比如F(1750, 250)会计算出1125；</p>
+<p>所以正确的结果应该对t/c进行处理，也就是说，起点剩余的燃料不足运输到终点，直接舍弃。第三阶段的方程式应该是</p>
+<p>$$</p>
+<p>F(t, s) = (t // c – 1) * (c – 2s) + (c – s) + (t % c – 2 s), if (t%c &gt; 2s)</p>
+<p>$$</p>
+<h3 id="伪代码-2">伪代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="分析时间复杂度o-2">分析时间复杂度O</h3>
+<p>时间复杂度为</p>
+<p>$$</p>
+<p>O(3000*3000)</p>
+<p>$$</p>
+<p>因为每个数字都要计算一遍。</p>
+<h3 id="源代码-2">源代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="测试结果-2">测试结果</h3>
+<p><!-- raw HTML omitted --></p>
+<h3 id="后期改善优化的地方-2">后期改善优化的地方</h3>
+<ol>
+<li>
+<p>去除了一下数据进行加速</p>
+</li>
+<li>
+<p>保存f减少重复运算值</p>
+</li>
+<li>
+<p>应该有更加简单的方法，类似这种，但是不好解释。</p>
+</li>
+</ol>
+<p><!-- raw HTML omitted --></p>
+<ol>
+<li>$$</li>
+</ol>
+<pre><code>3y=1000\
+ 
+5x=1000\
+ 
+解得x+y=200+333=533，因此使得最后一辆火车抵达时节省了533吨煤\
+ 
+$$
+</code></pre>
+<h2 id="facebook">Facebook</h2>
+<h3 id="题目-3">题目</h3>
+<p>Given a list of words, L, that are all the same length, and a string, S, find the starting position of the substring of S that is concatenation of each word in L exactly once and without intervening characters. This substring will occur exactly once in S.</p>
+<h3 id="算法分析-算法思想-3">算法分析 算法思想</h3>
+<p>使用hashmap来保存word的hash值，来加快查找速度。（旧）</p>
+<p>直接用hash函数求字符串的hash值，最后求得结果。</p>
+<p>依据公式</p>
+<p>$$</p>
+<p>hash(w_1) + hash(w_2) = hash(w_2) + hash(w_1)</p>
+<p>$$</p>
+<h3 id="伪代码-3">伪代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="分析时间复杂度o-3">分析时间复杂度O</h3>
+<p>就是字符串长度</p>
+<p>$$</p>
+<p>O(lengthOfS)</p>
+<p>$$</p>
+<h3 id="源代码-3">源代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="测试结果-3">测试结果</h3>
+<p>测试数据生成意义不是很大，</p>
+<p><!-- raw HTML omitted --></p>
+<h3 id="后期改善优化的地方-3">后期改善优化的地方</h3>
+<ol>
+<li>hash尽管在速度上非常优秀，但是在准确度方面，如果出现hash冲突，那么值可能不准确。此时可以利用hashmap来解决这个问题，不过会多出重置hashmap的相关时间。</li>
+</ol>
+<h2 id="for-n--m-8211-problems">For n -m – problems</h2>
+<h3 id="problemset">Problemset</h3>
+<p>Assume we have a sequence that contains N numbers of type long. And we know for sure that among this sequence each number does occur exactly n times except for the one number that occurs exactly m times (0 &lt; m &lt; n). How do we find that number with O(N) operations and O(1) additional memory?</p>
+<h3 id="algorithm">Algorithm</h3>
+<p>^ is the add operation without carry.</p>
+<p>默认one,two都是0, 即任何数字都不存在</p>
+<p>数字a第一次来的时候, one标记a存在, two不变</p>
+<p>数字a第二次来的时候, one标记a不存在, two标记a存在</p>
+<p>数字a第三次来的时候, one不变, two标记a不存在</p>
+<p>构造这样一种运算，通过异或将数据保存在one和two里面。</p>
+<h3 id="pseudocode">Pseudocode</h3>
+<!-- raw HTML omitted -->
+<p>### Source code</p>
+<p>“`python</p>
+<h1 id="usrbinenv-python">!/usr/bin/env python</h1>
+<p>def solve(array):</p>
+<p>one, two = 0, 0</p>
+<p>for i in array:</p>
+<p>one = (one ^ i) &amp; ~two</p>
+<p>two = (two ^ i) &amp; ~one</p>
+<p>return one, two</p>
+<p>if <strong>name</strong> == ‘<strong>main</strong>‘:</p>
+<p>array = input()</p>
+<p>array = array.split(‘ ‘)</p>
+<p>array = list(map(lambda x: int(x), array))</p>
+<p># print(array)</p>
+<p>_, res = solve(array)</p>
+<p>print(res)</p>
+<p>“`</p>
+<h3 id="test">Test</h3>
+<!-- raw HTML omitted -->
+<p>Use python generate data to test.</p>
+<p><!-- raw HTML omitted --></p>
+<h3 id="discussion-and-improve">Discussion and improve</h3>
+<p>如果n不是3，那么需要构造更多的临时变量。</p>
+<h2 id="很长的数组">很长的数组</h2>
+<h3 id="题目-4">题目</h3>
+<p>一个很长很长的short型数组A，将它分成m个长为L的子数组B1，B2，…，Bm，其中每个数组排序后都是递增的等差数列，求最大的L值。</p>
+<p>$$</p>
+<p>例如，A = {-1, 3, 6, 1, 8, 10} 可以分成B_1 = {-1, 1, 3}, B_2 = {6, 8, 10},; L = 3 即为所求。</p>
+<p>$$</p>
+<h3 id="算法分析">算法分析</h3>
+<p>首先进行排序，然后开始分三步走。</p>
+<ol>
+<li>
+<p>统计元素个数 O(n)</p>
+</li>
+<li>
+<p>排序 O(nlog(n))</p>
+</li>
+</ol>
+<p>​</p>
+<p>第一步用来枚举L和m的大小，由题目可知，L * m = 数组的长度。从m为1开始枚举，保证得到的L为最大值。</p>
+<p>第二步搜索为深搜，确定当前子数组的起点和初始步长，使用pos记录当前数组选定的元素。</p>
+<p>第三步枚举，根据起点给定的初始步长，开始枚举步长，如果枚举的步长可以在数组中找到足够的元素，即数字为L，那么记录这种分法，开始枚举下一个起点。如果枚举的步长和起点无法满足条件，回溯到上一个节点，把上一个节点记录的步长+1再一次搜索。当枚举的起点数达到m，即满足要求输出。</p>
+<p>大白话来讲，就是从头开始分原始数组到m个数组中去，排序过后，在前面的每一个节点未被分配的元素，都是子数组起点。如果使用广度优先搜索，即每次都给一个子数组分配一个满足子数组步长要求的数，会导致在最后才发现分配的元素数不满足要求，从而浪费大量时间。</p>
+<p><!-- raw HTML omitted --></p>
+<p>其中，深度优先搜索还有几个剪枝的技巧：</p>
+<ol>
+<li>
+<p>当前步长*(L-1)如果超过了数组的最大元素，可以不继续搜索</p>
+</li>
+<li>
+<p>如果在给定步长的情况下， 下一个数字的大小超过之前的数字+步长，那么可以不必继续搜索。</p>
+</li>
+</ol>
+<p>因为数组已经排好序。</p>
+<ol>
+<li>还有其他的剪枝技巧，体现在代码中了。</li>
+</ol>
+<h3 id="时间复杂度">时间复杂度</h3>
+<p>n为数组长度，排序的时间为 O(nlogn)，枚举m时间为n，枚举step时间为65536【short跨度】，枚举全部元素时间为n，因此算法的时间上界为</p>
+<p>$$</p>
+<p>O(65536n^2)</p>
+<p>$$</p>
+<p>实际情况下，由于剪枝等操作的存在，应优于这个时间。</p>
+<h3 id="伪代码-4">伪代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="源代码-4">源代码</h3>
+<!-- raw HTML omitted -->
+<h3 id="测试">测试</h3>
+<p>测试样例生成结果未必准确，找了部分的测试样例，可以通过修改代码中array来提现。</p>
+<p><!-- raw HTML omitted --></p>
+<h3 id="讨论">讨论</h3>
+<ol>
+<li>在记录了起点和步长，应该可以利用这两点推出当前使用了哪些元素，如果空间大小不够使用，可以不适用record记录，如果下一层不满足条件回溯的时候，可以利用起点和步长回推已经使用的元素。</li>
+</ol>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#最接近的数字">最接近的数字</a>
+      <ul>
+        <li><a href="#题目">题目</a></li>
+        <li><a href="#算法分析-算法思想">算法分析 算法思想</a></li>
+        <li><a href="#伪代码">伪代码</a></li>
+        <li><a href="#分析时间复杂度o">分析时间复杂度O</a></li>
+        <li><a href="#源代码">源代码</a></li>
+        <li><a href="#测试结果">测试结果</a></li>
+        <li><a href="#后期改善优化的地方">后期改善优化的地方</a></li>
+      </ul>
+    </li>
+    <li><a href="#寻找发帖水王">寻找发帖水王</a>
+      <ul>
+        <li><a href="#题目-1">题目</a></li>
+        <li><a href="#算法分析-算法思想-1">算法分析 算法思想</a></li>
+        <li><a href="#伪代码-1">伪代码</a></li>
+        <li><a href="#分析时间复杂度o-1">分析时间复杂度O</a></li>
+        <li><a href="#源代码-1">源代码</a></li>
+        <li><a href="#测试结果-1">测试结果</a></li>
+        <li><a href="#后期改善优化的地方-1">后期改善优化的地方</a></li>
+      </ul>
+    </li>
+    <li><a href="#山西煤老板">山西煤老板</a>
+      <ul>
+        <li><a href="#题目-2">题目</a></li>
+        <li><a href="#算法分析-算法思想-2">算法分析 算法思想</a></li>
+        <li><a href="#伪代码-2">伪代码</a></li>
+        <li><a href="#分析时间复杂度o-2">分析时间复杂度O</a></li>
+        <li><a href="#源代码-2">源代码</a></li>
+        <li><a href="#测试结果-2">测试结果</a></li>
+        <li><a href="#后期改善优化的地方-2">后期改善优化的地方</a></li>
+      </ul>
+    </li>
+    <li><a href="#facebook">Facebook</a>
+      <ul>
+        <li><a href="#题目-3">题目</a></li>
+        <li><a href="#算法分析-算法思想-3">算法分析 算法思想</a></li>
+        <li><a href="#伪代码-3">伪代码</a></li>
+        <li><a href="#分析时间复杂度o-3">分析时间复杂度O</a></li>
+        <li><a href="#源代码-3">源代码</a></li>
+        <li><a href="#测试结果-3">测试结果</a></li>
+        <li><a href="#后期改善优化的地方-3">后期改善优化的地方</a></li>
+      </ul>
+    </li>
+    <li><a href="#for-n--m-8211-problems">For n -m – problems</a>
+      <ul>
+        <li><a href="#problemset">Problemset</a></li>
+        <li><a href="#algorithm">Algorithm</a></li>
+        <li><a href="#pseudocode">Pseudocode</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#test">Test</a></li>
+        <li><a href="#discussion-and-improve">Discussion and improve</a></li>
+      </ul>
+    </li>
+    <li><a href="#很长的数组">很长的数组</a>
+      <ul>
+        <li><a href="#题目-4">题目</a></li>
+        <li><a href="#算法分析">算法分析</a></li>
+        <li><a href="#时间复杂度">时间复杂度</a></li>
+        <li><a href="#伪代码-4">伪代码</a></li>
+        <li><a href="#源代码-4">源代码</a></li>
+        <li><a href="#测试">测试</a></li>
+        <li><a href="#讨论">讨论</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2017/11/27/%E8%BF%99%E4%B8%AA%E4%B8%8D%E6%98%AF%E5%BE%88%E8%AE%B2%E7%A9%B6%E7%9A%84%E5%8D%9A%E5%AE%A2/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            这个不是很讲究的博客
+        </div>
+    </a>
+    
+    
+    <a href="/2017/11/26/c-tips/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">C- tips&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>迁移 Django Model id 为 uuid // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="迁移 Django Model id 为 uuid" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">迁移 Django Model id 为 uuid</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/" class="article-date">
+                <time datetime='2018-12-06T01:00:00.000&#43;08:00' itemprop="datePublished">2018-12-06</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/python-web-%E5%BC%80%E5%8F%91">Python Web 开发</a>
+                    
+                    
+                    <span>&gt;</span>
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E5%AD%A6%E4%B9%A0">学习</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <blockquote>
+<p><a href="https://www.klette.us/migrate-django-models-to-uuid-primary-key/">https://www.klette.us/migrate-django-models-to-uuid-primary-key/</a></p>
+<p>又是一篇渣翻</p>
+</blockquote>
+<p>老设计决策有时候会让你很难受，下面就是一个例子。</p>
+<p>我手上的一个 Django Model 是这样的：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>此外，还有一个外键指向它</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>现在，我们需要让 municipality 支持多个国家，显然一个唯一 field 将会引起冲突，不够用。（译者：这个理由有点牵强）</p>
+<p>对于所有代码的现代部分，我们使用<code>UUID</code>作为主键。所以我们想要 migrate <code>municaipality</code>的主键到<code>UUID</code>，并且维持了原有的关系。（译者：外键和自增主键都是数据库性能的杀手。）</p>
+<p>2017年9月份，Django 依然不支持优雅的迁移主键，所以我们自己做了（译者：我也不知道现在行不行。）</p>
+<p>我们尝试了许多 magic 解决方案，但是我们在 migrations 系统这个被难住了，并且不能检测以及很好的处理改变。</p>
+<p>在经过一小段研究和错误，我们找到了以下的解决方案。尽管这还有一些小问题，但是的确有效。</p>
+<p>再一次提醒，从数据库的角度，当你定义了一个<code>ForeignKey</code> field 在 Django 中，Django将会创建一个数据库列，是同样的类型，作为 referenced model 的主键，并且增加外键约束。所以在上面的例子中，我们有两个表：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>所以我们需要解除外键约束，更换 root model，然后映射新的主键到旧的上，并且重新应用外键到上面去。</p>
+<p>我们首先打破外键</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>现在，·Municipality·modle 没有被任何外键所 refer，我们可以在上面进行工作了。</p>
+<p>增加一个新的 id field：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>处于某些原因，默认值在我的案例中不 work，所以我增加了一个过程到创建的 migration，来创建新的唯一 id。</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>现在我们有一个<code>UUID</code> ·id·field 在·Municipality 中，然后我们应该可以更换主键了。</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>创建 migration，并且确保在<code>code</code>上的<code>AlterField</code>操作在<code>id</code>之前。我们已经在<code>id</code>上增加了<code>primary_key</code>并且增加了 unique=True 到<code>code</code> field。constraint 没了，在我们删除 primary_key 的时候就没了。</p>
+<p>让我们开始一个空的迁移</p>
+<!-- raw HTML omitted -->
+<p>打开文件，输入</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<ol>
+<li>增加一个临时的field来保存 Municipality 的UUID，我们不让他是一个<code>ForeignKey</code>field，否则 Django confuse。</li>
+<li>我们运行 match 函数来寻找新的 id，通过寻找旧的 key，并且存储到临时的 field。</li>
+<li>删除旧的 municipality field</li>
+<li>重命名临时 field 到 municipality</li>
+<li>最后迁移到一个外键，然后创建我们需要 constraint</li>
+</ol>
+<!-- raw HTML omitted -->
+<p>下面还有一些内容。自从我们将 migrations 分离成多个文件，我们让代码变得很脆弱（如果后面的某些 migrations 失败了）。这将会让我们的应用进入一个 unworkable 的状态。所以确保测试一下migrations。你可通过手工把这所有的步骤整合到一个migration里，但是如果你有来自多个不同app的 reference，你可能需要把这些步骤再分开。</p>
+<h2 id="logging">logging</h2>
+<p>迁移的过程中，你可能遇到很多问题，所以一个比较不错的方式，是创建一个简单的迁移 logging。</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>想要观察 Django 运行了那些 SQL 语句，运行<code>python manage.py sqlmigrate &lt;appname&gt;&lt;migration_number&gt;</code>，这是一个超级有用的方法。</p>
+<p> </p>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#logging">logging</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+        <footer class="article-footer">
+            <ul class="article-tag-list">
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/django">django
+                    </a>
+                </li>
+                
+            </ul>
+        </footer>
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2018/12/28/%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E4%BD%A0%E6%90%AD%E5%BB%BA-vue-cli%EF%BB%BF/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            手把手教你搭建 vue-cli﻿
+        </div>
+    </a>
+    
+    
+    <a href="/2018/12/01/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">使用 Docker swarm 构建 PostgreSQL 集群&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

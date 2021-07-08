@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Python on Windows // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="Python on Windows" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2016/04/27/pythononwindows/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">Python on Windows</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2016/04/27/pythononwindows/" class="article-date">
+                <time datetime='2016-04-27T01:00:00.000&#43;08:00' itemprop="datePublished">2016-04-27</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E9%BB%98%E8%AE%A4">默认</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2016/04/27/pythononwindows/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>在Windows上使用Python总会有这样或者那样的坑等着我们去踩。</p>
+<h2 id="pip问题">pip问题</h2>
+<p>如果安装了两个版本的python，例如python3.5和python2.7，悲剧就发生了。除非每次都使用pip –no-cache来解决缓存问题，否则pip2可能会使用pip3的缓存，导致软件包出现稀奇的问题。</p>
+<p>最好的解决方案是使用virtualenv来创建一个虚拟环境。安装virtualenv的方法很多，不再详谈。</p>
+<ul>
+<li>有些人使用windows下的git-bash做一些操作，但是也是十分蛋疼的，git-bash这个高科技的东西，本身是在windows下运行，但是拥有bash的特性，查安装文档的时候，容易出现很多问题。本身使用的Python.exe，但是却要使用sh那一套东西，中间会不会出问题？</li>
+</ul>
+<blockquote>
+<p>后来尝试了一下bash里面的东西，感觉还行。</p>
+</blockquote>
+<ul>
+<li>一般Python文档所说的windows，应该是根据cmd的。但是Powershell这个windows的终端，居然不支持ftype这一类的cmd可用命令，造成又一层的不兼容。着实令人心烦。当然，我也没有深究这个问题，因为碰上一个问题就深究下去，而且深究的意义不是很大，我认为是很浪费时间的。</li>
+</ul>
+<p>补充：windows下的Powershell抑或bash，可以利用MinGW来区分。但是往往文档中没有特别表明出来。</p>
+<h2 id="一些编码问题">一些编码问题</h2>
+<p>主要就是<code>utf-8</code>的bom的问题。这个问题纯属M$想多了，导致各种讨厌的不兼容，最常见的出错。</p>
+<h2 id="终极解决方案">终极解决方案</h2>
+<p>不要在Windows上使用Python，如果非常想要这么做，建议安装一个虚拟机，然后使用ssh连接到虚拟机上进行开发。使用桥接网卡，和NAT转接，保证联网。</p>
+<p>现在再次修订一下，我现在认为，最佳的解决方案是，使用ssh链接到阿里云或者腾讯云使用。使用neovim+tmux+ipython来书写调试代码，效果非常。</p>
+
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#pip问题">pip问题</a></li>
+    <li><a href="#一些编码问题">一些编码问题</a></li>
+    <li><a href="#终极解决方案">终极解决方案</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2016/04/27/github%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            Github 使用方法
+        </div>
+    </a>
+    
+    
+    <a href="/2016/04/23/%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E6%89%80%E7%94%A8%E8%BF%87%E7%9A%84%E5%8D%9A%E5%AE%A2/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">那些年我所用过的博客&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

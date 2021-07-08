@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linux-makefile写法 // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="Linux-makefile写法" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2014/12/24/linux-makefile%E5%86%99%E6%B3%95/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">Linux-makefile写法</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2014/12/24/linux-makefile%E5%86%99%E6%B3%95/" class="article-date">
+                <time datetime='2014-12-24T01:00:00.000&#43;08:00' itemprop="datePublished">2014-12-24</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/linux">Linux</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2014/12/24/linux-makefile%E5%86%99%E6%B3%95/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <blockquote>
+<p>本文出自<a href="http://svtter.com">svtter.com</a></p>
+</blockquote>
+<blockquote>
+<p>本文可以随意转载，但是转载请保留本信息.</p>
+</blockquote>
+<p>makefile写法有复杂的有简单的，我这里提到的主要为了做一些简单的开发，所以还是说些简单的事情。</p>
+<p><strong>使用makefile之前，要学会使用bash的一些东西。鸟哥的私房菜虽然说是介绍Linux，但是总感觉很多都是介绍bash，以及和</strong></p>
+<p><strong>bash配合使用的一些命令。。。</strong></p>
+<h2 id="变量的写法">变量的写法</h2>
+<ul>
+<li>定义的时候直接使用<code>VAR = main.o</code>即可这种格式即可</li>
+<li>使用的时候使用<code>${VAR}</code>这种形式来使用，类似于php中的变量。</li>
+</ul>
+<p>另外， 位于<code>makefile</code>外面的变量也是可以使用的，使用的时候使用如下格式<code>VAR = main.o make</code>即可，这样就相当于在makefile</p>
+<p>定义了一个VAR变量。在外定义的变量是优先于makefile里面的变量的，就像是一个预订义的函数一般。</p>
+<p>此外，<code>$@</code>表示当前的目标。如果在clean那里面，<code>$@</code>指的是<code>clean</code></p>
+<h2 id="make--命令写法"><code>make + 命令</code>写法</h2>
+<ul>
+<li>
+<p>比如make clean的写法，就是在makefile文件中添加</p>
+<blockquote>
+<p>clean:</p>
+</blockquote>
+<blockquote>
+<p>rm .. (类似bash的使用方法，这个地方也可以使用变量）</p>
+</blockquote>
+</li>
+</ul>
+<p>相对的，install等等的方法就类似于这个上面的写法了。</p>
+<p>写到这里也是明白了为什么vim里面有个make命令，却没有各种编译命令了= =</p>
+<p>然后附加一个自己写的第一个<code>makefile</code>:（为了读者更加容易理解，我没有使用变量）</p>
+<!-- raw HTML omitted -->
+<p>test.c:</p>
+<!-- raw HTML omitted -->
+<p>t2.c:</p>
+<!-- raw HTML omitted -->
+<p>文件目录是：</p>
+<p>– file</p>
+<p>– makefile</p>
+<p>– test.c</p>
+<p>– t2.c</p>
+<ul>
+<li>使用make可以创建链接文件并且运行。</li>
+<li>使用<code>make clean</code>可以删除生成的文件。</li>
+</ul>
+
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#变量的写法">变量的写法</a></li>
+    <li><a href="#make--命令写法"><code>make + 命令</code>写法</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2014/12/28/java-import%E5%92%8Cpackage%E7%9A%84%E7%94%A8%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            Java-import和package的用法
+        </div>
+    </a>
+    
+    
+    <a href="/2014/12/23/linux-%E8%BD%AF%E4%B8%AD%E6%96%AD%E9%80%9A%E4%BF%A1/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Linux-软中断通信&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

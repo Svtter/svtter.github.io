@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用 Docker swarm 构建 PostgreSQL 集群 // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="使用 Docker swarm 构建 PostgreSQL 集群" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2018/12/01/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">使用 Docker swarm 构建 PostgreSQL 集群</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2018/12/01/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/" class="article-date">
+                <time datetime='2018-12-01T01:00:00.000&#43;08:00' itemprop="datePublished">2018-12-01</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/devops">DevOps</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2018/12/01/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <blockquote>
+<p>又是一个渣翻，Copyright belongs to the original text。</p>
+<p><a href="https://info.crunchydata.com/blog/an-easy-recipe-for-creating-a-postgresql-cluster-with-docker-swarm">原文地址</a></p>
+</blockquote>
+<h2 id="背景">背景</h2>
+<p>PostgreSQL 在 9.0 版本已经开始持续接收大量的增强，包括：</p>
+<ol>
+<li>异步拓展</li>
+<li>同步拓展</li>
+<li>仲裁提交</li>
+<li>级联拓展</li>
+<li>逻辑拓展</li>
+</ol>
+<p>PostgreSQL 文档也提供了一个 overview 以及 不同拓展方法的比较。详见<!-- raw HTML omitted -->PostgreSQL 集群策略比较<!-- raw HTML omitted --></p>
+<p>用于部署 PostgreSQL 的拓展的主拓展的方法论，是一个重要的工具来为你的数据库集群创建高可用的环境。需要一个合适的部署策略来确保你的数据被保存到不同磁盘，以及不同的数据中心。</p>
+<p>拓展不是一个“安装然后忘记”的操作。在生产系统中，你想要确定你对实例有合适的监控，来了解你所有的在线的拓展，或者了解一个拓展有多少数据需要与主节点进行同步。</p>
+<p>当主节点配置好以后，安装就很容易了。但幸运的是，使用 Docker 可以使得这个过程更加轻松。</p>
+<h2 id="环境安装">环境安装</h2>
+<p>想要部署这个环境，你至少需要 Docker 1.12版本。</p>
+<p>要想开始，提供一个 Docker 集群。例如，一个开发集群，你可以在每一个机器上加载 Dokcer，来使用 Swarm。这个方法将使用如下的架构：</p>
+<p><!-- raw HTML omitted --></p>
+<p>每一个系统都需要安装 Docker 以及启动。</p>
+<h2 id="swarm-安装">Swarm 安装</h2>
+<p>从1.12版本开始，Docker就已经集成了Swarm。</p>
+<h2 id="容器编排">容器编排</h2>
+<p>高可用 PostgresSQL 集群配置需要两个以上的主机。主节点和从节点需要运行在不同的 worker 节点上，来使得可用性最高。</p>
+<p>为了部署 <!-- raw HTML omitted -->Crunchy PostgreSQL containers<!-- raw HTML omitted --> 到多个集群，你需要使用 node labels。</p>
+<p>标注主机对于使用 PostgreSQL 容器有几个好处：</p>
+<ul>
+<li>将服务散步到许多 worker 上，来提高可用性</li>
+<li>主机可以针对读（从）写（主）操作进行优化（例如使用高性能磁盘）</li>
+</ul>
+<p>**记住：**对于PostgreSQL 10，主节点可以同时被允许读写，但是从节点仅仅允许被读。</p>
+<p>为了允许容器被放在指定的 worker 节点上，增加一个元数据标签到 Swarm 节点上。</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>在上述例子中，一个被称为 primary 的标签，加入了 worker1。通过使用这个标签，我们可以应用一些约束到 Docker swarm 的 PostgreSQL Stack 部署上。</p>
+<p><strong>注意：我们没有对从节点增加约束，我们可以简单的使用一条 inverse 约束：</strong></p>
+<p><code>node.labels.type != primary</code></p>
+<h2 id="postgresql-stack-定义">PostgreSQL stack 定义</h2>
+<p>通过 Swarm 部署以及 worker 节点正确的标记，我们可以部署 PostgreSQL stack了。</p>
+<p>PostgreSQL stack 是通过一个主节点以及从节点组成的。下面是服务定义：</p>
+<p><em>docker-compose.yml</em></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>注意，主服务定义了一个 hostname，但是 replica 服务没有。Replica 需要一个 hostname 来启动 replication。通过提供一个静态的 hostname 给主节点，replica就可以连接主节点，而不需要发现主容器。</p>
+<p>replica，没有一个 hostname，这允许 replica 服务拓展到多个节点。（待会儿展示一下）。</p>
+<p>primary 和 replica 服务的主要区别，是 PG_MODE 环境变量。这个变量配置容器是主节点，还是从节点。</p>
+<h2 id="部署-stack">部署 STACK</h2>
+<p>保存这个文件到 _docker-compose.yml _之后，我们可以通过 Docker 进行部署了。</p>
+<!-- raw HTML omitted -->
+<p>这个 stack 部署，将会创建一个 PostgreSQL 集群，就像是下图一样：</p>
+<p><strong><!-- raw HTML omitted --></strong></p>
+<h2 id="测试集群">测试集群</h2>
+<p>检查服务是否运行，运行下面的命令：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>如果想要提升 replicas 的数量，运行下列命令：</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>为了确保 replicas 是流式的，在 worker1 节点上查询 PostgreSQL 主节点，使用下列命令：</p>
+<pre><code>docker exec -it $(docker ps -q) psql -U postgres -x -c 'table pg_stat_replication' postgres
+</code></pre>
+<h2 id="示例代码">示例代码</h2>
+<p>下面是实例代码：</p>
+<p><a href="https://github.com/CrunchyData/crunchy-containers/tree/master/examples/docker/swarm-service">https://github.com/CrunchyData/crunchy-containers/tree/master/examples/docker/swarm-service</a></p>
+<h2 id="结论">结论</h2>
+<p>Docker 以及 Docker swarm 提供了工具，来使得容器部署进入了更高的层次。我们希望这个提议证明了 PostgreSQL 集群是如何的容易部署。</p>
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#背景">背景</a></li>
+    <li><a href="#环境安装">环境安装</a></li>
+    <li><a href="#swarm-安装">Swarm 安装</a></li>
+    <li><a href="#容器编排">容器编排</a></li>
+    <li><a href="#postgresql-stack-定义">PostgreSQL stack 定义</a></li>
+    <li><a href="#部署-stack">部署 STACK</a></li>
+    <li><a href="#测试集群">测试集群</a></li>
+    <li><a href="#示例代码">示例代码</a></li>
+    <li><a href="#结论">结论</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+        <footer class="article-footer">
+            <ul class="article-tag-list">
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/container">Container
+                    </a>
+                </li>
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/docker">Docker
+                    </a>
+                </li>
+                
+                <li class="article-tag-list-item">
+                    <a class="article-tag-list-link" href="https://svtter.cn//tags/swarm">Swarm
+                    </a>
+                </li>
+                
+            </ul>
+        </footer>
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            迁移 Django Model id 为 uuid
+        </div>
+    </a>
+    
+    
+    <a href="/2018/11/23/beam-search-%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%AD%96%E7%95%A5/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">beam search – 一个搜索策略&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>

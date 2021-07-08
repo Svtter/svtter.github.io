@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用Docker的一些Tips // Svtter&#39;s Blog</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    
+    
+    
+
+        <meta property="og:title" content="使用Docker的一些Tips" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en" />
+    <meta property="og:url" content="https://svtter.cn/2017/07/07/%E4%BD%BF%E7%94%A8docker%E7%9A%84%E4%B8%80%E4%BA%9Btips/" />
+    
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link href="https://svtter.cn/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+    <link href="https://svtter.cn/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="https://svtter.cn/css/style.css">
+    
+
+    <meta name="generator" content="Hugo 0.84.3" />
+</head>
+
+
+<body>
+<div id="container">
+    <header id="header">
+    <div id="header-outer" class="outer">
+        <div id="header-inner" class="inner">
+            <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+            <a id="logo" class="logo-text" href="https://svtter.cn/">Svtter&#39;s Blog</a>
+            <nav id="main-nav">
+                
+                <a class="main-nav-link" href="/categories/">📰 Categories</a>
+                
+                <a class="main-nav-link" href="/daily-ml/">⚙️ Daily ML</a>
+                
+                <a class="main-nav-link" href="/tags/">🏷️ Tags</a>
+                
+                <a class="main-nav-link" href="/about/">🙍‍♂️ About</a>
+                
+            </nav>
+            <nav id="sub-nav">
+                <div id="search-form-wrap">
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <section id="main" class="outer">
+        <article class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        <header class="article-header">
+            <h1 class="article-title" itemprop="name">使用Docker的一些Tips</h1>
+        </header>
+        
+        <div class="article-meta">
+            <a href="/2017/07/07/%E4%BD%BF%E7%94%A8docker%E7%9A%84%E4%B8%80%E4%BA%9Btips/" class="article-date">
+                <time datetime='2017-07-07T01:00:00.000&#43;08:00' itemprop="datePublished">2017-07-07</time>
+            </a>
+            
+            
+            <div class="post-categories">
+                <div class="article-category">
+                    
+                    
+                    <a class="article-category-link" href="https://svtter.cn//categories/%E9%BB%98%E8%AE%A4">默认</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="article-comment-link-wrap">
+                <a href="/2017/07/07/%E4%BD%BF%E7%94%A8docker%E7%9A%84%E4%B8%80%E4%BA%9Btips/#disqus_thread" class="article-comment-link">Comments</a>
+            </div>
+            
+        </div>
+        <div class="article-entry" itemprop="articleBody">
+            <p>Docker是一种强大的DevOps工具，使用其无论是作为开发环境还是生产环境，但是非常</p>
+<p>好的选择；在这篇文章中，讲讲Docker的几个开发Tips。</p>
+<h2 id="几条命令安装docker">几条命令安装Docker</h2>
+<!-- raw HTML omitted -->
+<h2 id="使用多个基础镜像">使用多个基础镜像</h2>
+<p>作为Python开发者，经常需要使用pip来构建安装包，等待pip安全的过程可谓是又臭又长，</p>
+<p>而且一个不小心，如果在没有使用pip.conf的情况下，安装失败，docker又要重新跑一次，</p>
+<p>十分的麻烦。下面给出的解决方案不一定是最好的，但是应该是比较有效的。</p>
+<p>比如，我在构建某个Python项目的时候，会创建一个python-base的image，tag使用当前</p>
+<p>项目名称。</p>
+<p>这个python-base就是基础镜像之一：</p>
+<!-- raw HTML omitted -->
+<p>介绍一下这个<code>Dockerfile</code>；在第一行，我使用的是一aliyun源的ubuntu镜像，来加速</p>
+<p>apt的过程，然后，把pip相关的配置复制到image中，最后，使用pip安装需求文件，</p>
+<p>清理缓存，然后这个基础镜像就构建好了。</p>
+<h2 id="创建自己的项目">创建自己的项目</h2>
+<!-- raw HTML omitted -->
+<p>此处就是这直接利用已经构建好的<code>python-base:school</code>的镜像，这样一来，每次我更新</p>
+<p>代码，或者supervisor的配置，只需要重新构建这个镜像就可以了。在这个镜像中，没有</p>
+<p>安装其他软件包的过程，因此节省了大量的时间。</p>
+<p>此外，如果只需要更新代码，而依赖相对不改变的时候，可以通过挂载代码到VOLUME中，</p>
+<p>每次更新代码，都通过<code>git pull</code>，然后重启一下镜像，就可以重新部署了。</p>
+<h2 id="docker-构建python镜像的一些技巧">Docker 构建Python镜像的一些技巧</h2>
+<p>使用pip快速 <a href="http://blog.csdn.net/lambert310/article/details/52412059">http://blog.csdn.net/lambert310/article/details/52412059</a></p>
+<h2 id="一条命令搭建lamp">一条命令搭建LAMP</h2>
+<p>这条命令创建一个apache-php服务器，服务于<code>8087</code>端口。</p>
+<!-- raw HTML omitted -->
+        </div>
+
+        
+        
+        <div class="article-toc" >
+            <h3>Contents</h3>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#几条命令安装docker">几条命令安装Docker</a></li>
+    <li><a href="#使用多个基础镜像">使用多个基础镜像</a></li>
+    <li><a href="#创建自己的项目">创建自己的项目</a></li>
+    <li><a href="#docker-构建python镜像的一些技巧">Docker 构建Python镜像的一些技巧</a></li>
+    <li><a href="#一条命令搭建lamp">一条命令搭建LAMP</a></li>
+  </ul>
+</nav>
+        </div>
+        
+        
+
+        
+
+
+        
+    </div>
+    
+<nav id="article-nav">
+    
+    <a href="/2017/07/09/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" id="article-nav-newer" class="article-nav-link-wrap">
+        <div class="article-nav-title"><span>&lt;</span>&nbsp;
+            单元测试
+        </div>
+    </a>
+    
+    
+    <a href="/2017/07/07/%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">批量修改图片大小&nbsp;<span>&gt;</span></div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+        
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        
+    </section>
+    <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2021 Svtter&#39;s Blog
+            <br />
+            Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> with theme <a href="https://github.com/carsonip/hugo-theme-minos" target="_blank">Minos</a>
+        </div>
+    </div>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/tomorrow-night.min.css" integrity="sha256-2wL88NKUqvJi/ExflDzkzUumjUM73mcK2gBvBBeLvTk=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js" integrity="sha256-KbfTjB0WZ8vvXngdpJGY3Yp3xKk+tttbqClO11anCIU=" crossorigin="anonymous"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    <script>
+        document.getElementById('main-nav-toggle').addEventListener('click', function () {
+            var header = document.getElementById('header');
+            if (header.classList.contains('mobile-on')) {
+                header.classList.remove('mobile-on');
+            } else {
+                header.classList.add('mobile-on');
+            }
+        });
+    </script>
+</footer>
+
+</div>
+</body>
+</html>
