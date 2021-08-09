@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>测试驱动开发应该怎么做？ - Svtter&#39;s Blog</title><link rel="apple-touch-icon" href="/images/favicons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" href="/images/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="manifest" href="/images/favicons/manifest.json">
+<link rel="icon" href="/images/favicons/favicon.ico">
+<meta name="keywords" content="" />
+<meta name="description" content="" /><meta itemprop="name" content="测试驱动开发应该怎么做？">
+<meta itemprop="description" content="测试驱动开发，是一种保证软件质量，提高研发效率的开发方法。"><meta itemprop="datePublished" content="2021-08-06T10:41:16&#43;08:00" />
+<meta itemprop="dateModified" content="2021-08-06T10:41:16&#43;08:00" />
+<meta itemprop="wordCount" content="549">
+<meta itemprop="keywords" content="design,TDD," /><meta property="og:title" content="测试驱动开发应该怎么做？" />
+<meta property="og:description" content="测试驱动开发，是一种保证软件质量，提高研发效率的开发方法。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/zh-cn/posts/2021-08-06-how-to-tdd/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-06T10:41:16&#43;08:00" />
+<meta property="article:modified_time" content="2021-08-06T10:41:16&#43;08:00" /><meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="测试驱动开发应该怎么做？"/>
+<meta name="twitter:description" content="测试驱动开发，是一种保证软件质量，提高研发效率的开发方法。"/>
+<meta name="twitter:site" content="@yourtwitterusername"/>
+<meta data-name="palette" content="blue"><link rel=stylesheet href="/css/bundle.min.f2209a83bfa7f733540426e3abe2edccef95ac63c8535e2b3750caccec2f85ed.css" integrity="sha256-8iCag7&#43;n9zNUBCbjq&#43;LtzO&#43;VrGPIU14rN1DKzOwvhe0=" crossorigin="anonymous"><script src="/js/bundle.min.c04f77e3d4f5452744d9520deeb133a384918f851a47ed37be09a56dd157d5fe.js" integrity="sha256-wE9349T1RSdE2VIN7rEzo4SRj4UaR&#43;03vgmlbdFX1f4=" crossorigin="anonymous"></script>
+<script data-ad-client="ca-pub-3637233323312402" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script></head><body><header><nav class="navbar navbar-expand-xl fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/zh-cn/">
+      <img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy">SVTTER</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-1 mb-2 mb-lg-0"><form class="search-bar d-flex ms-1" action="/zh-cn/search">
+  <div class="input-group input-group-sm">
+    <button class="btn btn-search disabled position-absolute left-0" type="submit"><i class="fas fa-fw fa-search"></i></button>
+    <input class="form-control rounded-pill" id="searchQuery" name="q" type="search" aria-label="Search">
+  </div>
+</form></ul><ul class="navbar-nav me-1 mb-2 mb-lg-0 me-1 ms-auto"><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdown-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>下拉菜单
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown-dropdown"><li>
+              <a class="dropdown-item"
+                href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank">
+                Github
+              </a>
+            </li></ul>
+        </li><li class="nav-item dropdown">
+  <a class="nav-link" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-fw fa-language"></i> 简体中文
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li><li><a class="dropdown-item" href="/fr/">Français</a></li><li><a class="dropdown-item" href="/zh-tw/">繁體中文</a></li></ul>
+</li><li class="nav-item">
+  <a class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasSettings" role="button"
+    aria-controls="offcanvasSettings">
+    <i class="fas fa-fw fa-sliders-h"></i> 设置
+  </a>
+</li>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings"
+  aria-labelledby="offcanvasSettingsLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" w id="offcanvasSettingsLabel"><i class="fas fa-fw fa-sliders-h"></i> 设置</h5>
+    <a role="button" data-bs-dismiss="offcanvas" aria-label="Close">
+      <span class="fas fa-2x fa-fw fa-times"></span>
+    </a>
+  </div>
+  <div class="offcanvas-body"><section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</section>
+<section class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</section>
+
+<section class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <span id="btnPalette" class="btn btn-sm"><i class="fas fa-eye-dropper"></i></span>
+    </div>
+  </form>
+  <div class="container mt-2 visually-hidden" id="palettePicker">
+    <div class="btn-group"><button type="button" id="palette-blue" title="蓝色" 
+          class="btn btn-sm palette bg-blue d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-blue-gray" title="蓝灰色" 
+          class="btn btn-sm palette bg-blue-gray d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-brown" title="棕色" 
+          class="btn btn-sm palette bg-brown d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-cyan" title="青色" 
+          class="btn btn-sm palette bg-cyan d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-green" title="绿色" 
+          class="btn btn-sm palette bg-green d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-indigo" title="靛青色" 
+          class="btn btn-sm palette bg-indigo d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-orange" title="橙色" 
+          class="btn btn-sm palette bg-orange d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-pink" title="粉色" 
+          class="btn btn-sm palette bg-pink d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-purple" title="紫色" 
+          class="btn btn-sm palette bg-purple d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-red" title="红色" 
+          class="btn btn-sm palette bg-red d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-teal" title="蓝绿色" 
+          class="btn btn-sm palette bg-teal d-flex align-items-center justify-content-center">
+        </button><button type="button" id="palette-yellow" title="黄色" 
+          class="btn btn-sm palette bg-yellow d-flex align-items-center justify-content-center">
+        </button></button>
+    </div>
+  </div>
+</section></div>
+</div></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main role="main" class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row" aria-label="breadcrumb">
+  <ol class="breadcrumb surface"><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">Posts</a></li><li class="breadcrumb-item active">测试驱动开发应该怎么做？</li></ol>
+</nav><article class="post row surface"><div class="post-panel-wrapper">
+  <div class="post-panel d-flex flex-column">
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button">
+  <i class="fas fa-fw fa-expand-alt fa-rotate-45"></i>
+</a>
+  
+    
+
+    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
+  <i class="fas fa-fw fa-medal"></i>
+</a>
+    <a class="action" data-bs-container="body" data-bs-toggle="popover" data-bs-html="true" data-bs-placement="bottom"
+  data-bs-trigger="focus" tabindex="0"
+  data-bs-content="&lt;a target=&#34;_blank&#34; rel=&#34;license&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh&#34;&gt;CC BY-NC-ND 4.0 &lt;i class=&#34;fab fa-fw fa-creative-commons&#34;&gt;&lt;/i&gt;&lt;i class=&#34;fab fa-fw fa-creative-commons-by&#34;&gt;&lt;/i&gt;&lt;i class=&#34;fab fa-fw fa-creative-commons-nc&#34;&gt;&lt;/i&gt;&lt;i class=&#34;fab fa-fw fa-creative-commons-nd&#34;&gt;&lt;/i&gt;&lt;/a&gt;
+">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    <a id="btnTOC" class="fas fa-fw fa-list-alt" data-bs-toggle="offcanvas" href="#offcanvasTOC" aria-controls="offcanvasTOC" role="button">
+</a>
+  </div>
+</div>
+<h1 class="post-title my-3">测试驱动开发应该怎么做？
+</h1><div class="post-meta mb-3"><span class="post-date me-2">
+    <i class="fas fa-fw fa-calendar-alt"></i>2021-08-06
+  </span><span class="post-reading-time me-2">
+    <i class="fas fa-fw fa-coffee"></i>2 分钟阅读
+  </span><a href="/zh-cn/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-taxonomy">#软件设计模式</a><a href="/zh-cn/tags/design/" class="post-taxonomy">#design</a><a href="/zh-cn/tags/tdd/" class="post-taxonomy">#TDD</a></div>
+<div class="offcanvas offcanvas-end surface" tabindex="-1" id="offcanvasTOC" aria-labelledby="offcanvasTOCLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasTOCLabel">目录</h5>
+    <a role="button" data-bs-dismiss="offcanvas" aria-label="Close">
+      <span class="fas fa-2x fa-fw fa-times"></span>
+    </a>
+  </div>
+  <div class="offcanvas-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#基本流程">基本流程</a></li>
+    <li><a href="#功能测试应该怎么写">功能测试应该怎么写？</a></li>
+    <li><a href="#web-前端如何采用tdd">WEB 前端如何采用TDD？</a></li>
+  </ul>
+</nav>
+  </div>
+</div><div class="post-content mb-3"><p>测试驱动开发，是一种保证软件质量，提高研发效率的开发方法。</p>
+<p>测试驱动开发的定义如下：</p>
+<blockquote>
+<p>测试驱动开发，英文全称Test-Driven Development，简称TDD，是一种不同于传统<a href="https://baike.baidu.com/item/%e8%bd%af%e4%bb%b6%e5%bc%80%e5%8f%91%e6%b5%81%e7%a8%8b/3430246" target="_blank">软件开发流程</a>
+的新型的开发方法。它要求在<a href="https://baike.baidu.com/item/%e7%bc%96%e5%86%99/1517598" target="_blank">编写</a>
+某个<a href="https://baike.baidu.com/item/%e5%8a%9f%e8%83%bd/10346898" target="_blank">功能</a>
+的<a href="https://baike.baidu.com/item/%e4%bb%a3%e7%a0%81/86048" target="_blank">代码</a>
+之前先编写测试代码，然后只编写使测试通过的功能代码，通过测试来推动整个开发的进行。这有助于编写简洁可用和高质量的代码，并加速开发过程。</p>
+</blockquote>
+<p>以上内容来自<a href="https://baike.baidu.com/item/%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/3328831?fr=aladdin" target="_blank">百度百科</a>
+。</p>
+<p>百度百科很好的说明了这个问题，我们本文不再赘述，只讲关键问题。</p>
+<h2 id="基本流程">基本流程</h2>
+<ol>
+<li>快速新增一个<strong>不能通过</strong>的测试</li>
+<li>运行测试（运行一个测试，或者所有的测试）</li>
+<li>做<strong>尽可能少</strong>的改动，使测试通过</li>
+<li>运行所有测试，并使其通过</li>
+<li>重构代码，消除重复设计，优化结构</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"><span class="ln">1</span>A: write a test 
+<span class="ln">2</span>
+<span class="ln">3</span>B: make test pass 
+<span class="ln">4</span>
+<span class="ln">5</span>C: refactor
+<span class="ln">6</span>
+<span class="ln">7</span>A -&gt; B -&gt; C -&gt; A
+</code></pre></div><h2 id="功能测试应该怎么写">功能测试应该怎么写？</h2>
+<p>功能测试，应该尽可能只使用本层的函数和接口。
+例如，功能测试应尽可能调用 django app 的 URL 接口，而不是直接调用 app 中的业务逻辑。
+当然，如果准备数据较为复杂，可以利用一些工具函数，将基础数据加载到系统中。
+这些工具函数，我们同样建议在功能测试层实现，而不是直接调用最底层的函数。</p>
+<h2 id="web-前端如何采用tdd">WEB 前端如何采用TDD？</h2>
+<ol>
+<li>不测试样式。一般情况下，样式不是核心需求。</li>
+<li>充分利用 HTML tag。例如：利用 class 定位元素</li>
+<li>测试业务逻辑。针对历史 BUG 进行测试。</li>
+<li>充分利用 Javascript 模块。写模块，而非脚本</li>
+</ol></div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content surface">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-medal"></i>打赏</h5>
+        <a href="#" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-fw fa-times"></i></a>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item" role="presentation">
+            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
+              <i class="fab fa-fw fa-alipay"></i>支付宝
+            </a>
+          </li><li class="nav-item" role="presentation">
+            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
+              <i class="fab fa-fw fa-weixin"></i>微信
+            </a>
+          </li></ul>
+        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
+          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
+          </div></div>
+      </div>
+    </div>
+  </div>
+</div><hr /><div class="post-navs d-flex mb-3 justify-content-between">
+  <div class="post-nav w-50"><div class="prev-post btn btn-sm">
+      <a href="/zh-cn/posts/2021-03-22-to-my-junior-fellow-apprentice/">给程序设计初学者的一点建议
+</a>
+    </div></div>
+  <div class="post-nav flex-row-reverse"></div>
+</div><section class="related-posts">
+    <h3>相关文章</h3>
+    <ul class="related-posts"><li><a href="/zh-cn/posts/2020-01-12-summary-of-2019/">2019年总结
+</a></li><li><a href="/zh-cn/posts/2021-03-22-to-my-junior-fellow-apprentice/">给程序设计初学者的一点建议
+</a></li><li><a href="/zh-cn/posts/2021-01-09-all-hail-dotnet/">厉害的 Dotnet
+</a></li><li><a href="/zh-cn/posts/2021-01-23-tech-subscription/">技术订阅
+</a></li><li><a href="/zh-cn/posts/2021-01-22-instruction-master/">指导新人-Part1
+</a></li></ul>
+  </section></article><div class="post-comments surface row"><div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a><script src="https://utteranc.es/client.js"
+  repo="razonyang/hugo-theme-bootstrap-comments"
+  issue-term="pathname"
+  label="comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script></div></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container"><section class="profile surface row text-center">
+  <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" src="/images/profile.webp" alt="Svtter" loading="lazy"></div>
+  <div class="col-12 profile-meta"><div class="profile-name">Svtter</div><div class="profile-bio">Hacker and Painter.</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Epoch</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>China</div><div class="profile-about"><i class="fas fa-fw fa-info-circle"></i><a href="/zh-cn/about/">😄 关于我</a></div></div>
+</section>
+  <section class="recent-posts row surface">
+  <h4>最近文章</h4>
+  <ul><li><a href="/zh-cn/posts/2021-08-06-how-to-tdd/">测试驱动开发应该怎么做？
+</a></li><li><a href="/zh-cn/posts/2021-03-22-to-my-junior-fellow-apprentice/">给程序设计初学者的一点建议
+</a></li><li><a href="/zh-cn/posts/2021-01-09-all-hail-dotnet/">厉害的 Dotnet
+</a></li><li><a href="/zh-cn/posts/2021-01-23-tech-subscription/">技术订阅
+</a></li><li><a href="/zh-cn/posts/2021-01-22-instruction-master/">指导新人-Part1
+</a></li></ul>
+</section><section class="taxonomy-categories row surface">
+      <h4>
+        <a href="/zh-cn/categories">分类</a>
+      </h4>
+      <div><a href="/zh-cn/categories/%E9%BB%98%E8%AE%A4/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="默认">
+          默认 <span class="badge rounded-pill">66</span>
+        </a><a href="/zh-cn/categories/acm/icpc/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="ACM/ICPC">
+          ACM/ICPC <span class="badge rounded-pill">41</span>
+        </a><a href="/zh-cn/categories/linux/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Linux">
+          Linux <span class="badge rounded-pill">22</span>
+        </a><a href="/zh-cn/categories/%E7%BC%96%E7%A8%8B/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="编程">
+          编程 <span class="badge rounded-pill">20</span>
+        </a><a href="/zh-cn/categories/%E4%B9%90%E8%B6%A3/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="乐趣">
+          乐趣 <span class="badge rounded-pill">18</span>
+        </a><a href="/zh-cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="动态语言">
+          动态语言 <span class="badge rounded-pill">13</span>
+        </a><a href="/zh-cn/categories/%E7%94%9F%E6%B4%BB/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="生活">
+          生活 <span class="badge rounded-pill">11</span>
+        </a><a href="/zh-cn/categories/%E5%AD%A6%E4%B9%A0/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="学习">
+          学习 <span class="badge rounded-pill">10</span>
+        </a><a href="/zh-cn/categories/ubuntu/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Ubuntu">
+          Ubuntu <span class="badge rounded-pill">7</span>
+        </a><a href="/zh-cn/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="软件设计模式">
+          软件设计模式 <span class="badge rounded-pill">7</span>
+        </a></div>
+    </section><section class="taxonomy-tags row surface">
+      <h4>
+        <a href="/zh-cn/tags">标签</a>
+      </h4>
+      <div><a href="/zh-cn/tags/deep-learning/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Deep learning">
+          Deep learning <span class="badge rounded-pill">4</span>
+        </a><a href="/zh-cn/tags/django/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="django">
+          django <span class="badge rounded-pill">3</span>
+        </a><a href="/zh-cn/tags/python/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="python">
+          python <span class="badge rounded-pill">3</span>
+        </a><a href="/zh-cn/tags/tdd/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="TDD">
+          TDD <span class="badge rounded-pill">2</span>
+        </a><a href="/zh-cn/tags/active-learning/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="active learning">
+          active learning <span class="badge rounded-pill">1</span>
+        </a><a href="/zh-cn/tags/agile/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="agile">
+          agile <span class="badge rounded-pill">1</span>
+        </a><a href="/zh-cn/tags/beam-search/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Beam Search">
+          Beam Search <span class="badge rounded-pill">1</span>
+        </a><a href="/zh-cn/tags/beego/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="beego">
+          beego <span class="badge rounded-pill">1</span>
+        </a><a href="/zh-cn/tags/blog/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Blog">
+          Blog <span class="badge rounded-pill">1</span>
+        </a><a href="/zh-cn/tags/ci/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="CI">
+          CI <span class="badge rounded-pill">1</span>
+        </a></div>
+    </section></div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav my-2 justify-content-center"><li class="nav-item">
+    <a class="nav-link social-link" href="mailto:svtter@163.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a>
+  </li><li class="nav-item">
+      <a class="nav-link social-link" target="_blank" href="https://github.com/yourgithubusername" title="GitHub">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link social-link" target="_blank" href="https://linkedin.com/yourlinkedinusername" title="LinkedIn">
+        <i class="fa-fw fa-2x fab fa-linkedin-in"></i>
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link social-link" target="_blank" href="https://stackoverflow.com/users/yourstackoverflowuserid" title="Stack Overflow">
+        <i class="fa-fw fa-2x fab fa-stack-overflow"></i>
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link social-link" target="_blank" href="https://twitter.com/yourtwitterusername" title="Twitter">
+        <i class="fa-fw fa-2x fab fa-twitter"></i>
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link social-link" target="_blank" href="https://weibo.com/yourweibousername" title="Weibo">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a>
+    </li><li class="nav-item">
+      <a class="nav-link social-link" target="_blank" href="https://www.zhihu.com/people/yourzhihuusername" title="Zhihu">
+        <i class="fa-fw fa-2x fab fa-zhihu"></i>
+      </a>
+    </li></nav>
+<div class="copyright mb-2">
+  Copyright © 2016-2021 Razon Yang. All Rights Reserved.
+</div>
+<div class="powered-by mb-2">
+  Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank">Bootstrap</a> theme.
+</div></footer>
+<a id="btnScrollToTop" class="btn-scroll-to-top">
+  <i class="fas fa-fw fa-chevron-circle-up fa-2x"></i>
+</a>
+</body>
+</html>
