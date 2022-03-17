@@ -1,207 +1,108 @@
 <!doctype html>
 <html lang="zh-cn">
-  <head>
+<head>
+
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>傻瓜函数式编程 - Svtter&#39;s Blog</title><link rel="apple-touch-icon" href="/images/favicons/apple-touch-icon.png" sizes="180x180">
-<link rel="icon" href="/images/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-<link rel="icon" href="/images/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-<link rel="manifest" href="/images/favicons/manifest.json">
-<link rel="icon" href="/images/favicons/favicon.ico">
-<meta name="keywords" content="" />
-<meta name="description" content="" /><meta itemprop="name" content="傻瓜函数式编程">
-<meta itemprop="description" content="这篇文章是转载的，讲的如何进行函数式编程。"><meta itemprop="datePublished" content="2016-03-30T01:00:00&#43;08:00" />
-<meta itemprop="dateModified" content="2016-03-30T01:00:00&#43;08:00" />
-<meta itemprop="wordCount" content="18971">
-<meta itemprop="keywords" content="" /><meta property="og:title" content="傻瓜函数式编程" />
-<meta property="og:description" content="这篇文章是转载的，讲的如何进行函数式编程。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/2016/03/30/%E5%82%BB%E7%93%9C%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2016-03-30T01:00:00&#43;08:00" />
-<meta property="article:modified_time" content="2016-03-30T01:00:00&#43;08:00" /><meta property="og:site_name" content="Svtter&#39;s Blog" />
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="傻瓜函数式编程"/>
-<meta name="twitter:description" content="这篇文章是转载的，讲的如何进行函数式编程。"/>
-<meta name="twitter:site" content="@Crack_svtter"/>
-<meta data-name="palette" content="blue"><link rel=stylesheet href="/css/bundle.min.f2209a83bfa7f733540426e3abe2edccef95ac63c8535e2b3750caccec2f85ed.css" integrity="sha256-8iCag7&#43;n9zNUBCbjq&#43;LtzO&#43;VrGPIU14rN1DKzOwvhe0=" crossorigin="anonymous"><script src="/js/bundle.min.c04f77e3d4f5452744d9520deeb133a384918f851a47ed37be09a56dd157d5fe.js" integrity="sha256-wE9349T1RSdE2VIN7rEzo4SRj4UaR&#43;03vgmlbdFX1f4=" crossorigin="anonymous"></script><script defer src="/js/katex.efb27591b98224b170a1dcd34b1b5ef4a9af1ae7a0ac31442742e776e52b60f9.js" integrity="sha256-77J1kbmCJLFwodzTSxte9KmvGuegrDFEJ0LnduUrYPk=" crossorigin="anonymous"></script>
-</head><body><header><nav class="navbar navbar-expand-xl fixed-top">
-  <div class="container">
-    <a class="navbar-brand" href="/zh-cn/">
-      <img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy">Svtter&#39;s Blog</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-1 mb-2 mb-lg-0"><form class="search-bar d-flex ms-1" action="/zh-cn/search">
-  <div class="input-group input-group-sm">
-    <button class="btn btn-search disabled position-absolute left-0" type="submit"><i class="fas fa-fw fa-search"></i></button>
-    <input class="form-control rounded-pill" id="searchQuery" name="q" type="search" aria-label="Search">
-  </div>
-</form></ul><ul class="navbar-nav me-1 mb-2 mb-lg-0 me-1 ms-auto"><li class="nav-item dropdown">
-  <a class="nav-link" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="fas fa-fw fa-language"></i> 简体中文
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li><li><a class="dropdown-item" href="/fr/">Français</a></li><li><a class="dropdown-item" href="/zh-tw/">繁體中文</a></li></ul>
-</li><li class="nav-item">
-  <a class="nav-link" data-bs-toggle="offcanvas" href="#offcanvasSettings" role="button"
-    aria-controls="offcanvasSettings">
-    <i class="fas fa-fw fa-sliders-h"></i> 设置
-  </a>
-</li>
-
-<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings"
-  aria-labelledby="offcanvasSettingsLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" w id="offcanvasSettingsLabel"><i class="fas fa-fw fa-sliders-h"></i> 设置</h5>
-    <a role="button" data-bs-dismiss="offcanvas" aria-label="Close">
-      <span class="fas fa-2x fa-fw fa-times"></span>
-    </a>
-  </div>
-  <div class="offcanvas-body"><section class="setting">
-  <form class="row">
-    <div class="col-auto">
-      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="modeSwitcher">
-      </div>
-    </div>
-  </form>
-</section>
-<section class="setting">
-  <form class="font-size-switcher-form row">
-    <div class="col-auto">
-      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
-    </div>
-  </form>
-</section>
-
-<section class="setting palettes">
-  <form class="row">
-    <div class="col-auto">
-      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <span id="btnPalette" class="btn btn-sm"><i class="fas fa-eye-dropper"></i></span>
-    </div>
-  </form>
-  <div class="container mt-2 visually-hidden" id="palettePicker">
-    <div class="btn-group"><button type="button" id="palette-blue" title="蓝色" 
-          class="btn btn-sm palette bg-blue d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-blue-gray" title="蓝灰色" 
-          class="btn btn-sm palette bg-blue-gray d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-brown" title="棕色" 
-          class="btn btn-sm palette bg-brown d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-cyan" title="青色" 
-          class="btn btn-sm palette bg-cyan d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-green" title="绿色" 
-          class="btn btn-sm palette bg-green d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-indigo" title="靛青色" 
-          class="btn btn-sm palette bg-indigo d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-orange" title="橙色" 
-          class="btn btn-sm palette bg-orange d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-pink" title="粉色" 
-          class="btn btn-sm palette bg-pink d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-purple" title="紫色" 
-          class="btn btn-sm palette bg-purple d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-red" title="红色" 
-          class="btn btn-sm palette bg-red d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-teal" title="蓝绿色" 
-          class="btn btn-sm palette bg-teal d-flex align-items-center justify-content-center">
-        </button><button type="button" id="palette-yellow" title="黄色" 
-          class="btn btn-sm palette bg-yellow d-flex align-items-center justify-content-center">
-        </button></button>
-    </div>
-  </div>
-</section></div>
-</div></ul>
-    </div>
-  </div>
-</nav>
-</header>
-<main role="main" class="container">
-      <div class="row content">
-<div class="col-lg-8">
-  <div class="container"><nav class="row" aria-label="breadcrumb">
-  <ol class="breadcrumb surface"><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">Posts</a></li><li class="breadcrumb-item active">傻瓜函数式编程</li></ol>
-</nav><article class="post row surface"><div class="post-panel-wrapper">
-  <div class="post-panel d-flex flex-column">
-    <a id="sidebarToggler" class="action d-none d-lg-block" role="button">
-  <i class="fas fa-fw fa-expand-alt fa-rotate-45"></i>
-</a>
-  
     
 
-    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
-  <i class="fas fa-fw fa-medal"></i>
-</a>
-    <a class="action" data-bs-container="body" data-bs-toggle="popover" data-bs-html="true" data-bs-placement="bottom"
-  data-bs-trigger="focus" tabindex="0"
-  data-bs-content="&lt;a target=&#34;_blank&#34; rel=&#34;license&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh&#34;&gt;CC BY-NC-ND 4.0 &lt;i class=&#34;fab fa-fw fa-creative-commons&#34;&gt;&lt;/i&gt;&lt;i class=&#34;fab fa-fw fa-creative-commons-by&#34;&gt;&lt;/i&gt;&lt;i class=&#34;fab fa-fw fa-creative-commons-nc&#34;&gt;&lt;/i&gt;&lt;i class=&#34;fab fa-fw fa-creative-commons-nd&#34;&gt;&lt;/i&gt;&lt;/a&gt;
-">
-  <i class="fas fa-fw fa-copyright"></i>
-</a>
-    <a id="btnTOC" class="fas fa-fw fa-list-alt" data-bs-toggle="offcanvas" href="#offcanvasTOC" aria-controls="offcanvasTOC" role="button">
-</a>
-  </div>
-</div>
-<h1 class="post-title my-3">傻瓜函数式编程
-</h1><div class="post-meta mb-3"><span class="post-date me-2">
-    <i class="fas fa-fw fa-calendar-alt"></i>2016-03-30
-  </span><span class="post-reading-time me-2">
-    <i class="fas fa-fw fa-coffee"></i>38 分钟阅读
-  </span><a href="/zh-cn/categories/%E6%9D%82%E8%AE%B0/" class="post-taxonomy">#杂记</a></div>
-<div class="offcanvas offcanvas-end surface" tabindex="-1" id="offcanvasTOC" aria-labelledby="offcanvasTOCLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasTOCLabel">目录</h5>
-    <a role="button" data-bs-dismiss="offcanvas" aria-label="Close">
-      <span class="fas fa-2x fa-fw fa-times"></span>
-    </a>
-  </div>
-  <div class="offcanvas-body">
-    <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#开篇">开篇</a></li>
-        <li><a href="#公园漫步">公园漫步</a></li>
-        <li><a href="#历史回眸sup3sup">历史回眸<!-- raw HTML omitted -->3<!-- raw HTML omitted --></a></li>
-        <li><a href="#函数式编程">函数式编程</a></li>
-        <li><a href="#fp之优点">FP之优点</a></li>
-        <li><a href="#高阶函数">高阶函数</a></li>
-        <li><a href="#currying">Currying</a></li>
-        <li><a href="#惰性求值21"><a href="http://zh.wikipedia.org/zh/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC">惰性求值</a></a></li>
-        <li><a href="#continuation">Continuation</a></li>
-        <li><a href="#模式匹配">模式匹配</a></li>
-        <li><a href="#closure">Closure</a></li>
-        <li><a href="#路在何方">路在何方？</a></li>
-        <li><a href="#欢迎联系">欢迎联系</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-</div><div class="post-content mb-3"><p>这篇文章是转载的，讲的如何进行函数式编程。</p>
+    <title>傻瓜函数式编程 | Svtter&#39;s Blog</title>
+    <meta property="og:title" content="傻瓜函数式编程 - Svtter&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2016-03-30T01:00:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2016-03-30T01:00:00&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="傻瓜函数式编程">
+        <meta name="author" content="svtter">
+        
+    <meta property="og:url" content="https://svtter.cn/2016/03/30/%E5%82%BB%E7%93%9C%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://svtter.cn/">
+                        Svtter&#39;s Blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://svtter.cn/">首页</a>
+                    
+                    <a  href="https://svtter.cn/categories/" title="📰 Categories">📰 Categories</a>
+                    
+                    <a  href="https://svtter.cn/daily-ml/" title="⚙️ Daily ML">⚙️ Daily ML</a>
+                    
+                    <a  href="https://svtter.cn/tags/" title="🏷️ Tags">🏷️ Tags</a>
+                    
+                    <a  href="https://svtter.cn/about/" title="🙍‍♂️ About">🙍‍♂️ About</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">傻瓜函数式编程</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2016年3月30日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%9D%82%E8%AE%B0'>杂记</a></span>
+            
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <p>这篇文章是转载的，讲的如何进行函数式编程。</p>
 <h1 id="傻瓜函数式编程">傻瓜函数式编程</h1>
 <p>2006年6月19日，星期一</p>
 <h3 id="开篇">开篇</h3>
 <p>我们这些码农做事都是很拖拉的。每天例行报到后，先来点咖啡，看看邮件还有RSS订阅的文章。然后翻翻新闻还有那些技术网站上的更新，再过一遍编程论坛口水区里那些无聊的论战。最后从头把这些再看一次以免错过什么精彩的内容。然后就可以吃午饭了。饭饱过后，回来盯着IDE发一会呆，再看看邮箱，再去搞杯咖啡。光阴似箭，可以回家了……</p>
-<p>（在被众人鄙视之前）我唯一想说的是，在这些拖拉的日子里总会时不时读到一些<a href="http://www.baike.com/wiki/%E4%B8%8D%E6%98%8E%E8%A7%89%E5%8E%89" target="_blank">不明觉厉</a>
-的文章。如果没有打开不应该打开的网站，每隔几天你都可以看到至少一篇这样的东西。它们的共性：难懂，耗时，于是这些文章就慢慢的堆积成山了。很快你就会发现自己已经累积了一堆的收藏链接还有数不清的PDF文件，此时你只希望隐入一个杳无人烟的深山老林里什么也不做，用一年半载好好的消化这些私藏宝贝。当然，我是说最好每天还是能有人来给送吃的顺带帮忙打扫卫生倒垃圾，哇哈哈。</p>
+<p>（在被众人鄙视之前）我唯一想说的是，在这些拖拉的日子里总会时不时读到一些<a href="http://www.baike.com/wiki/%E4%B8%8D%E6%98%8E%E8%A7%89%E5%8E%89">不明觉厉</a>的文章。如果没有打开不应该打开的网站，每隔几天你都可以看到至少一篇这样的东西。它们的共性：难懂，耗时，于是这些文章就慢慢的堆积成山了。很快你就会发现自己已经累积了一堆的收藏链接还有数不清的PDF文件，此时你只希望隐入一个杳无人烟的深山老林里什么也不做，用一年半载好好的消化这些私藏宝贝。当然，我是说最好每天还是能有人来给送吃的顺带帮忙打扫卫生倒垃圾，哇哈哈。</p>
 <p>我不知道你都收藏了些什么，我的阅读清单里面相当大部分都是函数式编程相关的东东：基本上是最难啃的。这些文章充斥着无比枯燥的教科书语言，我想就连那些在华尔街浸淫10年以上的大牛都无法搞懂这些函数式编程（简称FP）文章到底在说什么。你可以去花旗集团或者德意志银行找个项目经理来问问<!-- raw HTML omitted -->1<!-- raw HTML omitted -->：你们为什么要选JMS而不用Erlang？答案基本上是：我认为这个学术用的语言还无法胜任实际应用。可是，现有的一些系统不仅非常复杂还需要满足十分严苛的需求，它们就都是用函数式编程的方法来实现的。这，就说不过去了。</p>
-<p>关于FP的文章确实比较难懂，但我不认为一定要搞得那么晦涩。有一些历史原因造成了这种知识断层，可是FP概念本身并不难理解。我希望这篇文章可以成为一个“FP入门指南”，帮助你从<a href="http://zh.wikipedia.org/zh/%E6%8C%87%E4%BB%A4%E5%BC%8F%E7%B7%A8%E7%A8%8B" target="_blank">指令式编程</a>
-走向<a href="http://zh.wikipedia.org/zh/%E5%87%BD%E6%95%B8%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80" target="_blank">函数式编程</a>
-。先来点咖啡，然后继续读下去。很快你对FP的理解就会让同事们刮目相看了。</p>
+<p>关于FP的文章确实比较难懂，但我不认为一定要搞得那么晦涩。有一些历史原因造成了这种知识断层，可是FP概念本身并不难理解。我希望这篇文章可以成为一个“FP入门指南”，帮助你从<a href="http://zh.wikipedia.org/zh/%E6%8C%87%E4%BB%A4%E5%BC%8F%E7%B7%A8%E7%A8%8B">指令式编程</a>走向<a href="http://zh.wikipedia.org/zh/%E5%87%BD%E6%95%B8%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80">函数式编程</a>。先来点咖啡，然后继续读下去。很快你对FP的理解就会让同事们刮目相看了。</p>
 <p>什么是函数式编程（Functional Programming，FP）？它从何而来？可以吃吗？倘若它真的像那些鼓吹FP的人说的那么好，为什么实际应用中那么少见？为什么只有那些在读博士的家伙想要用它？而最重要的是，它母亲的怎么就那么难学？那些所谓的closure、continuation，currying，lazy evaluation还有no side effects都是什么东东（译者：本着保留专用术语的原则，此处及下文类似情形均不译）？如果没有那些大学教授的帮忙怎样把它应用到实际工程里去？为什么它和我们熟悉的万能而神圣的指令式编程那么的不一样？</p>
 <p>我们很快就会解开这些谜团。刚才我说过实际工程和学术界之间的知识断层是有其历史原因的，那么就先让我来解释一下这个问题。答案，就在接下来的一次公园漫步中：</p>
 <h3 id="公园漫步">公园漫步</h3>
-<p>时间机器启动……我们来到公元前380年，也就是2000多年前的雅典城外。这是一个阳光明媚的久违的春天，<a href="http://zh.wikipedia.org/zh/%E6%9F%8F%E6%8B%89%E5%9B%BE" target="_blank">柏拉图</a>
-和一个帅气的小男仆走在一片橄榄树荫下。他们正准备前往一个学院。天气很好，吃得很饱，渐渐的，两人的谈话转向了哲学。</p>
+<p>时间机器启动……我们来到公元前380年，也就是2000多年前的雅典城外。这是一个阳光明媚的久违的春天，<a href="http://zh.wikipedia.org/zh/%E6%9F%8F%E6%8B%89%E5%9B%BE">柏拉图</a>和一个帅气的小男仆走在一片橄榄树荫下。他们正准备前往一个学院。天气很好，吃得很饱，渐渐的，两人的谈话转向了哲学。</p>
 <p>“你看那两个学生，哪一个更高一些？”，柏拉图小心的选择用字，以便让这个问题更好的引导眼前的这个小男孩。</p>
 <p>小男仆望向水池旁边的两个男生，“他们差不多一样高。”。</p>
 <p>“‘差不多一样高’是什么意思？”柏拉图问。</p>
@@ -213,28 +114,17 @@
 <p>这是人类第一次试图了解数学的本质。柏拉图认为我们所在的世界中，万事万物都是完美模型的一个近似。他同时意识到虽然我们不能感受到完美的模型，但这丝毫不会阻止我们了解完美模型的概念。柏拉图进而得出结论：完美的数学模型只存在于另外一个世界，而因为某种原因我们却可以通过联系着这两个世界的一个纽带来认识这些模型。一个简单的例子就是完美的圆形。没有人见过这样的一个圆，但是我们知道怎样的圆是完美的圆，而且可以用公式把它描述出来。</p>
 <p>如此说来，什么是数学呢？为什么可以用数学法则来描述我们的这个宇宙？我们所处的这个世界中万事万物都可以用数学来描述吗？<!-- raw HTML omitted -->2<!-- raw HTML omitted --></p>
 <p>数理哲学是一门很复杂的学科。它和其他多数哲学一样，更着重于提出问题而不是给出答案。数学就像拼图一样，很多结论都是这样推导出来的：先是确立一些互不冲突的基础原理，以及一些操作这些原理的规则，然后就可以把这些原理以及规则拼凑起来形成新的更加复杂的规则或是定理了。数学家把这种方法称为“形式系统”或是“演算”。如果你想做的话，可以用形式系统描述俄罗斯方块这个游戏。而事实上，俄罗斯方块这个游戏的实现，只要它正确运行，就是一个形式系统。只不过它以一种不常见的形式表现出来罢了。</p>
-<p>如果<a href="http://zh.wikipedia.org/wiki/%E5%8D%8A%E4%BA%BA%E9%A9%AC%E5%BA%A7%CE%B1" target="_blank">半人马阿尔法</a>
-上有文明存在的话，那里的生物可能无法解读我们的俄罗斯方块形式系统甚至是简单的圆形的形式系统，因为它们感知世界的唯一器官可能只有鼻子（译者：偶的妈你咋知道？）也许它们是无法得知俄罗斯方块的形式系统了，但是它们很有可能知道圆形。它们的圆形我们可能没法解读，因为我们的鼻子没有它们那么灵敏（译者：那狗可以么？）可是只要越过形式系统的表示方式（比如通过使用“超级鼻子”之类的工具来感知这些用味道表示的形式系统，然后使用标准的解码技术把它们翻译成人类能理解的语言），那么任何有足够智力的文明都可以理解这些形式系统的本质。</p>
+<p>如果<a href="http://zh.wikipedia.org/wiki/%E5%8D%8A%E4%BA%BA%E9%A9%AC%E5%BA%A7%CE%B1">半人马阿尔法</a>上有文明存在的话，那里的生物可能无法解读我们的俄罗斯方块形式系统甚至是简单的圆形的形式系统，因为它们感知世界的唯一器官可能只有鼻子（译者：偶的妈你咋知道？）也许它们是无法得知俄罗斯方块的形式系统了，但是它们很有可能知道圆形。它们的圆形我们可能没法解读，因为我们的鼻子没有它们那么灵敏（译者：那狗可以么？）可是只要越过形式系统的表示方式（比如通过使用“超级鼻子”之类的工具来感知这些用味道表示的形式系统，然后使用标准的解码技术把它们翻译成人类能理解的语言），那么任何有足够智力的文明都可以理解这些形式系统的本质。</p>
 <p>有意思的是，哪怕宇宙中完全不存在任何文明，类似俄罗斯方块还有圆形这样的形式系统依旧是成立的：只不过没有智慧生物去发现它们而已。这个时候如果忽然一个文明诞生了，那么这些具有智慧的生物就很有可能发现各种各样的形式系统，并且用它们发现的系统去描述各种宇宙法则。不过它们可能不会发现俄罗斯方块这样的形式系统，因为在它们的世界里没有俄罗斯方块这种东西嘛。有很多像俄罗斯方块这样的形式系统是与客观世界无关的，比如说自然数，很难说所有的自然数都与客观世界有关，随便举一个超级大的数，这个数可能就和世界上任何事物无关，因为这个世界可能不是无穷大的。</p>
 <h3 id="历史回眸sup3sup">历史回眸<!-- raw HTML omitted -->3<!-- raw HTML omitted --></h3>
-<p>再次启动时间机……这次到达的是20世纪30年代，离今天近了很多。无论<a href="http://zh.wikipedia.org/wiki/%E6%96%B0%E5%A4%A7%E9%99%B8" target="_blank">新</a>
-<a href="http://zh.wikipedia.org/wiki/%E8%88%8A%E5%A4%A7%E9%99%B8" target="_blank">旧</a>
-大陆，经济大萧条都造成了巨大的破坏。社会各阶层几乎每一个家庭都深受其害。只有极其少数的几个地方能让人们免于遭受穷困之苦。几乎没有人能够幸运的在这些避难所里度过危机，注意，我说的是几乎没有，还真的有这么些幸运儿，比如说当时普林斯顿大学的数学家们。</p>
+<p>再次启动时间机……这次到达的是20世纪30年代，离今天近了很多。无论<a href="http://zh.wikipedia.org/wiki/%E6%96%B0%E5%A4%A7%E9%99%B8">新</a><a href="http://zh.wikipedia.org/wiki/%E8%88%8A%E5%A4%A7%E9%99%B8">旧</a>大陆，经济大萧条都造成了巨大的破坏。社会各阶层几乎每一个家庭都深受其害。只有极其少数的几个地方能让人们免于遭受穷困之苦。几乎没有人能够幸运的在这些避难所里度过危机，注意，我说的是几乎没有，还真的有这么些幸运儿，比如说当时普林斯顿大学的数学家们。</p>
 <p>新建成的哥特式办公楼给普林斯顿大学带来一种天堂般的安全感。来自世界各地的逻辑学者应邀来到普林斯顿，他们将组建一个新的学部。正当大部分美国人还在为找不到一片面包做晚餐而发愁的时候，在普林斯顿却是这样一番景象：高高的天花板和木雕包覆的墙，每天品茶论道，漫步丛林。</p>
-<p>一个名叫<a href="http://zh.wikipedia.org/zh/%E9%98%BF%E9%9A%86%E4%BD%90%C2%B7%E9%82%B1%E5%A5%87" target="_blank">阿隆佐·邱奇</a>
-(Alonzo Church)的年轻数学家就过着这样优越的生活。阿隆佐本科毕业于普林斯顿后被留在研究院。他觉得这样的生活完全没有必要，于是他鲜少出现在那些数学茶会中也不喜欢到树林里散心。阿隆佐更喜欢独处：自己一个人的时候他的工作效率更高。尽管如此他还是和普林斯顿学者保持着联系，这些人当中有<a href="http://zh.wikipedia.org/zh/%E8%89%BE%E4%BC%A6%C2%B7%E5%9B%BE%E7%81%B5" target="_blank">艾伦·图灵</a>
-、<a href="http://zh.wikipedia.org/zh/%E7%BA%A6%E7%BF%B0%C2%B7%E5%86%AF%C2%B7%E8%AF%BA%E4%BC%8A%E6%9B%BC" target="_blank">约翰·冯·诺伊曼</a>
-、<a href="http://zh.wikipedia.org/zh-hant/%E5%BA%93%E5%B0%94%E7%89%B9%C2%B7%E5%93%A5%E5%BE%B7%E5%B0%94" target="_blank">库尔特·哥德尔</a>
-。</p>
+<p>一个名叫<a href="http://zh.wikipedia.org/zh/%E9%98%BF%E9%9A%86%E4%BD%90%C2%B7%E9%82%B1%E5%A5%87">阿隆佐·邱奇</a>(Alonzo Church)的年轻数学家就过着这样优越的生活。阿隆佐本科毕业于普林斯顿后被留在研究院。他觉得这样的生活完全没有必要，于是他鲜少出现在那些数学茶会中也不喜欢到树林里散心。阿隆佐更喜欢独处：自己一个人的时候他的工作效率更高。尽管如此他还是和普林斯顿学者保持着联系，这些人当中有<a href="http://zh.wikipedia.org/zh/%E8%89%BE%E4%BC%A6%C2%B7%E5%9B%BE%E7%81%B5">艾伦·图灵</a>、<a href="http://zh.wikipedia.org/zh/%E7%BA%A6%E7%BF%B0%C2%B7%E5%86%AF%C2%B7%E8%AF%BA%E4%BC%8A%E6%9B%BC">约翰·冯·诺伊曼</a>、<a href="http://zh.wikipedia.org/zh-hant/%E5%BA%93%E5%B0%94%E7%89%B9%C2%B7%E5%93%A5%E5%BE%B7%E5%B0%94">库尔特·哥德尔</a>。</p>
 <p>这四个人都对形式系统感兴趣。相对于现实世界，他们更关心如何解决抽象的数学问题。而他们的问题都有这么一个共同点：都在尝试解答关于计算的问题。诸如：如果有一台拥有无穷计算能力的超级机器，可以用来解决什么问题？它可以自动的解决这些问题吗？是不是还是有些问题解决不了，如果有的话，是为什么？如果这样的机器采用不同的设计，它们的计算能力相同吗？</p>
-<p>在与这些人的合作下，阿隆佐设计了一个名为<a href="http://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97" target="_blank">lambda演算</a>
-的形式系统。这个系统实质上是为其中一个超级机器设计的编程语言。在这种语言里面，函数的参数是函数，返回值也是函数。这种函数用希腊字母lambda（<a href="http://en.wikipedia.org/wiki/Lambda" target="_blank">λ</a>
-），这种系统因此得名<!-- raw HTML omitted -->4<!-- raw HTML omitted -->。有了这种形式系统，阿隆佐终于可以分析前面的那些问题并且能够给出答案了。</p>
-<p>除了阿隆佐·邱奇，艾伦·图灵也在进行类似的研究。他设计了一种完全不同的系统（后来被称为<a href="http://zh.wikipedia.org/zh/%E5%9B%BE%E7%81%B5%E6%9C%BA" target="_blank">图灵机</a>
-），并用这种系统得出了和阿隆佐相似的答案。到了后来人们证明了图灵机和lambda演算的能力是一样的。</p>
+<p>在与这些人的合作下，阿隆佐设计了一个名为<a href="http://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97">lambda演算</a>的形式系统。这个系统实质上是为其中一个超级机器设计的编程语言。在这种语言里面，函数的参数是函数，返回值也是函数。这种函数用希腊字母lambda（<a href="http://en.wikipedia.org/wiki/Lambda">λ</a>），这种系统因此得名<!-- raw HTML omitted -->4<!-- raw HTML omitted -->。有了这种形式系统，阿隆佐终于可以分析前面的那些问题并且能够给出答案了。</p>
+<p>除了阿隆佐·邱奇，艾伦·图灵也在进行类似的研究。他设计了一种完全不同的系统（后来被称为<a href="http://zh.wikipedia.org/zh/%E5%9B%BE%E7%81%B5%E6%9C%BA">图灵机</a>），并用这种系统得出了和阿隆佐相似的答案。到了后来人们证明了图灵机和lambda演算的能力是一样的。</p>
 <p>如果二战没有发生，这个故事到这里就应该结束了，我的这篇小文没什么好说的了，你们也可以去看看有什么其他好看的文章。可是二战还是爆发了，整个世界陷于火海之中。那时的美军空前的大量使用炮兵。为了提高轰炸的精度，军方聘请了大批数学家夜以继日的求解各种差分方程用于计算各种火炮发射数据表。后来他们发现单纯手工计算这些方程太耗时了，为了解决这个问题，各种各样的计算设备应运而生。IBM制造的Mark一号就是用来计算这些发射数据表的第一台机器。Mark一号重5吨，由75万个零部件构成，每一秒可以完成3次运算。</p>
-<p>战后，人们为提高计算能力而做出的努力并没有停止。1949年第一台电子离散变量自动计算机诞生并取得了巨大的成功。它是<a href="http://zh.wikipedia.org/zh/%E5%86%AF%C2%B7%E8%AF%BA%E4%BC%8A%E6%9B%BC%E7%BB%93%E6%9E%84" target="_blank">冯·诺伊曼设计架构</a>
-的第一个实例，也是一台现实世界中实现的图灵机。相比他的这些同事，那个时候阿隆佐的运气就没那么好了。</p>
+<p>战后，人们为提高计算能力而做出的努力并没有停止。1949年第一台电子离散变量自动计算机诞生并取得了巨大的成功。它是<a href="http://zh.wikipedia.org/zh/%E5%86%AF%C2%B7%E8%AF%BA%E4%BC%8A%E6%9B%BC%E7%BB%93%E6%9E%84">冯·诺伊曼设计架构</a>的第一个实例，也是一台现实世界中实现的图灵机。相比他的这些同事，那个时候阿隆佐的运气就没那么好了。</p>
 <p>到了50年代末，一个叫John McCarthy的MIT教授（他也是普林斯顿的硕士）对阿隆佐的成果产生了兴趣。1958年他发明了一种列表处理语言（Lisp），这种语言是一种阿隆佐lambda演算在现实世界的实现，而且它能在冯·诺伊曼计算机上运行！很多计算机科学家都认识到了Lisp强大的能力。1973年在MIT人工智能实验室的一些程序员研发出一种机器，并把它叫做Lisp机。于是阿隆佐的lambda演算也有自己的硬件实现了！</p>
 <h3 id="函数式编程">函数式编程</h3>
 <p>函数式编程是阿隆佐思想的在现实世界中的实现。不过不是全部的lambda演算思想都可以运用到实际中，因lambda演算在设计的时候就不是为了在各种现实世界中的限制下工作的。所以，就像面向对象的编程思想一样，函数式编程只是一系列想法，而不是一套严苛的规定。有很多支持函数式编程的程序语言，它们之间的具体设计都不完全一样。在这里我将用Java写的例子介绍那些被广泛应用的函数式编程思想（没错，如果你是受虐狂你可以用Java写出函数式程序）。在下面的章节中我会在Java语言的基础上，做一些修改让它变成实际可用的函数式编程语言。那么现在就开始吧。</p>
@@ -262,21 +152,18 @@
 <p>如果是函数式程序，编译器就可以对代码进行分析，然后可能分析出生成字符串s1和s2的两个函数可能会比较耗时，进而安排它们并行运行。这在指令式编程中是无法做到的，因为每一个函数都有可能修改其外部状态，然后接下来的函数又可能依赖于这些状态的值。在函数式编程中，自动分析代码并找到适合并行执行的函数十分简单，和分析C的内联函数没什么两样。从这个角度来说用FP风格编写的程序是“永不过时”的（虽然我一般不喜欢说大话空话，不过这次就算个例外吧）。硬件厂商已经没办法让CPU运行得再快了。他们只能靠增加CPU核的数量然后用并行来提高运算的速度。这些厂商故意忽略一个事实：只有可以并行的软件才能让你花大价钱买来的这些硬件物有所值。指令式的软件中只有很小一部分能做到跨核运行，而所有的函数式软件都能实现这一目标，因为FP的程序从一开始就是可以并行运行的。</p>
 <h4 id="热部署">热部署</h4>
 <p>在Windows早期，如果要更新系统那可是要重启电脑的，而且还要重启很多次。哪怕只是安装一个新版本的播放器。到了XP的时代这种情况得到比较大的改善，尽管还是不理想（我工作的时候用的就是Windows，就在现在，我的系统托盘上就有个讨厌的图标，我不重启机子就不消失）。这一方面Unix好一些，曾经。只需要暂停一些相关的部件而不是整个操作系统，就可以安装更新了。虽然是要好一些了，对很多服务器应用来说这也还是不能接受的。电信系统要求的是100%的在线率，如果一个救急电话因为系统升级而无法拨通，成千上万的人就会因此丧命。同样的，华尔街的那些公司怎么也不能说要安装软件而在整个周末停止他们系统的服务。</p>
-<p>最理想的情况是更新相关的代码而不用暂停系统的其他部件。对指令性程序来说是不可能的。想想看，试着在系统运行时卸载掉一个Java的类然后再载入这个类的新的实现，这样做的话系统中所有该类的实例都会立刻不能运行，因为该类的相关状态已经丢失了。这种情况下可能需绞尽脑汁设计复杂的版本控制代码，需要将所有这种类正在运行的实例<a href="http://zh.wikipedia.org/wiki/%E5%BA%8F%E5%88%97%E5%8C%96" target="_blank">序列化</a>
-，逐一销毁它们，然后创建新类的实例，将现有数据也序列化后装载到这些新的实例中，最后希望负责装载的程序可以正确的把这些数据移植到新实例中并正常的工作。这种事很麻烦，每次有新的改动都需要手工编写装载程序来完成更新，而且这些装载程序还要很小心，以免破坏了现有对象之间的联系。理论上是没问题，可是实际上完全行不通。</p>
+<p>最理想的情况是更新相关的代码而不用暂停系统的其他部件。对指令性程序来说是不可能的。想想看，试着在系统运行时卸载掉一个Java的类然后再载入这个类的新的实现，这样做的话系统中所有该类的实例都会立刻不能运行，因为该类的相关状态已经丢失了。这种情况下可能需绞尽脑汁设计复杂的版本控制代码，需要将所有这种类正在运行的实例<a href="http://zh.wikipedia.org/wiki/%E5%BA%8F%E5%88%97%E5%8C%96">序列化</a>，逐一销毁它们，然后创建新类的实例，将现有数据也序列化后装载到这些新的实例中，最后希望负责装载的程序可以正确的把这些数据移植到新实例中并正常的工作。这种事很麻烦，每次有新的改动都需要手工编写装载程序来完成更新，而且这些装载程序还要很小心，以免破坏了现有对象之间的联系。理论上是没问题，可是实际上完全行不通。</p>
 <p>FP的程序中所有状态就是传给函数的参数，而参数都是储存在栈上的。这一特性让软件的热部署变得十分简单。只要比较一下正在运行的代码以及新的代码获得一个diff，然后用这个diff更新现有的代码，新代码的热部署就完成了。其它的事情有FP的语言工具自动完成！如果还有人认为这只存在于科幻小说中，他需要再想想：多年来Erlang工程师已经使用这种技术对它们的系统进行升级而完全不用暂停运行了。</p>
 <h4 id="机器辅助优化及证明">机器辅助优化及证明</h4>
 <p>FP语言有一个特性很有意思，那就是它们是可以用数学方法来分析的。FP语言本身就是形式系统的实现，只要是能在纸上写出来的数学运算就可以用这种语言表述出来。于是只要能够用数学方法证明两段代码是一致的，编译器就可以把某段代码解析成在数学上等同的但效率又更高的另外一段代码<!-- raw HTML omitted -->7<!-- raw HTML omitted -->。 关系数据库已经用这种方法进行优化很多年了。没有理由在常规的软件行业就不能应用这种技术。</p>
 <p>另外，还可以用这种方法来证明代码的正确性，甚至可以设计出能够自动分析代码并为单元测试自动生成边缘测试用例的工具出来！对于那些对缺陷零容忍的系统来说，这一功能简直就是无价之宝。例如心脏起搏器，例如飞行管控系统，这几乎就是必须满足的需求。哪怕你正在开发的程序不是为了完成什么重要核心任务，这些工具也可以帮助你写出更健壮的程序，直接甩竞争对手n条大街。</p>
 <h3 id="高阶函数">高阶函数</h3>
 <p>我还记得在了解到FP以上的各种好处后想到：“这些优势都很吸引人，可是，如果必须非要用这种所有变量都是final的蹩脚语言，估计还是不怎么实用吧”。其实这样的想法是不对的。对于Java这样的指令式语言来说，如果所有的变量都是必须是final的，那么确实很束手束脚。然而对函数式语言来说，情况就不一样了。函数式语言提供了一种特别的抽象工具，这种工具将帮助使用者编写FP代码，让他们甚至都没想到要修改变量的值。高阶函数就是这种工具之一。</p>
-<p>FP语言中的函数有别于Java或是C。可以说这种函数是一个<a href="http://zh.wikipedia.org/wiki/%E5%85%A8%E9%9B%86" target="_blank">全集</a>
-：Java函数可以做到的它都能做，同时它还有更多的能力。首先，像在C里写程序那样创建一个函数：</p>
+<p>FP语言中的函数有别于Java或是C。可以说这种函数是一个<a href="http://zh.wikipedia.org/wiki/%E5%85%A8%E9%9B%86">全集</a>：Java函数可以做到的它都能做，同时它还有更多的能力。首先，像在C里写程序那样创建一个函数：</p>
 <!-- raw HTML omitted -->
 <p>看起来和C程序没什么区别，但是很快你就可以看出区别来。接下来我们扩展Java的编译器以便支持这种代码，也就是说，当我们写下以上的程序编译器会把它转化成下面的Java程序（别忘了，所有的变量都是final的）：</p>
 <!-- raw HTML omitted -->
-<p>在这里，符号add并不是一个函数，它是只有一个函数作为其成员的简单的类。这样做有很多好处，可以在程序中把add当成参数传给其他的函数，也可以把add赋给另外一个符号，还可以在运行时创建add_function_t的实例然后在不再需要这些实例的时候由系统回收机制处理掉。这样做使得函数成为和integer或是string这样的<a href="http://zh.wikipedia.org/zh/%E7%AC%AC%E4%B8%80%E9%A1%9E%E7%89%A9%E4%BB%B6" target="_blank">第一类对象</a>
-。对其他函数进行操作（比如说把这些函数当成参数）的函数，就是所谓的高阶函数。别让这个看似高深的名字吓倒你（译者：好死不死起个这个名字，初一看还准备搬出已经尘封的高数教材……），它和Java中操作其他类（也就是把一个类实例传给另外的类）的类没有什么区别。可以称这样的类为“高阶类”，但是没人会在意，因为Java圈里就没有什么很强的学术社团。（译者：这是高级黑吗？）</p>
+<p>在这里，符号add并不是一个函数，它是只有一个函数作为其成员的简单的类。这样做有很多好处，可以在程序中把add当成参数传给其他的函数，也可以把add赋给另外一个符号，还可以在运行时创建add_function_t的实例然后在不再需要这些实例的时候由系统回收机制处理掉。这样做使得函数成为和integer或是string这样的<a href="http://zh.wikipedia.org/zh/%E7%AC%AC%E4%B8%80%E9%A1%9E%E7%89%A9%E4%BB%B6">第一类对象</a>。对其他函数进行操作（比如说把这些函数当成参数）的函数，就是所谓的高阶函数。别让这个看似高深的名字吓倒你（译者：好死不死起个这个名字，初一看还准备搬出已经尘封的高数教材……），它和Java中操作其他类（也就是把一个类实例传给另外的类）的类没有什么区别。可以称这样的类为“高阶类”，但是没人会在意，因为Java圈里就没有什么很强的学术社团。（译者：这是高级黑吗？）</p>
 <p>那么什么时候该用高阶函数，又怎样用呢？我很高兴有人问这个问题。设想一下，你写了一大堆程序而不考虑什么类结构设计，然后发现有一部分代码重复了几次，于是你就会把这部分代码独立出来作为一个函数以便多次调用（所幸学校里至少会教这个）。如果你发现这个函数里有一部分逻辑需要在不同的情况下实现不同的行为，那么你可以把这部分逻辑独立出来作为一个高阶函数。搞晕了？下面来看看我工作中的一个真实的例子。</p>
 <p>假设有一段Java的客户端程序用来接收消息，用各种方式对消息做转换，然后发给一个服务器。</p>
 <!-- raw HTML omitted -->
@@ -288,22 +175,17 @@
 <!-- raw HTML omitted -->
 <p>在上面的程序里，我们没有创建任何新的类型或是多层类的结构。仅仅是把相应的函数作为参数进行传递，就做到了和用面向对象编程一样的事情，而且还有额外的好处：一是不再受限于多层类的结构。这样做可以做运行时传递新的函数，可以在任何时候改变这些函数，而且这些改变不仅更加精准而且触碰的代码更少。这种情况下编译器其实就是在替我们编写面向对象的“粘合”代码（译者：又称胶水代码，粘接代码）！除此之外我们还可以享用FP编程的其他所有优势。函数式编程能提供的抽象服务还远不止于此。高阶函数只不过是个开始。</p>
 <h3 id="currying">Currying</h3>
-<p>我遇见的大多数码农都读过“<a href="http://baike.baidu.com/view/66964.htm#2" target="_blank">四人帮</a>
-”的那本《设计模式》。任何稍有自尊心的码农都会说这本书和语言无关，因此无论你用什么编程语言，当中提到的那些模式大体上适用于所有软件工程。听起来很厉害，然而事实却不是这样。</p>
-<p>函数式语言的表达能力很强。用这种语言编程的时候基本不需要设计模式，因为这种语言层次已经足够高，使得使用者可以以概念编程，从而完全不需要设计模式了。以<a href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F" target="_blank">适配器模式</a>
-为例（有人知道这个模式和<a href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F" target="_blank">外观模式</a>
-有什么区别吗？怎么觉得有人为了出版合同的要求而硬生生凑页数？）（译者：您不愧是高级黑啊）。对于一个支持currying技术的语言来说，这个模式就是多余的。</p>
+<p>我遇见的大多数码农都读过“<a href="http://baike.baidu.com/view/66964.htm#2">四人帮</a>”的那本《设计模式》。任何稍有自尊心的码农都会说这本书和语言无关，因此无论你用什么编程语言，当中提到的那些模式大体上适用于所有软件工程。听起来很厉害，然而事实却不是这样。</p>
+<p>函数式语言的表达能力很强。用这种语言编程的时候基本不需要设计模式，因为这种语言层次已经足够高，使得使用者可以以概念编程，从而完全不需要设计模式了。以<a href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">适配器模式</a>为例（有人知道这个模式和<a href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">外观模式</a>有什么区别吗？怎么觉得有人为了出版合同的要求而硬生生凑页数？）（译者：您不愧是高级黑啊）。对于一个支持currying技术的语言来说，这个模式就是多余的。</p>
 <p>在Java中最有名的适配器模式就是在其“默认”抽象单元中的应用：类。在函数式语言中这种模式其实就是函数。在这个模式中，一个接口被转换成另外一个接口，让不同的用户代码调用。接下来就有一个适配器模式的例子：</p>
 <!-- raw HTML omitted -->
-<p>上面的代码中square函数计算一个整数的平方，这个函数的接口被转换成计算一个整数的任意整数次幂。在学术圈里这种简单的技术就被叫做currying（因为逻辑学家<a href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F" target="_blank">哈斯凯尔·加里</a>
-用其数学技巧将这种技术描述出来，于是就以他的名字来命名了）。在一个FP语言中函数（而不是类）被作为参数进行传递，currying常常用于转化一个函数的接口以便于其他代码调用。函数的接口就是它的参数，于是currying通常用于减少函数参数的数量（见前例）。</p>
+<p>上面的代码中square函数计算一个整数的平方，这个函数的接口被转换成计算一个整数的任意整数次幂。在学术圈里这种简单的技术就被叫做currying（因为逻辑学家<a href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">哈斯凯尔·加里</a>用其数学技巧将这种技术描述出来，于是就以他的名字来命名了）。在一个FP语言中函数（而不是类）被作为参数进行传递，currying常常用于转化一个函数的接口以便于其他代码调用。函数的接口就是它的参数，于是currying通常用于减少函数参数的数量（见前例）。</p>
 <p>函数式语言生来就支持这一技术，于是没有必要为某个函数手工创建另外一个函数去包装并转换它的接口，这些函数式语言已经为你做好了。我们继续拓展Java来支持这一功能。</p>
 <!-- raw HTML omitted -->
 <p>上面的语句实现了一个平方计算函数，它只需要一个参数。它会继而调用pow函数并且把第二个参数置为2。编译过后将生成以下Java代码：</p>
 <!-- raw HTML omitted -->
 <p>从上面的例子可以看到，很简单的，函数pow的封装函数就创建出来了。在FP语言中currying就这么简单：一种可以快速且简单的实现函数封装的捷径。我们可以更专注于自己的设计，编译器则会为你编写正确的代码！什么时候使用currying呢？很简单，当你想要用适配器模式（或是封装函数）的时候，就是用currying的时候。</p>
-<h3 id="惰性求值21"><a href="http://zh.wikipedia.org/zh/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC" target="_blank">惰性求值</a>
-</h3>
+<h3 id="惰性求值21"><a href="http://zh.wikipedia.org/zh/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC">惰性求值</a></h3>
 <p>惰性求值（或是延迟求值）是一种有趣的技术，而当我们投入函数式编程的怀抱后这种技术就有了得以实现的可能。前面介绍并发执行的时候已经提到过如下代码：</p>
 <!-- raw HTML omitted -->
 <p>在指令式语言中以上代码执行的顺序是显而易见的。由于每个函数都有可能改动或者依赖于其外部的状态，因此必须顺序执行。先是计算somewhatLongOperation1，然后到somewhatLongOperation2，最后执行concatenate。函数式语言就不一样了。</p>
@@ -316,8 +198,7 @@
 <!-- raw HTML omitted -->
 <p>程序中只有在stock为European的时候才执行sendToSEC。如何实现例子中的unless？如果没有惰性求值就需要求助于某种形式的宏（译者：用if不行么？），不过在像Haskell这样的语言中就不需要那么麻烦了。直接实现一个unless函数就可以！</p>
 <!-- raw HTML omitted -->
-<p>请注意，如果condition值为真，那就不会计算code。在其他严格语言（见<a href="http://zh.wikipedia.org/wiki/%E6%B1%82%E5%80%BC%E7%AD%96%E7%95%A5#.E4.B8.A5.E6.A0.BC.E6.B1.82.E5.80.BC_.28Strict_evaluation.29" target="_blank">严格求值</a>
-）中这种行为是做不到的，因为在进入unless这个函数之前，作为参数的code已经被计算过了。</p>
+<p>请注意，如果condition值为真，那就不会计算code。在其他严格语言（见<a href="http://zh.wikipedia.org/wiki/%E6%B1%82%E5%80%BC%E7%AD%96%E7%95%A5#.E4.B8.A5.E6.A0.BC.E6.B1.82.E5.80.BC_.28Strict_evaluation.29">严格求值</a>）中这种行为是做不到的，因为在进入unless这个函数之前，作为参数的code已经被计算过了。</p>
 <h4 id="无穷数据结构">无穷数据结构</h4>
 <p>惰性求值技术允许定义无穷数据结构，这要在严格语言中实现将非常复杂。例如一个储存Fibonacci数列数字的列表。很明显这样一个列表是无法在有限的时间内计算出这个无穷的数列并存储在内存中的。在像Java这样的严格语言中，可以定义一个Fibonacci函数，返回这个序列中的某个数。而在Haskell或是类似的语言中，可以把这个函数进一步抽象化并定义一个Fibonacci数列的无穷列表结构。由于语言本身支持惰性求值，这个列表中只有真正会被用到的数才会被计算出来。这让我们可以把很多问题抽象化，然后在更高的层面上解决它们（比如可以在一个列表处理函数中处理无穷多数据的列表）。</p>
 <h4 id="不足之处">不足之处</h4>
@@ -335,16 +216,14 @@
 <!-- raw HTML omitted -->
 <p>这两行代码彼此之间没有依赖关系，因此编译器可以随意的重新安排它们的执行顺序。可是只要用CPS重写它，编译器就必须顺序执行了，因为重写后的代码存在依赖关系了。</p>
 <!-- raw HTML omitted -->
-<p>这段新的代码中println需要结合其计算结果调用readLine，然后再返回readLine的返回值。这使得两个函数得以保证按顺序执行而且readLine总被执行（这是由于整个运算需要它的返回值作为最终结果）。Java的println是没有返回值的，但是如果它可以返回一个能被readnLine接受的抽象值，问题就解决了！（译者：别忘了，这里作者一开始就在Java的基础上修改搭建自己的语言）当然，如果一直把函数按照这种方法串下去，代码很快就变得不可读了，可是没有人要求你一定要这样做。可以通过在语言中添加<a href="http://zh.wikipedia.org/wiki/%E8%AF%AD%E6%B3%95%E7%B3%96" target="_blank">语法糖</a>
-的方式来解决这个问题，这样程序员只要按照顺序写代码，编译器负责自动把它们串起来就好了。于是就可以任意安排代码的执行顺序而不用担心会失去FP带来的好处了（包括可以用数学方法来分析我们的程序）！如果到这里还有人感到困惑，可以这样理解，函数只是有唯一成员的类的实例而已。试着重写上面两行程序，让println和readLine编程这种类的实例，所有问题就都搞清楚了。</p>
+<p>这段新的代码中println需要结合其计算结果调用readLine，然后再返回readLine的返回值。这使得两个函数得以保证按顺序执行而且readLine总被执行（这是由于整个运算需要它的返回值作为最终结果）。Java的println是没有返回值的，但是如果它可以返回一个能被readnLine接受的抽象值，问题就解决了！（译者：别忘了，这里作者一开始就在Java的基础上修改搭建自己的语言）当然，如果一直把函数按照这种方法串下去，代码很快就变得不可读了，可是没有人要求你一定要这样做。可以通过在语言中添加<a href="http://zh.wikipedia.org/wiki/%E8%AF%AD%E6%B3%95%E7%B3%96">语法糖</a>的方式来解决这个问题，这样程序员只要按照顺序写代码，编译器负责自动把它们串起来就好了。于是就可以任意安排代码的执行顺序而不用担心会失去FP带来的好处了（包括可以用数学方法来分析我们的程序）！如果到这里还有人感到困惑，可以这样理解，函数只是有唯一成员的类的实例而已。试着重写上面两行程序，让println和readLine编程这种类的实例，所有问题就都搞清楚了。</p>
 <p>到这里本章基本可以结束了，而我们仅仅了解到continuation的一点皮毛，对它的用途也知之甚少。我们可以用CPS完成整个程序，程序里所有的函数都有一个额外的continuation作为参数接受其他函数的返回值。还可以把任何程序转换为CPS的，需要做的只是把当中的函数看作是特殊的continuation（总是将返回值传给调用者的continuation）就可以了，简单到完全可以由工具自动完成（史上很多编译器就是这样做的）。</p>
 <p>一旦将程序转为CPS的风格，有些事情就变得显而易见了：每一条指令都会有一些continuation，都会将它的计算结果传给某一个函数并调用它，在一个普通的程序中这个函数就是该指令被调用并且返回的地方。随便找个之前提到过的代码，比如说add(5,10)好了。如果add属于一个用CPS风格写出的程序，add的continuation很明显就是当它执行结束后要调用的那个函数。可是在一个非CPS的程序中，add的continuation又是什么呢？当然我们还是可以把这段程序转成CPS的，可是有必要这样做吗？</p>
 <p>事实上没有必要。注意观察整个CPS转换过程，如果有人尝试要为CPS程序写编译器并且认真思考过就会发现：CPS的程序是不需要栈的！在这里完全没有函数需要做传统意义上的“返回”操作，函数执行完后仅需要接着调用另外一个函数就可以了。于是就不需要在每次调用函数的时候把参数压栈再将它们从中取出，只要把这些参数存放在一片内存中然后使用跳转指令就解决问题了。也完全不需要保留原来的参数：因为这种程序里的函数都不返回，所以它们不会被用第二次！</p>
 <p>简单点说呢，用CPS风格写出来的程序不需要栈，但是每次调用函数的时候都会要多加一个参数。非CPS风格的程序不需要额外的参数但又需要栈才能运行。栈里面存的是什么？仅仅是参数还有一个供函数运行结束后返回的程序指针而已。这个时候你是不是已经恍然大悟了？对啊，栈里面的数据实际上就是continuation的信息！栈上的程序返回指针实质上就是CPS程序中需要调用的下一个函数！想要知道add(5, 10)的continuation是什么？只要看它运行时栈的内容就可以了。</p>
 <p>接下来就简单多了。continuation和栈上指示函数返回地址的指针其实是同一样东西，只是continuation是显式的传递该地址并且因此代码就不局限于只能返回到函数被调用的地方了。前面说过，continuation就是函数，而在我们特制的语言中函数就是类的实例，那么可以得知栈上指向函数返回地址的指针和continuation的参数是一样的，因为我们所谓的函数（就像类的一个实例）其实就是指针。这也意味着在程序运行的任何时候，你都可以得到当前的continuation（就是栈上的信息）。</p>
 <p>好了，我们已经搞清楚当前的continuation是什么了。接下来要弄明白它的存在有什么意义。只要得到了当前的continuation并将它保存起来，就相当于保存了程序的当前状态：在时间轴上把它冻结起来了。这有点像操作系统进入休眠状态。continuation对象保存了足够的信息随时可以从指定的某个状态继续运行程序。在切换线程的时候操作系统也是这样做的。唯一的区别在于它保留了所有的控制权利。当请求某个continuation对象时（在Scheme语言中是通过调用call-with-current-continuation函数实现的）得到的是一个存有当前continuation的对象，也就是栈对象（在CPS中也就是下一个要执行的函数）。可以把这个对象保存做一个变量中（或者是存在磁盘上）。当以该continuation对象“重启”该程序时，程序的状态就会立即“转换”为该对象中保存的状态。这一点和切换回一个被暂停的线程或是从系统休眠中唤醒很相像，唯一不同的是continuatoin对象可以反复的这样使用。当系统唤醒后，休眠前保存的信息就会销毁，否则你也可以反复的从该点唤醒系统，就像乘时光机回到过去一样。有了continuation你就可以做到这一点！</p>
-<p>那么continuation在什么情况下有用呢？有一些应用程序天生就没有状态，如果要在这样的系统中模拟出状态以简化工作的时候，就可以用到continuation。最合适的应用场合之一就是网页应用程序。微软的ASP.NET为了让程序员更轻松的编写应用程序，花了大量的精力去模拟各种状态。假如C#支持continuation的话，那么ASP.NET的复杂度将减半：因为只要把某一时刻的continuation保存起来，下次用户再次发起同样请求的时候，重新载入这个continuation即可。对于网络应用的程序员来说就再也没有中断了：轻轻松松程序就从下一行开始继续运行了！对于一些实际问题来说，continuation是一种非常有用的抽象工具。如今大量的传统胖客户端（见<a href="http://zh.wikipedia.org/wiki/%E7%98%A6%E5%AE%A2%E6%88%B7%E7%AB%AF" target="_blank">瘦客户端</a>
-）正纷纷走进网络，continuation在未来将扮演越来越重要的角色。</p>
+<p>那么continuation在什么情况下有用呢？有一些应用程序天生就没有状态，如果要在这样的系统中模拟出状态以简化工作的时候，就可以用到continuation。最合适的应用场合之一就是网页应用程序。微软的ASP.NET为了让程序员更轻松的编写应用程序，花了大量的精力去模拟各种状态。假如C#支持continuation的话，那么ASP.NET的复杂度将减半：因为只要把某一时刻的continuation保存起来，下次用户再次发起同样请求的时候，重新载入这个continuation即可。对于网络应用的程序员来说就再也没有中断了：轻轻松松程序就从下一行开始继续运行了！对于一些实际问题来说，continuation是一种非常有用的抽象工具。如今大量的传统胖客户端（见<a href="http://zh.wikipedia.org/wiki/%E7%98%A6%E5%AE%A2%E6%88%B7%E7%AB%AF">瘦客户端</a>）正纷纷走进网络，continuation在未来将扮演越来越重要的角色。</p>
 <h3 id="模式匹配">模式匹配</h3>
 <p>模式匹配并不是什么新功能。而事实上它和函数式编程也没有什么太大的关系。它之所以常常被认为是FP的一个特性，是因为在函数式语言已经支持模式匹配很长一段时间后的今天，指令式语言是还没有这个功能。</p>
 <p>还是直接用例子来看看什么是模式匹配吧，这是一个用Java写的Fibonacci函数：</p>
@@ -352,8 +231,7 @@
 <p>再看看用我们基于Java修改过的新语言写出来的Fibonacci函数，这种新语言就支持模式匹配：</p>
 <!-- raw HTML omitted -->
 <p>区别在哪里呢？在于后者的编译器替我们实现了程序的分支。</p>
-<p>这有什么了不起的？确实也没什么。只是有人注意到很多函数中有非常复杂的switch结构（对于函数式程序而言更是如此），于是想到如果能把这层结构也抽象化就更好了。然后就把这个复杂的函数拆分成若干新的函数，并在这些函数的某些参数中应用模式（这和<a href="http://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD" target="_blank">重载</a>
-有点类似）。这样依赖当这个函数被调用的时候，编译器会在运行时将调用者传入的参数与各个新函数的参数定义进行比较，找出合适的那个函数来执行。合适的函数往往是参数定义上最具体最接近传入参数的那个函数。在这个例子中，当n为1时，可以用函数int fib(int n)，不过真正调用的是int fib(1)因为这个函数更具体更接近调用者的要求。</p>
+<p>这有什么了不起的？确实也没什么。只是有人注意到很多函数中有非常复杂的switch结构（对于函数式程序而言更是如此），于是想到如果能把这层结构也抽象化就更好了。然后就把这个复杂的函数拆分成若干新的函数，并在这些函数的某些参数中应用模式（这和<a href="http://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD">重载</a>有点类似）。这样依赖当这个函数被调用的时候，编译器会在运行时将调用者传入的参数与各个新函数的参数定义进行比较，找出合适的那个函数来执行。合适的函数往往是参数定义上最具体最接近传入参数的那个函数。在这个例子中，当n为1时，可以用函数int fib(int n)，不过真正调用的是int fib(1)因为这个函数更具体更接近调用者的要求。</p>
 <p>模式匹配一般来说要比这里举的例子更加复杂。比如说，高级模式匹配系统可以支持下面的操作：</p>
 <!-- raw HTML omitted -->
 <p>那么什么情况下模式匹配会有用呢？在需要处理一大堆程序分支的时候！每当需要实现复杂的嵌套if语句的时候，模式匹配可以帮助你用更少的代码更好的完成任务。我所知道的一个这样的函数是标准的WndProc函数，该函数是所有Win32应用程序必须具备的（尽管它经常会被抽象化）。模式匹配系统一般都可以像匹配简单数值一样匹配数据集合。举个例子，对于一个接受数组作为参数的函数，可以通过模式匹配数组中第一个数字为1并且第三个数字大于3的输入。</p>
@@ -368,9 +246,7 @@
 <!-- raw HTML omitted -->
 <p>当closure需要访问不在它本地域的变量时，就可以通过这个引用到更外一层的父域中寻找该变量。谜底揭开了！closure将函数编程与面向对象的方法结合了起来。下一次为了保存并传递某些状态而创建类的时候，想想closure。它能在运行时从相应的域中获得变量，从而可以把该变量当初“成员变量”来访问，也因为这样，就不再需要去创建一个成员变量了。</p>
 <h3 id="路在何方">路在何方？</h3>
-<p>这篇文章仅仅涉及到函数式编程的一些皮毛。考虑到有时候星星之火可以燎原，所以如果它能给你一些帮助那就再好不过了。接下来我计划就<a href="http://zh.wikipedia.org/wiki/%E8%8C%83%E7%95%B4%E8%AE%BA" target="_blank">范畴论</a>
-、monads、函数式编程数据结构、函数式语言中的<a href="http://zh.wikipedia.org/wiki/%E9%A1%9E%E5%9E%8B%E7%B3%BB%E7%B5%B1" target="_blank">类型系统</a>
-、并行函数式编程、数据库的函数式编程以及更多的话题写些类似的文章。如果我可以写出（在我学习的同时）以上清单的一半，我的人生就完整了。于此同时，Google将是我们的良师益友。</p>
+<p>这篇文章仅仅涉及到函数式编程的一些皮毛。考虑到有时候星星之火可以燎原，所以如果它能给你一些帮助那就再好不过了。接下来我计划就<a href="http://zh.wikipedia.org/wiki/%E8%8C%83%E7%95%B4%E8%AE%BA">范畴论</a>、monads、函数式编程数据结构、函数式语言中的<a href="http://zh.wikipedia.org/wiki/%E9%A1%9E%E5%9E%8B%E7%B3%BB%E7%B5%B1">类型系统</a>、并行函数式编程、数据库的函数式编程以及更多的话题写些类似的文章。如果我可以写出（在我学习的同时）以上清单的一半，我的人生就完整了。于此同时，Google将是我们的良师益友。</p>
 <h3 id="欢迎联系">欢迎联系</h3>
 <p>如果您有任何问题，评价或者建议，请发邮件到coffeemug@gmail.com（译者：如果翻译方面的问题／建议请发到yang.huang@ymail.com:)）。期待您的回复。</p>
 <p>注：</p>
@@ -379,53 +255,25 @@
 <p><!-- raw HTML omitted -->3<!-- raw HTML omitted -->我一直一来都很讨厌在历史课上罗列一堆枯燥无味的时间、人名、事件。对我来说历史就是关于那些改变世界的人们活生生的故事，是他们行为背后的个人动机，是那些他们用以影响芸芸众生的方法和工具。从这个角度来说，接下来的这堂历史课是不完整的，很遗憾。只有那些非常相关的人和事会被提及。</p>
 <p><!-- raw HTML omitted -->4<!-- raw HTML omitted -->在我学习函数式编程的时候，“lambda”这个术语搞得我很烦，因为我不知道它到底是什么意思。在这里lambda就是一个函数，在数学符号中用这个希腊字母只是因为它更容易写。所以以后在谈及函数式编程的时候只要你听到lambda，把它在脑中翻译为“函数”就可以了。</p>
 <p><!-- raw HTML omitted -->5<!-- raw HTML omitted -->有意思的是不论如何Java中的字符串总是不可修改的。讨论这种背叛Java的设计背后的原因会很有意思，可惜这样会让我们跑题的。</p>
-<p><!-- raw HTML omitted -->6<!-- raw HTML omitted -->大部分函数式语言的编译器都会尽量将迭代函数转换为对等的循环语句。这种做法叫做<a href="http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8" target="_blank">尾调用优化</a>
-。</p>
+<p><!-- raw HTML omitted -->6<!-- raw HTML omitted -->大部分函数式语言的编译器都会尽量将迭代函数转换为对等的循环语句。这种做法叫做<a href="http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8">尾调用优化</a>。</p>
 <p><!-- raw HTML omitted -->7<!-- raw HTML omitted -->反之则不一定成立。尽管有时候可以证明两段代码是等价的，但不是在所有的情况下都可以得出这样的结论。</p>
-<p><!-- raw HTML omitted -->8<!-- raw HTML omitted -->实际上这样做并不比栈上存储要慢，因为在引入<a href="http://zh.wikipedia.org/wiki/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6_%28%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%B8%29" target="_blank">垃圾回收机制</a>
-后，内存分配操作的时间代价仅为O(1)。</p></div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content surface">
-      <div class="modal-header">
-        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-medal"></i>打赏</h5>
-        <a href="#" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-fw fa-times"></i></a>
-      </div>
-      <div class="modal-body">
-        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item" role="presentation">
-            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
-              <i class="fab fa-fw fa-alipay"></i>支付宝
-            </a>
-          </li><li class="nav-item" role="presentation">
-            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
-              <i class="fab fa-fw fa-weixin"></i>微信
-            </a>
-          </li></ul>
-        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
-            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
-          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
-            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
-          </div></div>
-      </div>
-    </div>
-  </div>
-</div><hr /><div class="post-navs d-flex mb-3 justify-content-between">
-  <div class="post-nav w-50"><div class="prev-post btn btn-sm">
-      <a href="/2016/03/24/%E5%AE%89%E8%85%BElinux%E4%B8%8B%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0-md/">安腾Linux下使用笔记.md
-</a>
-    </div></div>
-  <div class="post-nav flex-row-reverse"><div class="next-post btn btn-sm">
-      <a href="/2016/04/06/emacs%E6%B4%97%E8%84%91/">Emacs洗脑
-</a>
-    </div></div>
-</div><section class="related-posts">
-    <h3>相关文章</h3>
-    <ul class="related-posts"><li><a href="/2016/03/24/%E5%AE%89%E8%85%BElinux%E4%B8%8B%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0-md/">安腾Linux下使用笔记.md
-</a></li><li><a href="/2016/03/10/leanote-theme_api%E4%BC%98%E5%8C%96/">Leanote – Theme_API优化
-</a></li><li><a href="/2016/03/10/leanote-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">Leanote – 源码阅读
-</a></li><li><a href="/2016/03/10/%E7%BC%96%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%9A%84%E6%96%87%E7%AB%A0/">编程相关的文章
-</a></li><li><a href="/2016/03/09/python-%E6%89%B9%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D/">Python – 批量重命名
-</a></li></ul>
-  </section></article><div class="post-comments surface row"><div id="disqus_thread"></div>
+<p><!-- raw HTML omitted -->8<!-- raw HTML omitted -->实际上这样做并不比栈上存储要慢，因为在引入<a href="http://zh.wikipedia.org/wiki/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6_(%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%B8)">垃圾回收机制</a>后，内存分配操作的时间代价仅为O(1)。</p>
+        </div>
+
+        
+
+
+        
+
+
+        <div class="post-meta meta-tags">
+            
+            没有标签
+            
+        </div>
+    </article>
+    
+    <div id="disqus_thread"></div>
 <script type="application/javascript">
     var disqus_config = function () {
     
@@ -444,105 +292,353 @@
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a><script src="https://utteranc.es/client.js"
-  repo="razonyang/hugo-theme-bootstrap-comments"
-  issue-term="pathname"
-  label="comment"
-  theme="github-light"
-  crossorigin="anonymous"
-  async>
-</script></div></div>
-</div><aside class="col-lg-4 sidebar d-flex">
-  <div class="container"><section class="profile surface row text-center">
-  <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" src="/images/profile.webp" alt="Svtter" loading="lazy"></div>
-  <div class="col-12 profile-meta"><div class="profile-name">Svtter</div><div class="profile-bio">Hacker and Painter.</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Epoch</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>China</div><div class="profile-about"><i class="fas fa-fw fa-info-circle"></i><a href="/zh-cn/about/">😄 关于我</a></div></div>
-</section>
-  <section class="recent-posts row surface">
-  <h4>最近文章</h4>
-  <ul><li><a href="/zh-cn/posts/2021-11-20-macos-use-ruby/">在 MacOS 上使用 Ruby
-</a></li><li><a href="/zh-cn/posts/2021-11-20-orm-pattern/">ORM 中的 Pattern
-</a></li><li><a href="/zh-cn/posts/2021-09-06-the-way-of-think/">克服困难
-</a></li><li><a href="/zh-cn/posts/2021-09-04-docker-compose-app/">使用 Docker 构建前端应用
-</a></li><li><a href="/zh-cn/posts/2021-08-06-how-to-tdd/">测试驱动开发应该怎么做？
-</a></li></ul>
-</section><section class="taxonomy-categories row surface">
-      <h4>
-        <a href="/zh-cn/categories">分类</a>
-      </h4>
-      <div><a href="/zh-cn/categories/%E9%BB%98%E8%AE%A4/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="默认">
-          默认 <span class="badge rounded-pill">66</span>
-        </a><a href="/zh-cn/categories/acm/icpc/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="ACM/ICPC">
-          ACM/ICPC <span class="badge rounded-pill">41</span>
-        </a><a href="/zh-cn/categories/linux/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Linux">
-          Linux <span class="badge rounded-pill">22</span>
-        </a><a href="/zh-cn/categories/%E7%BC%96%E7%A8%8B/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="编程">
-          编程 <span class="badge rounded-pill">20</span>
-        </a><a href="/zh-cn/categories/%E4%B9%90%E8%B6%A3/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="乐趣">
-          乐趣 <span class="badge rounded-pill">18</span>
-        </a><a href="/zh-cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="动态语言">
-          动态语言 <span class="badge rounded-pill">13</span>
-        </a><a href="/zh-cn/categories/%E7%94%9F%E6%B4%BB/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="生活">
-          生活 <span class="badge rounded-pill">11</span>
-        </a><a href="/zh-cn/categories/%E5%AD%A6%E4%B9%A0/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="学习">
-          学习 <span class="badge rounded-pill">10</span>
-        </a><a href="/zh-cn/categories/ubuntu/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Ubuntu">
-          Ubuntu <span class="badge rounded-pill">7</span>
-        </a><a href="/zh-cn/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="软件设计模式">
-          软件设计模式 <span class="badge rounded-pill">7</span>
-        </a></div>
-    </section><section class="taxonomy-tags row surface">
-      <h4>
-        <a href="/zh-cn/tags">标签</a>
-      </h4>
-      <div><a href="/zh-cn/tags/deep-learning/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Deep learning">
-          Deep learning <span class="badge rounded-pill">4</span>
-        </a><a href="/zh-cn/tags/django/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="django">
-          django <span class="badge rounded-pill">3</span>
-        </a><a href="/zh-cn/tags/python/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="python">
-          python <span class="badge rounded-pill">3</span>
-        </a><a href="/zh-cn/tags/docker/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Docker">
-          Docker <span class="badge rounded-pill">2</span>
-        </a><a href="/zh-cn/tags/tdd/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="TDD">
-          TDD <span class="badge rounded-pill">2</span>
-        </a><a href="/zh-cn/tags/active-learning/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="active learning">
-          active learning <span class="badge rounded-pill">1</span>
-        </a><a href="/zh-cn/tags/agile/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="agile">
-          agile <span class="badge rounded-pill">1</span>
-        </a><a href="/zh-cn/tags/beam-search/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Beam Search">
-          Beam Search <span class="badge rounded-pill">1</span>
-        </a><a href="/zh-cn/tags/beego/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="beego">
-          beego <span class="badge rounded-pill">1</span>
-        </a><a href="/zh-cn/tags/blog/" class="post-taxonomy rounded btn btn-sm me-2 mb-2" title="Blog">
-          Blog <span class="badge rounded-pill">1</span>
-        </a></div>
-    </section></div>
-</aside>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    
+    
 </div>
-    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav my-2 justify-content-center"><li class="nav-item">
-    <a class="nav-link social-link" href="mailto:svtter@163.com" title="Email">
-      <i class="fas fa-fw fa-2x fa-envelope"></i>
-    </a>
-  </li><li class="nav-item">
-      <a class="nav-link social-link" target="_blank" href="https://github.com/svtter" title="GitHub">
-        <i class="fa-fw fa-2x fab fa-github"></i>
-      </a>
-    </li><li class="nav-item">
-      <a class="nav-link social-link" target="_blank" href="https://linkedin.com/hao-xiu-a4a153210" title="LinkedIn">
-        <i class="fa-fw fa-2x fab fa-linkedin-in"></i>
-      </a>
-    </li><li class="nav-item">
-      <a class="nav-link social-link" target="_blank" href="https://twitter.com/Crack_svtter" title="Twitter">
-        <i class="fa-fw fa-2x fab fa-twitter"></i>
-      </a>
-    </li></nav>
-<div class="copyright mb-2">
-  Copyright © 2016-2022 Hao Xiu. All Rights Reserved.
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://svtter.cn/">Svtter&#39;s Blog By </a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://svtter.cn/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://svtter.cn/zh-cn/posts/2020-12-26-long-time-for-post-update/" title="与拖延做斗争">与拖延做斗争</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/zh-cn/posts/2020-04-09-mellow-config/" title="Mellow Config">Mellow Config</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/04/14/%E7%A9%B7%E7%88%B8%E7%88%B8%E5%AF%8C%E7%88%B8%E7%88%B8-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" title="穷爸爸富爸爸 – 阅读笔记">穷爸爸富爸爸 – 阅读笔记</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/03/19/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/" title="Ubuntu 装机总结">Ubuntu 装机总结</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/01/31/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" title="编程语言与知识基础">编程语言与知识基础</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/01/17/%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-linux-%E8%BF%9B%E7%A8%8B/" title="将已经运行的进程切换到后台">将已经运行的进程切换到后台</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/01/08/django-tricks/" title="Django tricks">Django tricks</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/01/07/my-keras-tricks/" title="My Keras tricks.">My Keras tricks.</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/01/07/ubuntu-%E5%A4%9A%E6%98%BE%E7%A4%BA%E5%99%A8%E6%96%B9%E6%A1%88/" title="Ubuntu 多显示器方案">Ubuntu 多显示器方案</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/2019/01/04/%E4%B8%BA%E4%BD%A0%E7%9A%84-docker-%E9%A1%B9%E7%9B%AE%E9%9B%86%E6%88%90-elk/" title="为你的 Docker 项目集成 ELK">为你的 Docker 项目集成 ELK</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://svtter.cn/categories/acm/icpc/">ACM/ICPC (41)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/code/">Code (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/cpp-c&#43;&#43;/">Cpp C&#43;&#43; (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/database/">Database (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/devops/">DevOps (6)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/java/">Java (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/javascript/">Javascript (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/life/">Life (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/linux/">Linux (22)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/linux-arm/">Linux ARM (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/php/">php (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/programming/">Programming (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/python-web-%E5%BC%80%E5%8F%91/">Python Web 开发 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/ros/">ROS (6)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/shell-%E7%9B%B8%E5%85%B3/">Shell 相关 (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/software/">Software (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/summary/">Summary (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/tools/">tools (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/ubuntu/">Ubuntu (7)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/vim/">Vim (6)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/web-%E5%BC%80%E5%8F%91/">Web 开发 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E4%B9%90%E8%B6%A3/">乐趣 (18)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%89%8D%E7%AB%AF/">前端 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/">动态语言 (13)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%AD%A6%E4%B9%A0/">学习 (10)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%B7%A5%E5%85%B7/">工具 (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">并行计算 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%80%9D%E8%80%83/">思考 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%80%BB%E7%BB%93/">总结 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%95%B0%E5%AD%A6/">数学 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%9D%82%E8%AE%B0/">杂记 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%94%9F%E6%B4%BB/">生活 (11)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%99%BD%E7%9A%AE%E4%B9%A6/">白皮书 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%AE%97%E6%B3%95/">算法 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%BC%96%E7%A8%8B/">编程 (20)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%BD%91%E7%BB%9C/">网络 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">软件设计模式 (7)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E8%BF%90%E7%BB%B4/">运维 (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E9%9A%8F%E7%AC%94/">随笔 (5)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E9%BB%98%E8%AE%A4/">默认 (66)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://svtter.cn/tags/active-learning/">active learning</a>
+    
+    <a href="https://svtter.cn/tags/agile/">agile</a>
+    
+    <a href="https://svtter.cn/tags/beam-search/">Beam Search</a>
+    
+    <a href="https://svtter.cn/tags/beego/">beego</a>
+    
+    <a href="https://svtter.cn/tags/blog/">Blog</a>
+    
+    <a href="https://svtter.cn/tags/ci/">CI</a>
+    
+    <a href="https://svtter.cn/tags/container/">Container</a>
+    
+    <a href="https://svtter.cn/tags/cpp/">CPP</a>
+    
+    <a href="https://svtter.cn/tags/ctc-loss/">CTC loss</a>
+    
+    <a href="https://svtter.cn/tags/cuda/">CUDA</a>
+    
+    <a href="https://svtter.cn/tags/database/">Database</a>
+    
+    <a href="https://svtter.cn/tags/deep-learning/">Deep learning</a>
+    
+    <a href="https://svtter.cn/tags/delay/">delay</a>
+    
+    <a href="https://svtter.cn/tags/design/">design</a>
+    
+    <a href="https://svtter.cn/tags/dhcp/">dhcp</a>
+    
+    <a href="https://svtter.cn/tags/django/">django</a>
+    
+    <a href="https://svtter.cn/tags/docker/">Docker</a>
+    
+    <a href="https://svtter.cn/tags/editor/">editor</a>
+    
+    <a href="https://svtter.cn/tags/elk/">ELK</a>
+    
+    <a href="https://svtter.cn/tags/frontend/">frontend</a>
+    
+    <a href="https://svtter.cn/tags/gitlab/">GitLab</a>
+    
+    <a href="https://svtter.cn/tags/golang/">golang</a>
+    
+    <a href="https://svtter.cn/tags/gpu/">GPU</a>
+    
+    <a href="https://svtter.cn/tags/graph/">graph</a>
+    
+    <a href="https://svtter.cn/tags/javascript/">javascript</a>
+    
+    <a href="https://svtter.cn/tags/keras/">Keras</a>
+    
+    <a href="https://svtter.cn/tags/kotlin/">kotlin</a>
+    
+    <a href="https://svtter.cn/tags/language/">language</a>
+    
+    <a href="https://svtter.cn/tags/life/">Life</a>
+    
+    <a href="https://svtter.cn/tags/linux/">Linux</a>
+    
+    <a href="https://svtter.cn/tags/mellow/">mellow</a>
+    
+    <a href="https://svtter.cn/tags/migration/">Migration</a>
+    
+    <a href="https://svtter.cn/tags/nginx/">nginx</a>
+    
+    <a href="https://svtter.cn/tags/orm/">ORM</a>
+    
+    <a href="https://svtter.cn/tags/psychology/">psychology</a>
+    
+    <a href="https://svtter.cn/tags/python/">python</a>
+    
+    <a href="https://svtter.cn/tags/ruby/">Ruby</a>
+    
+    <a href="https://svtter.cn/tags/software/">Software</a>
+    
+    <a href="https://svtter.cn/tags/ssh/">ssh</a>
+    
+    <a href="https://svtter.cn/tags/stl/">STL</a>
+    
+    <a href="https://svtter.cn/tags/swarm/">Swarm</a>
+    
+    <a href="https://svtter.cn/tags/tcpip/">tcpip</a>
+    
+    <a href="https://svtter.cn/tags/tdd/">TDD</a>
+    
+    <a href="https://svtter.cn/tags/thought/">thought</a>
+    
+    <a href="https://svtter.cn/tags/tools/">tools</a>
+    
+    <a href="https://svtter.cn/tags/tricks/">Tricks</a>
+    
+    <a href="https://svtter.cn/tags/ubuntu/">Ubuntu</a>
+    
+    <a href="https://svtter.cn/tags/unfinished/">unfinished</a>
+    
+    <a href="https://svtter.cn/tags/vue/">vue</a>
+    
+    <a href="https://svtter.cn/tags/vuejs/">vuejs</a>
+    
+    <a href="https://svtter.cn/tags/why/">Why</a>
+    
+    <a href="https://svtter.cn/tags/%E6%83%B3%E6%B3%95/">想法</a>
+    
+    <a href="https://svtter.cn/tags/%E6%8A%80%E6%9C%AF%E8%AE%A2%E9%98%85/">技术订阅</a>
+    
+    <a href="https://svtter.cn/tags/%E6%8C%87%E5%AF%BC%E6%96%B0%E4%BA%BA/">指导新人</a>
+    
+    <a href="https://svtter.cn/tags/%E8%B4%A2%E5%8A%A1/">财务</a>
+    
 </div>
-<div class="powered-by mb-2">
-  Powered by <a href="https://gohugo.io" target="_blank">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank">Bootstrap</a> theme.
-</div></footer>
-<a id="btnScrollToTop" class="btn-scroll-to-top">
-  <i class="fas fa-fw fa-chevron-circle-up fa-2x"></i>
-</a>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://svtter.cn/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
