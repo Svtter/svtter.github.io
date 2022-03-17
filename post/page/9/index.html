@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    <title>Posts | Svtter&#39;s Blog</title>
+    <meta property="og:title" content="Posts - Svtter&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="Posts">
+        
+    <meta name="author" content="">
+    <meta property="og:url" content="https://svtter.cn/post/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <link rel="alternate" type="application/rss+xml" href="https://svtter.cn/post/index.xml" title="Svtter's Blog" />
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://svtter.cn/">
+                        Svtter&#39;s Blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://svtter.cn/">首页</a>
+                    
+                    <a  href="https://svtter.cn/categories/" title="📰 Categories">📰 Categories</a>
+                    
+                    <a  href="https://svtter.cn/daily-ml/" title="⚙️ Daily ML">⚙️ Daily ML</a>
+                    
+                    <a  href="https://svtter.cn/tags/" title="🏷️ Tags">🏷️ Tags</a>
+                    
+                    <a  href="https://svtter.cn/about/" title="🙍‍♂️ About">🙍‍♂️ About</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/27/%E4%BD%BF%E7%94%A8docker%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84sitemap%E9%97%AE%E9%A2%98/" title="使用Docker时遇到的sitemap问题">使用Docker时遇到的sitemap问题</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月27日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%BC%96%E7%A8%8B'>编程</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            这两天感觉博客访问量已经不能靠用嘴宣传了，于是决定做一下sitemap，但是发现django自带的sitemap生成器存在这样的问题：生成的sitemap是依照container的hostname来显示的。
+为此我查询了一下其他人是怎么搞的，发现他们都把nginx和django放在一个容器下——但是如此构建不仅麻烦，似乎违背了docker的构建思路，在一个container里面放了多个进程。因此，我认为下面的方案是合理的。
+解决方案 Enabling the sites framework To enable the sites framework, follow these steps:
+Add ‘django.contrib.sites’ to your INSTALLED_APPS setting.
+Define a SITE_ID setting: SITE_ID = 1
+Run migrate. django.contrib.sites registers a post_migrate signal handler which creates a default site named example.com with the domain example.com. This site will also be created after Django creates the test database. To set the correct name and domain for your project, you can use a data migration.……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/27/%E4%BD%BF%E7%94%A8docker%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84sitemap%E9%97%AE%E9%A2%98/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/" title="使用Docker安装Spark">使用Docker安装Spark</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月26日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE'>大数据</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            在国内加载Dockerhub上的镜像速度会比较慢，对此我们可以通过设置mirror镜像的方式来加速images的下载。
+此外，如果是ipv6的网络，在一些mirror可以直接走ipv6通路，速度非常客观。这里以USTC的mirror为例。
+我这里的环境是Ubuntu 14.04，对于不同的Linux环境，修改的方式都差不多；修改文件/etc/docker/daemon.json，如果没有这个文件，创建一个，注意，此处可能需要root权限。修改完成后，运行命令sudo service docker restart重启docker服务。
+配置好以后，选择2.1.0版本的spark进行docker下载。
+docker pull p7hb/docker-spark:2.1.0
+或者直接运行
+docker run -it -p 4040:4040 -p 8080:8080 -p 8081:8081 -h spark --name=spark p7hb/docker-spark:2.1.0
+参考  https://lug.ustc.edu.cn/wiki/mirrors/help/docker https://github.com/P7h/docker-spark  ……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/26/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" title="pipenv入门指南">pipenv入门指南</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月26日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80'>动态语言</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            前言 pipenv是书写flask的大神kennethreitz的新作；pipenv集成了virtualenv和pip等工具，让你从requirements.pip以及virtualenv的环境中解放出来。并且他还集成了pyenv的选择python版本，可以说是所向披靡了。
+这是他的原话：
+相信随着pipenv更加流行，许多工具也会在自己的环境中对pipenv提供支持，解决许多令人不舒服的问题，也能更好的提高编辑的舒适度。
+安装pipenv 创建虚拟环境 virtualenv  当不存在一个虚拟环境的时候，pipenv将会自动创建一个环境 你也可以手动创建虚拟环境：  $ pipenv --three 创建Python3虚拟环境 $ pipenv --two 创建Python2虚拟环境   其他的东西和virtualenv是一样的。  安装包 比如你要使用requests（是的也是这个大神写的）。
+安装完成后，会生成Pipfile以及Pipfile.lock；这一点很像npm.
+其他命令  激活当前虚拟环境 pipenv shell 运行虚拟环境中的命令 pipenv run python 把你的依赖图输出出来 pipenv graph 安装当前目录的相关依赖 pipenv install  使用问题 目前我使用的时候也会多少存在问题，比如说我看不见下载的进度条，默认不是开启的；
+然后就是因为网络环境的问题，我的pip.conf设置不能应用到pipenv上，我需要自己手动更改Pipfile，这一点有些麻烦。
+后记 本身我想把这个文章针对的群体稍微降降，针对一些技术能力不是特别高的群体，但是存在一些问题，比如有些东西是需要一定知识才能看懂的。如果出现了不懂的内容，尽量自己查找一下吧。……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/26/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/20/shell-tips/" title="Shell-tips">Shell-tips</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月20日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E9%BB%98%E8%AE%A4'>默认</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            重启终端 执行命令，修改环境变量等等之后可以通过此命令来简单重启shell
+exec &quot;$SHELL&quot;
+查找文件 $ find ~ -name &quot;*.txt&quot; -print #在$HOME中查.txt文件并显示
+locate findname
+编辑变量 在zsh中，编辑$HOME/.zshenv；在bash中，编辑.bash_profile……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/20/shell-tips/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/18/roskinectconfigurenote/" title="Ros Kinect Configure Note">Ros Kinect Configure Note</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月18日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/ros'>ROS</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            This blog for my kinect-v2 ros configure.
+Environment  Thinkpad P70 Ubuntu 14.04 indigo  Reference to https://github.com/code-iai/iai_kinect2
+Install Before start, make sure the cuda, cudnn has been configured correctly.
+First, you need to install libfreenect2.
+I recommend to use export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64 in your .zshrc or .bashrc (more professional, in bash_profile or .zshenv). You will avoid some problems about library error.
+When installing libfreenect2, Use cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2 -DENABLE_CXX11=ON to generate Makeifle at build/……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/18/roskinectconfigurenote/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/15/%E7%BB%99%E5%B0%8F%E7%99%BD%E7%9A%84ipythonnotebook%E6%8C%87%E5%8D%97/" title="给小白的IPython Notebook指南">给小白的IPython Notebook指南</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%BC%96%E7%A8%8B'>编程</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            这是给“小白”的notebook指南。notebook是算法开发经常使用的工具。
+安装notebook 运行notebook 在终端下运行这个命令可以启动notebook。
+使用IPython-Notebook 点击右方的New按钮，选择Python3，以此来启动一个新的NoteBook。
+这时会新创建一个文件。
+在In [ ]:后输入要运行的代码，然后点击Run即可运行。例如：
+使用Terminal Terminal就是之前在Windows下的cmd，MacOS下的terminal，点击之后见到这个界面：
+尝试输入python，就可以像之前那样进行命令行编程了。……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/15/%E7%BB%99%E5%B0%8F%E7%99%BD%E7%9A%84ipythonnotebook%E6%8C%87%E5%8D%97/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/15/writewithvim-2/" title="Write with Vim – 2">Write with Vim – 2</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/vim'>Vim</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            Write with vim – 1  Vim的下一步 对我自己而言，也是在这一步。
+现在你对Vim已经有所了解，hjkl肯定会，f也能熟用，,可能被你映射成了&lt;leader&gt;，或者等等。但是我还是想要写这个blog，来指引新手（诚然，也是指引自己）。
+这个时候，我建议你将Esc映射成ii，然后禁用Esc
+在Write with vim – 1中，记录模式我已经用的比较习惯了（@+寄存器），但是正则表达式用的一般般，仍然需要好好的努力才行。
+想要用好Vim，离不开github 大概更多人喜欢在 http://www.vim.org 上寻找自己心仪的插件，但是我认为还是在github上找更好。为什么？
+ 因为许多的开源项目都已经在github上扎根，许多优秀的插件都能在github上找到其身影。比如：Nerdtree, YouCompeleteME, airline, etc. 你可以通过github的star数量来判断这个项目的优秀程度。当然，更确切说，是把star做为参考标准之一。  等等优点，想到我再补充。
+使用插件管理器，管理你的插件 我个人比较推荐 Plug
+插件使用git更新插件，将vimscripts分离，控制不同功能的插件可以放在不同的位置，保证了vimrc的整洁。从而提高了个人配置的维护性。
+Plug 是首当其冲的插件，有了他，你会发现更新插件，安装新的插件一切都是那么的简单。
+Plug 的使用方法在 README 里面有，但是如果英文比较差 — 没关系，也能看懂。
+下一步的学习 很多人觉得vimscript学习起来有些困难，这里有份非常好的文档。准确说是翻译。翻译者辛苦了。
+http://learnvimscriptthehardway.onefloweroneworld.com/……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/15/writewithvim-2/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/15/writewithvim-1/" title="Write with Vim – 1">Write with Vim – 1</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/vim'>Vim</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本文最初发表于2015年，但是个人认为写的尚可，就搬运到这里来，其中有些知识有些老旧，有时间的时候再更新一下。
+Write with Vim – 2
+前言 [2014]
+大约在一年前使用vim？这个也是个不确定的时间。具体什么时间使用Vim早已经忘记了。现在用的还算顺手，但是很多东西其实都还没有认真的学一下。最简单的比如说一部分正则表达式的匹配，以及vimscript的写法等等。也是没有具体时间去认真的深入，毕竟信息科技的世界里有太多太多可以探索的东西了= =。
+在大多数情况下我还是认为自己写一些前人已经有的blog毫无价值，但是转念一想写blog又是为了谁呢，还不是为了自己吗。总结过去，才能更好的前进走向未来。
+另外最近又在开始看emacs了。不过总感觉这样是不好的行为——vim我还没有钻研透彻，就跑去了E去到处乱看，最后哪个都搞不好——谁又知道呢？废话也是少说，写本文是给新手入门的。
+另外今天发现K的作用是查找命令（默认是！man）[2014-09-27]
+本文是利用vimperator（firefox）+ gvim进行书写的，还有了markdown的高亮等等插件。
+[/2014]
+入手Vim 首先我认为你是在Linux下使用vim的，而不是windows。如果是windows，我建议你寻找类似的
+取代方案，或者等着我以后补充。如果给你带来不便了，你来咬我啊～
+当年学习vim的时候遵从诸位大神的理解，跟着vimtutor走了一趟，感觉还是比较不错的。
+最关键的还是自己要多多使用vim，不能停，就算是一开始很不爽，也要坚持使用下去
+ 第一步是学习vimtutor，这个毋庸置疑。最关键的输入i, 还有移动hjkl记住了就可以了  之后最关键的任务就是不停的用vim，就算是觉得慢也用——当然在慢的过程中要思考如何能快。 学习使用`vimtutor`就是在命令行中输入： `vimtutor` 第一步我个人认为是最难的一步。尤其是度过那一段干啥都很慢，狂点鼠标还用不了的阶段。  然后不是跳到问题3就是跳到本问题了。慢慢发现熟悉的&lt;C-c&gt;（就是Ctrl+c)不能用了，到了Vi  m里面变成了终止退出命令了(就像是Esc）（原本也是使用ESC来退出编辑模式的，但是后来发现`&lt;C-c&gt;` 比较快捷，于是就使用他了。（如果你没看懂，重新返回第一步练习）。然后在vim中寻找关于复制， 粘贴的使用方法——至少我是这样。然后就会理解vim中的寄存器的相关信息。  然后就开始找那些可以让自己快速编辑的命令了，比如说w|e|f。我个人比较喜欢f，这个可以让我  快速定位一句话中的一个字母，欲罢不能。`w，e`倒是用的比较少，`b`的位置我不是很喜欢。在这个 过程中大概`d | s | c`这些家伙也慢慢出现了。  再然后就开始发现数字和大写字母的好处了，从小写到大写也是一个慢慢认识的过程，也是不用  记忆到底是如何运作的，只需要看好了出现的位置就行了。用多了自然就会了。  然后习惯了以后就是换行，查找，替换等等操作了。在这个过程中查找用的还是比较多的，  但是替换的命令我就经常忘记如何使用了——没办法，经常忘记。换行更多的使用的是`行号g`，或者 `:行号`然后等等等。  进阶 你也可以直接下载我的配置使用，其中的插件配置可以在一定程度上给出指导。
+ 都是一步一步过来的但是我也忘记我是怎么走过来的。依然很水，不会的配置上网搜索然后copy到自己的vimrc中。走到进阶就差不多懂得.vimrc为何物——因为可能受不了自己vim中的字体，配色，以及目录——或者括号匹配等等问题。这个时候vimrc的作用就出来了。  这个时候我推荐你使用我的配置，也是基于网络上十分流行的一个版本：   如果出现什么问题，参见README.md中的FAQ
+ 这样就可以安装运行了。出现一个问题很正常，如果不在意就继续使用，在意的话自己百度。出现很多
+问题可能是因为Vundle没有装好，使用
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/15/writewithvim-1/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/11/ros%E7%AC%94%E8%AE%B0/" title="ROS 笔记">ROS 笔记</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/ros'>ROS</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            记录一些Ros开发以及学习中的问题
+如何学习机器人  知乎答案 斯坦福大学机器人公开课  以上内容仅供参考；
+Tips  Ros中Cpp有而Python没有的  Ros 开发相关  ROS可视化 ROS-MoveIT  ……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/11/ros%E7%AC%94%E8%AE%B0/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2017/12/06/%E5%BF%AB%E9%80%9Fgit%E6%8C%87%E5%8D%97/" title="快速git指南">快速git指南</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2017年12月6日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%BC%96%E7%A8%8B'>编程</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            git是一个版本控制工具，通过git我们可以解决许多版本冲突，以及协同开发的问题。
+git安装 Windows可以通过安装文件直接安装，Linux可以通过apt-get install git安装，OSX可以通过brew install git来安装git。
+初始化当前目录为git项目 这个操作的意思是，把当前项目使用git进行管理。此时会创建一个.git文件夹。
+添加当前文件的改动，并且提交 如果修改了文件，文件的变动没有被git记录。这个时候运行上述命令，就可以把变动记录下来。
+推送到远程仓库 获取远程仓库的更新 下载git仓库 例如，下载这个项目breastCancer，可以使用如下的命令
+通过这个操作就可以下载这个仓库。
+可视化当前更新 例如
+点击first commit，即可看到这次提交的相关改动。
+其他的问题 如果出现conflict以及其他的问题，可以通过google自行搜索解决。
+可参考的资料  廖雪峰git教程  ……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2017/12/06/%E5%BF%AB%E9%80%9Fgit%E6%8C%87%E5%8D%97/">阅读全文</a></p>
+    </article>
+    
+    
+    
+
+
+
+<ol class="page-navigator">
+    
+    <li class="prev">
+        <a href="https://svtter.cn/post/page/8/">上一页</a>
+    </li>
+    
+
+    
+
+    
+        
+        
+    
+    
+
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/post/">1</a>
+        </li>
+        
+    
+        
+        <li>
+            <span>...</span>
+        </li>
+        
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/post/page/7/">7</a>
+        </li>
+        
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/post/page/8/">8</a>
+        </li>
+        
+    
+        
+        
+        <li  class="current">
+            <a href="https://svtter.cn/post/page/9/">9</a>
+        </li>
+        
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/post/page/10/">10</a>
+        </li>
+        
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/post/page/11/">11</a>
+        </li>
+        
+    
+        
+        <li>
+            <span>...</span>
+        </li>
+        
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/post/page/31/">31</a>
+        </li>
+        
+    
+
+    
+    
+
+    <li class="next">
+        <a href="https://svtter.cn/post/page/10/">下一页</a>
+    </li>
+    
+</ol>
+
+
+
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://svtter.cn/">Svtter&#39;s Blog By </a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-90439158-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://svtter.cn/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-11-20-macos-use-ruby/" title="在 MacOS 上使用 Ruby">在 MacOS 上使用 Ruby</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-11-20-orm-pattern/" title="ORM 中的 Pattern">ORM 中的 Pattern</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-09-06-the-way-of-think/" title="克服困难">克服困难</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-09-04-docker-compose-app/" title="使用 Docker 构建前端应用">使用 Docker 构建前端应用</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-08-06-how-to-tdd/" title="测试驱动开发应该怎么做？">测试驱动开发应该怎么做？</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-03-22-to-my-junior-fellow-apprentice/" title="给程序设计初学者的一点建议">给程序设计初学者的一点建议</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-01-09-all-hail-dotnet/" title="厉害的 dotnet">厉害的 dotnet</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-01-23-tech-subscription/" title="技术订阅">技术订阅</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-01-22-instruction-master/" title="指导新人-part1">指导新人-part1</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.cn/post/2021-01-04-why-write-a-blog/" title="为什么写博客？">为什么写博客？</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://svtter.cn/categories/acm/icpc/">ACM/ICPC (41)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/code/">Code (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/cpp-c&#43;&#43;/">Cpp C&#43;&#43; (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/database/">Database (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/devops/">DevOps (6)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/java/">Java (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/javascript/">Javascript (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/life/">Life (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/linux/">Linux (22)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/linux-arm/">Linux ARM (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/php/">php (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/programming/">Programming (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/python-web-%E5%BC%80%E5%8F%91/">Python Web 开发 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/ros/">ROS (6)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/shell-%E7%9B%B8%E5%85%B3/">Shell 相关 (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/software/">Software (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/summary/">Summary (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/tools/">tools (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/ubuntu/">Ubuntu (7)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/vim/">Vim (6)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/web-%E5%BC%80%E5%8F%91/">Web 开发 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E4%B9%90%E8%B6%A3/">乐趣 (18)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%89%8D%E7%AB%AF/">前端 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/">动态语言 (13)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%AD%A6%E4%B9%A0/">学习 (10)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%B7%A5%E5%85%B7/">工具 (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">并行计算 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%80%9D%E8%80%83/">思考 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%80%BB%E7%BB%93/">总结 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%95%B0%E5%AD%A6/">数学 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%9D%82%E8%AE%B0/">杂记 (4)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%94%9F%E6%B4%BB/">生活 (11)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%99%BD%E7%9A%AE%E4%B9%A6/">白皮书 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%AE%97%E6%B3%95/">算法 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%BC%96%E7%A8%8B/">编程 (20)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E7%BD%91%E7%BB%9C/">网络 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学 (1)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">软件设计模式 (7)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E8%BF%90%E7%BB%B4/">运维 (3)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记 (2)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E9%9A%8F%E7%AC%94/">随笔 (5)</a></li>
+    
+    <li><a href="https://svtter.cn/categories/%E9%BB%98%E8%AE%A4/">默认 (66)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://svtter.cn/tags/active-learning/">active learning</a>
+    
+    <a href="https://svtter.cn/tags/agile/">agile</a>
+    
+    <a href="https://svtter.cn/tags/beam-search/">Beam Search</a>
+    
+    <a href="https://svtter.cn/tags/beego/">beego</a>
+    
+    <a href="https://svtter.cn/tags/blog/">Blog</a>
+    
+    <a href="https://svtter.cn/tags/ci/">CI</a>
+    
+    <a href="https://svtter.cn/tags/container/">Container</a>
+    
+    <a href="https://svtter.cn/tags/cpp/">CPP</a>
+    
+    <a href="https://svtter.cn/tags/ctc-loss/">CTC loss</a>
+    
+    <a href="https://svtter.cn/tags/cuda/">CUDA</a>
+    
+    <a href="https://svtter.cn/tags/database/">Database</a>
+    
+    <a href="https://svtter.cn/tags/deep-learning/">Deep learning</a>
+    
+    <a href="https://svtter.cn/tags/delay/">delay</a>
+    
+    <a href="https://svtter.cn/tags/design/">design</a>
+    
+    <a href="https://svtter.cn/tags/dhcp/">dhcp</a>
+    
+    <a href="https://svtter.cn/tags/django/">django</a>
+    
+    <a href="https://svtter.cn/tags/docker/">Docker</a>
+    
+    <a href="https://svtter.cn/tags/editor/">editor</a>
+    
+    <a href="https://svtter.cn/tags/elk/">ELK</a>
+    
+    <a href="https://svtter.cn/tags/frontend/">frontend</a>
+    
+    <a href="https://svtter.cn/tags/gitlab/">GitLab</a>
+    
+    <a href="https://svtter.cn/tags/golang/">golang</a>
+    
+    <a href="https://svtter.cn/tags/gpu/">GPU</a>
+    
+    <a href="https://svtter.cn/tags/graph/">graph</a>
+    
+    <a href="https://svtter.cn/tags/javascript/">javascript</a>
+    
+    <a href="https://svtter.cn/tags/keras/">Keras</a>
+    
+    <a href="https://svtter.cn/tags/kotlin/">kotlin</a>
+    
+    <a href="https://svtter.cn/tags/language/">language</a>
+    
+    <a href="https://svtter.cn/tags/life/">Life</a>
+    
+    <a href="https://svtter.cn/tags/linux/">Linux</a>
+    
+    <a href="https://svtter.cn/tags/mellow/">mellow</a>
+    
+    <a href="https://svtter.cn/tags/migration/">Migration</a>
+    
+    <a href="https://svtter.cn/tags/nginx/">nginx</a>
+    
+    <a href="https://svtter.cn/tags/orm/">ORM</a>
+    
+    <a href="https://svtter.cn/tags/psychology/">psychology</a>
+    
+    <a href="https://svtter.cn/tags/python/">python</a>
+    
+    <a href="https://svtter.cn/tags/ruby/">Ruby</a>
+    
+    <a href="https://svtter.cn/tags/software/">Software</a>
+    
+    <a href="https://svtter.cn/tags/ssh/">ssh</a>
+    
+    <a href="https://svtter.cn/tags/stl/">STL</a>
+    
+    <a href="https://svtter.cn/tags/swarm/">Swarm</a>
+    
+    <a href="https://svtter.cn/tags/tcpip/">tcpip</a>
+    
+    <a href="https://svtter.cn/tags/tdd/">TDD</a>
+    
+    <a href="https://svtter.cn/tags/thought/">thought</a>
+    
+    <a href="https://svtter.cn/tags/tools/">tools</a>
+    
+    <a href="https://svtter.cn/tags/tricks/">Tricks</a>
+    
+    <a href="https://svtter.cn/tags/ubuntu/">Ubuntu</a>
+    
+    <a href="https://svtter.cn/tags/unfinished/">unfinished</a>
+    
+    <a href="https://svtter.cn/tags/vue/">vue</a>
+    
+    <a href="https://svtter.cn/tags/vuejs/">vuejs</a>
+    
+    <a href="https://svtter.cn/tags/why/">Why</a>
+    
+    <a href="https://svtter.cn/tags/%E6%83%B3%E6%B3%95/">想法</a>
+    
+    <a href="https://svtter.cn/tags/%E6%8A%80%E6%9C%AF%E8%AE%A2%E9%98%85/">技术订阅</a>
+    
+    <a href="https://svtter.cn/tags/%E6%8C%87%E5%AF%BC%E6%96%B0%E4%BA%BA/">指导新人</a>
+    
+    <a href="https://svtter.cn/tags/%E8%B4%A2%E5%8A%A1/">财务</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://svtter.cn/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -72,11 +72,106 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://svtter.cn/2014/11/08/%E7%BA%BF%E6%80%A7%E6%97%B6%E9%97%B4%E9%80%89%E6%8B%A9/" title="线性时间选择">线性时间选择</a>
+                <a href="https://svtter.cn/2014/11/21/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B/" title="Linux系统函数简介">Linux系统函数简介</a>
             </h1>
         </header>
         <date class="post-meta meta-date">
-            2014年11月8日
+            2014年11月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本文出自&lt;svtter.com&gt;
+系统调用函数说明、参数值及定义
+本文摘自老师的资料= =
+使用这些函数的时候记得将头文件unistd.h包含到程序中
+1、fork()  创建一个新进程
+  int fork()
+  其中返回int取值意义如下:
+  0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败
+ 2、lockf(files,function,size):  用作锁定文件的某些段或者整个文件,本函数适用的头文件为:
+  #include&lt;unistd.h&gt;
+  参数定义:
+  int lockf(files,function,size)
+  int files,function;
+  long size;
+  其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。
+ 3、msgget(key,flag):  获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。
+  该函数使用偷文件如下:
+  #include&lt;sy/types.h&gt;
+  #include&lt;sy/ipc.h&gt;
+  #include&lt;sy/msg.h&gt;
+  参数定义
+  int msgget(key,flag)
+  key_tkey;……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/21/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/21/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/" title="python的自动补全">python的自动补全</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80'>动态语言</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            新建python_start_up_file文件 在$HOME/.profile文件中写入
+export PYTHONSTARTUP=$HOME/.python_start_up_file
+小注： 可以使用py3compile来编译文件，然后使用python3+文件名来运行……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/21/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/19/python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/" title="Python-使用hexo的python脚本">Python-使用hexo的python脚本</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月19日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80'>动态语言</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            为了简化blog的使用写的python脚本，用来简化自己的操作= =
+更新了一下。
+最新的代码在coding.net上……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/19/python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/16/acm-hdu5104-water/" title="ACM – hdu5104-water">ACM – hdu5104-water</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月16日
         </date>
         
         <div class="post-meta">
@@ -87,103 +182,210 @@
         </div>
         
         <div class="post-content">
-            定义 在给定线性序集中n个元素和一个整数k，要求找出n个元素中第k小的数。
-方法一 线性时间选择，可以使用堆排序，这样就可以在$O(n+klog_n)=O(n)_的时间内找到的k小的元素。
-方法二 使用快速排序中的分块算法，对所需要选择的数组分块，分完以后再在剩余的部分中，寻找(k – 减去分块的大小)
-代码如下:
-但是此方法在最差的情况下需要$n^2$的时间，比如在寻找最小元素时，总是在最大的元素划分。
-尽管如此，平均效率还是不错的。
-方法三 我还是比较喜欢直接看代码= =……
-        </div>
-        <p class="readmore"><a href="https://svtter.cn/2014/11/08/%E7%BA%BF%E6%80%A7%E6%97%B6%E9%97%B4%E9%80%89%E6%8B%A9/">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.cn/2014/11/08/%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E5%86%99%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" title="自己动手写操作系统阅读笔记（一）">自己动手写操作系统阅读笔记（一）</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2014年11月8日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F'>操作系统</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            <p>本来今天想要学习一下操作系统的相关内容，奈何书都没带，猛然想起自己还有一个自己动手写操作系统的梦想，于是拿出这本书重新研究以下。</p>
-<p>对于第一章节的写一个简单的boot写出来以后也是着实兴奋一把，不过也是要记下相关的信息。</p>……
-        </div>
-        <p class="readmore"><a href="https://svtter.cn/2014/11/08/%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E5%86%99%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.cn/2014/11/07/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" title="正则表达式">正则表达式</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2014年11月7日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86'>编译原理</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            <h1 id="在php中">在php中</h1>
-<p>使用<code>preg_match(&quot;/&lt;title&gt;(.*)&lt;title&gt;/isU&quot;)</code></p>
+            <p>这个题目的总结就是不作不会死- -好端端的暴力我非要用个bfs。</p>
+<p>看见自己wrong了还以为是哈希的问题- =</p>
+<h1 id="题意">题意</h1>
 <ul>
-<li>/****/表示中间的部分匹配。</li>
-<li>(.*)表示匹配的部分。</li>
-<li>i表示忽略大小写</li>
-<li>s使点号能匹配所有字符包括换行符</li>
-<li>U最短匹配。注意U一定要大写才有效果</li>
+<li>p1+p2+p3 = n，$p1 &lt;= p2 &lt;= p3$</li>
+<li>输出符合条件的组数</li>
+</ul>
+<h1 id="输入输出">输入输出</h1>
+<ul>
+<li>给100组n，输出组数</li>
+</ul>
+<h1 id="分析">分析</h1>
+<ul>
+<li>只有3个数，暴力解就可以，注意循环终止条件。</li>
 </ul>……
         </div>
-        <p class="readmore"><a href="https://svtter.cn/2014/11/07/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">阅读全文</a></p>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/16/acm-hdu5104-water/">阅读全文</a></p>
     </article>
     
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://svtter.cn/2014/11/05/%E6%80%BB%E7%BB%93-2014%E5%B9%B410%E6%9C%88%E6%80%BB%E7%BB%93/" title="总结-2014年10月总结">总结-2014年10月总结</a>
+                <a href="https://svtter.cn/2014/11/16/%E4%BD%BF%E7%94%A8gdb%E8%B0%83%E8%AF%95/" title="使用gdb调试">使用gdb调试</a>
             </h1>
         </header>
         <date class="post-meta meta-date">
-            2014年11月5日
+            2014年11月16日
         </date>
         
         <div class="post-meta">
             <span>|</span>
             
-            <span class="meta-category"><a href='/categories/%E6%80%BB%E7%BB%93'>总结</a></span>
+            <span class="meta-category"><a href='/categories/acm/icpc'>ACM/ICPC</a></span>
             
         </div>
         
         <div class="post-content">
-            搭建BLOG的心得 + 2014年10月份的总结  blog心得 要不是登录到sinaapp上看看我都忘记了自己还有一个用typecho搭建的blog，但是凡事一旦牵扯到git之类的东西，总会觉得高大上一点。
-然后伤心的觉得，似乎我辛辛苦苦搭建的hexo， 似乎没个鸟用。心塞。
-主要问题在于：
- 这家伙对于之前的写的文章，修改起来不够方便，还要回去慢慢找，不如直接用点击来的快捷。 但是从另一个角度上说，如果是命令行玩家，grep几次自然也就完全没有问题了。 当然，也有好处，最大的好处就是方便，推送，不用花钱等。 还有各种玩头，就不一一说明了。。反正大家仁者见仁，智者见智。  相比之下typecho就会轻松很多（因为发现也是不支持一些东西，我又懒得弄），__JustWriting__嘛。。不想再用了，虽然说也是很爽，但是用了php搞得和静态页面的一个项目似的，总是感觉怪怪的。
-之前给__Justwriting__写了一点点称不上脚本的脚本(仅LINUX下好用, 毕竟bash用的挺XX，python也没时间学。)，但是事情一多，自然也是有点想要放弃git pull request的意思了。
-再想想，__JustWriting__最大的优点在于，可以把我们的代码备份上去，不像hexo，今天下午手残的我 + 神经短路的我一个不小心弄丢了所有的代码，真心是哭了。。。
-另外，也是需要各种grep的阿。
- 其实本来想吐槽关于找不到文章的问题，不过在写着写着的过程中想到了可以使用搜索这种东西。。倒是我自己有些不动脑了。
- 写一个对自己来讲简单的比较：
-如果有问题，就当我说错了，最好是指出来= =
-   项目 JustWriting hexo typecho(wordpress)     命令行推送 AC AC    直接界面编辑   AC   代码部署 简单 更简单 一般   是否使用googleapi  YES    想起来我再加上       外观上都难说，typecho我没有做过什么优化，JustWriting因为用的是不稳定（也不知道也没有稳定版本，^_^）版本，所以删掉了。有兴趣倒是可以看看hexo。……
+            最近都是用gcc+vim写代码，昨天突然写个代码算法出个逻辑bug，因为用了大量递归调用，DEB半天出不来也是醉了，于是
+学习一下gdb——之前也是勉强使用过，但是明显感觉不爽阿。。所以这次好好学习，记录一下。
+目前我能用到的几个命令：
+选择调试文件  &lt;shell&gt;: gdb &lt;file&gt; 或者进入gdb以后，使用  断点 显示断点  (gdb): info break  添加静态断点  (gdb): b[reak] + 行数/函数名 (可以用tab补全)  添加条件断点 条件为真，则在断点处停止
+– (gdb): b addr if condition
+删除断点 删除编号为1的断点, 如果不加参数，会删除所有断点
+– (gdb): delete breakpoint 1
+启用/禁用断点  (gdb): disable breakpoint 1 (gdb): enable breakpoint 1  运行 开始运行  (gdb):r  继续  (gdb):c  单步调试 不进入单步执行
+– (gdb):n
+进入的单步
+– (gdb):s[tep
+显示变量 以变量为var为例……
         </div>
-        <p class="readmore"><a href="https://svtter.cn/2014/11/05/%E6%80%BB%E7%BB%93-2014%E5%B9%B410%E6%9C%88%E6%80%BB%E7%BB%93/">阅读全文</a></p>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/16/%E4%BD%BF%E7%94%A8gdb%E8%B0%83%E8%AF%95/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/15/%E8%A7%A3%E5%86%B3%E6%97%A0%E6%B3%95%E5%9C%A8centos%E4%B8%8B%E7%9A%84gvim%E4%B8%AD%E4%BD%BF%E7%94%A8ibus%E8%BE%93%E5%85%A5%E4%B8%AD%E6%96%87/" title="解决无法在CentOS下的gvim中使用ibus输入中文">解决无法在CentOS下的gvim中使用ibus输入中文</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            问题 之前在gvim中一直无法使用中文，格外痛苦，后来使用了vim-ibus插件之后，可以在vim中使用中文了，但是依然不能在gvim中使用，一直以为是两个软件冲突的
+问题，现在终于解决了。
+ gvim version: vim-X11 ibus version: 1.6  解决方案  问题出在：使用的vim插件中有插件与ibus冲突，但是奈何找不到X11的log（应该可以找到，找到再说。。） 排查方式比较简单，使用:PluginInstall,:PluginClean即可(考虑到我使用vundle管理插件) 去除相应的插件即可(比如现在冲突的是auto-pairs)。如果不想去除冲突插件，可以考虑使用vim-ibus，这个在shell下是可以使得很多冲突减少的。 可能auto-pairs在不久的将来就会修复这个bug，请在具体环境下排查  ……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/15/%E8%A7%A3%E5%86%B3%E6%97%A0%E6%B3%95%E5%9C%A8centos%E4%B8%8B%E7%9A%84gvim%E4%B8%AD%E4%BD%BF%E7%94%A8ibus%E8%BE%93%E5%85%A5%E4%B8%AD%E6%96%87/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/14/linux-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" title="Linux-存储管理">Linux-存储管理</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月14日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            还未动笔……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/14/linux-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/14/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/" title="Linux-进程管理">Linux-进程管理</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月14日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本文出自&lt;svtter.com&gt;
+进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
+运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？
+  lockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。
+  wait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0
+  运行结果 ……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/14/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/14/python-%E4%B8%80%E4%B8%AApython%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/" title="Python – 一个Python的备份脚本">Python – 一个Python的备份脚本</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月14日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80'>动态语言</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            <h1 id="tags">TAGS</h1>
+<ul>
+<li>python的注释必须与代码相隔两个空格</li>
+<li>#与注释语言间必须有一个空格</li>
+</ul>……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/14/python-%E4%B8%80%E4%B8%AApython%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/12/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2/" title="Linux -基础学习笔记-2">Linux -基础学习笔记-2</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月12日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            <h1 id="linux用户和用户组">Linux用户和用户组</h1>
+<ul>
+<li>简单解释：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">文件权限</th>
+<th style="text-align:left">连接数</th>
+<th style="text-align:left">文件所有者</th>
+<th style="text-align:left">文件所属用户组</th>
+<th style="text-align:left">文件大小</th>
+<th style="text-align:left">文件最后被修改的时间</th>
+<th style="text-align:left">文件名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">-rw-r–r–</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">root</td>
+<td style="text-align:left">root</td>
+<td style="text-align:left">42304</td>
+<td style="text-align:left">Sep 4 18:26</td>
+<td style="text-align:left">install.log</td>
+</tr>
+</tbody>
+</table>……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/12/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2/">阅读全文</a></p>
     </article>
     
     
@@ -240,7 +442,27 @@
         </li>
         
     
+        
+        
+        <li >
+            <a href="https://svtter.cn/page/30/">30</a>
+        </li>
+        
+    
+        
+        
+        <li >
+            <a href="https://svtter.cn/page/31/">31</a>
+        </li>
+        
+    
 
+    
+    
+
+    <li class="next">
+        <a href="https://svtter.cn/page/30/">下一页</a>
+    </li>
     
 </ol>
 
@@ -306,43 +528,43 @@ if (!doNotTrack) {
 <ul class="widget-list">
     
     <li>
-        <a href="https://svtter.cn/zh-cn/posts/2020-12-26-long-time-for-post-update/" title="与拖延做斗争">与拖延做斗争</a>
+        <a href="https://svtter.cn/post/2021-11-20-macos-use-ruby/" title="在 MacOS 上使用 Ruby">在 MacOS 上使用 Ruby</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/zh-cn/posts/2020-04-09-mellow-config/" title="Mellow Config">Mellow Config</a>
+        <a href="https://svtter.cn/post/2021-11-20-orm-pattern/" title="ORM 中的 Pattern">ORM 中的 Pattern</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/04/14/%E7%A9%B7%E7%88%B8%E7%88%B8%E5%AF%8C%E7%88%B8%E7%88%B8-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" title="穷爸爸富爸爸 – 阅读笔记">穷爸爸富爸爸 – 阅读笔记</a>
+        <a href="https://svtter.cn/post/2021-09-06-the-way-of-think/" title="克服困难">克服困难</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/03/19/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/" title="Ubuntu 装机总结">Ubuntu 装机总结</a>
+        <a href="https://svtter.cn/post/2021-09-04-docker-compose-app/" title="使用 Docker 构建前端应用">使用 Docker 构建前端应用</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/01/31/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E4%B8%8E%E7%9F%A5%E8%AF%86%E5%9F%BA%E7%A1%80/" title="编程语言与知识基础">编程语言与知识基础</a>
+        <a href="https://svtter.cn/post/2021-08-06-how-to-tdd/" title="测试驱动开发应该怎么做？">测试驱动开发应该怎么做？</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/01/17/%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C-linux-%E8%BF%9B%E7%A8%8B/" title="将已经运行的进程切换到后台">将已经运行的进程切换到后台</a>
+        <a href="https://svtter.cn/post/2021-03-22-to-my-junior-fellow-apprentice/" title="给程序设计初学者的一点建议">给程序设计初学者的一点建议</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/01/08/django-tricks/" title="Django tricks">Django tricks</a>
+        <a href="https://svtter.cn/post/2021-01-09-all-hail-dotnet/" title="厉害的 dotnet">厉害的 dotnet</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/01/07/my-keras-tricks/" title="My Keras tricks.">My Keras tricks.</a>
+        <a href="https://svtter.cn/post/2021-01-23-tech-subscription/" title="技术订阅">技术订阅</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/01/07/ubuntu-%E5%A4%9A%E6%98%BE%E7%A4%BA%E5%99%A8%E6%96%B9%E6%A1%88/" title="Ubuntu 多显示器方案">Ubuntu 多显示器方案</a>
+        <a href="https://svtter.cn/post/2021-01-22-instruction-master/" title="指导新人-part1">指导新人-part1</a>
     </li>
     
     <li>
-        <a href="https://svtter.cn/2019/01/04/%E4%B8%BA%E4%BD%A0%E7%9A%84-docker-%E9%A1%B9%E7%9B%AE%E9%9B%86%E6%88%90-elk/" title="为你的 Docker 项目集成 ELK">为你的 Docker 项目集成 ELK</a>
+        <a href="https://svtter.cn/post/2021-01-04-why-write-a-blog/" title="为什么写博客？">为什么写博客？</a>
     </li>
     
 </ul>
