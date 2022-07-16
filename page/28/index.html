@@ -72,6 +72,48 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://svtter.cn/2014/11/30/archlinux-%E5%AE%89%E8%A3%85%E7%AC%94%E8%AE%B0/" title="archlinux-安装笔记">archlinux-安装笔记</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2014年11月30日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本文出自&lt;svtter.com&gt;  花了一些时间安装arch，记录一下注意事项。
+多重引导   安装多重引导支持
+pacman -S os-prober
+  更新grub
+grub-mkconfig -o /boot/grub/grub.cfg
+  写入mbr
+grub-install --target=i386-pc --recheck /dev/sda
+  图形化的网络服务 systemctl enable NetWorkManager.service
+wifi配置  如果你想使用wifi（在图形界面下），首先你要停止dhcp服务systemctl stop dhcpcd.service 开机停止运行systemctl disable dhcpcd.service 我们之所以这样，是为了保证我们的NetWorkManager正常服务。  session控制器 我选择的是gdm，原因是slim我不太会配置。
+pacman -S gdm
+另外patheon在我书写这篇blog的时候，还是存在不少bug.官方的wiki在这个时候也不是很好用了。期待patheon！
+添加了官方给的patheon库，会出现一个gnome-lib的冲突
+输入法的注意事项 使用fcitx需要注意.xprofile的配置问题。
+其他的安装情况可以看看官方的wiki
+sudoer的配置 使用pacman安装sudoer
+pacman -S sudo
+编辑/etc/sudoers，取消wheel用户组的注释.
+vim配置 在gvim中，直接使用synatic on而不用判断，否则会造成代码高亮失效。
+locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocate
+另外, mark一个项目:gitbook, 很好很强大 应该涵盖了所有的我安装时候遇到的问题，如果还有什么问题，我再后续添加。……
+        </div>
+        <p class="readmore"><a href="https://svtter.cn/2014/11/30/archlinux-%E5%AE%89%E8%A3%85%E7%AC%94%E8%AE%B0/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://svtter.cn/2014/11/28/linux-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1/" title="Linux-进程间的通信">Linux-进程间的通信</a>
             </h1>
         </header>
@@ -313,33 +355,6 @@ AC代码 规律在代码中，很明确。……
         <p class="readmore"><a href="https://svtter.cn/2014/11/22/%E5%85%B3%E4%BA%8E%E6%9C%80%E8%BF%91/">阅读全文</a></p>
     </article>
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.cn/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" title="Linux-同步互斥">Linux-同步互斥</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2014年11月21日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/linux'>Linux</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-             本文出自&lt;svtter.com&gt;  使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。
-编译的时候记得-pthread选项。
-运行结果 操作系统经典问题：哲学家就餐问题 mutex是c++11的新功能。记得添加C++11支持。(在运行结果中包含编译选项。)
-运行结果 操作系统经典问题：读者写者问题 读者优先  使用了c++11的新特性thread  运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。
-写者优先   使rsem中只有一个读者在等待，保证了如果有写者，写者优先写  运行结果  基本上结果就是写者写完，才会有读者阅读  ……
-        </div>
-        <p class="readmore"><a href="https://svtter.cn/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/">阅读全文</a></p>
-    </article>
-    
     
 
 
@@ -493,6 +508,10 @@ if (!doNotTrack) {
 <ul class="widget-list">
     
     <li>
+        <a href="https://svtter.cn/post/2022-07-16-2-packages-in-1-folder/" title="Two packages in one folder">Two packages in one folder</a>
+    </li>
+    
+    <li>
         <a href="https://svtter.cn/post/2022-05-09-crazy-import/" title="Crazy Import">Crazy Import</a>
     </li>
     
@@ -526,10 +545,6 @@ if (!doNotTrack) {
     
     <li>
         <a href="https://svtter.cn/post/2021-01-23-tech-subscription/" title="技术订阅">技术订阅</a>
-    </li>
-    
-    <li>
-        <a href="https://svtter.cn/post/2021-01-22-instruction-master/" title="指导新人-part1">指导新人-part1</a>
     </li>
     
 </ul>
