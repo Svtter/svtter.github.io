@@ -89,7 +89,7 @@
         </div>
         
         <div class="post-content">
-            ……
+             ……
         </div>
         <p class="readmore"><a href="https://svtter.cn/2019/01/07/ubuntu-%E5%A4%9A%E6%98%BE%E7%A4%BA%E5%99%A8%E6%96%B9%E6%A1%88/">阅读全文</a></p>
     </article>
@@ -115,14 +115,17 @@
         
         <div class="post-content">
             记录了一些使用 keras 的技巧。
-categorical_crossentropy vs sparse_categorical_crossentropy. 3. The Answer, In a Nutshell   If your targets are one-hot encoded, use categorical_crossentropy.
-  Examples of one-hot encodings:
-  [1,0,0]
-  [0,1,0]
-  [0,0,1]
-  But if your targets are integers, use sparse_categorical_crossentropy.
-  Examples of integer encodings (for the sake of completion):
- 1, 2, 3    clip norm Multiple GPU # https://keras.……
+categorical_crossentropy vs sparse_categorical_crossentropy. 3. The Answer, In a Nutshell If your targets are one-hot encoded, use categorical_crossentropy.
+Examples of one-hot encodings:
+[1,0,0]
+[0,1,0]
+[0,0,1]
+But if your targets are integers, use sparse_categorical_crossentropy.
+Examples of integer encodings (for the sake of completion):
+1, 2, 3 clip norm Multiple GPU # https://keras.io/utils/#multi_gpu_model#
+使用多GPU，注意使用 save 的时候，传参传 model (multi_gpu_model的model参数)
+Encode Labels 可以把不同的字符[‘aa’, ‘bb’, ‘cc’, ‘aa’] 编码成 [0, 1, 2, 0]
+&lt;td&gt; # encode class values as integers&lt;br /&gt;encoder&amp;nbsp;=&amp;nbsp;LabelEncoder()&lt;br /&gt;encoder.……
         </div>
         <p class="readmore"><a href="https://svtter.cn/2019/01/07/my-keras-tricks/">阅读全文</a></p>
     </article>
@@ -359,10 +362,11 @@ categorical_crossentropy vs sparse_categorical_crossentropy. 3. The Answer, In 
         <div class="post-content">
             通过 连接主义时间分类 loss 以及编码操作
 如果想用使用计算机识别文字，神经网络很好用。使用一些列 CNN 从序列中提取特征，使用 RNN 来传播需略的信息。它会输出字符得分，给每个序列元素，通过一个简单的矩阵表示。现在，有两个事情我们想要对矩阵进行处理。
- 训练：计算损失值来训练神经网络 推理：解码矩阵来获得图片中的字符  两个任务可以同时被 CTC 操作完成。对于手写数字系统的描述，可以参见图像 1.
-我们更进一步看看 CTC 操作，并且讨论一下它如完成的，以及它背后的公式是如此巧妙。最后，我将会指点你来找到 Python 代码以及不复杂的公式，如果你感兴趣的话。为什么我们使用 CTC 当然我们可以创建一个数据集，这个数据集有文本行，然后指出每列属于哪一个字符，就像图 2 中展示的那样。然后，我们可以训练一个神经网络来输出每一列的得分。而然，对于这个简单的解法，这里有两个问题。
- 这个十分的耗时（以及无聊）来在字符层面上标注数据 我们仅仅能够得到字符的得分，因此还需要一些操作来获取最终的文本。一个简单地字符可以跨越多个位置，比如，我们得到 “ttooo”，是因为 “o” 是一个比较宽的字符。我们已经删除了多余的 “t” and “o”，但是，如果要识别的字符是 “too”，我们应该怎么办？如果删除了多余的 “o”，将会给我们错误的答案。我们应该如何处理呢？  CTC 解决了几个问题
- 我们只需要告诉 CTC loss function，文本在图像中出现了，因此我们忽略位置和宽度文中在图像中。 不需要更多的文本识别处理  CTC 如何工作的 就像是我们已经讨论的，我们不希望在图像的每一列标注数据（这曾经被我们成为时间步）。神经网络的训练将会被 CTC 损失函数所指引。我们只需要把数据矩阵给 CTC 函数，以及对应的真实值即可。但是它是怎么知道每一个字符出现的呢？他不知道。相对而言，它尝试了图片中所有的真实文本，以及计算了所有的加和。通过这个方式， This way, the score of a GT text is high if the sum over the alignment-scores has a high value.……
+训练：计算损失值来训练神经网络 推理：解码矩阵来获得图片中的字符 两个任务可以同时被 CTC 操作完成。对于手写数字系统的描述，可以参见图像 1.
+我们更进一步看看 CTC 操作，并且讨论一下它如完成的，以及它背后的公式是如此巧妙。最后，我将会指点你来找到 Python 代码以及不复杂的公式，如果你感兴趣的话。
+为什么我们使用 CTC 当然我们可以创建一个数据集，这个数据集有文本行，然后指出每列属于哪一个字符，就像图 2 中展示的那样。然后，我们可以训练一个神经网络来输出每一列的得分。而然，对于这个简单的解法，这里有两个问题。
+这个十分的耗时（以及无聊）来在字符层面上标注数据 我们仅仅能够得到字符的得分，因此还需要一些操作来获取最终的文本。一个简单地字符可以跨越多个位置，比如，我们得到 “ttooo”，是因为 “o” 是一个比较宽的字符。我们已经删除了多余的 “t” and “o”，但是，如果要识别的字符是 “too”，我们应该怎么办？如果删除了多余的 “o”，将会给我们错误的答案。我们应该如何处理呢？ CTC 解决了几个问题
+我们只需要告诉 CTC loss function，文本在图像中出现了，因此我们忽略位置和宽度文中在图像中。 不需要更多的文本识别处理 CTC 如何工作的 就像是我们已经讨论的，我们不希望在图像的每一列标注数据（这曾经被我们成为时间步）。神经网络的训练将会被 CTC 损失函数所指引。我们只需要把数据矩阵给 CTC 函数，以及对应的真实值即可。但是它是怎么知道每一个字符出现的呢？他不知道。相对而言，它尝试了图片中所有的真实文本，以及计算了所有的加和。通过这个方式， This way, the score of a GT text is high if the sum over the alignment-scores has a high value.……
         </div>
         <p class="readmore"><a href="https://svtter.cn/2018/11/22/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A/">阅读全文</a></p>
     </article>

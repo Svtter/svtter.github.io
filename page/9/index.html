@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-cn">
 <head>
-	<meta name="generator" content="Hugo 0.84.3" />
+	<meta name="generator" content="Hugo 0.105.0">
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -90,8 +90,8 @@
             记又一次搞崩服务器。使用“又”，是因为我搞崩不是一次两次了。我希望这是最后一次。
 背景 使用Android连接服务器的时候，发现要比自己的mac速度快很多，于是十分好奇，打算研究一下是什么因素导致的。
 流程 检查了app以后，判断应该是开启了fast TCP导致的，于是考虑在mac上也开启对应的fast TCP，但是效果并不是十分显著；于是再次排查，发现服务器端并没有开启fast TCP。
- 这就很奇怪了，为什么速度这么快呢？是因为对“同源”的加密方法有优化吗？
- 于是，自然而然的考虑是不是可以通过开启这个TCP加速来加速服务器。这就开启了噩梦的开端。因为需要3.7以上的Linux Kernel才支持这个特性，所以需要先升级内核。我的内核难道不应该是最新的吗？带着这个以为输入了uname sr，显示内核版本2.6*。惊奇，我的VPS内核这么旧吗？于是自然而然的想到要升级一下内核，并且理所应当的把升级内核的脚本apt-get install linux-kernel-lts-wily运行了一下。于是噩梦开始了。
+这就很奇怪了，为什么速度这么快呢？是因为对“同源”的加密方法有优化吗？
+于是，自然而然的考虑是不是可以通过开启这个TCP加速来加速服务器。这就开启了噩梦的开端。因为需要3.7以上的Linux Kernel才支持这个特性，所以需要先升级内核。我的内核难道不应该是最新的吗？带着这个以为输入了uname sr，显示内核版本2.6*。惊奇，我的VPS内核这么旧吗？于是自然而然的想到要升级一下内核，并且理所应当的把升级内核的脚本apt-get install linux-kernel-lts-wily运行了一下。于是噩梦开始了。
 OpenVZ本身是不支持升级内核的，所有的VM都使用同一个内核版本，因此这个命令导致了很神奇的BUG，安装内核装不上，卸载内核卸载不了。
 这个时候我面临两个选择，一个是重新安装系统，一个是解决当前的这个问题。
 经过简单地判断，我认为如果解决当前问题，可能花费我更多的时间，直接重新安装系统就可以了。重新配置一些相关措施也并不难。
@@ -99,7 +99,7 @@ OpenVZ本身是不支持升级内核的，所有的VM都使用同一个内核版
 这就非常痛苦了，每次操作都在嘲讽自己的愚蠢与过度自信。最后，我只进行了简单的配置，只找回了部分的优化——记忆里我所做的优化就只有这些了，但是速度似乎下降了，这就是最终的结果。
 这也让我想起《人月神话》里面描写的一句，具体我已经记不清了，意思大概是这样的：有些步骤你是必须要做的，只不过当前你没有做而已，以后是要补上的。我读到这个地方的时候，联想这个规律为“技术债”。
 好了，以上就是我还“技术债”的全部过程了。
-教训  研究问题虽然好，但是要注意花费的时间 在生产服务器上，不要做没有经过自查的操作。 不要被强迫症控制了，能用则用。 记录自己的行为日志，如果可以的话，写一个安装脚本  唉，真是一次不合格的运维行动。……
+教训 研究问题虽然好，但是要注意花费的时间 在生产服务器上，不要做没有经过自查的操作。 不要被强迫症控制了，能用则用。 记录自己的行为日志，如果可以的话，写一个安装脚本 唉，真是一次不合格的运维行动。……
         </div>
         <p class="readmore"><a href="https://svtter.cn/2018/01/11/%E8%AE%B0%E5%8F%88%E4%B8%80%E6%AC%A1%E6%90%9E%E5%B4%A9%E6%9C%8D%E5%8A%A1%E5%99%A8/">阅读全文</a></p>
     </article>
@@ -206,8 +206,8 @@ Run migrate. django.contrib.sites registers a post_migrate signal handler which 
         
         <div class="post-content">
             许多人都在推荐fish-shell，比如说阮一峰大佬和Reitz神；因此也要试试fish的魅力。虽然已经是z和zsh的老用户，但是对于效率的极致追求不能停。
- 注意：fish仅适用于某些开发场景，目前不适用于所有开发场景——在其他许多shell环境中，由于历史因素以及已经构建完成的大量生态，对于当前的开发影响是巨大的。
- fish基本操作 fish不仅仅使用tab进行不全，还可以使用ctrl+f或者alt+f进行全行不全。
+注意：fish仅适用于某些开发场景，目前不适用于所有开发场景——在其他许多shell环境中，由于历史因素以及已经构建完成的大量生态，对于当前的开发影响是巨大的。
+fish基本操作 fish不仅仅使用tab进行不全，还可以使用ctrl+f或者alt+f进行全行不全。
 fish还可以通过安装oh-my-fish，对应到z-shell的oh-my-zsh。不过，一般情况下，fish本身就已经做的够好了，基本不需要再进行更多的配置。
 fish中的export 使用set -x来替代。例如set -x HOME /home/svtter，即export HOME=/home/svtter
 后记 后来我还是切换回了zsh；我使用的开发环境对于zsh已经支持的很好了，但是对于fish的支持还是差强人意。学习新的技术是需要成本的，如果有时间就对fish的支持进行完善，如果没时间，那么还是等它更加成熟再使用吧。
@@ -237,9 +237,9 @@ fish中的export 使用set -x来替代。例如set -x HOME /home/svtter，即exp
             前言 pipenv是书写flask的大神kennethreitz的新作；pipenv集成了virtualenv和pip等工具，让你从requirements.pip以及virtualenv的环境中解放出来。并且他还集成了pyenv的选择python版本，可以说是所向披靡了。
 这是他的原话：
 相信随着pipenv更加流行，许多工具也会在自己的环境中对pipenv提供支持，解决许多令人不舒服的问题，也能更好的提高编辑的舒适度。
-安装pipenv 创建虚拟环境 virtualenv  当不存在一个虚拟环境的时候，pipenv将会自动创建一个环境 你也可以手动创建虚拟环境：  $ pipenv --three 创建Python3虚拟环境 $ pipenv --two 创建Python2虚拟环境   其他的东西和virtualenv是一样的。  安装包 比如你要使用requests（是的也是这个大神写的）。
+安装pipenv 创建虚拟环境 virtualenv 当不存在一个虚拟环境的时候，pipenv将会自动创建一个环境 你也可以手动创建虚拟环境： $ pipenv --three 创建Python3虚拟环境 $ pipenv --two 创建Python2虚拟环境 其他的东西和virtualenv是一样的。 安装包 比如你要使用requests（是的也是这个大神写的）。
 安装完成后，会生成Pipfile以及Pipfile.lock；这一点很像npm.
-其他命令  激活当前虚拟环境 pipenv shell 运行虚拟环境中的命令 pipenv run python 把你的依赖图输出出来 pipenv graph 安装当前目录的相关依赖 pipenv install  使用问题 目前我使用的时候也会多少存在问题，比如说我看不见下载的进度条，默认不是开启的；
+其他命令 激活当前虚拟环境 pipenv shell 运行虚拟环境中的命令 pipenv run python 把你的依赖图输出出来 pipenv graph 安装当前目录的相关依赖 pipenv install 使用问题 目前我使用的时候也会多少存在问题，比如说我看不见下载的进度条，默认不是开启的；
 然后就是因为网络环境的问题，我的pip.conf设置不能应用到pipenv上，我需要自己手动更改Pipfile，这一点有些麻烦。
 后记 本身我想把这个文章针对的群体稍微降降，针对一些技术能力不是特别高的群体，但是存在一些问题，比如有些东西是需要一定知识才能看懂的。如果出现了不懂的内容，尽量自己查找一下吧。……
         </div>
@@ -271,7 +271,7 @@ fish中的export 使用set -x来替代。例如set -x HOME /home/svtter，即exp
 docker pull p7hb/docker-spark:2.1.0
 或者直接运行
 docker run -it -p 4040:4040 -p 8080:8080 -p 8081:8081 -h spark --name=spark p7hb/docker-spark:2.1.0
-参考  https://lug.ustc.edu.cn/wiki/mirrors/help/docker https://github.com/P7h/docker-spark  ……
+参考 https://lug.ustc.edu.cn/wiki/mirrors/help/docker https://github.com/P7h/docker-spark ……
         </div>
         <p class="readmore"><a href="https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/">阅读全文</a></p>
     </article>
@@ -322,7 +322,7 @@ locate findname
         
         <div class="post-content">
             This blog for my kinect-v2 ros configure.
-Environment  Thinkpad P70 Ubuntu 14.04 indigo  Reference to https://github.com/code-iai/iai_kinect2
+Environment Thinkpad P70 Ubuntu 14.04 indigo Reference to https://github.com/code-iai/iai_kinect2
 Install Before start, make sure the cuda, cudnn has been configured correctly.
 First, you need to install libfreenect2.
 I recommend to use export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64 in your .zshrc or .bashrc (more professional, in bash_profile or .zshenv). You will avoid some problems about library error.
@@ -362,11 +362,12 @@ Write with Vim – 2
 取代方案，或者等着我以后补充。如果给你带来不便了，你来咬我啊～
 当年学习vim的时候遵从诸位大神的理解，跟着vimtutor走了一趟，感觉还是比较不错的。
 最关键的还是自己要多多使用vim，不能停，就算是一开始很不爽，也要坚持使用下去
- 第一步是学习vimtutor，这个毋庸置疑。最关键的输入i, 还有移动hjkl记住了就可以了  之后最关键的任务就是不停的用vim，就算是觉得慢也用——当然在慢的过程中要思考如何能快。 学习使用`vimtutor`就是在命令行中输入： `vimtutor` 第一步我个人认为是最难的一步。尤其是度过那一段干啥都很慢，狂点鼠标还用不了的阶段。  然后不是跳到问题3就是跳到本问题了。慢慢发现熟悉的&lt;C-c&gt;（就是Ctrl+c)不能用了，到了Vi  m里面变成了终止退出命令了(就像是Esc）（原本也是使用ESC来退出编辑模式的，但是后来发现`&lt;C-c&gt;` 比较快捷，于是就使用他了。（如果你没看懂，重新返回第一步练习）。然后在vim中寻找关于复制， 粘贴的使用方法——至少我是这样。然后就会理解vim中的寄存器的相关信息。  然后就开始找那些可以让自己快速编辑的命令了，比如说w|e|f。我个人比较喜欢f，这个可以让我  快速定位一句话中的一个字母，欲罢不能。`w，e`倒是用的比较少，`b`的位置我不是很喜欢。在这个 过程中大概`d | s | c`这些家伙也慢慢出现了。  再然后就开始发现数字和大写字母的好处了，从小写到大写也是一个慢慢认识的过程，也是不用  记忆到底是如何运作的，只需要看好了出现的位置就行了。用多了自然就会了。  然后习惯了以后就是换行，查找，替换等等操作了。在这个过程中查找用的还是比较多的，  但是替换的命令我就经常忘记如何使用了——没办法，经常忘记。换行更多的使用的是`行号g`，或者 `:行号`然后等等等。  进阶 你也可以直接下载我的配置使用，其中的插件配置可以在一定程度上给出指导。
- 都是一步一步过来的但是我也忘记我是怎么走过来的。依然很水，不会的配置上网搜索然后copy到自己的vimrc中。走到进阶就差不多懂得.vimrc为何物——因为可能受不了自己vim中的字体，配色，以及目录——或者括号匹配等等问题。这个时候vimrc的作用就出来了。  这个时候我推荐你使用我的配置，也是基于网络上十分流行的一个版本：   如果出现什么问题，参见README.md中的FAQ
- 这样就可以安装运行了。出现一个问题很正常，如果不在意就继续使用，在意的话自己百度。出现很多
+第一步是学习vimtutor，这个毋庸置疑。最关键的输入i, 还有移动hjkl记住了就可以了 之后最关键的任务就是不停的用vim，就算是觉得慢也用——当然在慢的过程中要思考如何能快。 学习使用`vimtutor`就是在命令行中输入： `vimtutor` 第一步我个人认为是最难的一步。尤其是度过那一段干啥都很慢，狂点鼠标还用不了的阶段。 然后不是跳到问题3就是跳到本问题了。慢慢发现熟悉的&lt;C-c&gt;（就是Ctrl+c)不能用了，到了Vi m里面变成了终止退出命令了(就像是Esc）（原本也是使用ESC来退出编辑模式的，但是后来发现`&lt;C-c&gt;` 比较快捷，于是就使用他了。（如果你没看懂，重新返回第一步练习）。然后在vim中寻找关于复制， 粘贴的使用方法——至少我是这样。然后就会理解vim中的寄存器的相关信息。 然后就开始找那些可以让自己快速编辑的命令了，比如说w|e|f。我个人比较喜欢f，这个可以让我 快速定位一句话中的一个字母，欲罢不能。`w，e`倒是用的比较少，`b`的位置我不是很喜欢。在这个 过程中大概`d | s | c`这些家伙也慢慢出现了。 再然后就开始发现数字和大写字母的好处了，从小写到大写也是一个慢慢认识的过程，也是不用 记忆到底是如何运作的，只需要看好了出现的位置就行了。用多了自然就会了。 然后习惯了以后就是换行，查找，替换等等操作了。在这个过程中查找用的还是比较多的， 但是替换的命令我就经常忘记如何使用了——没办法，经常忘记。换行更多的使用的是`行号g`，或者 `:行号`然后等等等。 进阶 你也可以直接下载我的配置使用，其中的插件配置可以在一定程度上给出指导。
+都是一步一步过来的但是我也忘记我是怎么走过来的。依然很水，不会的配置上网搜索然后copy到自己的vimrc中。走到进阶就差不多懂得.vimrc为何物——因为可能受不了自己vim中的字体，配色，以及目录——或者括号匹配等等问题。这个时候vimrc的作用就出来了。 这个时候我推荐你使用我的配置，也是基于网络上十分流行的一个版本： 如果出现什么问题，参见README.md中的FAQ
+这样就可以安装运行了。出现一个问题很正常，如果不在意就继续使用，在意的话自己百度。出现很多
 问题可能是因为Vundle没有装好，使用
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle……
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+我是在.vimrc之后才发现的这种神奇的编辑的。分块编辑的确能够极大的提升效率。然后不停 的阅读vimrc吧！然后从help中吸取精华吧！ 下一步我要熟练使用记录模式和正则匹配，以及vimscript的写法等等。希望本文对于想要学习Vim的 你有所帮助。 ……
         </div>
         <p class="readmore"><a href="https://svtter.cn/2017/12/15/writewithvim-1/">阅读全文</a></p>
     </article>

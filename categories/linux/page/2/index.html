@@ -96,15 +96,15 @@
         </div>
         
         <div class="post-content">
-            本文出自&lt;svtter.com&gt;  花了一些时间安装arch，记录一下注意事项。
-多重引导   安装多重引导支持
+            本文出自&lt;svtter.com&gt; 花了一些时间安装arch，记录一下注意事项。
+多重引导 安装多重引导支持
 pacman -S os-prober
-  更新grub
+更新grub
 grub-mkconfig -o /boot/grub/grub.cfg
-  写入mbr
+写入mbr
 grub-install --target=i386-pc --recheck /dev/sda
-  图形化的网络服务 systemctl enable NetWorkManager.service
-wifi配置  如果你想使用wifi（在图形界面下），首先你要停止dhcp服务systemctl stop dhcpcd.service 开机停止运行systemctl disable dhcpcd.service 我们之所以这样，是为了保证我们的NetWorkManager正常服务。  session控制器 我选择的是gdm，原因是slim我不太会配置。
+图形化的网络服务 systemctl enable NetWorkManager.service
+wifi配置 如果你想使用wifi（在图形界面下），首先你要停止dhcp服务systemctl stop dhcpcd.service 开机停止运行systemctl disable dhcpcd.service 我们之所以这样，是为了保证我们的NetWorkManager正常服务。 session控制器 我选择的是gdm，原因是slim我不太会配置。
 pacman -S gdm
 另外patheon在我书写这篇blog的时候，还是存在不少bug.官方的wiki在这个时候也不是很好用了。期待patheon！
 添加了官方给的patheon库，会出现一个gnome-lib的冲突
@@ -138,10 +138,11 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
         </div>
         
         <div class="post-content">
-            本文出自&lt;svtter.com&gt;  实验内容 消息的创建，发送，和接收。
+             本文出自&lt;svtter.com&gt; 实验内容 消息的创建，发送，和接收。
 &lt;任务&gt; 使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
-程序设计  为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息,  则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。  CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个  消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。  父进程在 SERVER 和 CLIENT 均退出后结束。  使用的函数  并非每次创建消息队列都会成功，所以重新添加-1情况的判断。
-  可以使用ipcs -q命令查看……
+程序设计 为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息, 则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。 CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个 消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。 父进程在 SERVER 和 CLIENT 均退出后结束。 使用的函数 并非每次创建消息队列都会成功，所以重新添加-1情况的判断。
+可以使用ipcs -q命令查看
+源代码 运行结果 ……
             <p class="readmore"><a href="https://svtter.cn/2014/11/28/linux-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1/">阅读全文</a></p>
         </div>
     </article>
@@ -164,11 +165,11 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
         </div>
         
         <div class="post-content">
-             本文出自&lt;svtter.com&gt;  使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。
+             本文出自&lt;svtter.com&gt; 使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。
 编译的时候记得-pthread选项。
 运行结果 操作系统经典问题：哲学家就餐问题 mutex是c++11的新功能。记得添加C++11支持。(在运行结果中包含编译选项。)
-运行结果 操作系统经典问题：读者写者问题 读者优先  使用了c++11的新特性thread  运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。
-写者优先   使rsem中只有一个读者在等待，保证了如果有写者，写者优先写  运行结果  基本上结果就是写者写完，才会有读者阅读  ……
+运行结果 操作系统经典问题：读者写者问题 读者优先 使用了c++11的新特性thread 运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。
+写者优先 使rsem中只有一个读者在等待，保证了如果有写者，写者优先写 运行结果 基本上结果就是写者写完，才会有读者阅读 ……
             <p class="readmore"><a href="https://svtter.cn/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/">阅读全文</a></p>
         </div>
     </article>
@@ -191,13 +192,13 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
         </div>
         
         <div class="post-content">
-              本文出自&lt;svtter.com&gt;
-  头文件: #include&lt;unistd.h&gt;
-  使用方法: int pipe(int chan[2]);
-  说明: pipe会建立管道，并将文件描述词通过chan返回。一般chan[0]为管道的读取端，chan[1]是写入端。
-  返回值: 成功返回0，失败返回-1，错误信息保存在errno中
-  错误信息:
- EMFILE 进程已用完文件描述词最大量。 ENFILE 系统已无文件描述词可用。 EFAULT 参数filedes数组地址不合法    运行结果： ……
+             本文出自&lt;svtter.com&gt;
+头文件: #include&lt;unistd.h&gt;
+使用方法: int pipe(int chan[2]);
+说明: pipe会建立管道，并将文件描述词通过chan返回。一般chan[0]为管道的读取端，chan[1]是写入端。
+返回值: 成功返回0，失败返回-1，错误信息保存在errno中
+错误信息:
+EMFILE 进程已用完文件描述词最大量。 ENFILE 系统已无文件描述词可用。 EFAULT 参数filedes数组地址不合法 运行结果： ……
             <p class="readmore"><a href="https://svtter.cn/2014/11/21/linux-%E7%AE%A1%E9%81%93/">阅读全文</a></p>
         </div>
     </article>
@@ -224,25 +225,50 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
 系统调用函数说明、参数值及定义
 本文摘自老师的资料= =
 使用这些函数的时候记得将头文件unistd.h包含到程序中
-1、fork()  创建一个新进程
-  int fork()
-  其中返回int取值意义如下:
-  0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败
- 2、lockf(files,function,size):  用作锁定文件的某些段或者整个文件,本函数适用的头文件为:
-  #include&lt;unistd.h&gt;
-  参数定义:
-  int lockf(files,function,size)
-  int files,function;
-  long size;
-  其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。
- 3、msgget(key,flag):  获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。
-  该函数使用偷文件如下:
-  #include&lt;sy/types.h&gt;
-  #include&lt;sy/ipc.h&gt;
-  #include&lt;sy/msg.h&gt;
-  参数定义
-  int msgget(key,flag)
-  key_tkey;……
+1、fork() 创建一个新进程
+int fork()
+其中返回int取值意义如下:
+0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败
+2、lockf(files,function,size): 用作锁定文件的某些段或者整个文件,本函数适用的头文件为:
+#include&lt;unistd.h&gt;
+参数定义:
+int lockf(files,function,size)
+int files,function;
+long size;
+其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。
+3、msgget(key,flag): 获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。
+该函数使用偷文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;
+参数定义
+int msgget(key,flag)
+key_tkey;
+int flag;
+语法格式:msgqid=msgget(key,flag)
+其中:msgid是该系统调用返回的描述符,失败则返回-1;flag 本身由操作允许权和控制命令值相或得到。
+如:
+IP_CREAT|0400 是否该队列应被创建;
+IP_EXCL |0400 是否该队列的创建应是互斥的;等。
+msgsnd(id,msgp,size,flag): 发送一消息。
+该函数是用头文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;
+参数定义
+int msgnd(id,msgp,size,flag)
+int id,size,flag;
+struct msgbuf * msgp;
+其中:id是返回消息队列的描述符;msgp是指向用户存储区的一个构造体指针,size指示由msgp
+指向的数据结构中字符数组的长度;即消息的长度。这个数组的最大值由MSG-MAX系统可调用参数来确
+定。flag规定当核心用尽内部缓冲空间时应执行的动作;若在标志flag中末设置IPC_NOWAIT位,则当
+41该消息队列中字节数超过一最大值时,或系统范围的消息数超过某一最大值时,调用msgsnd进程睡眠。
+若是设置IPC_NOWAIT,则在此情况下,msgsnd立即返回。
+msgrcv(id,msgp,size,type,flag): 接受一消息。
+该函数调用使用头文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;……
             <p class="readmore"><a href="https://svtter.cn/2014/11/21/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
         </div>
     </article>
@@ -267,7 +293,7 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
         <div class="post-content">
             问题 之前在gvim中一直无法使用中文，格外痛苦，后来使用了vim-ibus插件之后，可以在vim中使用中文了，但是依然不能在gvim中使用，一直以为是两个软件冲突的
 问题，现在终于解决了。
- gvim version: vim-X11 ibus version: 1.6  解决方案  问题出在：使用的vim插件中有插件与ibus冲突，但是奈何找不到X11的log（应该可以找到，找到再说。。） 排查方式比较简单，使用:PluginInstall,:PluginClean即可(考虑到我使用vundle管理插件) 去除相应的插件即可(比如现在冲突的是auto-pairs)。如果不想去除冲突插件，可以考虑使用vim-ibus，这个在shell下是可以使得很多冲突减少的。 可能auto-pairs在不久的将来就会修复这个bug，请在具体环境下排查  ……
+gvim version: vim-X11 ibus version: 1.6 解决方案 问题出在：使用的vim插件中有插件与ibus冲突，但是奈何找不到X11的log（应该可以找到，找到再说。。） 排查方式比较简单，使用:PluginInstall,:PluginClean即可(考虑到我使用vundle管理插件) 去除相应的插件即可(比如现在冲突的是auto-pairs)。如果不想去除冲突插件，可以考虑使用vim-ibus，这个在shell下是可以使得很多冲突减少的。 可能auto-pairs在不久的将来就会修复这个bug，请在具体环境下排查 ……
             <p class="readmore"><a href="https://svtter.cn/2014/11/15/%E8%A7%A3%E5%86%B3%E6%97%A0%E6%B3%95%E5%9C%A8centos%E4%B8%8B%E7%9A%84gvim%E4%B8%AD%E4%BD%BF%E7%94%A8ibus%E8%BE%93%E5%85%A5%E4%B8%AD%E6%96%87/">阅读全文</a></p>
         </div>
     </article>
@@ -316,9 +342,9 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
             本文出自&lt;svtter.com&gt;
 进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
 运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？
-  lockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。
-  wait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0
-  运行结果 ……
+lockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。
+wait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0
+运行结果 ……
             <p class="readmore"><a href="https://svtter.cn/2014/11/14/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">阅读全文</a></p>
         </div>
     </article>
@@ -392,7 +418,7 @@ locate配置 安装以后发现locate命令无法使用，安装pacman -S mlocat
         
         <div class="post-content">
             目录的问题 由于SELinux造成的httpd中的目录无法访问，可以使用
- chcon -R -t httpd_user_content_t &lt;path to web files&gt; chcon -R -t httpd_sys_content_t &lt;path to web files&gt;  mark一个网站()[http://www.jb51.net/os/RedHat/1303.html]
+chcon -R -t httpd_user_content_t &lt;path to web files&gt; chcon -R -t httpd_sys_content_t &lt;path to web files&gt; mark一个网站()[http://www.jb51.net/os/RedHat/1303.html]
 文件夹访问权限 以上方法解决了SELinux的问题，但是我的目录依然没有访问权限。
 然后看了一下文件的基本属性: -rw-r--r--. 1 root root 21 11月 11 12:27 index.html
 应该也是没有问题的。

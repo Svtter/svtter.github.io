@@ -101,77 +101,77 @@ classes instead of modules. Some of the benefits of using classes include:</p>
 <li>Implicit environment variable names</li>
 </ul>
 <h2 id="example">Example</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># .env</span>
-export DJANGO_SECRET_KEY<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;*2#fz@c0w5fe8f-&#39;</span>
-export DJANGO_DEBUG<span style="color:#f92672">=</span>true
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># manage.py</span>
-<span style="color:#f92672">import</span> os
-<span style="color:#f92672">import</span> sys
-
-<span style="color:#f92672">import</span> class_settings
-<span style="color:#f92672">from</span> class_settings <span style="color:#f92672">import</span> env
-
-<span style="color:#f92672">from</span> django.core.management <span style="color:#f92672">import</span> execute_from_command_line
-
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
-    env<span style="color:#f92672">.</span>read_env()
-    os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>setdefault(<span style="color:#e6db74">&#39;DJANGO_SETTINGS_MODULE&#39;</span>, <span style="color:#e6db74">&#39;myproject.settings&#39;</span>)
-    os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>setdefault(<span style="color:#e6db74">&#39;DJANGO_SETTINGS_CLASS&#39;</span>, <span style="color:#e6db74">&#39;MySettings&#39;</span>)
-    class_settings<span style="color:#f92672">.</span>setup()
-    execute_from_command_line(sys<span style="color:#f92672">.</span>argv)
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># myproject/settings.py</span>
-<span style="color:#f92672">from</span> class_settings <span style="color:#f92672">import</span> Settings, env
-
-
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MySettings</span>(Settings):
-    SECRET_KEY <span style="color:#f92672">=</span> env()
-    DEBUG <span style="color:#f92672">=</span> env<span style="color:#f92672">.</span>bool(default<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-    INSTALLED_APPS <span style="color:#f92672">=</span> [
-        <span style="color:#e6db74">&#39;django.contrib.admin&#39;</span>,
-        <span style="color:#e6db74">&#39;django.contrib.auth&#39;</span>,
-        <span style="color:#e6db74">&#39;django.contrib.contenttypes&#39;</span>,
-        <span style="color:#e6db74">&#39;django.contrib.sessions&#39;</span>,
-        <span style="color:#e6db74">&#39;django.contrib.messages&#39;</span>,
-        <span style="color:#e6db74">&#39;django.contrib.staticfiles&#39;</span>,
-    ]
-    ROOT_URLCONF <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;myproject.urls&#39;</span>
-    WSGI_APPLICATION <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;myproject.wsgi.application&#39;</span>
-</code></pre></div><h2 id="installation">Installation</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># .env</span>
+</span></span><span style="display:flex;"><span>export DJANGO_SECRET_KEY<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;*2#fz@c0w5fe8f-&#39;</span>
+</span></span><span style="display:flex;"><span>export DJANGO_DEBUG<span style="color:#f92672">=</span>true
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># manage.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> class_settings
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> class_settings <span style="color:#f92672">import</span> env
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> django.core.management <span style="color:#f92672">import</span> execute_from_command_line
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    env<span style="color:#f92672">.</span>read_env()
+</span></span><span style="display:flex;"><span>    os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>setdefault(<span style="color:#e6db74">&#39;DJANGO_SETTINGS_MODULE&#39;</span>, <span style="color:#e6db74">&#39;myproject.settings&#39;</span>)
+</span></span><span style="display:flex;"><span>    os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>setdefault(<span style="color:#e6db74">&#39;DJANGO_SETTINGS_CLASS&#39;</span>, <span style="color:#e6db74">&#39;MySettings&#39;</span>)
+</span></span><span style="display:flex;"><span>    class_settings<span style="color:#f92672">.</span>setup()
+</span></span><span style="display:flex;"><span>    execute_from_command_line(sys<span style="color:#f92672">.</span>argv)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># myproject/settings.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> class_settings <span style="color:#f92672">import</span> Settings, env
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MySettings</span>(Settings):
+</span></span><span style="display:flex;"><span>    SECRET_KEY <span style="color:#f92672">=</span> env()
+</span></span><span style="display:flex;"><span>    DEBUG <span style="color:#f92672">=</span> env<span style="color:#f92672">.</span>bool(default<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>    INSTALLED_APPS <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;django.contrib.admin&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;django.contrib.auth&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;django.contrib.contenttypes&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;django.contrib.sessions&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;django.contrib.messages&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;django.contrib.staticfiles&#39;</span>,
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    ROOT_URLCONF <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;myproject.urls&#39;</span>
+</span></span><span style="display:flex;"><span>    WSGI_APPLICATION <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;myproject.wsgi.application&#39;</span>
+</span></span></code></pre></div><h2 id="installation">Installation</h2>
 <p>Install it from [PyPI][pypi-url] with [pip][pip-url]:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pip install django-class-settings
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip install django-class-settings
+</span></span></code></pre></div><hr>
 <p>我们可以看到，这个类关键入口可能在<code>env.read_env()</code>以及<code>class_settings.setup()</code>。</p>
 <p>我们首先看一下 <code>src.class_settings.env</code> 的代码。可以发现，这个代码用于加载 django 中的 env；
 因此不是我们关注的重点。</p>
 <p>让我们再看看关键函数 setup。</p>
 <p><code>src/class_settings/__init__.py</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">__all__ <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Env&#34;</span>, <span style="color:#e6db74">&#34;Settings&#34;</span>, <span style="color:#e6db74">&#34;env&#34;</span>, <span style="color:#e6db74">&#34;setup&#34;</span>]
-__version__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.3.0-dev&#34;</span>
-
-<span style="color:#f92672">from</span> .env <span style="color:#f92672">import</span> Env, env
-<span style="color:#f92672">from</span> .settings <span style="color:#f92672">import</span> Settings
-
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">setup</span>():
-    <span style="color:#f92672">import</span> sys
-    <span style="color:#f92672">from</span> django.conf <span style="color:#f92672">import</span> settings
-    <span style="color:#f92672">from</span> django.utils.functional <span style="color:#f92672">import</span> SimpleLazyObject
-    <span style="color:#f92672">from</span> .importers <span style="color:#f92672">import</span> SettingsImporter, LazySettingsModule
-
-    <span style="color:#66d9ef">global</span> _setup
-    <span style="color:#66d9ef">if</span> _setup:
-        <span style="color:#66d9ef">return</span>
-
-    sys<span style="color:#f92672">.</span>meta_path<span style="color:#f92672">.</span>append(SettingsImporter)
-    default_settings <span style="color:#f92672">=</span> LazySettingsModule()
-    settings_module <span style="color:#f92672">=</span> SimpleLazyObject(<span style="color:#66d9ef">lambda</span>: default_settings<span style="color:#f92672">.</span>SETTINGS_MODULE)
-    settings<span style="color:#f92672">.</span>configure(default_settings, SETTINGS_MODULE<span style="color:#f92672">=</span>settings_module)
-
-    _setup <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
-
-
-_setup <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
-</code></pre></div><p>在<code>.settings.py</code>中没有直接加载的代码，因此，我们可以直接阅读本文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>__all__ <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Env&#34;</span>, <span style="color:#e6db74">&#34;Settings&#34;</span>, <span style="color:#e6db74">&#34;env&#34;</span>, <span style="color:#e6db74">&#34;setup&#34;</span>]
+</span></span><span style="display:flex;"><span>__version__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.3.0-dev&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> .env <span style="color:#f92672">import</span> Env, env
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> .settings <span style="color:#f92672">import</span> Settings
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">setup</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">from</span> django.conf <span style="color:#f92672">import</span> settings
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">from</span> django.utils.functional <span style="color:#f92672">import</span> SimpleLazyObject
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">from</span> .importers <span style="color:#f92672">import</span> SettingsImporter, LazySettingsModule
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">global</span> _setup
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> _setup:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>meta_path<span style="color:#f92672">.</span>append(SettingsImporter)
+</span></span><span style="display:flex;"><span>    default_settings <span style="color:#f92672">=</span> LazySettingsModule()
+</span></span><span style="display:flex;"><span>    settings_module <span style="color:#f92672">=</span> SimpleLazyObject(<span style="color:#66d9ef">lambda</span>: default_settings<span style="color:#f92672">.</span>SETTINGS_MODULE)
+</span></span><span style="display:flex;"><span>    settings<span style="color:#f92672">.</span>configure(default_settings, SETTINGS_MODULE<span style="color:#f92672">=</span>settings_module)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    _setup <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>_setup <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span></code></pre></div><p>在<code>.settings.py</code>中没有直接加载的代码，因此，我们可以直接阅读本文件。</p>
 <p>未完待续&hellip;</p>
         </div>
 
@@ -213,7 +213,7 @@ _setup <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</s
     
     <div id="disqus_thread"></div>
 <script type="application/javascript">
-    var disqus_config = function () {
+    window.disqus_config = function () {
     
     
     

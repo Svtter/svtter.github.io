@@ -97,7 +97,7 @@
         
         <div class="post-content">
             发现maven与Java，别有一番乐趣
- 入门建议：
+入门建议：
 https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html
 现在很多文章其实写的都不如官方的文章，但是人们总是习惯性的从百度获取自己想要的某些资源。
 maven编译依赖 一般情况下，maven不会把依赖的包编译到自己的jar包里面，我猜和dll的出发点是一样的，减少内存的占用（减少相同内容在内存中的冗余）。
@@ -127,7 +127,8 @@ maven编译依赖 一般情况下，maven不会把依赖的包编译到自己的
         </div>
         
         <div class="post-content">
-            本文可以随意转载，但是转载请保留本信息.本文已经更新，请看 — 如何使用vim开发Java.
+            本文可以随意转载，但是转载请保留本信息.
+本文已经更新，请看 — 如何使用vim开发Java.
 本来想把本文命名为使用Vim写Java-Project的，但是个人认为这样并没有很高的开发效率，所以只是提
 供一个部分的解决方案，剩下的就由大家努力探索吧。。
 Java有个自己构建工程的工具叫做Ant, 全名Apache Ant，好东西，最通俗的解释就是Java的
@@ -135,7 +136,7 @@ makefile，这里提供的方案，就是使用Ant或者maven来构建工程，�
 Java的代码检查。另外，java代码补全设置其实也是有的，但是具体的设置我没有好好研究过，主要是
 已经陪不起那个时间了。
 另外，Eclipse导出Java项目的时候，一个不错的方法就是Export Ant Buildfiles，这就是ant文件。
- Ant学习简单教程  Maven我没有好好学，但是看wiki似乎Synastic对maven的支持比ant的支持更加优秀，也可能是mvn的构
+Ant学习简单教程 Maven我没有好好学，但是看wiki似乎Synastic对maven的支持比ant的支持更加优秀，也可能是mvn的构
 建方法上存在优势？这个我不清楚。有时间写一篇文章来好好的研究下。
 Ant这个东西构建的包有时候检查会出现问题，（如果采用目录编译的方法，那么就无法检查）。
 另外，需要不停的在目录下建立.synastic_javac_config，着实烦人。但是如果使用了全局设置，改
@@ -167,13 +168,13 @@ use :SyntasticJavacEditClasspath and add workpath.……
         
         <div class="post-content">
             本文出自svtter.com
-  本文可以随意转载，但是转载请保留本信息.
- 之前一直都是用eclipse开发Java，Vim修炼到今日，本来想要拉出来溜溜Java，奈何package和import的
+本文可以随意转载，但是转载请保留本信息.
+之前一直都是用eclipse开发Java，Vim修炼到今日，本来想要拉出来溜溜Java，奈何package和import的
 机制以及 synastic[自动检查代码的插件] 没有对于eclipse对java包类似的支持，所以只得滚回
 eclipse，然后使用vrapper了。
 闲话少说，听我细细道来package和import;
 这篇文章主要是说明类似这种情况，即不同包但是文件路径一部分相同，即:
- /temp  temp.java tests/  joking.java      贴出源代码:   test.java:
+/temp temp.java tests/ joking.java 贴出源代码: test.java:
 package temp;
 import temp.tests.joking;
 public class test {
@@ -182,12 +183,18 @@ joking a = new joking();
 a.test();
 }
 }
-  joking.java
+joking.java
 package temp.tests;
 public class joking {
 int a = 1;
 public void test() {
-System.out.println(a);……
+System.out.println(a);
+}
+}
+一种编译方法 这个时候打开test.java是没有办法通过拼写验证[synastic]，需要这样:
+然后再打开test.java, 可以了。但是这个时候有个很别扭的问题，我们发现这个时候生成了一个文件
+temp/temp/tests/joking.class，也就是说我们的目录现在变成了这个样子:
+/temp temp.java tests/ joking.java temp/ test/ joking.class 请不要告诉我你很爽，因为这个目录给我的感觉很不爽- -试想，如果我们在别的目录下引用这个包，我……
             <p class="readmore"><a href="https://svtter.cn/2014/12/28/java-import%E5%92%8Cpackage%E7%9A%84%E7%94%A8%E6%B3%95/">阅读全文</a></p>
         </div>
     </article>
