@@ -84,7 +84,7 @@
         <div class="post-meta">
             <span>|</span>
             
-            <span class="meta-category"><a href='/categories/java'>Java</a></span>
+            <span class="meta-category"><a href='/categories/programming'>programming</a></span>
             
         </div>
         
@@ -92,79 +92,54 @@
         
         <div class="post-content">
             <blockquote>
-<p>本文出自<a href="http://svtter.com">svtter.com</a></p>
+<p>本文出自<a href="http://svtter.github.io">svtter.github.io</a>
+本文可以随意转载，但是转载请保留本信息.</p>
 </blockquote>
-<blockquote>
-<p>本文可以随意转载，但是转载请保留本信息.</p>
-</blockquote>
-<p>之前一直都是用eclipse开发Java，Vim修炼到今日，本来想要拉出来溜溜Java，奈何package和import的</p>
-<p>机制以及 synastic[自动检查代码的插件] 没有对于eclipse对java包类似的支持，所以只得滚回</p>
-<p>eclipse，然后使用vrapper了。</p>
+<p>之前一直都是用eclipse开发Java，Vim修炼到今日，本来想要拉出来溜溜Java，奈何package和import的机制以及 synastic[自动检查代码的插件] 没有对于eclipse对java包类似的支持，所以只得滚回eclipse，然后使用vrapper了。</p>
 <p>闲话少说，听我细细道来package和import;</p>
 <p>这篇文章主要是说明类似这种情况，即不同包但是文件路径一部分相同，即:</p>
+<pre tabindex="0"><code>  * /temp
+      * temp.java
+      * tests/
+          * joking.java
+</code></pre><h2 id="贴出源代码">贴出源代码:</h2>
 <ul>
-<li>/temp
-<ul>
-<li>temp.java</li>
-<li>tests/
-<ul>
+<li>test.java:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#f92672">package</span> temp<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">import</span> temp.tests.joking<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span> <span style="color:#f92672">(</span>String args<span style="color:#f92672">[])</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      joking a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> joking<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>      a<span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
 <li>joking.java</li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="贴出源代码">贴出源代码:</h2>
-<ul>
-<li>
-<p>test.java:</p>
-<p>package temp;</p>
-<p>import temp.tests.joking;</p>
-<p>public class test {</p>
-<p>public static void main (String args[]) {</p>
-<p>joking a = new joking();</p>
-<p>a.test();</p>
-<p>}</p>
-<p>}</p>
-</li>
-<li>
-<p>joking.java</p>
-<p>package temp.tests;</p>
-<p>public class joking {</p>
-<p>int a = 1;</p>
-<p>public void test() {</p>
-<p>System.out.println(a);</p>
-<p>}</p>
-<p>}</p>
-</li>
-</ul>
-<h2 id="一种编译方法">一种编译方法</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#f92672">package</span> temp.tests<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">joking</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>a<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="一种编译方法">一种编译方法</h2>
 <p>这个时候打开test.java是没有办法通过拼写验证[synastic]，需要这样:</p>
-<!-- raw HTML omitted -->
+<p><code>javac -d . /tests/joking.java</code></p>
 <p>然后再打开test.java, 可以了。但是这个时候有个很别扭的问题，我们发现这个时候生成了一个文件</p>
 <p><code>temp/temp/tests/joking.class</code>，也就是说我们的目录现在变成了这个样子:</p>
-<ul>
-<li>/temp
-<ul>
-<li>temp.java</li>
-<li>tests/
-<ul>
-<li>joking.java</li>
-</ul>
-</li>
-<li>temp/
-<ul>
-<li>test/
-<ul>
-<li>joking.class</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>请不要告诉我你很爽，因为这个目录给我的感觉很不爽- -试想，如果我们在别的目录下引用这个包，我</p>
+<pre tabindex="0"><code>  * /temp
+      * temp.java
+      * tests/
+          * joking.java
+      * temp/
+          * test/
+              * joking.class
+</code></pre><p>请不要告诉我你很爽，因为这个目录给我的感觉很不爽- -试想，如果我们在别的目录下引用这个包，我</p>
 <p>们就需要做很多这样的操作，造成的后果就是各个包里面出现无数个<code>temp/test/joking.class</code>…</p>
 <p>对我而言这是难以忍受的，我也想不太清楚为什么当初java这么设计 — 可能是为了避免耦合等问题？</p>
 <p>软件工程这个地方学得不够好，先mark一下，或者有读者可以给我解释一下这个设计。或者说，下面这</p>
@@ -179,8 +154,9 @@
 <p>最后还是自己对synastic依赖性太强了。但是自己不会写= =，也是无奈了。开个issue求支持吧= =</p>
 <h2 id="后记">后记</h2>
 <p>找到方法了 — 使用ant来构建项目。不过synastic的官方文档并没有说的很清楚，issue看起来又比较</p>
+<blockquote>
 <p>费劲，饿死了，吃饭去。。</p>
-
+</blockquote>
         </div>
 
         
@@ -191,7 +167,13 @@
 
         <div class="post-meta meta-tags">
             
-            没有标签
+            <ul class="clearfix">
+                
+                <li><a href='/tags/java'>Java</a></li>
+                
+                <li><a href='/tags/package'>package</a></li>
+                
+            </ul>
             
         </div>
     </article>
@@ -346,21 +328,15 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/devops/">DevOps (6)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/java/">Java (3)</a></li>
-    
     <li><a href="https://svtter.github.io/categories/javascript/">Javascript (4)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/life/">Life (2)</a></li>
+    <li><a href="https://svtter.github.io/categories/life/">Life (4)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/linux/">Linux (22)</a></li>
-    
-    <li><a href="https://svtter.github.io/categories/linux-arm/">Linux ARM (1)</a></li>
+    <li><a href="https://svtter.github.io/categories/linux/">Linux (23)</a></li>
     
     <li><a href="https://svtter.github.io/categories/math/">Math (1)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/php/">php (2)</a></li>
-    
-    <li><a href="https://svtter.github.io/categories/programming/">Programming (2)</a></li>
+    <li><a href="https://svtter.github.io/categories/programming/">programming (8)</a></li>
     
     <li><a href="https://svtter.github.io/categories/python-web-%E5%BC%80%E5%8F%91/">Python Web 开发 (4)</a></li>
     
@@ -380,7 +356,7 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/web-%E5%BC%80%E5%8F%91/">Web 开发 (2)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/%E4%B9%90%E8%B6%A3/">乐趣 (18)</a></li>
+    <li><a href="https://svtter.github.io/categories/%E4%B9%90%E8%B6%A3/">乐趣 (15)</a></li>
     
     <li><a href="https://svtter.github.io/categories/%E5%89%8D%E7%AB%AF/">前端 (4)</a></li>
     
@@ -443,11 +419,15 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/agile/">agile</a>
     
+    <a href="https://svtter.github.io/tags/ant/">ant</a>
+    
+    <a href="https://svtter.github.io/tags/arm/">ARM</a>
+    
     <a href="https://svtter.github.io/tags/beam-search/">Beam Search</a>
     
     <a href="https://svtter.github.io/tags/beego/">beego</a>
     
-    <a href="https://svtter.github.io/tags/blog/">Blog</a>
+    <a href="https://svtter.github.io/tags/blog/">blog</a>
     
     <a href="https://svtter.github.io/tags/ci/">CI</a>
     
@@ -505,11 +485,15 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/language/">language</a>
     
+    <a href="https://svtter.github.io/tags/leanote/">leanote</a>
+    
     <a href="https://svtter.github.io/tags/life/">Life</a>
     
     <a href="https://svtter.github.io/tags/linux/">Linux</a>
     
     <a href="https://svtter.github.io/tags/management/">management</a>
+    
+    <a href="https://svtter.github.io/tags/maven/">maven</a>
     
     <a href="https://svtter.github.io/tags/mellow/">mellow</a>
     
@@ -517,9 +501,15 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/module/">module</a>
     
+    <a href="https://svtter.github.io/tags/network/">network</a>
+    
     <a href="https://svtter.github.io/tags/nginx/">nginx</a>
     
     <a href="https://svtter.github.io/tags/orm/">ORM</a>
+    
+    <a href="https://svtter.github.io/tags/package/">package</a>
+    
+    <a href="https://svtter.github.io/tags/php/">php</a>
     
     <a href="https://svtter.github.io/tags/psychology/">psychology</a>
     
@@ -548,6 +538,8 @@ if (!doNotTrack) {
     <a href="https://svtter.github.io/tags/ubuntu/">Ubuntu</a>
     
     <a href="https://svtter.github.io/tags/unfinished/">unfinished</a>
+    
+    <a href="https://svtter.github.io/tags/vim/">vim</a>
     
     <a href="https://svtter.github.io/tags/vue/">vue</a>
     
