@@ -591,10 +591,7 @@ app_extra.py：
 之前一直没有排查到错误，今天终于在本地机器的加持下得以解决。这是什么问题呢？IP地址冲突。
 的确是IP地址冲突。首先先使用校园网client ssh b-server 服务器，失败了。使用同一个物理主机的a-server与b-server进行互联，成功了。校园网client能够连接a-server。因此，观察 a-server 和 b-server 的区别，发现 a-server 子网掩码是255.255.255.128，而 b-server 的子网掩码是 255.255.255.0。
 此外，还有：
-查看系统开放的端口
-netstat -nltp
-测试本地是否能够访问，排查本地问题
-ssh user@locahost
+查看系统开放的端口 netstat -nltp 测试本地是否能够访问，排查本地问题 ssh user@locahost
 子网掩码不同，为什么就连接不上呢？（原理）
 最终，解决了这个问题。通过重启 networking 以及 重新通过 dhcp 获取 ip 地址。
 使用 systemctl restart networking.service 重启 networking 服务。 使用 ifconfig eth0 down; ifconfig eth0 up 来开关具体的网卡。 使用 # dhclient -r 释放当前ip 使用 # dhclient 获取新的ip 大功告成，算是阶段性的解决了这个问题。DDNS迫在眉睫啊！</description>
@@ -852,13 +849,11 @@ It’s hard to make notebook file to import so it’s important to make notebook
       <pubDate>Thu, 05 Apr 2018 01:00:00 +0800</pubDate>
       
       <guid>https://svtter.github.io/2018/04/05/%E4%B8%8E%E6%89%80%E6%9C%89%E5%8D%95%E8%AF%8D%E7%9B%B8%E5%85%B3%E8%81%94%E7%9A%84%E5%AD%97%E4%B8%B2/</guid>
-      <description>题目 https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/description/ 给定一个字符串 s 和一些长度相同的单词 words，找出 s 与 words 中所有单词（words 每个单词只出现一次）串联一起（words 中组成串联串的单词的顺序随意）的字符串匹配的所有起始索引，子串要与串联串完全匹配，中间不能有其他字符。
-举个例子，给定：
-s：”barfoothefoobarman”
-words：[“foo”, “bar”]
-你应该返回的索引: [0,9]。（任意顺序）
-题解 代码写的比较清楚，应该不需要题解。。
-code </description>
+      <description>&lt;h2 id=&#34;题目&#34;&gt;题目&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/description/&#34;&gt;https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/description/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;给定一个字符串 s 和一些长度相同的单词 words，找出 s 与 words 中所有单词（words 每个单词只出现一次）串联一起（words 中组成串联串的单词的顺序随意）的字符串匹配的所有起始索引，子串要与串联串完全匹配，中间不能有其他字符。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -2184,11 +2179,48 @@ pip问题 如果安装了两个版本的python，例如python3.5和python2.7，�
       <pubDate>Sat, 23 Apr 2016 01:00:00 +0800</pubDate>
       
       <guid>https://svtter.github.io/2016/04/23/%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E6%89%80%E7%94%A8%E8%BF%87%E7%9A%84%E5%8D%9A%E5%AE%A2/</guid>
-      <description>用过的博客数不胜数，丢掉的博文也是数不过来，在这里自己做一下总结，也是防止自己忘记之前使用过的那些个博客服务。
-&amp;lt;td&amp;gt; 域名 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 使用时间 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; http://blog.csdn.net/svitter &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 2012 &amp;amp;#8211; 2014 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; http://www.cnblogs.com/svitter &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 2012 &amp;amp;#8211; 至今 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; http://svtter.github.io &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 2014 &amp;amp;#8211; 至今 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; http://svtter.leanote.com &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 2014 &amp;amp;#8211; 至今 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 缺失 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 不记得了 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; http://139.129.6.1 &amp;lt;/td&amp;gt; &amp;lt;td&amp;gt; 2016 &amp;amp;#8211; 至今 &amp;lt;/td&amp;gt; 博客用的很多，其中csdn是最一开始使用的，但是因为csdn所支持的功能太少，尽管社区很大，但是感觉并不快乐，限制也比较多，不如自己建一个站来的舒服。博客园混了一段时间，也是不想自己写一个前端，而且好像已经很久没有更新什么东西了= =。github静态页面生成 — 我是使用的hexo，但是也不是很方便，感觉速度比较慢，写的时候也不是很自在。至于pelican那些，没有怎么使用，因为不是很流行，主题还要自己写，于是也是放弃了。awesome-python-webapp主要是用来练手的，后续的很多东西都没有跟上，于是也就放弃了。
-所以感觉还是ghost比较好用。之前的文章也是挺多，如果愿意，可以从那边读。质量不是很高。尽管现在也不是很高。一闪而过我好像还有个blog，但是现在记不得了。leanote放弃的原因是web与iOSapp同步做的不是很好，切换目录以后目录仍然存在，我删掉原来的目录，发现我已经转移的博文也不见了，顿时心中悲痛不已，连报bug的心情都没有了，发誓再也不去碰这个东西 —— 当然， 没准以后发展的不错了，还是会用的。
-博客的部署 自己建立博客的问题就在于维护。本身希望直接使用一个VPS作为开发机，什么代码工程都放在vps上面，但是后续发现不太符合实际。因为本身做的一些东西扔在服务器上跑，怕负载太重，或者出什么差错，导致博客也跟着一起挂掉。虽然可能博客并没有什么访问量2333。有时间应该做一个流量统计的东西挂在页面上。
-但这个事情也是有些纠结的，因为本身我也不知道自己究竟喜欢哪个方向，但是朝着一个方向干总觉有些无聊。诚然，比不干自然是好很多。</description>
+      <description>&lt;p&gt;用过的博客数不胜数，丢掉的博文也是数不过来，在这里自己做一下总结，也是防止自己忘记之前使用过的那些个博客服务。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;博客名&lt;/th&gt;
+&lt;th&gt;域名&lt;/th&gt;
+&lt;th&gt;使用时间&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;CSDN&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;http://blog.csdn.net/svitter&#34;&gt;http://blog.csdn.net/svitter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;2012 – 2014&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;博客园&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;http://www.cnblogs.com/svitter&#34;&gt;http://www.cnblogs.com/svitter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;2012 – 至今&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;github.io&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;http://svtter.github.io&#34;&gt;http://svtter.github.io&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;2014 – 至今&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Leanote&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;http://svtter.leanote.com&#34;&gt;http://svtter.leanote.com&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;2014 – 至今&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;wordpress&lt;/td&gt;
+&lt;td&gt;缺失&lt;/td&gt;
+&lt;td&gt;不记得了&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;awesome-python-web&lt;/td&gt;
+&lt;td&gt;http://139.129.6.1&lt;/td&gt;
+&lt;td&gt;2016 – 至今&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</description>
     </item>
     
     <item>
@@ -3619,23 +3651,10 @@ $2^32-n$补码表示法.
       <pubDate>Mon, 08 Dec 2014 01:00:00 +0800</pubDate>
       
       <guid>https://svtter.github.io/2014/12/08/js-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/</guid>
-      <description>本文出自svtter.github.io
-JavaScript首先应该看w3cschool来涨涨见识, 但是因为之前沉溺游戏荒废了。。
-mark一个还不错的gitbook learn javascript
-自备梯子。。(没钱奈何现在还是free\w\w\w\w..)
-js一切皆为对象。
-JS-再理解 javascript是一脚本语言 — 脚本语言的特性就是一句一句解释执行，所以很多情况和处理机制和bash类似（但是语法明显不同）
-在定义变量等思想，作用域也比较接近.
-Js-使用getElement以及$定位 使用if(% == null)来判断一下是否真的获取到了对象
-另外，添加新元素append()的时候记得补充&amp;lt;/div&amp;gt;
-Js-使用正则表达式 如果使用RegExp(&amp;quot;&amp;quot;)+exec()这种形式，””中的的元字符需要双来使用。
-此外，如果需要查询正则表，可以通过这个链接正则表
-js文件无法运行原因 使用Opera或者Chrome调试，大部分问题都可以找出 — 基本上不是func写错了，就是使用了int这种定义文件方式..
-之前编写html和js都不知道有console这等神器。如果以后再写html做一些研究。。
-JS-jQuery-创建 If the HTML is more complex than a single tag without attributes,
-as it is in the above example,
-the actual creation of the elements is handled by the browser’s innerHTML mechanism. In most cases,
-jQuery creates a new</description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;本文出自&lt;a href=&#34;http://svtter.github.io&#34;&gt;svtter.github.io&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;JavaScript&lt;/strong&gt;首先应该看w3cschool来涨涨见识, 但是因为之前沉溺游戏荒废了。。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -4199,10 +4218,10 @@ apache在进入2.4.*以后，不再使用Allow from all这种形式了，取而�
     
     <item>
       <title>从grub rescue修复</title>
-      <link>https://svtter.github.io/2014/11/10/%E4%BB%8Egrubrescue%E4%BF%AE%E5%A4%8D/</link>
+      <link>https://svtter.github.io/post/2014-11-10-%E4%BB%8Egrubrescue%E4%BF%AE%E5%A4%8D/</link>
       <pubDate>Mon, 10 Nov 2014 01:00:00 +0800</pubDate>
       
-      <guid>https://svtter.github.io/2014/11/10/%E4%BB%8Egrubrescue%E4%BF%AE%E5%A4%8D/</guid>
+      <guid>https://svtter.github.io/post/2014-11-10-%E4%BB%8Egrubrescue%E4%BF%AE%E5%A4%8D/</guid>
       <description>修复grub-rescue模式 今天删除了一个多余的分区，结果grub找不到原来的启动mod了，也是学习了。
 grub-rescue模式中只能用ls, insmod, set root= , set prefix= ,这几个命令。
 发现没搞定，重启还是不幸。
