@@ -6,7 +6,27 @@
     <description>Recent content in 机器学习 on Svtter&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 23 Nov 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 07 Jan 2019 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My Keras tricks</title>
+      <link>https://svtter.github.io/2019/01/07/my-keras-tricks/</link>
+      <pubDate>Mon, 07 Jan 2019 01:00:00 +0800</pubDate>
+      
+      <guid>https://svtter.github.io/2019/01/07/my-keras-tricks/</guid>
+      <description>记录了一些使用 keras 的技巧。
+categorical_crossentropy vs sparse_categorical_crossentropy. 3. The Answer, In a Nutshell If your targets are one-hot encoded, use categorical_crossentropy.
+Examples of one-hot encodings:
+[1,0,0]
+[0,1,0]
+[0,0,1]
+But if your targets are integers, use sparse_categorical_crossentropy.
+Examples of integer encodings (for the sake of completion):
+1, 2, 3 clip norm Multiple GPU # https://keras.io/utils/#multi_gpu_model#
+使用多GPU，注意使用 save 的时候，传参传 model (multi_gpu_model的model参数)
+Encode Labels 可以把不同的字符[‘aa’, ‘bb’, ‘cc’, ‘aa’] 编码成 [0, 1, 2, 0]
+&amp;lt;td&amp;gt; # encode class values as integers&amp;lt;br /&amp;gt;encoder&amp;amp;nbsp;=&amp;amp;nbsp;LabelEncoder()&amp;lt;br /&amp;gt;encoder.</description>
+    </item>
+    
     <item>
       <title>beam search – 一个搜索策略</title>
       <link>https://svtter.github.io/2018/11/23/beam-search-%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%AD%96%E7%95%A5/</link>
@@ -56,6 +76,20 @@
       <guid>https://svtter.github.io/2018/04/20/%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2ipynb/</guid>
       <description>一段脚本将ipython notebook转化为py文件。
 It’s hard to make notebook file to import so it’s important to make notebook importable.</description>
+    </item>
+    
+    <item>
+      <title>Keras坑</title>
+      <link>https://svtter.github.io/2018/02/01/keras%E5%9D%91/</link>
+      <pubDate>Thu, 01 Feb 2018 01:00:00 +0800</pubDate>
+      
+      <guid>https://svtter.github.io/2018/02/01/keras%E5%9D%91/</guid>
+      <description>使用Keras做分类的时候踩了一个坑，也是拿来主义的锅，估计也有不少同志遇到。
+在进行分类的时候，往往使用categorical_crossentropy，有时候萌新（像我）会用binary_crossentropy，虽然结果可能上浮30%，但是这个结果是不对的。model.fit以及model.evaluate给出的acc的值都是有问题的，正确的计算方法应该是：
+# Actual accuracy calculated manually: y_pred = model.predict(x_test) acc = sum([np.argmax(y_test[i])==np.argmax(y_pred[i]) for i in range(10000)])/10000 其中
+numpy.argmax(a, axis=None, out=None) # 返回沿轴axis最大值的索引。 使用测试样本的数量代替10000，输出的acc才是正确的结果。
+这个方法是使用二分类的时候才能使用的，label的个数多于2就不能使用。
+参考 https://stackoverflow.com/questions/42081257/keras-binary-crossentropy-vs-categorical-crossentropy-performance</description>
     </item>
     
   </channel>

@@ -93,14 +93,16 @@
       <pubDate>Mon, 06 Sep 2021 13:18:15 +0800</pubDate>
       
       <guid>https://svtter.github.io/post/2021-09-06-the-way-of-think/</guid>
-      <description>本文开始之前，有几个原则和道理，需要读者要认同：
-明确一个问题：从规则上讲，作为一名学生/老师/工程师，带来问题的工作一定要做。 认同一个道理：从个人的角度讲，只有做事情，才能让自己更优秀。 通过实践验证的真理是最有价值的，只停留在书本上的知识是无法创造价值，也不容易被人认同的。 基于“一定要做”这个大的预设，可以进一步做一些思考。
-一定要做，但是不想做，怎么办？ 如果一个事情是一定要做的。 为什么不想做？可能有几个原因：
-做事情没有成就感。 事情很难，属于困难区。人往往喜欢做舒适区的事情，能够做挑战区的事情，无法做困难区的事情，因此不想做。 其他的原因：这个原因是什么呢？ 可以考虑一下，是怎样的客观原因导致自己不想做。 但是无论如何，不能放弃。一旦放弃了，就是被打败了。人可以失败，但不能被打败。逃避了一次，就会有下一次。
-针对以上几个原因，可以有几种解决方法：
-针对成就感 寻求他人的认同。别人说：你这件事情做的真棒。真强。别人的认同是有益的。 完成自我认同。我相比于之前的自己，掌握了更多的知识。 自己找到做事情的乐趣。多给自己选择。同样一个事情，我有很多种方式去做。从而激发自己的内在动力。 从所谓无价值的事情上寻找价值。人类不是一开始就有建筑学的，是不停的建造，升级，研究才形成建筑学的。 针对困难区 与管理者沟通，降低任务本身的难度。 自身通过调整，将大的困难区任务分解成小的挑战区任务。通过解决挑战区的任务，完成自我认同，进而完成困难区的任务。 每个人都想让自己的生活过的更好。如果每个人都做同样的事情，是没有办法过的更好的。要努力才能收获更多东西。
-针对其他原因 问题不清楚的时候，不好给出答案。 但是可以把握几个原则：
-坚持，不放弃 持续思考问题的解决方案。 </description>
+      <description>&lt;p&gt;本文开始之前，有几个原则和道理，需要读者要认同：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;明确一个问题：从规则上讲，作为一名学生/老师/工程师，带来问题的工作一定要做。&lt;/li&gt;
+&lt;li&gt;认同一个道理：从个人的角度讲，只有做事情，才能让自己更优秀。
+&lt;ol&gt;
+&lt;li&gt;通过实践验证的真理是最有价值的，只停留在书本上的知识是无法创造价值，也不容易被人认同的。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;基于“一定要做”这个大的预设，可以进一步做一些思考。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -356,7 +358,7 @@ session 是使用 cookie 来进行判断的，通过 session_cookie_name 来提�
     </item>
     
     <item>
-      <title>My Keras tricks.</title>
+      <title>My Keras tricks</title>
       <link>https://svtter.github.io/2019/01/07/my-keras-tricks/</link>
       <pubDate>Mon, 07 Jan 2019 01:00:00 +0800</pubDate>
       
@@ -938,8 +940,8 @@ reference https://blog.lilydjwg.me/2012/6/6/get-ipv4-and-ipv6-addresses-of-local
       <guid>https://svtter.github.io/2018/02/01/keras%E5%9D%91/</guid>
       <description>使用Keras做分类的时候踩了一个坑，也是拿来主义的锅，估计也有不少同志遇到。
 在进行分类的时候，往往使用categorical_crossentropy，有时候萌新（像我）会用binary_crossentropy，虽然结果可能上浮30%，但是这个结果是不对的。model.fit以及model.evaluate给出的acc的值都是有问题的，正确的计算方法应该是：
-其中
-使用测试样本的数量代替10000，输出的acc才是正确的结果。
+# Actual accuracy calculated manually: y_pred = model.predict(x_test) acc = sum([np.argmax(y_test[i])==np.argmax(y_pred[i]) for i in range(10000)])/10000 其中
+numpy.argmax(a, axis=None, out=None) # 返回沿轴axis最大值的索引。 使用测试样本的数量代替10000，输出的acc才是正确的结果。
 这个方法是使用二分类的时候才能使用的，label的个数多于2就不能使用。
 参考 https://stackoverflow.com/questions/42081257/keras-binary-crossentropy-vs-categorical-crossentropy-performance</description>
     </item>
@@ -1004,14 +1006,10 @@ ROS image转换为cv::Mat格式，提供opencv使用 http://wiki.ros.org/cv_brid
       <pubDate>Sat, 27 Jan 2018 01:00:00 +0800</pubDate>
       
       <guid>https://svtter.github.io/2018/01/27/%E4%BD%BF%E7%94%A8fabric%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2/</guid>
-      <description> Fabric是一个可以在远程机器上运行命令的库
-Fabric官方目前只支持Python2版本，但是有勤劳的人开发出了适配Python3的版本。具体可以查看这个fork。
-Fabric的使用 我在使用Fabric的时候主要是用于部署我的网站。使用时候，首先需要引入所有的API：
-这样就可以导入Fabric的API进行远程控制啦。
-具体问题 git需要输入密码 ssh通过秘钥链接 使用root 一个简单的部署例子 这个部署例子结合了更新代码，进入指定目录，运行命令等。
-写好文件以后，保存为fabfile.py，运行fab deploy即可部署。deploy对应着deploy()函数。
-NOTE：不在远程服务器上使用ssh的git仓库，是因为担心服务器被hack连累我的git repo。
-参考资料 廖雪峰 15days python3-fabric </description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Fabric是一个可以在远程机器上运行命令的库&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Fabric官方目前只支持Python2版本，但是有勤劳的人开发出了适配Python3的版本。具体可以查看这个&lt;a href=&#34;https://github.com/mathiasertl/fabric/&#34;&gt;fork&lt;/a&gt;。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1201,14 +1199,7 @@ fish中的export 使用set -x来替代。例如set -x HOME /home/svtter，即exp
       <pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate>
       
       <guid>https://svtter.github.io/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/</guid>
-      <description>在国内加载Dockerhub上的镜像速度会比较慢，对此我们可以通过设置mirror镜像的方式来加速images的下载。
-此外，如果是ipv6的网络，在一些mirror可以直接走ipv6通路，速度非常客观。这里以USTC的mirror为例。
-我这里的环境是Ubuntu 14.04，对于不同的Linux环境，修改的方式都差不多；修改文件/etc/docker/daemon.json，如果没有这个文件，创建一个，注意，此处可能需要root权限。修改完成后，运行命令sudo service docker restart重启docker服务。
-配置好以后，选择2.1.0版本的spark进行docker下载。
-docker pull p7hb/docker-spark:2.1.0
-或者直接运行
-docker run -it -p 4040:4040 -p 8080:8080 -p 8081:8081 -h spark --name=spark p7hb/docker-spark:2.1.0
-参考 https://lug.ustc.edu.cn/wiki/mirrors/help/docker https://github.com/P7h/docker-spark </description>
+      <description>&lt;p&gt;在国内加载Dockerhub上的镜像速度会比较慢，对此我们可以通过设置mirror镜像的方式来加速images的下载。&lt;/p&gt;</description>
     </item>
     
     <item>
