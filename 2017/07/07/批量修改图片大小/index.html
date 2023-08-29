@@ -84,7 +84,7 @@
         <div class="post-meta">
             <span>|</span>
             
-            <span class="meta-category"><a href='/categories/%E9%BB%98%E8%AE%A4'>默认</a></span>
+            <span class="meta-category"><a href='/categories/%E7%BC%96%E7%A8%8B'>编程</a></span>
             
         </div>
         
@@ -94,7 +94,40 @@
             <p>这两天做数据采集的时候，发现直接获取的数据文件太大了，保存起来占用内存太多，</p>
 <p>手机端又不需要这么大的内存。</p>
 <p>于是在网上简单搜搜，经过修改制作了一个简单的脚本。</p>
-<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># vim:fenc=utf-8</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Copyright © 2017 xiuhao &lt;xiuhao@xiuhaodeMacBook-Pro.local&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> glob
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> PIL <span style="color:#f92672">import</span> Image
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os.path
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 测试代码</span>
+</span></span><span style="display:flex;"><span>rootdir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;./canteen&#39;</span>
+</span></span><span style="display:flex;"><span>saveDir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;./canteen-new&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">convertjpg</span>(jpgfile, savedir, width<span style="color:#f92672">=</span><span style="color:#ae81ff">5000</span>, height<span style="color:#f92672">=</span><span style="color:#ae81ff">4000</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;&#39;&#39;修改图片文件大小jpgfile：图片文件；savedir：修改后要保存的路径&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    img <span style="color:#f92672">=</span> Image<span style="color:#f92672">.</span>open(jpgfile)
+</span></span><span style="display:flex;"><span>    new_img <span style="color:#f92672">=</span> img<span style="color:#f92672">.</span>resize((width, height), Image<span style="color:#f92672">.</span>BILINEAR)
+</span></span><span style="display:flex;"><span>    new_img<span style="color:#f92672">.</span>save(os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(savedir, os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>basename(jpgfile)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">modifyjpgSize</span>(file, saveDir):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;&#39;&#39;查找给定路径下图片文件，并修改其大小&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> jpgfile <span style="color:#f92672">in</span> glob<span style="color:#f92672">.</span>glob(file):
+</span></span><span style="display:flex;"><span>        convertjpg(jpgfile, saveDir)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> parent, dirnames, filenames <span style="color:#f92672">in</span> os<span style="color:#f92672">.</span>walk(rootdir):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> filename <span style="color:#f92672">in</span> filenames:
+</span></span><span style="display:flex;"><span>            fullname <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(parent, filename)
+</span></span><span style="display:flex;"><span>            modifyjpgSize(fullname, saveDir)
+</span></span></code></pre></div>
         </div>
 
         
@@ -105,7 +138,13 @@
 
         <div class="post-meta meta-tags">
             
-            没有标签
+            <ul class="clearfix">
+                
+                <li><a href='/tags/python'>Python</a></li>
+                
+                <li><a href='/tags/image'>Image</a></li>
+                
+            </ul>
             
         </div>
     </article>
@@ -252,7 +291,7 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/acm/icpc/">ACM/ICPC (41)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/devops/">DevOps (16)</a></li>
+    <li><a href="https://svtter.github.io/categories/devops/">DevOps (17)</a></li>
     
     <li><a href="https://svtter.github.io/categories/life/">Life (11)</a></li>
     
@@ -260,7 +299,7 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/math/">Math (2)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/programming/">programming (22)</a></li>
+    <li><a href="https://svtter.github.io/categories/programming/">programming (23)</a></li>
     
     <li><a href="https://svtter.github.io/categories/python-web-%E5%BC%80%E5%8F%91/">Python Web 开发 (4)</a></li>
     
@@ -296,9 +335,11 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/%E7%94%9F%E6%B4%BB/">生活 (9)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/%E7%BC%96%E7%A8%8B/">编程 (19)</a></li>
+    <li><a href="https://svtter.github.io/categories/%E7%BC%96%E7%A8%8B/">编程 (21)</a></li>
     
     <li><a href="https://svtter.github.io/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BF%BB%E8%AF%91/">翻译 (3)</a></li>
     
     <li><a href="https://svtter.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学 (1)</a></li>
     
@@ -308,7 +349,7 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/%E9%9A%8F%E7%AC%94/">随笔 (5)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/%E9%BB%98%E8%AE%A4/">默认 (58)</a></li>
+    <li><a href="https://svtter.github.io/categories/%E9%BB%98%E8%AE%A4/">默认 (51)</a></li>
     
 </ul>
     </section>
@@ -375,13 +416,15 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/django/">Django</a>
     
-    <a href="https://svtter.github.io/tags/docker/">docker</a>
+    <a href="https://svtter.github.io/tags/docker/">Docker</a>
     
     <a href="https://svtter.github.io/tags/editor/">editor</a>
     
     <a href="https://svtter.github.io/tags/elk/">ELK</a>
     
     <a href="https://svtter.github.io/tags/emotion/">emotion</a>
+    
+    <a href="https://svtter.github.io/tags/engineering/">Engineering</a>
     
     <a href="https://svtter.github.io/tags/fabric/">Fabric</a>
     
@@ -409,6 +452,8 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/im/">IM</a>
     
+    <a href="https://svtter.github.io/tags/image/">Image</a>
+    
     <a href="https://svtter.github.io/tags/java/">Java</a>
     
     <a href="https://svtter.github.io/tags/javascript/">Javascript</a>
@@ -435,9 +480,15 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/mellow/">mellow</a>
     
+    <a href="https://svtter.github.io/tags/meteor/">Meteor</a>
+    
     <a href="https://svtter.github.io/tags/migration/">Migration</a>
     
     <a href="https://svtter.github.io/tags/module/">module</a>
+    
+    <a href="https://svtter.github.io/tags/mongodb/">MongoDB</a>
+    
+    <a href="https://svtter.github.io/tags/mysql/">MySQL</a>
     
     <a href="https://svtter.github.io/tags/network/">network</a>
     
@@ -503,7 +554,11 @@ if (!doNotTrack) {
     
     <a href="https://svtter.github.io/tags/wiki/">wiki</a>
     
+    <a href="https://svtter.github.io/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/">小程序</a>
+    
     <a href="https://svtter.github.io/tags/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">并行计算</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%BE%AE%E4%BF%A1/">微信</a>
     
     <a href="https://svtter.github.io/tags/%E6%83%B3%E6%B3%95/">想法</a>
     
