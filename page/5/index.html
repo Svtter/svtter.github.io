@@ -72,6 +72,56 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://svtter.github.io/2019/01/08/django-tricks/" title="Django tricks">Django tricks</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月8日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80'>动态语言</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            关于 session django.contrib.sessions.middleware | Django documentation | Django
+session 是使用 cookie 来进行判断的，通过 session_cookie_name 来提取，然后通过 SessionStore() 来保存。
+因此，Django 也是通过 sessionid 来区分用户；（或者其他什么名称）。
+使用 cache 作为全局变量 cache.set(‘foo’, ‘bar’) # another function cache.get(‘foo’) # get ‘bar’
+使用 cache , django-redis 是一个好方法。可以在使用 cache.lock变量，在应用层面加锁，来完成异步操作，还可以支持分布式应用，十分方便。……
+        </div>
+        <p class="readmore"><a href="https://svtter.github.io/2019/01/08/django-tricks/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://svtter.github.io/2019/01/07/my-keras-tricks/" title="My Keras tricks">My Keras tricks</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0'>机器学习</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            <p>记录了一些使用 keras 的技巧。</p>……
+        </div>
+        <p class="readmore"><a href="https://svtter.github.io/2019/01/07/my-keras-tricks/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://svtter.github.io/2019/01/07/ubuntu-%E5%A4%9A%E6%98%BE%E7%A4%BA%E5%99%A8%E6%96%B9%E6%A1%88/" title="Ubuntu 多显示器方案">Ubuntu 多显示器方案</a>
             </h1>
         </header>
@@ -288,61 +338,6 @@
         <p class="readmore"><a href="https://svtter.github.io/2018/11/23/beam-search-%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%AD%96%E7%95%A5/">阅读全文</a></p>
     </article>
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.github.io/2018/11/22/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A/" title="对于 CTC 的一个直观理解与解释">对于 CTC 的一个直观理解与解释</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2018年11月22日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0'>机器学习</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            通过 连接主义时间分类 loss 以及编码操作
-如果想用使用计算机识别文字，神经网络很好用。使用一些列 CNN 从序列中提取特征，使用 RNN 来传播需略的信息。它会输出字符得分，给每个序列元素，通过一个简单的矩阵表示。现在，有两个事情我们想要对矩阵进行处理。
-训练：计算损失值来训练神经网络 推理：解码矩阵来获得图片中的字符 两个任务可以同时被 CTC 操作完成。对于手写数字系统的描述，可以参见图像 1.
-我们更进一步看看 CTC 操作，并且讨论一下它如完成的，以及它背后的公式是如此巧妙。最后，我将会指点你来找到 Python 代码以及不复杂的公式，如果你感兴趣的话。
-为什么我们使用 CTC 当然我们可以创建一个数据集，这个数据集有文本行，然后指出每列属于哪一个字符，就像图 2 中展示的那样。然后，我们可以训练一个神经网络来输出每一列的得分。而然，对于这个简单的解法，这里有两个问题。
-这个十分的耗时（以及无聊）来在字符层面上标注数据 我们仅仅能够得到字符的得分，因此还需要一些操作来获取最终的文本。一个简单地字符可以跨越多个位置，比如，我们得到 “ttooo”，是因为 “o” 是一个比较宽的字符。我们已经删除了多余的 “t” and “o”，但是，如果要识别的字符是 “too”，我们应该怎么办？如果删除了多余的 “o”，将会给我们错误的答案。我们应该如何处理呢？ CTC 解决了几个问题
-我们只需要告诉 CTC loss function，文本在图像中出现了，因此我们忽略位置和宽度文中在图像中。 不需要更多的文本识别处理 CTC 如何工作的 就像是我们已经讨论的，我们不希望在图像的每一列标注数据（这曾经被我们成为时间步）。神经网络的训练将会被 CTC 损失函数所指引。我们只需要把数据矩阵给 CTC 函数，以及对应的真实值即可。但是它是怎么知道每一个字符出现的呢？他不知道。相对而言，它尝试了图片中所有的真实文本，以及计算了所有的加和。通过这个方式， This way, the score of a GT text is high if the sum over the alignment-scores has a high value.……
-        </div>
-        <p class="readmore"><a href="https://svtter.github.io/2018/11/22/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A/">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.github.io/2018/11/20/%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%8A%A8%E5%AD%A6%E4%B9%A0%E5%8A%A0%E9%80%9F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" title="使用主动学习加速机器学习">使用主动学习加速机器学习</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2018年11月20日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0'>机器学习</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            <!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><a href="https://becominghuman.ai/accelerate-machine-learning-with-active-learning-96cea4b72fdb">https://becominghuman.ai/accelerate-machine-learning-with-active-learning-96cea4b72fdb</a><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p>让我们讨论一下主动学习。我相信这个方法可以极大的增速，以及减少许多机器学习工程的花费。这篇文章我将从两个部分说明这个问题。在第一部分，我给出了一个极高的层级的主动学习的说明，以及如何把它利用到机器学习工程中。在第二部分，深入到一个主动学习 demo 中。</p>……
-        </div>
-        <p class="readmore"><a href="https://svtter.github.io/2018/11/20/%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%8A%A8%E5%AD%A6%E4%B9%A0%E5%8A%A0%E9%80%9F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">阅读全文</a></p>
-    </article>
-    
     
 
 
@@ -497,11 +492,19 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://svtter.github.io/post/2023-09-13-2023-09-first-week/" title="2023 09 13 2023 09 First Week">2023 09 13 2023 09 First Week</a>
+    </li>
+    
+    <li>
         <a href="https://svtter.github.io/post/2023-09-05-logseq-plugin/" title="Logseq Plugin">Logseq Plugin</a>
     </li>
     
     <li>
         <a href="https://svtter.github.io/post/2023-09-04-%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%88%A4%E5%88%AB%E6%A8%A1%E5%9E%8B/" title="生成模型和判别模型">生成模型和判别模型</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2023-09-04-2023-08-last-week/" title="2023 08 Last Week">2023 08 Last Week</a>
     </li>
     
     <li>
@@ -526,14 +529,6 @@
     
     <li>
         <a href="https://svtter.github.io/post/2022-11-17-use-mirror/" title="Use Mirror">Use Mirror</a>
-    </li>
-    
-    <li>
-        <a href="https://svtter.github.io/post/2022-10-07-new-way-of-file-management/" title="一种新的文件管理方法">一种新的文件管理方法</a>
-    </li>
-    
-    <li>
-        <a href="https://svtter.github.io/post/2022-09-28-good-gevent/" title="Good Gevent">Good Gevent</a>
     </li>
     
 </ul>
@@ -562,6 +557,8 @@
     <li><a href="https://svtter.github.io/categories/ros/">ROS (6)</a></li>
     
     <li><a href="https://svtter.github.io/categories/software/">Software (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/summary/">summary (2)</a></li>
     
     <li><a href="https://svtter.github.io/categories/tools/">Tools (5)</a></li>
     
@@ -861,6 +858,8 @@
     <a href="https://svtter.github.io/tags/vuejs/">vuejs</a>
     
     <a href="https://svtter.github.io/tags/webrtc/">webrtc</a>
+    
+    <a href="https://svtter.github.io/tags/weekly/">weekly</a>
     
     <a href="https://svtter.github.io/tags/why/">Why</a>
     
