@@ -72,6 +72,36 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://svtter.github.io/post/2018-10-17-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%AF%86%E7%A0%81%E5%AF%B9%E4%BA%86%E5%B0%B1%E6%98%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8A/" title="为什么我的密码录入正确，但就是登录不上？">为什么我的密码录入正确，但就是登录不上？</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年10月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/devops'>DevOps</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            今天又偶遇了之前用阿里云出现的问题：
+之前一直没有排查到错误，今天终于在本地机器的加持下得以解决。这是什么问题呢？IP地址冲突。
+的确是IP地址冲突。首先先使用校园网client ssh b-server 服务器，失败了。使用同一个物理主机的a-server与b-server进行互联，成功了。校园网client能够连接a-server。因此，观察 a-server 和 b-server 的区别，发现 a-server 子网掩码是255.255.255.128，而 b-server 的子网掩码是 255.255.255.0。
+此外，还有：
+查看系统开放的端口 netstat -nltp 测试本地是否能够访问，排查本地问题 ssh user@locahost
+子网掩码不同，为什么就连接不上呢？（原理）
+最终，解决了这个问题。通过重启 networking 以及 重新通过 dhcp 获取 ip 地址。
+使用 systemctl restart networking.service 重启 networking 服务。 使用 ifconfig eth0 down; ifconfig eth0 up 来开关具体的网卡。 使用 # dhclient -r 释放当前ip 使用 # dhclient 获取新的ip 大功告成，算是阶段性的解决了这个问题。DDNS迫在眉睫啊！……
+        </div>
+        <p class="readmore"><a href="https://svtter.github.io/post/2018-10-17-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%AF%86%E7%A0%81%E5%AF%B9%E4%BA%86%E5%B0%B1%E6%98%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8A/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://svtter.github.io/2018/10/12/%E5%AE%89%E8%A3%85-gnu-linux/" title="安装 GNU/Linux">安装 GNU/Linux</a>
             </h1>
         </header>
@@ -328,30 +358,6 @@ Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.……
         <p class="readmore"><a href="https://svtter.github.io/2018/06/21/#dockerswarm%E5%AD%A6%E4%B9%A0/">阅读全文</a></p>
     </article>
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.github.io/2018/06/19/python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/" title="# Python文件操作"># Python文件操作</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2018年6月19日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80'>动态语言</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            <p>Python的文件操作很多，为了方便以后查询使用，在此做下记录。</p>
-<p>注：这些函数都可以在官网查询，这里做个cache。</p>……
-        </div>
-        <p class="readmore"><a href="https://svtter.github.io/2018/06/19/python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/">阅读全文</a></p>
-    </article>
-    
     
 
 
@@ -506,6 +512,10 @@ Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.……
 <ul class="widget-list">
     
     <li>
+        <a href="https://svtter.github.io/post/2023-11-13-technical-report/" title="Technical Report - 202311-2th">Technical Report - 202311-2th</a>
+    </li>
+    
+    <li>
         <a href="https://svtter.github.io/post/2023-11-07-coding-with-cloud-server/" title="Coding With Cloud Server">Coding With Cloud Server</a>
     </li>
     
@@ -541,10 +551,6 @@ Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.……
         <a href="https://svtter.github.io/post/2023-07-31-thanks-my-friend/" title="Thanks My Friend">Thanks My Friend</a>
     </li>
     
-    <li>
-        <a href="https://svtter.github.io/post/2023-01-08-2022%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" title="2022年终总结">2022年终总结</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -567,6 +573,8 @@ Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.……
     <li><a href="https://svtter.github.io/categories/programming/">programming (27)</a></li>
     
     <li><a href="https://svtter.github.io/categories/python-web-%E5%BC%80%E5%8F%91/">Python Web 开发 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/report/">report (1)</a></li>
     
     <li><a href="https://svtter.github.io/categories/ros/">ROS (6)</a></li>
     
@@ -825,6 +833,8 @@ Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.……
     
     <a href="https://svtter.github.io/tags/raspberry/">Raspberry</a>
     
+    <a href="https://svtter.github.io/tags/report/">report</a>
+    
     <a href="https://svtter.github.io/tags/ruby/">Ruby</a>
     
     <a href="https://svtter.github.io/tags/server/">server</a>
@@ -850,6 +860,8 @@ Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.……
     <a href="https://svtter.github.io/tags/tdd/">TDD</a>
     
     <a href="https://svtter.github.io/tags/tech/">tech</a>
+    
+    <a href="https://svtter.github.io/tags/technical-report/">technical report</a>
     
     <a href="https://svtter.github.io/tags/think/">think</a>
     
