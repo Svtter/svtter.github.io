@@ -73,6 +73,40 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://svtter.github.io/2018/01/28/ros%E5%BC%80%E5%8F%91tips/" title="ROS 开发tips" target="_blank">ROS 开发tips</a>
+            </h1>
+        </header>
+        
+  <time datetime="2018-01-27T17:00:00Z" class="post-meta meta-date dt-published">
+    2018-01-28
+  </time>
+
+
+<div class="post-meta meta-category">
+  <span>&nbsp;|</span>
+  
+    <a href='/categories/ros' target="_blank">ROS</a>
+  
+</div>
+
+
+        <div class="post-content">
+            这是我进行ros开发的几个比较有用但是ros-wiki中没有明确点出的。
+使用catkin的清除命令 如果使用rosbuild进行此操作，可以使用：
+如果使用catkin
+执行以上命令后，可以像往常一下构建数据包
+重新构建单独的catkin包 编译单独的包
+ROS image转换为cv::Mat格式，提供opencv使用 http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
+参考 ros入门实践 ……
+        </div>
+        <p class="readmore"><a href="https://svtter.github.io/2018/01/28/ros%E5%BC%80%E5%8F%91tips/" target="_blank">Continue reading</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://svtter.github.io/2018/01/28/ros%E6%B6%88%E6%81%AF%E5%BC%80%E5%8F%91/" title="ROS消息开发" target="_blank">ROS消息开发</a>
             </h1>
         </header>
@@ -356,46 +390,6 @@ rime是佛振，我国开发者进行开发的，充满了Hack精神的输入法
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://svtter.github.io/2018/01/11/%E8%AE%B0%E5%8F%88%E4%B8%80%E6%AC%A1%E6%90%9E%E5%B4%A9%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="记又一次搞崩服务器" target="_blank">记又一次搞崩服务器</a>
-            </h1>
-        </header>
-        
-  <time datetime="2018-01-10T17:00:00Z" class="post-meta meta-date dt-published">
-    2018-01-11
-  </time>
-
-
-<div class="post-meta meta-category">
-  <span>&nbsp;|</span>
-  
-    <a href='/categories/devops' target="_blank">Devops</a>
-  
-</div>
-
-
-        <div class="post-content">
-            记又一次搞崩服务器。使用“又”，是因为我搞崩不是一次两次了。我希望这是最后一次。
-背景 使用Android连接服务器的时候，发现要比自己的mac速度快很多，于是十分好奇，打算研究一下是什么因素导致的。
-流程 检查了app以后，判断应该是开启了fast TCP导致的，于是考虑在mac上也开启对应的fast TCP，但是效果并不是十分显著；于是再次排查，发现服务器端并没有开启fast TCP。
-这就很奇怪了，为什么速度这么快呢？是因为对“同源”的加密方法有优化吗？
-于是，自然而然的考虑是不是可以通过开启这个TCP加速来加速服务器。这就开启了噩梦的开端。因为需要3.7以上的Linux Kernel才支持这个特性，所以需要先升级内核。我的内核难道不应该是最新的吗？带着这个以为输入了uname sr，显示内核版本2.6*。惊奇，我的VPS内核这么旧吗？于是自然而然的想到要升级一下内核，并且理所应当的把升级内核的脚本apt-get install linux-kernel-lts-wily运行了一下。于是噩梦开始了。
-OpenVZ本身是不支持升级内核的，所有的VM都使用同一个内核版本，因此这个命令导致了很神奇的BUG，安装内核装不上，卸载内核卸载不了。
-这个时候我面临两个选择，一个是重新安装系统，一个是解决当前的这个问题。
-经过简单地判断，我认为如果解决当前问题，可能花费我更多的时间，直接重新安装系统就可以了。重新配置一些相关措施也并不难。
-失算的事情是，尽管我依稀记得一部分关于配置的内容，但是要完全复现我所配置的相关应用已经很难了，因为我没有做记录。于是来回又踩了许多坑，之前有些坑我有很明确的踩进去的记忆。
-这就非常痛苦了，每次操作都在嘲讽自己的愚蠢与过度自信。最后，我只进行了简单的配置，只找回了部分的优化——记忆里我所做的优化就只有这些了，但是速度似乎下降了，这就是最终的结果。
-这也让我想起《人月神话》里面描写的一句，具体我已经记不清了，意思大概是这样的：有些步骤你是必须要做的，只不过当前你没有做而已，以后是要补上的。我读到这个地方的时候，联想这个规律为“技术债”。
-好了，以上就是我还“技术债”的全部过程了。
-教训 研究问题虽然好，但是要注意花费的时间 在生产服务器上，不要做没有经过自查的操作。 不要被强迫症控制了，能用则用。 记录自己的行为日志，如果可以的话，写一个安装脚本 唉，真是一次不合格的运维行动。……
-        </div>
-        <p class="readmore"><a href="https://svtter.github.io/2018/01/11/%E8%AE%B0%E5%8F%88%E4%B8%80%E6%AC%A1%E6%90%9E%E5%B4%A9%E6%9C%8D%E5%8A%A1%E5%99%A8/" target="_blank">Continue reading</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -547,6 +541,10 @@ if (!doNotTrack) {
 <ul class="widget-list">
     
     <li>
+        <a href="https://svtter.github.io/post/2024-04-12-2024-q1-summary/" title="2024-Q1 Summary" target="_blank">2024-Q1 Summary</a>
+    </li>
+    
+    <li>
         <a href="https://svtter.github.io/post/2024-03-12-react-for-old-django/" title="给老 Django 工程师的初学者 react 教程" target="_blank">给老 Django 工程师的初学者 react 教程</a>
     </li>
     
@@ -582,10 +580,6 @@ if (!doNotTrack) {
         <a href="https://svtter.github.io/post/2023-09-13-2023-09-first-week/" title="2023-09 First Week" target="_blank">2023-09 First Week</a>
     </li>
     
-    <li>
-        <a href="https://svtter.github.io/post/2023-09-05-logseq-plugin/" title="Logseq Plugin" target="_blank">Logseq Plugin</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -615,7 +609,7 @@ if (!doNotTrack) {
     
     <li><a href="https://svtter.github.io/categories/software/">Software (2)</a></li>
     
-    <li><a href="https://svtter.github.io/categories/summary/">summary (3)</a></li>
+    <li><a href="https://svtter.github.io/categories/summary/">summary (4)</a></li>
     
     <li><a href="https://svtter.github.io/categories/tools/">Tools (6)</a></li>
     
@@ -871,6 +865,8 @@ if (!doNotTrack) {
     <a href="https://svtter.github.io/tags/react/">React</a>
     
     <a href="https://svtter.github.io/tags/report/">report</a>
+    
+    <a href="https://svtter.github.io/tags/research/">research</a>
     
     <a href="https://svtter.github.io/tags/ruby/">Ruby</a>
     
