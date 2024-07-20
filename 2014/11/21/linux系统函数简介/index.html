@@ -1,0 +1,1477 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    <title>Linux系统函数简介 | Svtter&#39;s Blog</title>
+    <meta property="og:title" content="Linux系统函数简介 - Svtter&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2014-11-21T01:00:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2014-11-21T01:00:00&#43;08:00'>
+        
+    <meta name="Keywords" content="python,svtter,django,软件架构,公众号,小程序,博客,项目管理,">
+    <meta name="description" content="Linux系统函数简介">
+        <meta name="author" content="svtter">
+        
+    <meta property="og:url" content="https://svtter.github.io/2014/11/21/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://svtter.github.io/">
+                        Svtter&#39;s Blog
+                    </a>
+                
+                <p class="description">Love your life.</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://svtter.github.io/">Home</a>
+                    
+                    <a  href="https://svtter.github.io/categories/" title="Categories">Categories</a>
+                    
+                    <a  href="https://svtter.github.io/daily-ml/" title="Daily ML">Daily ML</a>
+                    
+                    <a  href="https://svtter.github.io/tags/" title="Tags">Tags</a>
+                    
+                    <a  href="https://svtter.github.io/about/" title="About">About</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">Linux系统函数简介</h1>
+        </header>
+        
+  <time datetime="2014-11-20T17:00:00Z" class="post-meta meta-date dt-published">
+    2014-11-21
+  </time>
+
+
+<div class="post-meta meta-category">
+  <span>&nbsp;|</span>
+  
+    <a href='/categories/linux' target="_blank">Linux</a>
+  
+</div>
+
+
+        
+        
+        <div class="post-content">
+            <p>本文出自&lt;svtter.github.io&gt;</p>
+<p>系统调用函数说明、参数值及定义</p>
+<p>本文摘自老师的资料= =</p>
+<p><strong>使用这些函数的时候记得将头文件unistd.h包含到程序中</strong></p>
+<h2 id="1fork">1、fork()</h2>
+<blockquote>
+<p>创建一个新进程</p>
+</blockquote>
+<blockquote>
+<p>int fork()</p>
+</blockquote>
+<blockquote>
+<p>其中返回int取值意义如下:</p>
+</blockquote>
+<blockquote>
+<p>0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败</p>
+</blockquote>
+<h2 id="2lockffilesfunctionsize">2、lockf(files,function,size):</h2>
+<blockquote>
+<p>用作锁定文件的某些段或者整个文件,本函数适用的头文件为:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;unistd.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int lockf(files,function,size)</p>
+</blockquote>
+<blockquote>
+<p>int files,function;</p>
+</blockquote>
+<blockquote>
+<p>long size;</p>
+</blockquote>
+<blockquote>
+<p>其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。</p>
+</blockquote>
+<h2 id="3msggetkeyflag">3、msgget(key,flag):</h2>
+<blockquote>
+<p>获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。</p>
+</blockquote>
+<blockquote>
+<p>该函数使用偷文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgget(key,flag)</p>
+</blockquote>
+<blockquote>
+<p><code>key_tkey;</code></p>
+</blockquote>
+<blockquote>
+<p><code>int flag;</code></p>
+</blockquote>
+<blockquote>
+<p>语法格式:msgqid=msgget(key,flag)</p>
+</blockquote>
+<blockquote>
+<p>其中:msgid是该系统调用返回的描述符,失败则返回-1;flag 本身由操作允许权和控制命令值相或得到。</p>
+</blockquote>
+<blockquote>
+<p>如:</p>
+</blockquote>
+<blockquote>
+<p><code>IP_CREAT|0400</code> 是否该队列应被创建;</p>
+</blockquote>
+<blockquote>
+<p><code>IP_EXCL |0400</code> 是否该队列的创建应是互斥的;等。</p>
+</blockquote>
+<h2 id="msgsndidmsgpsizeflag">msgsnd(id,msgp,size,flag):</h2>
+<blockquote>
+<p>发送一消息。</p>
+</blockquote>
+<blockquote>
+<p>该函数是用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgnd(id,msgp,size,flag)</p>
+</blockquote>
+<blockquote>
+<p>int id,size,flag;</p>
+</blockquote>
+<blockquote>
+<p>struct msgbuf * msgp;</p>
+</blockquote>
+<blockquote>
+<p>其中:id是返回消息队列的描述符;msgp是指向用户存储区的一个构造体指针,size指示由msgp</p>
+</blockquote>
+<blockquote>
+<p>指向的数据结构中字符数组的长度;即消息的长度。这个数组的最大值由MSG-MAX系统可调用参数来确</p>
+</blockquote>
+<blockquote>
+<p>定。flag规定当核心用尽内部缓冲空间时应执行的动作;若在标志flag中末设置IPC_NOWAIT位,则当</p>
+</blockquote>
+<blockquote>
+<p>41该消息队列中字节数超过一最大值时,或系统范围的消息数超过某一最大值时,调用msgsnd进程睡眠。</p>
+</blockquote>
+<blockquote>
+<p>若是设置IPC_NOWAIT,则在此情况下,msgsnd立即返回。</p>
+</blockquote>
+<h2 id="msgrcvidmsgpsizetypeflag">msgrcv(id,msgp,size,type,flag):</h2>
+<blockquote>
+<p>接受一消息。</p>
+</blockquote>
+<blockquote>
+<p>该函数调用使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgrcv(id,msgp,size,type,flag)</p>
+</blockquote>
+<blockquote>
+<p>int id,size,type,flag;</p>
+</blockquote>
+<blockquote>
+<p>struct msgbuf * msgq;</p>
+</blockquote>
+<blockquote>
+<p>struct sgbuf{long mtpe;chat mtext[];};</p>
+</blockquote>
+<blockquote>
+<p>语法格式:</p>
+</blockquote>
+<blockquote>
+<p>count=msgrcv(id,msgp,size,type,flag)</p>
+</blockquote>
+<blockquote>
+<p>其中:id是用来存放欲接收消息的拥护数据结构的地址;size是msgp中数据数组的大小; type是</p>
+</blockquote>
+<blockquote>
+<p>用户要读的消息类型:</p>
+</blockquote>
+<blockquote>
+<p>type为0:接收该队列的第一个消息;</p>
+</blockquote>
+<blockquote>
+<p>type为正:接收类型type的第一个消息;</p>
+</blockquote>
+<blockquote>
+<p>type为负:接收小于或等于type绝对值的最低类型的第一个消息。</p>
+</blockquote>
+<blockquote>
+<p>flag规定倘若该队列无消息,核心应当做什么事,如果此时设置了IPC_NOWAIT标志,则立即返回,</p>
+</blockquote>
+<blockquote>
+<p>若在flag中设置了MSG_NOERROR,且所接收的消息大小大于size,核心截断所接受的消息。</p>
+</blockquote>
+<blockquote>
+<p>count是返回消息正文的字节数。</p>
+</blockquote>
+<h2 id="msgctlidcmdbuf">msgctl(id,cmd,buf):</h2>
+<blockquote>
+<p>查询一个消息描述符的状态,设置它的状态及删除一个消息描述符。</p>
+</blockquote>
+<blockquote>
+<p>调用该函数使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgctl(id,cmd,buf)</p>
+</blockquote>
+<blockquote>
+<p>int id,cmd;</p>
+</blockquote>
+<blockquote>
+<p>struct msgbuf * msgq;</p>
+</blockquote>
+<blockquote>
+<p>struct msqid_ds * buf;</p>
+</blockquote>
+<blockquote>
+<p>其中:函数调用成功时返回0,调用不成功时返回-1。id用来识别该消息的描述符;cmd规定命令的</p>
+</blockquote>
+<blockquote>
+<p>类型。</p>
+</blockquote>
+<blockquote>
+<p>IPC_START将与id相关联的消息队列首标读入buf。</p>
+</blockquote>
+<blockquote>
+<p>IPC_SET为这个消息序列设置有效的用户和小组标识及操作允许权和字节的数量。</p>
+</blockquote>
+<blockquote>
+<p>IPC_RMID删除id的消息队列。</p>
+</blockquote>
+<blockquote>
+<p>buf是含有控制参数或查询结果的用户数据结构的地址。</p>
+</blockquote>
+<blockquote>
+<p>附:msgid_ds结构定义如下:</p>
+</blockquote>
+<blockquote>
+<p>struct msgid_ds</p>
+</blockquote>
+<blockquote>
+<p>{struct ipc_perm msg_perm; /<em>许可权结构</em>/</p>
+</blockquote>
+<blockquote>
+<p>shot padl[7];</p>
+</blockquote>
+<blockquote>
+<p>/<em>由系统使用</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort onsg_qnum;</p>
+</blockquote>
+<blockquote>
+<p>/<em>队列上消息数</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort msg_qbytes;</p>
+</blockquote>
+<blockquote>
+<p>/<em>队列上最大字节数</em>/</p>
+</blockquote>
+<blockquote>
+<p>42ushort msg_lspid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后发送消息的PID</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort msg_lrpid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后接收消息的PID</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t msg__stime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后发送消息的时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t msg_rtime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后接收消息的时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>me_t msg_ctime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后更改时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>};</p>
+</blockquote>
+<blockquote>
+<p>struct ipc_perm</p>
+</blockquote>
+<blockquote>
+<p>{ushort uid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>当前用户id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort gid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>当前进程组id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort cuid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>创建用户id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort cgid</p>
+</blockquote>
+<blockquote>
+<p>/<em>创建进程组id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort mode;</p>
+</blockquote>
+<blockquote>
+<p>/<em>存取许可权</em>/</p>
+</blockquote>
+<blockquote>
+<p>{shot patl;long pad2} /<em>由系统使用</em>/</p>
+</blockquote>
+<blockquote>
+<p>};</p>
+</blockquote>
+<h2 id="shmgetkeysizeflag">shmget(key,size,flag):</h2>
+<blockquote>
+<p>获得一个共享存储区。</p>
+</blockquote>
+<blockquote>
+<p>该函数使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/shm.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>语法格式:</p>
+</blockquote>
+<blockquote>
+<p>shmid=shmaget(key,size,flag)</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int shmaget(key,size,flag)</p>
+</blockquote>
+<blockquote>
+<p>key_t key;</p>
+</blockquote>
+<blockquote>
+<p>int size,flag;</p>
+</blockquote>
+<blockquote>
+<p>其中:size是存储区的字节数,key和flag与系统调用msgget中的参数含义相同。</p>
+</blockquote>
+<blockquote>
+<p>附:</p>
+</blockquote>
+<blockquote>
+<p>操作允许权</p>
+</blockquote>
+<blockquote>
+<p>八进制数</p>
+</blockquote>
+<blockquote>
+<p>用户可读 00400</p>
+</blockquote>
+<blockquote>
+<p>用户可读 00200</p>
+</blockquote>
+<blockquote>
+<p>小组可读 00040</p>
+</blockquote>
+<blockquote>
+<p>小组可读 00020</p>
+</blockquote>
+<blockquote>
+<p>其他可读 00004</p>
+</blockquote>
+<blockquote>
+<p>其他可读 00002</p>
+</blockquote>
+<blockquote>
+<p>控制命令 值</p>
+</blockquote>
+<blockquote>
+<p>IPC_CREAT</p>
+</blockquote>
+<blockquote>
+<p>0001000</p>
+</blockquote>
+<blockquote>
+<p>IPC_EXCL</p>
+</blockquote>
+<blockquote>
+<p>0002000</p>
+</blockquote>
+<blockquote>
+<p>如:shmid=shmget(key,size,(IPC_CREAT|0400));</p>
+</blockquote>
+<blockquote>
+<p>创建一个关键字为key,长度为size的共享存储区。</p>
+</blockquote>
+<h2 id="shmatidaddrflag">shmat(id,addr,flag):</h2>
+<blockquote>
+<p>从逻辑上将一个共享存储区附接到进程的虚拟地址空间上。</p>
+</blockquote>
+<blockquote>
+<p>该函数调用使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>43#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>char * shmat(id,addr,flag)</p>
+</blockquote>
+<blockquote>
+<p>int id,flag;</p>
+</blockquote>
+<blockquote>
+<p>char * addr;</p>
+</blockquote>
+<blockquote>
+<p>语法格式:virtaddr=shmat(id,addr,flag)</p>
+</blockquote>
+<blockquote>
+<p>其中:id是共享存储区的标识符,addr是用户要使用共享存储区附接的虚地址,若addr是0,系统</p>
+</blockquote>
+<blockquote>
+<p>是否对应用户规定的地址做舍入操作。如果flag中设置了shm_rnd即表示操作系统在必要时舍去这个地</p>
+</blockquote>
+<blockquote>
+<p>址。如果设置了shm_rdonly,即表示只允许读操作。viraddr是附接的虚地址。</p>
+</blockquote>
+<h2 id="shmdtaddr">shmdt(addr):</h2>
+<blockquote>
+<p>把一个共享存储区从指定进程的虚地址空间分开。</p>
+</blockquote>
+<blockquote>
+<p>调用该函数使用头文件:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/mhm.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int shmdt(addr)</p>
+</blockquote>
+<blockquote>
+<p>char * addr</p>
+</blockquote>
+<blockquote>
+<p>其中,当调用成功时,返回0值,调用不成功,返回-1,addr是系统调用shmat所返回的地址。</p>
+</blockquote>
+<blockquote>
+<p>10、shmctl(id,cmd,buf):</p>
+</blockquote>
+<blockquote>
+<p>对与共享存储区关联的各种参数进行操作,从而对共享存储区进行控制。</p>
+</blockquote>
+<blockquote>
+<p>调用该函数使用头文件:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/shm.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int shmctl(id,cmd,buf)</p>
+</blockquote>
+<blockquote>
+<p>int id,cmd;</p>
+</blockquote>
+<blockquote>
+<p>struct shmid_ds * buf;</p>
+</blockquote>
+<blockquote>
+<p>其中:调用成功返回0,否则返回-1。id为被共享存储区的标识符。cmd规定操作的类型。规定如下:</p>
+</blockquote>
+<blockquote>
+<p>IPC_STAT:返回包含在指定的shmid相关数据结构中的状态信息,并且把它放置在用户存储区中的_but</p>
+</blockquote>
+<blockquote>
+<p>指针所指的数据结构中。执行此命令的进程必须有读取允许权。</p>
+</blockquote>
+<blockquote>
+<p>IPC_SET:对于指定的shmid,为它设置有效用户和小组标识和操作存取权。</p>
+</blockquote>
+<blockquote>
+<p>IPC_RMID:删除指定的shmid以及与它相关的共享存储区的数据结构。</p>
+</blockquote>
+<blockquote>
+<p>SHM_LOCK:在内存中锁定指定的共享存储区,必须是超级用户才可以进行此项操作。</p>
+</blockquote>
+<blockquote>
+<p>Buf是一个用户级数据结构地址。</p>
+</blockquote>
+<blockquote>
+<p>附:</p>
+</blockquote>
+<blockquote>
+<p>shmid_ds</p>
+</blockquote>
+<blockquote>
+<p>{struct ipc_perm shm_perm;</p>
+</blockquote>
+<blockquote>
+<p>/<em>允许权结构</em>/</p>
+</blockquote>
+<blockquote>
+<p>int shm_segsz;</p>
+</blockquote>
+<blockquote>
+<p>/<em>段大小</em>/</p>
+</blockquote>
+<blockquote>
+<p>int padl;</p>
+</blockquote>
+<blockquote>
+<p>/<em>由系统使用;</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort shm_lpid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后操作的进程id;</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort shm_cpid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>创建者的进程id;</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort shm_nattch;</p>
+</blockquote>
+<blockquote>
+<p>/<em>当前附界数;</em>/</p>
+</blockquote>
+<blockquote>
+<p>44short pad2;</p>
+</blockquote>
+<blockquote>
+<p>/<em>由系统使用;</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t shm_atime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后附接时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t shm_dtime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后段接时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t shm_ctime;</p>
+</blockquote>
+<blockquote>
+<p>/_最后修改时间*/</p>
+</blockquote>
+<blockquote>
+<p>}</p>
+</blockquote>
+<h2 id="signalsigfunction">signal(sig,function):</h2>
+<blockquote>
+<p>允许调用进程控制软中断信号的处理。</p>
+</blockquote>
+<blockquote>
+<p>头文件为:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;signal.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>signal(sig,function);</p>
+</blockquote>
+<blockquote>
+<p>int sig;</p>
+</blockquote>
+<blockquote>
+<p>void(*func)();</p>
+</blockquote>
+<blockquote>
+<p>其中:sig的值是:</p>
+</blockquote>
+<blockquote>
+<p>SIGHVP 挂起</p>
+</blockquote>
+<blockquote>
+<p>SIGINT 键盘按^c键或break键</p>
+</blockquote>
+<blockquote>
+<p>键盘按quit键</p>
+</blockquote>
+<blockquote>
+<p>SIGQUIT</p>
+</blockquote>
+<blockquote>
+<p>SIGILL 非法指令</p>
+</blockquote>
+<blockquote>
+<p>SIGIOT IOT指令</p>
+</blockquote>
+<blockquote>
+<p>SIGEMT EMT指令</p>
+</blockquote>
+<blockquote>
+<p>SIGFPE 浮点运算溢出</p>
+</blockquote>
+<blockquote>
+<p>SIGKILL 要求终止进程</p>
+</blockquote>
+<blockquote>
+<p>SIGBUS 总线错</p>
+</blockquote>
+<blockquote>
+<p>段违例</p>
+</blockquote>
+<blockquote>
+<p>SIGSEGV</p>
+</blockquote>
+<blockquote>
+<p>SIGSYS 系统调用参数错</p>
+</blockquote>
+<blockquote>
+<p>SIGPIPE 向无读者管道上写</p>
+</blockquote>
+<blockquote>
+<p>闹钟</p>
+</blockquote>
+<blockquote>
+<p>SIGALRM</p>
+</blockquote>
+<blockquote>
+<p>软件终结</p>
+</blockquote>
+<blockquote>
+<p>SIGTERM</p>
+</blockquote>
+<blockquote>
+<p>用户定义信号</p>
+</blockquote>
+<blockquote>
+<p>SIGUSRI</p>
+</blockquote>
+<blockquote>
+<p>第二个用户定义信号</p>
+</blockquote>
+<blockquote>
+<p>SIGUSR2</p>
+</blockquote>
+<blockquote>
+<p>SIGCLD 子进程死</p>
+</blockquote>
+<blockquote>
+<p>SIGPWR电源故障</p>
+</blockquote>
+<blockquote>
+<p>function的解释如下:</p>
+</blockquote>
+<blockquote>
+<p>SIG_DEL:缺省操作。对除SIGPWR和SIGCLD外所有信号的缺省操作是进程终结对信号</p>
+</blockquote>
+<blockquote>
+<p>SIGQUIT,SIGILL,SIGTRA,SIGIOT,SIGEMT,SIGFPE,SIGBUS,SIGSEGV和SIGSYS它产生一内存映</p>
+</blockquote>
+<blockquote>
+<p>像文件。</p>
+</blockquote>
+<blockquote>
+<p>SIG_IGN:忽视该信号的出现。</p>
+</blockquote>
+<blockquote>
+<p>Function:在该进程中的一个函数地址,在核心返回用户态时,它以软中断信号的序号作为参数调用</p>
+</blockquote>
+<blockquote>
+<p>该函数,对除了信号SIGILL,SIGTRAP和SIGTWR以外的信号,核心自动地重新设置软中断信号处理程序</p>
+</blockquote>
+<blockquote>
+<p>的值为SIG_DEL,一个进程不能捕获SIGKILL信</p>
+</blockquote>
+
+        </div>
+
+        
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/">Linux-同步互斥</a></li>
+        
+        <li><a href="/2014/11/21/linux-%E7%AE%A1%E9%81%93/">Linux-管道</a></li>
+        
+        <li><a href="/2014/11/21/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/">python的自动补全</a></li>
+        
+        <li><a href="/post/2014-11-19-python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/">Python-使用hexo的python脚本</a></li>
+        
+        <li><a href="/2014/11/16/acm-hdu5104-water/">ACM – hdu5104-water</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            No tags
+            
+        </div>
+    </article>
+    
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2024 <a href="https://svtter.github.io/">Svtter&#39;s Blog By svtter</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-6QDQHY3FGN', { 'anonymize_ip': false });
+}
+</script>
+
+<style type="text/css">
+div.highlight {
+    position: relative;
+    margin: 1em 0px;
+}
+
+.copy-code {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(78, 78, 78, 0.8);
+    border-radius: var(--radius);
+    padding: 0 5px;
+    font: inherit;
+    user-select: none;
+    cursor: pointer;
+    border: 0;
+    --radius: 8px;
+}
+
+div.highlight:hover .copy-code,pre:hover .copy-code {
+    display: block;
+}
+
+</style>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://svtter.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://svtter.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">Latest articles</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-07-20-dive-into-django-and-webpack/" title="Dive Into Django and Webpack" target="_blank">Dive Into Django and Webpack</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-07-06-django-and-webpack/" title="Django and Webpack" target="_blank">Django and Webpack</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-06-15-use-kind-to-play-k8s/" title="Using Kind to Play with K8s" target="_blank">Using Kind to Play with K8s</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-05-26-use-logseq-as-documentation/" title="Use Logseq as Documentation" target="_blank">Use Logseq as Documentation</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-04-12-2024-q1-summary/" title="2024-Q1 Summary" target="_blank">2024-Q1 Summary</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-03-12-react-for-old-django/" title="给老 Django 工程师的初学者 react 教程" target="_blank">给老 Django 工程师的初学者 react 教程</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-04-12-print-trick/" title="Print Trick for Python" target="_blank">Print Trick for Python</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-01-01-2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" title="2023年终总结" target="_blank">2023年终总结</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2023-12-18-how-to-use-logseq/" title="How to Use Logseq" target="_blank">How to Use Logseq</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2023-11-27-techincal-report/" title="Techincal Report - 202311-4th" target="_blank">Techincal Report - 202311-4th</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>Categories</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://svtter.github.io/categories/acm/icpc/">ACM/ICPC (41)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/database/">Database (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/devops/">DevOps (25)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/graphics/">graphics (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/life/">Life (18)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/linux/">Linux (23)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/math/">Math (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/programming/">programming (29)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/python-web/">python web (6)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/report/">report (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/ros/">ROS (6)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/software/">Software (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/summary/">summary (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/tools/">Tools (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/translation/">Translation (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/ubuntu/">Ubuntu (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/vim/">Vim (3)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/web-%E5%BC%80%E5%8F%91/">Web 开发 (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E4%B9%90%E8%B6%A3/">乐趣 (15)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%89%8D%E7%AB%AF/">前端 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/">动态语言 (13)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%91%A8%E6%8A%A5/">周报 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%AD%A6%E4%B9%A0/">学习 (10)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%8A%80%E6%9C%AF%E5%8A%9B/">技术力 (6)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%95%88%E7%8E%87/">效率 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习 (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%9D%82%E8%AE%B0/">杂记 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%B5%81%E5%AA%92%E4%BD%93/">流媒体 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%94%9F%E6%B4%BB/">生活 (9)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%AE%A1%E7%90%86/">管理 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BC%96%E7%A8%8B/">编程 (38)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BF%BB%E8%AF%91/">翻译 (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">软件设计模式 (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E9%98%85%E8%AF%BB/">阅读 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E9%9A%8F%E7%AC%94/">随笔 (8)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E9%BB%98%E8%AE%A4/">默认 (16)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>Tags</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://svtter.github.io/tags/about/">About</a>
+    
+    <a href="https://svtter.github.io/tags/active-learning/">active learning</a>
+    
+    <a href="https://svtter.github.io/tags/agile/">agile</a>
+    
+    <a href="https://svtter.github.io/tags/algorithm/">algorithm</a>
+    
+    <a href="https://svtter.github.io/tags/ant/">ant</a>
+    
+    <a href="https://svtter.github.io/tags/apple/">Apple</a>
+    
+    <a href="https://svtter.github.io/tags/archlinux/">ArchLinux</a>
+    
+    <a href="https://svtter.github.io/tags/arm/">ARM</a>
+    
+    <a href="https://svtter.github.io/tags/beam-search/">Beam Search</a>
+    
+    <a href="https://svtter.github.io/tags/beego/">beego</a>
+    
+    <a href="https://svtter.github.io/tags/big_data/">big_data</a>
+    
+    <a href="https://svtter.github.io/tags/blog/">blog</a>
+    
+    <a href="https://svtter.github.io/tags/book/">book</a>
+    
+    <a href="https://svtter.github.io/tags/c#/">c#</a>
+    
+    <a href="https://svtter.github.io/tags/cdma/">CDMA</a>
+    
+    <a href="https://svtter.github.io/tags/centos/">CentOS</a>
+    
+    <a href="https://svtter.github.io/tags/ci/">CI</a>
+    
+    <a href="https://svtter.github.io/tags/classfier/">classfier</a>
+    
+    <a href="https://svtter.github.io/tags/cloud-computing/">cloud-computing</a>
+    
+    <a href="https://svtter.github.io/tags/computing/">computing</a>
+    
+    <a href="https://svtter.github.io/tags/container/">Container</a>
+    
+    <a href="https://svtter.github.io/tags/cpp/">cpp</a>
+    
+    <a href="https://svtter.github.io/tags/crash/">crash</a>
+    
+    <a href="https://svtter.github.io/tags/csrf/">CSRF</a>
+    
+    <a href="https://svtter.github.io/tags/ctc-loss/">CTC loss</a>
+    
+    <a href="https://svtter.github.io/tags/cuda/">CUDA</a>
+    
+    <a href="https://svtter.github.io/tags/database/">Database</a>
+    
+    <a href="https://svtter.github.io/tags/deep-learning/">Deep Learning</a>
+    
+    <a href="https://svtter.github.io/tags/delay/">delay</a>
+    
+    <a href="https://svtter.github.io/tags/design/">design</a>
+    
+    <a href="https://svtter.github.io/tags/devops/">Devops</a>
+    
+    <a href="https://svtter.github.io/tags/dhcp/">DHCP</a>
+    
+    <a href="https://svtter.github.io/tags/dingtalk/">Dingtalk</a>
+    
+    <a href="https://svtter.github.io/tags/django/">Django</a>
+    
+    <a href="https://svtter.github.io/tags/docker/">Docker</a>
+    
+    <a href="https://svtter.github.io/tags/documentation/">documentation</a>
+    
+    <a href="https://svtter.github.io/tags/dotnet/">dotnet</a>
+    
+    <a href="https://svtter.github.io/tags/editor/">editor</a>
+    
+    <a href="https://svtter.github.io/tags/elk/">ELK</a>
+    
+    <a href="https://svtter.github.io/tags/emacs/">emacs</a>
+    
+    <a href="https://svtter.github.io/tags/emotion/">emotion</a>
+    
+    <a href="https://svtter.github.io/tags/engineering/">Engineering</a>
+    
+    <a href="https://svtter.github.io/tags/fabric/">Fabric</a>
+    
+    <a href="https://svtter.github.io/tags/ffmpeg/">ffmpeg</a>
+    
+    <a href="https://svtter.github.io/tags/file/">file</a>
+    
+    <a href="https://svtter.github.io/tags/frontend/">frontend</a>
+    
+    <a href="https://svtter.github.io/tags/gcc/">gcc</a>
+    
+    <a href="https://svtter.github.io/tags/gevent/">gevent</a>
+    
+    <a href="https://svtter.github.io/tags/ghost/">Ghost</a>
+    
+    <a href="https://svtter.github.io/tags/gitlab/">GitLab</a>
+    
+    <a href="https://svtter.github.io/tags/go/">go</a>
+    
+    <a href="https://svtter.github.io/tags/golang/">golang</a>
+    
+    <a href="https://svtter.github.io/tags/google/">google</a>
+    
+    <a href="https://svtter.github.io/tags/gpu/">GPU</a>
+    
+    <a href="https://svtter.github.io/tags/graph/">graph</a>
+    
+    <a href="https://svtter.github.io/tags/grub/">grub</a>
+    
+    <a href="https://svtter.github.io/tags/hexo/">hexo</a>
+    
+    <a href="https://svtter.github.io/tags/https/">HTTPS</a>
+    
+    <a href="https://svtter.github.io/tags/im/">IM</a>
+    
+    <a href="https://svtter.github.io/tags/image/">Image</a>
+    
+    <a href="https://svtter.github.io/tags/isp/">ISP</a>
+    
+    <a href="https://svtter.github.io/tags/jade/">jade</a>
+    
+    <a href="https://svtter.github.io/tags/java/">Java</a>
+    
+    <a href="https://svtter.github.io/tags/javascript/">Javascript</a>
+    
+    <a href="https://svtter.github.io/tags/k8s/">K8s</a>
+    
+    <a href="https://svtter.github.io/tags/keras/">Keras</a>
+    
+    <a href="https://svtter.github.io/tags/kotlin/">kotlin</a>
+    
+    <a href="https://svtter.github.io/tags/kubernetes/">Kubernetes</a>
+    
+    <a href="https://svtter.github.io/tags/language/">language</a>
+    
+    <a href="https://svtter.github.io/tags/leanote/">leanote</a>
+    
+    <a href="https://svtter.github.io/tags/leetcode/">leetcode</a>
+    
+    <a href="https://svtter.github.io/tags/life/">Life</a>
+    
+    <a href="https://svtter.github.io/tags/links/">links</a>
+    
+    <a href="https://svtter.github.io/tags/linux/">Linux</a>
+    
+    <a href="https://svtter.github.io/tags/lisp/">lisp</a>
+    
+    <a href="https://svtter.github.io/tags/logseq/">logseq</a>
+    
+    <a href="https://svtter.github.io/tags/macbook/">macbook</a>
+    
+    <a href="https://svtter.github.io/tags/management/">management</a>
+    
+    <a href="https://svtter.github.io/tags/maven/">maven</a>
+    
+    <a href="https://svtter.github.io/tags/mellow/">mellow</a>
+    
+    <a href="https://svtter.github.io/tags/meteor/">Meteor</a>
+    
+    <a href="https://svtter.github.io/tags/migration/">Migration</a>
+    
+    <a href="https://svtter.github.io/tags/module/">module</a>
+    
+    <a href="https://svtter.github.io/tags/mongodb/">MongoDB</a>
+    
+    <a href="https://svtter.github.io/tags/mysql/">MySQL</a>
+    
+    <a href="https://svtter.github.io/tags/network/">network</a>
+    
+    <a href="https://svtter.github.io/tags/nginx/">nginx</a>
+    
+    <a href="https://svtter.github.io/tags/nodejs/">nodejs</a>
+    
+    <a href="https://svtter.github.io/tags/non-block/">non-block</a>
+    
+    <a href="https://svtter.github.io/tags/note/">Note</a>
+    
+    <a href="https://svtter.github.io/tags/opencv/">opencv</a>
+    
+    <a href="https://svtter.github.io/tags/openwrt/">openwrt</a>
+    
+    <a href="https://svtter.github.io/tags/orm/">ORM</a>
+    
+    <a href="https://svtter.github.io/tags/owncloud/">owncloud</a>
+    
+    <a href="https://svtter.github.io/tags/package/">package</a>
+    
+    <a href="https://svtter.github.io/tags/php/">php</a>
+    
+    <a href="https://svtter.github.io/tags/psychology/">psychology</a>
+    
+    <a href="https://svtter.github.io/tags/ptsd/">PTSD</a>
+    
+    <a href="https://svtter.github.io/tags/python/">python</a>
+    
+    <a href="https://svtter.github.io/tags/raspberry/">Raspberry</a>
+    
+    <a href="https://svtter.github.io/tags/react/">React</a>
+    
+    <a href="https://svtter.github.io/tags/report/">report</a>
+    
+    <a href="https://svtter.github.io/tags/research/">research</a>
+    
+    <a href="https://svtter.github.io/tags/ruby/">Ruby</a>
+    
+    <a href="https://svtter.github.io/tags/server/">server</a>
+    
+    <a href="https://svtter.github.io/tags/shell/">shell</a>
+    
+    <a href="https://svtter.github.io/tags/sleeping/">sleeping</a>
+    
+    <a href="https://svtter.github.io/tags/software/">Software</a>
+    
+    <a href="https://svtter.github.io/tags/spark/">spark</a>
+    
+    <a href="https://svtter.github.io/tags/ssh/">ssh</a>
+    
+    <a href="https://svtter.github.io/tags/stl/">STL</a>
+    
+    <a href="https://svtter.github.io/tags/summary/">summary</a>
+    
+    <a href="https://svtter.github.io/tags/swarm/">Swarm</a>
+    
+    <a href="https://svtter.github.io/tags/tcp/ip/">TCP/IP</a>
+    
+    <a href="https://svtter.github.io/tags/tdd/">TDD</a>
+    
+    <a href="https://svtter.github.io/tags/tech/">tech</a>
+    
+    <a href="https://svtter.github.io/tags/technical-report/">technical report</a>
+    
+    <a href="https://svtter.github.io/tags/think/">think</a>
+    
+    <a href="https://svtter.github.io/tags/thought/">thought</a>
+    
+    <a href="https://svtter.github.io/tags/tools/">tools</a>
+    
+    <a href="https://svtter.github.io/tags/translation/">translation</a>
+    
+    <a href="https://svtter.github.io/tags/tricks/">Tricks</a>
+    
+    <a href="https://svtter.github.io/tags/tutorial/">Tutorial</a>
+    
+    <a href="https://svtter.github.io/tags/ubuntu/">Ubuntu</a>
+    
+    <a href="https://svtter.github.io/tags/unfinished/">unfinished</a>
+    
+    <a href="https://svtter.github.io/tags/vim/">vim</a>
+    
+    <a href="https://svtter.github.io/tags/vps/">VPS</a>
+    
+    <a href="https://svtter.github.io/tags/vscode/">vscode</a>
+    
+    <a href="https://svtter.github.io/tags/vue/">vue</a>
+    
+    <a href="https://svtter.github.io/tags/vuejs/">vuejs</a>
+    
+    <a href="https://svtter.github.io/tags/webpack/">webpack</a>
+    
+    <a href="https://svtter.github.io/tags/webrtc/">webrtc</a>
+    
+    <a href="https://svtter.github.io/tags/weekly/">weekly</a>
+    
+    <a href="https://svtter.github.io/tags/why/">Why</a>
+    
+    <a href="https://svtter.github.io/tags/wiki/">wiki</a>
+    
+    <a href="https://svtter.github.io/tags/windows/">Windows</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%88%A4%E5%88%AB%E6%96%B9%E6%B3%95/">判别方法</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/">小程序</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">并行计算</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%BE%AE%E4%BF%A1/">微信</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%83%B3%E6%B3%95/">想法</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%8A%80%E6%9C%AF%E8%AE%A2%E9%98%85/">技术订阅</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%8C%87%E5%AF%BC%E6%96%B0%E4%BA%BA/">指导新人</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/">生成方法</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%99%BD%E7%9A%AE%E4%B9%A6/">白皮书</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/">监督学习</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a>
+    
+    <a href="https://svtter.github.io/tags/%E8%B4%A2%E5%8A%A1/">财务</a>
+    
+    <a href="https://svtter.github.io/tags/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">Meta</h3>
+        <ul class="widget-list">
+            <li><a href="https://svtter.github.io/index.xml">RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

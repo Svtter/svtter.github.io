@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TCPIP on Svtter&#39;s Blog</title>
+    <link>https://svtter.github.io/tags/tcpip/</link>
+    <description>Recent content in TCPIP on Svtter&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 17 Oct 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.github.io/tags/tcpip/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>为什么我密码对了，就是登录不上？</title>
+      <link>https://svtter.github.io/2018/10/17/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%AF%86%E7%A0%81%E5%AF%B9%E4%BA%86%EF%BC%8C%E5%B0%B1%E6%98%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8A%EF%BC%9F/</link>
+      <pubDate>Wed, 17 Oct 2018 01:00:00 +0800</pubDate>
+      
+      <guid>https://svtter.github.io/2018/10/17/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%AF%86%E7%A0%81%E5%AF%B9%E4%BA%86%EF%BC%8C%E5%B0%B1%E6%98%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8A%EF%BC%9F/</guid>
+      <description>今天又偶遇了之前用阿里云出现的问题：
+之前一直没有排查到错误，今天终于在本地机器的加持下得以解决。这是什么问题呢？IP地址冲突。
+的确是IP地址冲突。首先先使用校园网client ssh b-server 服务器，失败了。使用同一个物理主机的a-server与b-server进行互联，成功了。校园网client能够连接a-server。因此，观察 a-server 和 b-server 的区别，发现 a-server 子网掩码是255.255.255.128，而 b-server 的子网掩码是 255.255.255.0。
+此外，还有：
+查看系统开放的端口 netstat -nltp 测试本地是否能够访问，排查本地问题 ssh user@locahost
+子网掩码不同，为什么就连接不上呢？（原理）
+最终，解决了这个问题。通过重启 networking 以及 重新通过 dhcp 获取 ip 地址。
+使用 systemctl restart networking.service 重启 networking 服务。 使用 ifconfig eth0 down; ifconfig eth0 up 来开关具体的网卡。 使用 # dhclient -r 释放当前ip 使用 # dhclient 获取新的ip 大功告成，算是阶段性的解决了这个问题。DDNS迫在眉睫啊！</description>
+    </item>
+    
+  </channel>
+</rss>

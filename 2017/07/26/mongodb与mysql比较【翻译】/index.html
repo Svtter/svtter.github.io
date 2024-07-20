@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    <title>MongoDB与MySQL比较【翻译】 | Svtter&#39;s Blog</title>
+    <meta property="og:title" content="MongoDB与MySQL比较【翻译】 - Svtter&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2017-07-26T01:00:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2017-07-26T01:00:00&#43;08:00'>
+        
+    <meta name="Keywords" content="python,svtter,django,软件架构,公众号,小程序,博客,项目管理,">
+    <meta name="description" content="MongoDB与MySQL比较【翻译】">
+        <meta name="author" content="svtter">
+        
+    <meta property="og:url" content="https://svtter.github.io/2017/07/26/mongodb%E4%B8%8Emysql%E6%AF%94%E8%BE%83%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://svtter.github.io/">
+                        Svtter&#39;s Blog
+                    </a>
+                
+                <p class="description">Love your life.</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://svtter.github.io/">Home</a>
+                    
+                    <a  href="https://svtter.github.io/categories/" title="Categories">Categories</a>
+                    
+                    <a  href="https://svtter.github.io/daily-ml/" title="Daily ML">Daily ML</a>
+                    
+                    <a  href="https://svtter.github.io/tags/" title="Tags">Tags</a>
+                    
+                    <a  href="https://svtter.github.io/about/" title="About">About</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">MongoDB与MySQL比较【翻译】</h1>
+        </header>
+        
+  <time datetime="2017-07-25T17:00:00Z" class="post-meta meta-date dt-published">
+    2017-07-26
+  </time>
+
+
+<div class="post-meta meta-category">
+  <span>&nbsp;|</span>
+  
+    <a href='/categories/translation' target="_blank">Translation</a>
+  
+</div>
+
+
+        
+        
+        <div class="post-content">
+            <blockquote>
+<p>翻译于 <a href="https://www.mongodb.com/compare/mongodb-mysql?jmp=docs">https://www.mongodb.com/compare/mongodb-mysql?jmp=docs</a></p>
+</blockquote>
+<h2 id="概览">概览</h2>
+<p>关系型数据库支持企业级应用已经有了十年之久，自从1995年MySQL释出，它已经成为最流行而低成本的选择。但是，在近几年存储以及不同类型数据的爆炸性增长，非关系型数据库，像是MongoDB，现行于市，满足新应用的需求。MongoDB既被用于新的应用，也被用于替代旧的关系型基础设施，或者在原来的基础上增加新的功能。</p>
+<h2 id="什么是mysql">什么是MySQL？</h2>
+<p>MySQL是一个流行的开源的关系型数据库管理系统（RDBMS），由Oracle公司开发，分发，以及提供支持。就像是其他的关系型系统，MySQL通过tables（表）来存储数据，使用结构查询语言（SQL）来管理数据库。在MySQL，你预先定义了你的数据库schema，这个schema基于你的需求，以及设置规则来管理你的tables之间的关系。在MySQL，相关联的信息可能被存储在分离的table中，但是通过JOIN操作来关联。以这种方式，数据复制是最小化的。</p>
+<h2 id="什么是mongodb">什么是MongoDB？</h2>
+<p>MongoDB是一个开源的数据库，由MongoDB公司开发。MongoDB以像是JSON样式的文档保存数据，因此，在结构上可以保持多样化。为了快速的查询，通过MongoDB查询语句，相关联的数据被一起保存。MongoDB使用动态schema，意味着你可以不用定义表格，不用定义域，以及他们的数据类型，而直接创建记录。你可以修改记录（我们称之为文档）的结构，只需要简单的添加新的域，或者删除已经存在的某一个。这个数据模型使得你能够更轻松的去展现分等级的关系，保存数组，以及其他更复杂的结构。在一个集合中的文档，不需要有一个相同的域的集合，数据的反规格化是很常见的。MongoDB也为高可用以及高扩展性做了相关设计，包括开箱即用的数据复制以及自动分片。</p>
+<h2 id="术语以及概念">术语以及概念</h2>
+<p>在MySQL中许多概念可以类比到MongoDB。这个表格列出了一些在每个系统中常见的概念</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">MySQL</th>
+<th style="text-align:left">MongoDB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Table</td>
+<td style="text-align:left">Collection</td>
+</tr>
+<tr>
+<td style="text-align:left">Row</td>
+<td style="text-align:left">Document</td>
+</tr>
+<tr>
+<td style="text-align:left">Column</td>
+<td style="text-align:left">Field</td>
+</tr>
+<tr>
+<td style="text-align:left">Joins</td>
+<td style="text-align:left">Embedded documents, linking</td>
+</tr>
+</tbody>
+</table>
+<h2 id="特性比较">特性比较</h2>
+<p>像是MySQL，MongoDB提供了一系列丰富的特性以及实用性，而不仅仅是提供简单的键-值存储。MongoDB有一个查询语言，高实用性的第二索引（包括文字搜索以及地理位置的查询），一个用于数据分析的强大的框架集成。通过MongoDB，在已经扩展的情况下，你仍然可以在许多不同类型的数据中使用这些特性，而MySQL不行。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left">MySQL</th>
+<th style="text-align:left">MongoDB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">丰富的数据模型</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">动态的数据表</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">数据类型</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">地理位置数据</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">域更新</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">开发者友好</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">复杂的事务</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">否</td>
+</tr>
+<tr>
+<td style="text-align:left">审计</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">是</td>
+</tr>
+<tr>
+<td style="text-align:left">自动分片</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">是</td>
+</tr>
+</tbody>
+</table>
+<h2 id="查询语言">查询语言</h2>
+<p>MySQL与MongoDB都有一个丰富的查询语言；一个全面的陈述，可以在MongoDB文档中看到。</p>
+<p><a href=""></a></p>
+<h2 id="为什么使用mongodb而不是mysql">为什么使用MongoDB而不是MySQL？</h2>
+<p>任何大小的组织都应该使用MongoDB，因为它可以让创建应用更加快捷，处理多种多样的数据结构，以及在扩展时更加有效的管理应用。</p>
+<p>在MongoDB上面进行开发是很简单的。因为，MongoDB的文档是可以很自然的联系到现代的面向对象的语言。MongoDB删除了复杂的ORM，即对象关系连接层。这个连接层一般把关系型数据库的数据转换成可编程的对象。</p>
+<p>MongoDB的灵活数据模型也意味着，你的数据结构可以和你的商业模型一同进化。例如，schema在MySQL上如果出现改动，经常是以星期为计数单位，而在MongoDB上，只需要几个小时就好了。</p>
+<p>MongoDB内建可扩展性，通过分布式的数据中心。相较于MySQL，MongoDB提供了更高一级的数据的可用性以及扩展性，这是MySQL所不能达到的。当你的开发环境以数据的存储以及吞吐量为瓶颈的时候，MongoDB可以无停机的扩展，以及不需要修改你的应用。相比之下，扩展MySQL经常需要重要的，特定的工程师来进行工作。百度从MySQL迁移到MongoDB来支持他日益增长的商务信息，中国互联网服务巨人，通过MongoDB集群，现在支持着100多个应用，以及管理了1PB多的数据。</p>
+<h2 id="有哪些使用mongodb的用户案例">有哪些使用MongoDB的用户案例？</h2>
+<p>MongoDB是一个多用途的数据库，可以被用到各种使用案例中。那些最出名的案例包括：单一浏览，物联网，移动，实时分析，个人，目录，以及内容管理系统。</p>
+<h2 id="什么时候mysql更好一些">什么时候MySQL更好一些？</h2>
+<p>当大多数系统需要一个灵活的可扩展的系统，像是MongoDB的时候，仍然有一些地方使用MySQL更好一些。</p>
+<p>应用需要复杂的多行的事务（比如，一个双重认证的借书系统）将会是一个很好的例子。MongoDB不是为了替代那些使用关系型数据库以及SQL的常规应用。</p>
+<p>一个更加具体的例子是，一个在旅游预订系统背后的预订引擎，它包括典型的复杂的事务。当预订引擎放MYSQL上面的时候，那些与用户相关的——为内容提供服务，与社交进行聚合，管理sessions的部分，最好使用MongoDB来进行替代。</p>
+<h2 id="mongodb和mysql能够一起工作吗">MongoDB和MySQL能够一起工作吗？</h2>
+<p>有许多将MongoDB与MySQL混合开发的例子。在一些案例中，选择重要的工具进行工作是必要的。例如，许多电商应用使用MongoDB与MySQL的混合。商品目录，那些包括许多不同种商品，且拥有许多不同属性的例子，就是MongoDB利用其数据灵活性的好去处。从另一个角度说，结算系统，包括复杂逻辑，最好是使用MySQL数据库或者其他关系型的技术。</p>
+<hr>
+<p>翻译到这里感觉已经大体上足够了。</p>
+        </div>
+
+        
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2014/12/09/archlinux-%E5%AE%89%E8%A3%85%E7%AC%94%E8%AE%B02-%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E8%BD%AC%E8%BD%BD/">archlinux-安装笔记2-常用软件转载</a></li>
+        
+        <li><a href="/2017/07/25/meteor%E6%8C%87%E5%8D%97%E7%BF%BB%E8%AF%91/">Meteor指南翻译</a></li>
+        
+        <li><a href="/2017/07/21/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E7%BC%96%E8%BE%91%E5%99%A8/">快速上手编辑器</a></li>
+        
+        <li><a href="/2017/07/20/javascript%E4%B8%AD%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F/">Javascript中变量的作用域</a></li>
+        
+        <li><a href="/2017/07/16/%E5%A6%82%E4%BD%95%E6%9B%B4%E6%96%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%BB%E9%A2%98/">如何更新自己的主题</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/mysql' target="_blank">MySQL</a></li>
+                
+                <li><a href='/tags/mongodb' target="_blank">MongoDB</a></li>
+                
+                <li><a href='/tags/database' target="_blank">Database</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "svtter-cn" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2024 <a href="https://svtter.github.io/">Svtter&#39;s Blog By svtter</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-6QDQHY3FGN', { 'anonymize_ip': false });
+}
+</script>
+
+<style type="text/css">
+div.highlight {
+    position: relative;
+    margin: 1em 0px;
+}
+
+.copy-code {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(78, 78, 78, 0.8);
+    border-radius: var(--radius);
+    padding: 0 5px;
+    font: inherit;
+    user-select: none;
+    cursor: pointer;
+    border: 0;
+    --radius: 8px;
+}
+
+div.highlight:hover .copy-code,pre:hover .copy-code {
+    display: block;
+}
+
+</style>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://svtter.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://svtter.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">Latest articles</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-07-20-dive-into-django-and-webpack/" title="Dive Into Django and Webpack" target="_blank">Dive Into Django and Webpack</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-07-06-django-and-webpack/" title="Django and Webpack" target="_blank">Django and Webpack</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-06-15-use-kind-to-play-k8s/" title="Using Kind to Play with K8s" target="_blank">Using Kind to Play with K8s</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-05-26-use-logseq-as-documentation/" title="Use Logseq as Documentation" target="_blank">Use Logseq as Documentation</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-04-12-2024-q1-summary/" title="2024-Q1 Summary" target="_blank">2024-Q1 Summary</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-03-12-react-for-old-django/" title="给老 Django 工程师的初学者 react 教程" target="_blank">给老 Django 工程师的初学者 react 教程</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-04-12-print-trick/" title="Print Trick for Python" target="_blank">Print Trick for Python</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2024-01-01-2023%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" title="2023年终总结" target="_blank">2023年终总结</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2023-12-18-how-to-use-logseq/" title="How to Use Logseq" target="_blank">How to Use Logseq</a>
+    </li>
+    
+    <li>
+        <a href="https://svtter.github.io/post/2023-11-27-techincal-report/" title="Techincal Report - 202311-4th" target="_blank">Techincal Report - 202311-4th</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>Categories</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://svtter.github.io/categories/acm/icpc/">ACM/ICPC (41)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/database/">Database (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/devops/">DevOps (25)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/graphics/">graphics (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/life/">Life (18)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/linux/">Linux (23)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/math/">Math (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/programming/">programming (29)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/python-web/">python web (6)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/report/">report (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/ros/">ROS (6)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/software/">Software (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/summary/">summary (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/tools/">Tools (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/translation/">Translation (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/ubuntu/">Ubuntu (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/vim/">Vim (3)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/web-%E5%BC%80%E5%8F%91/">Web 开发 (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E4%B9%90%E8%B6%A3/">乐趣 (15)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%89%8D%E7%AB%AF/">前端 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/">动态语言 (13)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%91%A8%E6%8A%A5/">周报 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E5%AD%A6%E4%B9%A0/">学习 (10)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%8A%80%E6%9C%AF%E5%8A%9B/">技术力 (6)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%95%88%E7%8E%87/">效率 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习 (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%9D%82%E8%AE%B0/">杂记 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E6%B5%81%E5%AA%92%E4%BD%93/">流媒体 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%94%9F%E6%B4%BB/">生活 (9)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%AE%A1%E7%90%86/">管理 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BC%96%E7%A8%8B/">编程 (38)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理 (1)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E7%BF%BB%E8%AF%91/">翻译 (2)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">软件设计模式 (7)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E9%98%85%E8%AF%BB/">阅读 (4)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E9%9A%8F%E7%AC%94/">随笔 (8)</a></li>
+    
+    <li><a href="https://svtter.github.io/categories/%E9%BB%98%E8%AE%A4/">默认 (16)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>Tags</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://svtter.github.io/tags/about/">About</a>
+    
+    <a href="https://svtter.github.io/tags/active-learning/">active learning</a>
+    
+    <a href="https://svtter.github.io/tags/agile/">agile</a>
+    
+    <a href="https://svtter.github.io/tags/algorithm/">algorithm</a>
+    
+    <a href="https://svtter.github.io/tags/ant/">ant</a>
+    
+    <a href="https://svtter.github.io/tags/apple/">Apple</a>
+    
+    <a href="https://svtter.github.io/tags/archlinux/">ArchLinux</a>
+    
+    <a href="https://svtter.github.io/tags/arm/">ARM</a>
+    
+    <a href="https://svtter.github.io/tags/beam-search/">Beam Search</a>
+    
+    <a href="https://svtter.github.io/tags/beego/">beego</a>
+    
+    <a href="https://svtter.github.io/tags/big_data/">big_data</a>
+    
+    <a href="https://svtter.github.io/tags/blog/">blog</a>
+    
+    <a href="https://svtter.github.io/tags/book/">book</a>
+    
+    <a href="https://svtter.github.io/tags/c#/">c#</a>
+    
+    <a href="https://svtter.github.io/tags/cdma/">CDMA</a>
+    
+    <a href="https://svtter.github.io/tags/centos/">CentOS</a>
+    
+    <a href="https://svtter.github.io/tags/ci/">CI</a>
+    
+    <a href="https://svtter.github.io/tags/classfier/">classfier</a>
+    
+    <a href="https://svtter.github.io/tags/cloud-computing/">cloud-computing</a>
+    
+    <a href="https://svtter.github.io/tags/computing/">computing</a>
+    
+    <a href="https://svtter.github.io/tags/container/">Container</a>
+    
+    <a href="https://svtter.github.io/tags/cpp/">cpp</a>
+    
+    <a href="https://svtter.github.io/tags/crash/">crash</a>
+    
+    <a href="https://svtter.github.io/tags/csrf/">CSRF</a>
+    
+    <a href="https://svtter.github.io/tags/ctc-loss/">CTC loss</a>
+    
+    <a href="https://svtter.github.io/tags/cuda/">CUDA</a>
+    
+    <a href="https://svtter.github.io/tags/database/">Database</a>
+    
+    <a href="https://svtter.github.io/tags/deep-learning/">Deep Learning</a>
+    
+    <a href="https://svtter.github.io/tags/delay/">delay</a>
+    
+    <a href="https://svtter.github.io/tags/design/">design</a>
+    
+    <a href="https://svtter.github.io/tags/devops/">Devops</a>
+    
+    <a href="https://svtter.github.io/tags/dhcp/">DHCP</a>
+    
+    <a href="https://svtter.github.io/tags/dingtalk/">Dingtalk</a>
+    
+    <a href="https://svtter.github.io/tags/django/">Django</a>
+    
+    <a href="https://svtter.github.io/tags/docker/">Docker</a>
+    
+    <a href="https://svtter.github.io/tags/documentation/">documentation</a>
+    
+    <a href="https://svtter.github.io/tags/dotnet/">dotnet</a>
+    
+    <a href="https://svtter.github.io/tags/editor/">editor</a>
+    
+    <a href="https://svtter.github.io/tags/elk/">ELK</a>
+    
+    <a href="https://svtter.github.io/tags/emacs/">emacs</a>
+    
+    <a href="https://svtter.github.io/tags/emotion/">emotion</a>
+    
+    <a href="https://svtter.github.io/tags/engineering/">Engineering</a>
+    
+    <a href="https://svtter.github.io/tags/fabric/">Fabric</a>
+    
+    <a href="https://svtter.github.io/tags/ffmpeg/">ffmpeg</a>
+    
+    <a href="https://svtter.github.io/tags/file/">file</a>
+    
+    <a href="https://svtter.github.io/tags/frontend/">frontend</a>
+    
+    <a href="https://svtter.github.io/tags/gcc/">gcc</a>
+    
+    <a href="https://svtter.github.io/tags/gevent/">gevent</a>
+    
+    <a href="https://svtter.github.io/tags/ghost/">Ghost</a>
+    
+    <a href="https://svtter.github.io/tags/gitlab/">GitLab</a>
+    
+    <a href="https://svtter.github.io/tags/go/">go</a>
+    
+    <a href="https://svtter.github.io/tags/golang/">golang</a>
+    
+    <a href="https://svtter.github.io/tags/google/">google</a>
+    
+    <a href="https://svtter.github.io/tags/gpu/">GPU</a>
+    
+    <a href="https://svtter.github.io/tags/graph/">graph</a>
+    
+    <a href="https://svtter.github.io/tags/grub/">grub</a>
+    
+    <a href="https://svtter.github.io/tags/hexo/">hexo</a>
+    
+    <a href="https://svtter.github.io/tags/https/">HTTPS</a>
+    
+    <a href="https://svtter.github.io/tags/im/">IM</a>
+    
+    <a href="https://svtter.github.io/tags/image/">Image</a>
+    
+    <a href="https://svtter.github.io/tags/isp/">ISP</a>
+    
+    <a href="https://svtter.github.io/tags/jade/">jade</a>
+    
+    <a href="https://svtter.github.io/tags/java/">Java</a>
+    
+    <a href="https://svtter.github.io/tags/javascript/">Javascript</a>
+    
+    <a href="https://svtter.github.io/tags/k8s/">K8s</a>
+    
+    <a href="https://svtter.github.io/tags/keras/">Keras</a>
+    
+    <a href="https://svtter.github.io/tags/kotlin/">kotlin</a>
+    
+    <a href="https://svtter.github.io/tags/kubernetes/">Kubernetes</a>
+    
+    <a href="https://svtter.github.io/tags/language/">language</a>
+    
+    <a href="https://svtter.github.io/tags/leanote/">leanote</a>
+    
+    <a href="https://svtter.github.io/tags/leetcode/">leetcode</a>
+    
+    <a href="https://svtter.github.io/tags/life/">Life</a>
+    
+    <a href="https://svtter.github.io/tags/links/">links</a>
+    
+    <a href="https://svtter.github.io/tags/linux/">Linux</a>
+    
+    <a href="https://svtter.github.io/tags/lisp/">lisp</a>
+    
+    <a href="https://svtter.github.io/tags/logseq/">logseq</a>
+    
+    <a href="https://svtter.github.io/tags/macbook/">macbook</a>
+    
+    <a href="https://svtter.github.io/tags/management/">management</a>
+    
+    <a href="https://svtter.github.io/tags/maven/">maven</a>
+    
+    <a href="https://svtter.github.io/tags/mellow/">mellow</a>
+    
+    <a href="https://svtter.github.io/tags/meteor/">Meteor</a>
+    
+    <a href="https://svtter.github.io/tags/migration/">Migration</a>
+    
+    <a href="https://svtter.github.io/tags/module/">module</a>
+    
+    <a href="https://svtter.github.io/tags/mongodb/">MongoDB</a>
+    
+    <a href="https://svtter.github.io/tags/mysql/">MySQL</a>
+    
+    <a href="https://svtter.github.io/tags/network/">network</a>
+    
+    <a href="https://svtter.github.io/tags/nginx/">nginx</a>
+    
+    <a href="https://svtter.github.io/tags/nodejs/">nodejs</a>
+    
+    <a href="https://svtter.github.io/tags/non-block/">non-block</a>
+    
+    <a href="https://svtter.github.io/tags/note/">Note</a>
+    
+    <a href="https://svtter.github.io/tags/opencv/">opencv</a>
+    
+    <a href="https://svtter.github.io/tags/openwrt/">openwrt</a>
+    
+    <a href="https://svtter.github.io/tags/orm/">ORM</a>
+    
+    <a href="https://svtter.github.io/tags/owncloud/">owncloud</a>
+    
+    <a href="https://svtter.github.io/tags/package/">package</a>
+    
+    <a href="https://svtter.github.io/tags/php/">php</a>
+    
+    <a href="https://svtter.github.io/tags/psychology/">psychology</a>
+    
+    <a href="https://svtter.github.io/tags/ptsd/">PTSD</a>
+    
+    <a href="https://svtter.github.io/tags/python/">python</a>
+    
+    <a href="https://svtter.github.io/tags/raspberry/">Raspberry</a>
+    
+    <a href="https://svtter.github.io/tags/react/">React</a>
+    
+    <a href="https://svtter.github.io/tags/report/">report</a>
+    
+    <a href="https://svtter.github.io/tags/research/">research</a>
+    
+    <a href="https://svtter.github.io/tags/ruby/">Ruby</a>
+    
+    <a href="https://svtter.github.io/tags/server/">server</a>
+    
+    <a href="https://svtter.github.io/tags/shell/">shell</a>
+    
+    <a href="https://svtter.github.io/tags/sleeping/">sleeping</a>
+    
+    <a href="https://svtter.github.io/tags/software/">Software</a>
+    
+    <a href="https://svtter.github.io/tags/spark/">spark</a>
+    
+    <a href="https://svtter.github.io/tags/ssh/">ssh</a>
+    
+    <a href="https://svtter.github.io/tags/stl/">STL</a>
+    
+    <a href="https://svtter.github.io/tags/summary/">summary</a>
+    
+    <a href="https://svtter.github.io/tags/swarm/">Swarm</a>
+    
+    <a href="https://svtter.github.io/tags/tcp/ip/">TCP/IP</a>
+    
+    <a href="https://svtter.github.io/tags/tdd/">TDD</a>
+    
+    <a href="https://svtter.github.io/tags/tech/">tech</a>
+    
+    <a href="https://svtter.github.io/tags/technical-report/">technical report</a>
+    
+    <a href="https://svtter.github.io/tags/think/">think</a>
+    
+    <a href="https://svtter.github.io/tags/thought/">thought</a>
+    
+    <a href="https://svtter.github.io/tags/tools/">tools</a>
+    
+    <a href="https://svtter.github.io/tags/translation/">translation</a>
+    
+    <a href="https://svtter.github.io/tags/tricks/">Tricks</a>
+    
+    <a href="https://svtter.github.io/tags/tutorial/">Tutorial</a>
+    
+    <a href="https://svtter.github.io/tags/ubuntu/">Ubuntu</a>
+    
+    <a href="https://svtter.github.io/tags/unfinished/">unfinished</a>
+    
+    <a href="https://svtter.github.io/tags/vim/">vim</a>
+    
+    <a href="https://svtter.github.io/tags/vps/">VPS</a>
+    
+    <a href="https://svtter.github.io/tags/vscode/">vscode</a>
+    
+    <a href="https://svtter.github.io/tags/vue/">vue</a>
+    
+    <a href="https://svtter.github.io/tags/vuejs/">vuejs</a>
+    
+    <a href="https://svtter.github.io/tags/webpack/">webpack</a>
+    
+    <a href="https://svtter.github.io/tags/webrtc/">webrtc</a>
+    
+    <a href="https://svtter.github.io/tags/weekly/">weekly</a>
+    
+    <a href="https://svtter.github.io/tags/why/">Why</a>
+    
+    <a href="https://svtter.github.io/tags/wiki/">wiki</a>
+    
+    <a href="https://svtter.github.io/tags/windows/">Windows</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%88%A4%E5%88%AB%E6%96%B9%E6%B3%95/">判别方法</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/">小程序</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">并行计算</a>
+    
+    <a href="https://svtter.github.io/tags/%E5%BE%AE%E4%BF%A1/">微信</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%83%B3%E6%B3%95/">想法</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%8A%80%E6%9C%AF%E8%AE%A2%E9%98%85/">技术订阅</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%8C%87%E5%AF%BC%E6%96%B0%E4%BA%BA/">指导新人</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a>
+    
+    <a href="https://svtter.github.io/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/">生成方法</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%99%BD%E7%9A%AE%E4%B9%A6/">白皮书</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/">监督学习</a>
+    
+    <a href="https://svtter.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a>
+    
+    <a href="https://svtter.github.io/tags/%E8%B4%A2%E5%8A%A1/">财务</a>
+    
+    <a href="https://svtter.github.io/tags/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">Meta</h3>
+        <ul class="widget-list">
+            <li><a href="https://svtter.github.io/index.xml">RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
