@@ -1,0 +1,471 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+ 
+
+
+      <title># Docker swarm 学习 - </title>
+
+  <meta name="description" content="本文的学习过程主要是通过 Docker 官方文档
+花了一段时间学习 Docker swarm，一个docker的容器集群服务，来应对即将到来的高并发项目需求。
+Docker machine Docker machine 是 Docker 官方编排的项目之一，可以理解成一个 Docker 宿主机器的统一管理CLI，自部署不是很好用：目前国内仅仅 aliyun 支持，其他的我在官方文档中没有找到。
+Docker machine 的安装十分简单，通过官网提供的脚本即可，For Linux：
+安装好以后，即可按照相关的操作进行运行。
+比如，创建两个虚拟机：
+进入虚拟机：
+显示虚拟机
+然后即可在虚拟机的基础上进行相关的操作，十分方便。
+Docker-swarm Docker swarm 则是一个集群的东西，基本的概念是，每个宿主机器都是一个 worker ，然后大家都加入一个东西，叫做 stack ，stack 里面有许多的 container ，每个宿主机器，也分别是一个 node 。
+这个 stack 是依据我们的 service 建立的，stack 中保存着 service 建立的名称，也可以通过 stack 查看相关的节点。
+每个 node 都可以运行多个 container ，swarm 会进行 负载均衡 ，这个就很酷了。
+在官方的例子中，docker-compose.yml：
+复制的 app service 数量为 5。
+大体上就是这个样子。
+想法
+行文至此，想到可以进一步学习，然后去一些相关的社区学习一波。（不过按照之前的经验，很多社区的质量都不高，讨论纯属浪费时间。）
+学完这些东西，至少可以把自己的服务器升级一波，做成标准的DevOps，以及充分利用服务器资源了。
+Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.">
+  <meta name="author" content="svtter"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Svtter\u0027s Blog",
+    
+    "url": "https:\/\/svtter.github.io\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/svtter.github.io\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/2018\/06\/21\/%23dockerswarm%E5%AD%A6%E4%B9%A0\/",
+          "name": "# docker swarm 学习"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "svtter"
+  },
+  "headline": "# Docker swarm 学习",
+  "description" : "本文的学习过程主要是通过 Docker 官方文档\n花了一段时间学习 Docker swarm，一个docker的容器集群服务，来应对即将到来的高并发项目需求。\nDocker machine Docker machine 是 Docker 官方编排的项目之一，可以理解成一个 Docker 宿主机器的统一管理CLI，自部署不是很好用：目前国内仅仅 aliyun 支持，其他的我在官方文档中没有找到。\nDocker machine 的安装十分简单，通过官网提供的脚本即可，For Linux：\n安装好以后，即可按照相关的操作进行运行。\n比如，创建两个虚拟机：\n进入虚拟机：\n显示虚拟机\n然后即可在虚拟机的基础上进行相关的操作，十分方便。\nDocker-swarm Docker swarm 则是一个集群的东西，基本的概念是，每个宿主机器都是一个 worker ，然后大家都加入一个东西，叫做 stack ，stack 里面有许多的 container ，每个宿主机器，也分别是一个 node 。\n这个 stack 是依据我们的 service 建立的，stack 中保存着 service 建立的名称，也可以通过 stack 查看相关的节点。\n每个 node 都可以运行多个 container ，swarm 会进行 负载均衡 ，这个就很酷了。\n在官方的例子中，docker-compose.yml：\n复制的 app service 数量为 5。\n大体上就是这个样子。\n想法\n行文至此，想到可以进一步学习，然后去一些相关的社区学习一波。（不过按照之前的经验，很多社区的质量都不高，讨论纯属浪费时间。）\n学完这些东西，至少可以把自己的服务器升级一波，做成标准的DevOps，以及充分利用服务器资源了。\nCode GitHub – Svtter\/Docker_Swarm_Test: a Docker swarm example project.",
+  "inLanguage" : "zh-cn",
+  "wordCount":  80 ,
+  "datePublished" : "2018-06-21T01:00:00\u002b08:00",
+  "dateModified" : "2018-06-21T01:00:00\u002b08:00",
+  "image" : "https:\/\/svtter.github.io\/",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/svtter.github.io\/2018\/06\/21\/%23dockerswarm%E5%AD%A6%E4%B9%A0\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/svtter.github.io\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/svtter.github.io\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+
+<meta property="og:title" content="# Docker swarm 学习" />
+<meta property="og:description" content="本文的学习过程主要是通过 Docker 官方文档
+花了一段时间学习 Docker swarm，一个docker的容器集群服务，来应对即将到来的高并发项目需求。
+Docker machine Docker machine 是 Docker 官方编排的项目之一，可以理解成一个 Docker 宿主机器的统一管理CLI，自部署不是很好用：目前国内仅仅 aliyun 支持，其他的我在官方文档中没有找到。
+Docker machine 的安装十分简单，通过官网提供的脚本即可，For Linux：
+安装好以后，即可按照相关的操作进行运行。
+比如，创建两个虚拟机：
+进入虚拟机：
+显示虚拟机
+然后即可在虚拟机的基础上进行相关的操作，十分方便。
+Docker-swarm Docker swarm 则是一个集群的东西，基本的概念是，每个宿主机器都是一个 worker ，然后大家都加入一个东西，叫做 stack ，stack 里面有许多的 container ，每个宿主机器，也分别是一个 node 。
+这个 stack 是依据我们的 service 建立的，stack 中保存着 service 建立的名称，也可以通过 stack 查看相关的节点。
+每个 node 都可以运行多个 container ，swarm 会进行 负载均衡 ，这个就很酷了。
+在官方的例子中，docker-compose.yml：
+复制的 app service 数量为 5。
+大体上就是这个样子。
+想法
+行文至此，想到可以进一步学习，然后去一些相关的社区学习一波。（不过按照之前的经验，很多社区的质量都不高，讨论纯属浪费时间。）
+学完这些东西，至少可以把自己的服务器升级一波，做成标准的DevOps，以及充分利用服务器资源了。
+Code GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project.">
+<meta property="og:url" content="https://svtter.github.io/2018/06/21/%23dockerswarm%E5%AD%A6%E4%B9%A0/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+  <meta name="twitter:title" content="# Docker swarm 学习" />
+  <meta name="twitter:description" content="本文的学习过程主要是通过 Docker 官方文档
+花了一段时间学习 Docker swarm，一个docker的容器集群服务，来应对即将到来的高并发项目需求。
+Docker machine Docker machine 是 Docker 官方编排的项目之一，可以理解成一个 Docker 宿主机器的统一管理CLI，自部署不是很好用：目前国内仅仅 aliyun 支持，其他的我在官方文档中没有找到。 …">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Crack_svtter" />
+  <meta name="twitter:creator" content="@Crack_svtter" />
+  <meta name="generator" content="Hugo 0.129.0">
+  <link rel="alternate" href="https://svtter.github.io/zh-cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://svtter.github.io/css/syntax.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6QDQHY3FGN');
+        }
+      </script>
+    
+  
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Categories" href="/zh-cn/categories/">Categories</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Daily ML" href="/zh-cn/daily-ml/">Daily ML</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/zh-cn/tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/zh-cn/page/about/">About</a>
+            </li>
+          
+        
+
+        
+          
+            <li>
+              
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1># Docker swarm 学习</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 June 21, 2018
+  
+  
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <blockquote>
+<p>本文的学习过程主要是通过 Docker <a href="https://docs.docker.com/get-started/part3/">官方文档</a></p>
+</blockquote>
+<p>花了一段时间学习 Docker swarm，一个docker的容器集群服务，来应对即将到来的高并发项目需求。</p>
+<h2 id="docker-machine">Docker machine</h2>
+<p>Docker machine 是 Docker 官方编排的项目之一，可以理解成一个 Docker 宿主机器的统一管理CLI，自部署不是很好用：目前国内仅仅 aliyun 支持，其他的我在官方文档中没有找到。</p>
+<p>Docker machine 的安装十分简单，通过官网提供的脚本即可，For Linux：</p>
+<!-- raw HTML omitted -->
+<p>安装好以后，即可按照相关的操作进行运行。</p>
+<p>比如，创建两个虚拟机：</p>
+<!-- raw HTML omitted -->
+<p>进入虚拟机：</p>
+<!-- raw HTML omitted -->
+<p>显示虚拟机</p>
+<!-- raw HTML omitted -->
+<p>然后即可在虚拟机的基础上进行相关的操作，十分方便。</p>
+<h2 id="docker-swarm">Docker-swarm</h2>
+<p>Docker swarm 则是一个集群的东西，基本的概念是，每个宿主机器都是一个 worker ，然后大家都加入一个东西，叫做 stack ，stack 里面有许多的 container ，每个宿主机器，也分别是一个 node 。</p>
+<p>这个 stack 是依据我们的 service 建立的，stack 中保存着 service 建立的名称，也可以通过 stack 查看相关的节点。</p>
+<p>每个 node 都可以运行多个 container ，swarm 会进行 <strong>负载均衡</strong> ，这个就很酷了。</p>
+<!-- raw HTML omitted -->
+<p>在官方的例子中，<code>docker-compose.yml</code>：</p>
+<!-- raw HTML omitted -->
+<p>复制的 app service 数量为 5。</p>
+<p>大体上就是这个样子。</p>
+<blockquote>
+<p>想法</p>
+</blockquote>
+<p>行文至此，想到可以进一步学习，然后去一些相关的社区学习一波。（不过按照之前的经验，很多社区的质量都不高，讨论纯属浪费时间。）</p>
+<p>学完这些东西，至少可以把自己的服务器升级一波，做成标准的<code>DevOps</code>，以及充分利用服务器资源了。</p>
+<h2 id="code">Code</h2>
+<p><a href="https://github.com/Svtter/Docker_Swarm_Test">GitHub – Svtter/Docker_Swarm_Test: a Docker swarm example project. Reference to official document.</a></p>
+
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://svtter.github.io/2018/06/19/python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/" data-toggle="tooltip" data-placement="top" title="# Python文件操作">&larr; 前一篇</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://svtter.github.io/2018/07/20/%23%E8%A7%A3%E5%86%B3dd%E4%B9%8B%E5%90%8Emac%E6%90%9E%E4%B8%8D%E5%AE%9Ausb%E7%9A%84%E9%97%AE%E9%A2%98/" data-toggle="tooltip" data-placement="top" title="# 解决 DD 之后 Mac 搞不定 USB 的问题">后一篇 &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      <footer>
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+		
+		  <a href="https://github.com/svtter" title="GitHub">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+		
+		  <a href="https://twitter.com/Crack_svtter" title="Twitter">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              svtter
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2024
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          由 <a href="https://gohugo.io">Hugo v0.129.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script src="https://svtter.github.io/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://svtter.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

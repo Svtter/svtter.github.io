@@ -1,0 +1,472 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+ 
+
+
+      <title>对于 CTC 的一个直观理解与解释 - </title>
+
+  <meta name="description" content="
+这篇文章是一个翻译：towardsdatascience-ctc
+
+通过 CTC loss 以及编码操作进行文字识别。">
+  <meta name="author" content="svtter"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Svtter\u0027s Blog",
+    
+    "url": "https:\/\/svtter.github.io\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/svtter.github.io\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/2018\/11\/22\/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A\/",
+          "name": "对于 ctc 的一个直观理解与解释"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "svtter"
+  },
+  "headline": "对于 CTC 的一个直观理解与解释",
+  "description" : " 这篇文章是一个翻译：towardsdatascience-ctc\n通过 CTC loss 以及编码操作进行文字识别。\n",
+  "inLanguage" : "zh-cn",
+  "wordCount":  353 ,
+  "datePublished" : "2018-11-22T01:00:00\u002b08:00",
+  "dateModified" : "2018-11-22T01:00:00\u002b08:00",
+  "image" : "https:\/\/svtter.github.io\/",
+  "keywords" : [ "CTC loss, Deep learning, translation" ],
+  "mainEntityOfPage" : "https:\/\/svtter.github.io\/2018\/11\/22\/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/svtter.github.io\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/svtter.github.io\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+
+<meta property="og:title" content="对于 CTC 的一个直观理解与解释" />
+<meta property="og:description" content="
+这篇文章是一个翻译：towardsdatascience-ctc
+
+通过 CTC loss 以及编码操作进行文字识别。">
+<meta property="og:url" content="https://svtter.github.io/2018/11/22/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+  <meta name="twitter:title" content="对于 CTC 的一个直观理解与解释" />
+  <meta name="twitter:description" content="
+这篇文章是一个翻译：towardsdatascience-ctc
+
+通过 CTC loss 以及编码操作进行文字识别。">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Crack_svtter" />
+  <meta name="twitter:creator" content="@Crack_svtter" />
+  <meta name="generator" content="Hugo 0.129.0">
+  <link rel="alternate" href="https://svtter.github.io/zh-cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://svtter.github.io/css/syntax.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6QDQHY3FGN');
+        }
+      </script>
+    
+  
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Categories" href="/zh-cn/categories/">Categories</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Daily ML" href="/zh-cn/daily-ml/">Daily ML</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/zh-cn/tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/zh-cn/page/about/">About</a>
+            </li>
+          
+        
+
+        
+          
+            <li>
+              
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>对于 CTC 的一个直观理解与解释</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 22, 2018
+  
+  
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <blockquote>
+<p>这篇文章是一个翻译：<a href="https://towardsdatascience.com/intuitively-understanding-connectionist-temporal-classification-3797e43a86c">towardsdatascience-ctc</a></p>
+</blockquote>
+<p>通过 CTC loss 以及编码操作进行文字识别。</p>
+<p>如果想用使用计算机识别文字，神经网络很好用。使用一些列 CNN 从序列中提取特征，使用 RNN 来传播需略的信息。它会输出字符得分，给每个序列元素，通过一个简单的矩阵表示。现在，有两个事情我们想要对矩阵进行处理。</p>
+<ol>
+<li>训练：计算损失值来训练神经网络</li>
+<li>推理：解码矩阵来获得图片中的字符</li>
+</ol>
+<p>两个任务可以同时被 CTC 操作完成。对于手写数字系统的描述，可以参见图像 1.</p>
+<p>我们更进一步看看 CTC 操作，并且讨论一下它如完成的，以及它背后的公式是如此巧妙。最后，我将会指点你来找到 Python 代码以及不复杂的公式，如果你感兴趣的话。</p>
+<p><img alt="img" src="https://i0.wp.com/cdn-images-1.medium.com/max/1760/1*i2OG4hu9EjsyWcVMc4OOvA.png?w=625&#038;ssl=1"></p>
+<h2 id="为什么我们使用-ctc">为什么我们使用 CTC</h2>
+<p>当然我们可以创建一个数据集，这个数据集有文本行，然后指出每列属于哪一个字符，就像图 2 中展示的那样。然后，我们可以训练一个神经网络来输出每一列的得分。而然，对于这个简单的解法，这里有两个问题。</p>
+<ol>
+<li>这个十分的耗时（以及无聊）来在字符层面上标注数据</li>
+<li>我们仅仅能够得到字符的得分，因此还需要一些操作来获取最终的文本。一个简单地字符可以跨越多个位置，比如，我们得到 “ttooo”，是因为 “o” 是一个比较宽的字符。我们已经删除了多余的 “t” and “o”，但是，如果要识别的字符是 “too”，我们应该怎么办？如果删除了多余的 “o”，将会给我们错误的答案。我们应该如何处理呢？</li>
+</ol>
+<p>CTC 解决了几个问题</p>
+<ol>
+<li>我们只需要告诉 CTC loss function，文本在图像中出现了，因此我们忽略位置和宽度文中在图像中。</li>
+<li>不需要更多的文本识别处理</li>
+</ol>
+<p><img alt="img" src="https://i0.wp.com/cdn-images-1.medium.com/max/1760/1*rfeNj9aNfUSqA-SXB_i4Bw.png"></p>
+<h2 id="ctc-如何工作的">CTC 如何工作的</h2>
+<p>就像是我们已经讨论的，我们不希望在图像的每一列标注数据（这曾经被我们成为时间步）。神经网络的训练将会被 CTC 损失函数所指引。我们只需要把数据矩阵给 CTC 函数，以及对应的真实值即可。但是它是怎么知道每一个字符出现的呢？他不知道。相对而言，它尝试了图片中所有的真实文本，以及计算了所有的加和。通过这个方式， This way, the score of a GT text is high if the sum over the alignment-scores has a high value.</p>
+<h2 id="编码文本">编码文本</h2>
+<p>如何编码重复的文本曾经是一个问题。这个问题通过引入一个虚假字符来解决了（称为空，但是不要把它和真正的 space 混淆。）。这个特殊的字符被标记为 “-”，在下面的文本中。我们使用了一个聪明的编码策略来解决重复字符的问题。当编码一个文本的时候，我们可以随机加入许多空在任何位置中，当我们解码的时候，我们将会把的这些删除。但是，我们必须在重复字符串中加入空，例如 “he<strong>ll</strong>o”，如此一来，重复字符就不是问题了。</p>
+<p>Let’s look at some examples:</p>
+<p>“to” → “—ttttttooo”, or “-t-o-”, or “to” “too” → “—ttttto-o”, or “-t-o-o-”, or “to-o”, but not “too”</p>
+<p>正如你所见，这些模式也允许我们简单的创建一些相同文本串的不同对取，比如 “t-o”, 以及 “too”，以及 “-to”，所有的表示都是同一个文本 “to”，但是通过对图片不同对其获得的。神经网络被训练于输出一个编码的文本（在神经网络的矩阵中编码）。</p>
+<h2 id="损失计算">损失计算</h2>
+<p>我们需要计算每一个损失值，这个损失值是由图像核真实文本给出来训练 NN 的。你已经知道 NN 输出一个矩阵，包含一个得分，为每个文本在每个时间步上。一个小矩阵在图三中展示：有许多的时间步（t0, t1），以及三个字符（”a”, “b”, 以及 blank “-“).</p>
+<p><img alt="img" src="https://i1.wp.com/cdn-images-1.medium.com/max/1760/1*BFQYgGofh6HOxnGdkJnO-w.png?w=625&#038;ssl=1"></p>
+<p>此外，你已经知道，loss 是通过加和所有积分来进行计算的，通过这个方式，字符出现在图片的哪个位置不重要。</p>
+<p>对于一个 alignment 的得分（或者 path；在文学中一般这么称呼）通过将相应的字符相乘。在上面的例子中，path”aa” 的得分是：0.4*0.4=0.16，”a-” 的得分是 0.4*0.6=0.24，”-a” 的得分是 0.6*0.4=0.24. 为了获得 GT 文本的得分，我们加和这个文本的所有 path 的得分。我们假设，GT 文本是 “a”，我们已经计算了所有长度为 “2” 的 path，分别是 “aa”，“a-”，“-a”，我们已经计算了这些 path 所有的得分，所以我们只需要把他们加起来，得到 0.4×0.4 + 0.4×0.6 + 0.6×0.4 = 0.64。如 GT 文本可能是 “”，我们可以看到只有一种相关的 path，那么就是 “–”，获得的得分是 0.6×0.6 =0.36.</p>
+<p>如果仔细看，你已经发现我们计算了 GT 的可能性，但是不是 loss 值，而然，loss 知识概率的负对数。这个 loss 值是反向传播算法以及 NN 的参数更新使用的，我这里没有进行详细的讨论。</p>
+<h2 id="解码">解码</h2>
+<p>当我们训练一个 NN，我们想要使用它来识别那些之前没有看到的图像。或者更多在更多的技术术语：我们想要计算，NN 输出的矩阵最可能是什么。你已经知道一个方法来计算给出文本的得分，但是现在，我们没有被给出任何文本，事实上，它正是我们正在寻找的文本。尝试所有可能的文本，如果他们只有很少的时间步以及字符，但是对于练习用例而言，这不可行。</p>
+<p>一个简单而快速的算法，是最佳 path 解码，包含两个步骤：</p>
+<ol>
+<li>它计算了最佳 path，通过获取最可能的每一个时间步的字符</li>
+<li>首先删除重复的字符，然后删除 path 里面所有的空。这仍然表示了识别的文本。</li>
+</ol>
+<p>正如 FIG4 所展示的，字符是 “a”，“b” 以及 “-”（空），一共有 5 个时间步。让我们应用最佳 path decoder 来处理这个矩阵。在 t0，最可能的是“a”，同样应用于 t1，t2. 空字符在 t3 是最可能的。最后，“b” 是 t4 时刻最可能的。这将给出我们一个 path“aaa-b”，我们删除了重复的字符，这将会返回“a-b”，然后我们删除 path 中的空，这给我们一个“ab”，作为我们输出的识别结果。</p>
+<p><img alt="img" src="https://i0.wp.com/cdn-images-1.medium.com/max/1600/1*1_5KnLvaTkGUFoyat2jHcQ.png?w=625&#038;ssl=1"></p>
+<p>最佳 path 解析是，当容纳，仅仅是一个近似。构建样例容易给出错误的结果，比如用这个方法构建 FIG3，将会得到 “”，作为识别文本。但是，我们已经知道“” 结果的概率是 0.36，而 “a” 的概率是 0.64。而然，近似算法经常在练习的情景下给出比较好的结果。也有许多其他的比较好的 decoder，例如 beam-search，prefix-search 以及 token passing，这些关于语言结构的方法，都有利于提升结果。</p>
+<h2 id="结论以及展望">结论以及展望</h2>
+<p>首先我们看得是，神经网络如何解决这个问题；然后，我们展示了 CTC 如何解决这些问题，然后，我们解释了 CTC 为啥能够工作，如何计算的 loss，以及如何解码 CTC 训练的 NN。</p>
+<p>This should give you a good understanding of what is happening behind the scenes when you e.g. call functions like ctc_loss or ctc_greedy_decoder in TensorFlow. However, when you want to implement CTC yourself, you need to know some more details, especially to make it run fast. Graves et al. [1] introduce the CTC operation, the paper also shows all the relevant math. If you are interested in how to improve decoding, take a look at the articles about beam search decoding [2][3]. I implemented some decoders and the loss function in Python and C++, which you can find on github [4][5]. Finally, if you want to look at the bigger picture of how to recognize (handwritten) text, look at my article on how to build a handwritten text recognition system [6].</p>
+
+        
+          <div class="blog-tags">
+            
+              
+              <a href="https://svtter.github.io/zh-cn/tags/ctc-loss/">CTC loss</a>&nbsp;
+            
+              
+              <a href="https://svtter.github.io/zh-cn/tags/deep-learning/">Deep learning</a>&nbsp;
+            
+              
+              <a href="https://svtter.github.io/zh-cn/tags/translation/">translation</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://svtter.github.io/2018/11/20/%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%8A%A8%E5%AD%A6%E4%B9%A0%E5%8A%A0%E9%80%9F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" data-toggle="tooltip" data-placement="top" title="使用主动学习加速机器学习">&larr; 前一篇</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://svtter.github.io/2018/11/23/beam-search-%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%AD%96%E7%95%A5/" data-toggle="tooltip" data-placement="top" title="beam search – 一个搜索策略">后一篇 &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      <footer>
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+		
+		  <a href="https://github.com/svtter" title="GitHub">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+		
+		  <a href="https://twitter.com/Crack_svtter" title="Twitter">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              svtter
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2024
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          由 <a href="https://gohugo.io">Hugo v0.129.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script src="https://svtter.github.io/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://svtter.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

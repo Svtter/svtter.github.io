@@ -1,0 +1,497 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+ 
+
+
+      <title>ACM – 莫比乌斯反演 - </title>
+
+  <meta name="description" content="昨天卡了这道题目，今天特意来看看莫比乌斯反演。
+其中，$∑_{d|n}$含义为整除.
+ACdreamer大大的讲解
+看了这篇文章即可= =
+wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
+这段代码也是摘自AC大大。我们得到这个东西有什么用？
+简单来说，就是简化计算数论函数和的计算的过程，进行加速。
+在HDU5212中，给出的题解是：
+这道题需要一些莫比乌斯反演、线性筛的知识
+定义$f(x)=x∗(x−1)$
+题目所求即为$\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$
+先用线性筛求出miu在[1,10000]的函数值
+利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)/miu$）在[1,10000]的函数值，其中g满足：
+$\Sigma(g(d)|x)$
+这样所求答案即为：
+$\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：
+cnt(x)=在a1,a2,..,an中是x的倍数的个数
+而cnt的取值也可以$O(vlogv)$暴力计算出
+所以总的时间复杂度就是$O(vlogv)$的
+就是这样。">
+  <meta name="author" content="svtter"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Svtter\u0027s Blog",
+    
+    "url": "https:\/\/svtter.github.io\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/svtter.github.io\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/2015\/04\/27\/acm-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94\/",
+          "name": "Acm – 莫比乌斯反演"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "svtter"
+  },
+  "headline": "ACM – 莫比乌斯反演",
+  "description" : "昨天卡了这道题目，今天特意来看看莫比乌斯反演。\n其中，$∑_{d|n}$含义为整除.\nACdreamer大大的讲解\n看了这篇文章即可= =\nwikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:\n这段代码也是摘自AC大大。我们得到这个东西有什么用？\n简单来说，就是简化计算数论函数和的计算的过程，进行加速。\n在HDU5212中，给出的题解是：\n这道题需要一些莫比乌斯反演、线性筛的知识\n定义$f(x)=x∗(x−1)$\n题目所求即为$\\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$\n先用线性筛求出miu在[1,10000]的函数值\n利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)\/miu$）在[1,10000]的函数值，其中g满足：\n$\\Sigma(g(d)|x)$\n这样所求答案即为：\n$\\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：\ncnt(x)=在a1,a2,..,an中是x的倍数的个数\n而cnt的取值也可以$O(vlogv)$暴力计算出\n所以总的时间复杂度就是$O(vlogv)$的\n就是这样。",
+  "inLanguage" : "zh-cn",
+  "wordCount":  22 ,
+  "datePublished" : "2015-04-27T01:00:00\u002b08:00",
+  "dateModified" : "2015-04-27T01:00:00\u002b08:00",
+  "image" : "https:\/\/svtter.github.io\/",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/svtter.github.io\/2015\/04\/27\/acm-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/svtter.github.io\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/svtter.github.io\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+
+<meta property="og:title" content="ACM – 莫比乌斯反演" />
+<meta property="og:description" content="昨天卡了这道题目，今天特意来看看莫比乌斯反演。
+其中，$∑_{d|n}$含义为整除.
+ACdreamer大大的讲解
+看了这篇文章即可= =
+wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
+这段代码也是摘自AC大大。我们得到这个东西有什么用？
+简单来说，就是简化计算数论函数和的计算的过程，进行加速。
+在HDU5212中，给出的题解是：
+这道题需要一些莫比乌斯反演、线性筛的知识
+定义$f(x)=x∗(x−1)$
+题目所求即为$\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$
+先用线性筛求出miu在[1,10000]的函数值
+利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)/miu$）在[1,10000]的函数值，其中g满足：
+$\Sigma(g(d)|x)$
+这样所求答案即为：
+$\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：
+cnt(x)=在a1,a2,..,an中是x的倍数的个数
+而cnt的取值也可以$O(vlogv)$暴力计算出
+所以总的时间复杂度就是$O(vlogv)$的
+就是这样。">
+<meta property="og:url" content="https://svtter.github.io/2015/04/27/acm-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+  <meta name="twitter:title" content="ACM – 莫比乌斯反演" />
+  <meta name="twitter:description" content="昨天卡了这道题目，今天特意来看看莫比乌斯反演。
+其中，$∑_{d|n}$含义为整除.
+ACdreamer大大的讲解
+看了这篇文章即可= =
+wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
+这段代码也是摘自AC大大。我们得到这个东西有什么用？
+简单来说，就是简化计算数论函数和的计算的过程，进行加速。
+在HDU5212中，给出的题解是：
+这道题需要一些莫比乌斯反演、线性筛的知识
+ …">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Crack_svtter" />
+  <meta name="twitter:creator" content="@Crack_svtter" />
+  <meta name="generator" content="Hugo 0.129.0">
+  <link rel="alternate" href="https://svtter.github.io/zh-cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://svtter.github.io/css/syntax.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6QDQHY3FGN');
+        }
+      </script>
+    
+  
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Categories" href="/zh-cn/categories/">Categories</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Daily ML" href="/zh-cn/daily-ml/">Daily ML</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/zh-cn/tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/zh-cn/page/about/">About</a>
+            </li>
+          
+        
+
+        
+          
+            <li>
+              
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>ACM – 莫比乌斯反演</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 April 27, 2015
+  
+  
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>昨天卡了这道题目，今天特意来看看莫比乌斯反演。</p>
+<p><img alt="title" src="http://leanote.com/api/file/getImage?fileId=553e576c38f4115a430008a1"></p>
+<p>其中，$∑_{d|n}$含义为整除.</p>
+<hr>
+<p><a href="http://blog.csdn.net/acdreamers/article/details/8542292">ACdreamer大大的讲解</a></p>
+<hr>
+<p>看了这篇文章即可= =</p>
+<h2 id="wikipedia的公式">wikipedia的公式:</h2>
+<p><img alt="title" src="http://leanote.com/api/file/getImage?fileId=553e6bf138f4115a430008ea"></p>
+<p><img alt="title" src="http://leanote.com/api/file/getImage?fileId=553e6be938f4115a430008e8"></p>
+<p>以上就是具体的公式，此外，还有线性筛法:</p>
+<!-- raw HTML omitted -->
+<p>这段代码也是摘自AC大大。我们得到这个东西有什么用？</p>
+<p>简单来说，就是简化计算数论函数和的计算的过程，进行加速。</p>
+<p>在HDU5212中，给出的题解是：</p>
+<blockquote>
+<p>这道题需要一些莫比乌斯反演、线性筛的知识</p>
+</blockquote>
+<blockquote>
+<p>定义$f(x)=x∗(x−1)$</p>
+</blockquote>
+<blockquote>
+<p>题目所求即为$\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$</p>
+</blockquote>
+<blockquote>
+<p>先用线性筛求出miu在[1,10000]的函数值</p>
+</blockquote>
+<blockquote>
+<p>利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)/miu$）在[1,10000]的函数值，其中g满足：</p>
+</blockquote>
+<blockquote>
+<p>$\Sigma(g(d)|x)$</p>
+</blockquote>
+<blockquote>
+<p>这样所求答案即为：</p>
+</blockquote>
+<blockquote>
+<p>$\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：</p>
+</blockquote>
+<blockquote>
+<p>cnt(x)=在a1,a2,..,an中是x的倍数的个数</p>
+</blockquote>
+<blockquote>
+<p>而cnt的取值也可以$O(vlogv)$暴力计算出</p>
+</blockquote>
+<blockquote>
+<p>所以总的时间复杂度就是$O(vlogv)$的</p>
+</blockquote>
+<p>就是这样。</p>
+
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://svtter.github.io/2015/04/27/bestcoder2%E9%A2%98%E7%9B%AE/" data-toggle="tooltip" data-placement="top" title="Bestcoder 2 题目">&larr; 前一篇</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://svtter.github.io/2015/04/28/acm-uva11121-%E8%BF%9B%E5%88%B6/" data-toggle="tooltip" data-placement="top" title="ACM – UVA11121 – 进制">后一篇 &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      <footer>
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+		
+		  <a href="https://github.com/svtter" title="GitHub">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+		
+		  <a href="https://twitter.com/Crack_svtter" title="Twitter">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              svtter
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2024
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          由 <a href="https://gohugo.io">Hugo v0.129.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script src="https://svtter.github.io/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://svtter.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

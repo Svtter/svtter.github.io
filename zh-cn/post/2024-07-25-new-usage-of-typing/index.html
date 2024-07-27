@@ -1,0 +1,429 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+ 
+
+
+      <title>New Usage of typing module in python - </title>
+
+  <meta name="description" content="我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！">
+  <meta name="author" content="svtter"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Svtter\u0027s Blog",
+    
+    "url": "https:\/\/svtter.github.io\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/svtter.github.io\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/zh-cn\/post\/2024-07-25-new-usage-of-typing\/",
+          "name": "New usage of typing module in python"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "svtter"
+  },
+  "headline": "New Usage of typing module in python",
+  "description" : "我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！\n",
+  "inLanguage" : "zh-cn",
+  "wordCount":  67 ,
+  "datePublished" : "2024-07-12T16:20:32\u002b08:00",
+  "dateModified" : "2024-07-12T16:20:32\u002b08:00",
+  "image" : "https:\/\/svtter.github.io\/",
+  "keywords" : [ "python, django, typing" ],
+  "mainEntityOfPage" : "https:\/\/svtter.github.io\/zh-cn\/post\/2024-07-25-new-usage-of-typing\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/svtter.github.io\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/svtter.github.io\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+
+<meta property="og:title" content="New Usage of typing module in python" />
+<meta property="og:description" content="我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！">
+<meta property="og:url" content="https://svtter.github.io/zh-cn/post/2024-07-25-new-usage-of-typing/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+  <meta name="twitter:title" content="New Usage of typing module in python" />
+  <meta name="twitter:description" content="我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Crack_svtter" />
+  <meta name="twitter:creator" content="@Crack_svtter" />
+  <meta name="generator" content="Hugo 0.129.0">
+  <link rel="alternate" href="https://svtter.github.io/zh-cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://svtter.github.io/css/syntax.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6QDQHY3FGN');
+        }
+      </script>
+    
+  
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Categories" href="/zh-cn/categories/">Categories</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Daily ML" href="/zh-cn/daily-ml/">Daily ML</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/zh-cn/tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/zh-cn/page/about/">About</a>
+            </li>
+          
+        
+
+        
+          
+            <li>
+              
+                
+                  <a href="https://svtter.github.io/post/2024-07-25-new-usage-of-typing/">en</a>
+                
+              
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>New Usage of typing module in python</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 July 12, 2024
+  
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+    
+  
+  &nbsp;&bull;&nbsp;其它语言: <a href="https://svtter.github.io/post/2024-07-25-new-usage-of-typing/" lang="en">en</a>
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！</p>
+<p>最近在阅读 django components 代码的时候，我在 <a href="https://github.com/EmilStenstrom/django-components/blob/master/src/django_components/component_registry.py">component_registry.py</a> 看到了这样一段代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>  <span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> TYPE_CHECKING, Callable, Dict, Type, TypeVar
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> TYPE_CHECKING:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">from</span> django_components <span style="color:#f92672">import</span> component
+</span></span><span style="display:flex;"><span>  _TC <span style="color:#f92672">=</span> TypeVar(<span style="color:#e6db74">&#34;_TC&#34;</span>, bound<span style="color:#f92672">=</span>Type[<span style="color:#e6db74">&#34;component.Component&#34;</span>])
+</span></span></code></pre></div><p>从中能学到几个知识点：</p>
+<ol>
+<li>TYPE_CHECKING 变量是用于程序员处理类型相关代码的 TAG，在实际运行的时候，内部代码不被执行；我们可以从 typing 的<a href="https://docs.python.org/3/library/typing.html#typing.TYPE_CHECKING">官方文档</a>中找到。</li>
+<li>TypeVar 可以这样来用：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>S <span style="color:#f92672">=</span> TypeVar(<span style="color:#e6db74">&#39;S&#39;</span>, bound<span style="color:#f92672">=</span>str)  <span style="color:#75715e"># Can be any subtype of str</span>
+</span></span></code></pre></div><p>在这段代码处，意味着 <code>_TC</code> 可以是任何一个 <code>component.Component</code> 的 <code>subtype</code>。</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>python 也在慢慢丰富自己的类型系统，许多新的用法也会慢慢地开发出来。不过相比之下，typescript 的类型系统要更先进一些。大家好好学！</p>
+<blockquote>
+<p>附加一点吐槽：Component 居然是一个 django view，感觉很奇怪啊。</p>
+</blockquote>
+
+        
+          <div class="blog-tags">
+            
+              
+              <a href="https://svtter.github.io/zh-cn/tags/python/">python</a>&nbsp;
+            
+              
+              <a href="https://svtter.github.io/zh-cn/tags/django/">django</a>&nbsp;
+            
+              
+              <a href="https://svtter.github.io/zh-cn/tags/typing/">typing</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://svtter.github.io/zh-cn/post/2024-07-06-django-and-webpack/" data-toggle="tooltip" data-placement="top" title="Django and Webpack">&larr; 前一篇</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      <footer>
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+		
+		  <a href="https://github.com/svtter" title="GitHub">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+		
+		  <a href="https://twitter.com/Crack_svtter" title="Twitter">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              svtter
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2024
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          由 <a href="https://gohugo.io">Hugo v0.129.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script src="https://svtter.github.io/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://svtter.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

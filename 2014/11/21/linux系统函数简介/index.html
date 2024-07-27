@@ -1,0 +1,1230 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+ 
+
+
+      <title>Linux系统函数简介 - </title>
+
+  <meta name="description" content="本文出自&lt;svtter.github.io&gt;
+系统调用函数说明、参数值及定义
+本文摘自老师的资料= =
+使用这些函数的时候记得将头文件unistd.h包含到程序中
+1、fork() 创建一个新进程
+int fork()
+其中返回int取值意义如下:
+0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败
+2、lockf(files,function,size): 用作锁定文件的某些段或者整个文件,本函数适用的头文件为:
+#include&lt;unistd.h&gt;
+参数定义:
+int lockf(files,function,size)
+int files,function;
+long size;
+其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。
+3、msgget(key,flag): 获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。
+该函数使用偷文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;
+参数定义
+int msgget(key,flag)
+key_tkey;
+int flag;
+语法格式:msgqid=msgget(key,flag)
+其中:msgid是该系统调用返回的描述符,失败则返回-1;flag 本身由操作允许权和控制命令值相或得到。
+如:
+IP_CREAT|0400 是否该队列应被创建;
+IP_EXCL |0400 是否该队列的创建应是互斥的;等。
+msgsnd(id,msgp,size,flag): 发送一消息。
+该函数是用头文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;
+参数定义
+int msgnd(id,msgp,size,flag)
+int id,size,flag;
+struct msgbuf * msgp;
+其中:id是返回消息队列的描述符;msgp是指向用户存储区的一个构造体指针,size指示由msgp
+指向的数据结构中字符数组的长度;即消息的长度。这个数组的最大值由MSG-MAX系统可调用参数来确
+定。flag规定当核心用尽内部缓冲空间时应执行的动作;若在标志flag中末设置IPC_NOWAIT位,则当
+41该消息队列中字节数超过一最大值时,或系统范围的消息数超过某一最大值时,调用msgsnd进程睡眠。
+若是设置IPC_NOWAIT,则在此情况下,msgsnd立即返回。
+msgrcv(id,msgp,size,type,flag): 接受一消息。
+该函数调用使用头文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;">
+  <meta name="author" content="svtter"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Svtter\u0027s Blog",
+    
+    "url": "https:\/\/svtter.github.io\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/svtter.github.io\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/svtter.github.io\/2014\/11\/21\/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B\/",
+          "name": "Linux系统函数简介"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "svtter"
+  },
+  "headline": "Linux系统函数简介",
+  "description" : "本文出自\u0026lt;svtter.github.io\u0026gt;\n系统调用函数说明、参数值及定义\n本文摘自老师的资料= =\n使用这些函数的时候记得将头文件unistd.h包含到程序中\n1、fork() 创建一个新进程\nint fork()\n其中返回int取值意义如下:\n0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败\n2、lockf(files,function,size): 用作锁定文件的某些段或者整个文件,本函数适用的头文件为:\n#include\u0026lt;unistd.h\u0026gt;\n参数定义:\nint lockf(files,function,size)\nint files,function;\nlong size;\n其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。\n3、msgget(key,flag): 获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。\n该函数使用偷文件如下:\n#include\u0026lt;sy\/types.h\u0026gt;\n#include\u0026lt;sy\/ipc.h\u0026gt;\n#include\u0026lt;sy\/msg.h\u0026gt;\n参数定义\nint msgget(key,flag)\nkey_tkey;\nint flag;\n语法格式:msgqid=msgget(key,flag)\n其中:msgid是该系统调用返回的描述符,失败则返回-1;flag 本身由操作允许权和控制命令值相或得到。\n如:\nIP_CREAT|0400 是否该队列应被创建;\nIP_EXCL |0400 是否该队列的创建应是互斥的;等。\nmsgsnd(id,msgp,size,flag): 发送一消息。\n该函数是用头文件如下:\n#include\u0026lt;sy\/types.h\u0026gt;\n#include\u0026lt;sy\/ipc.h\u0026gt;\n#include\u0026lt;sy\/msg.h\u0026gt;\n参数定义\nint msgnd(id,msgp,size,flag)\nint id,size,flag;\nstruct msgbuf * msgp;\n其中:id是返回消息队列的描述符;msgp是指向用户存储区的一个构造体指针,size指示由msgp\n指向的数据结构中字符数组的长度;即消息的长度。这个数组的最大值由MSG-MAX系统可调用参数来确\n定。flag规定当核心用尽内部缓冲空间时应执行的动作;若在标志flag中末设置IPC_NOWAIT位,则当\n41该消息队列中字节数超过一最大值时,或系统范围的消息数超过某一最大值时,调用msgsnd进程睡眠。\n若是设置IPC_NOWAIT,则在此情况下,msgsnd立即返回。\nmsgrcv(id,msgp,size,type,flag): 接受一消息。\n该函数调用使用头文件如下:\n#include\u0026lt;sy\/types.h\u0026gt;\n#include\u0026lt;sy\/ipc.h\u0026gt;\n#include\u0026lt;sy\/msg.h\u0026gt;",
+  "inLanguage" : "zh-cn",
+  "wordCount":  353 ,
+  "datePublished" : "2014-11-21T01:00:00\u002b08:00",
+  "dateModified" : "2014-11-21T01:00:00\u002b08:00",
+  "image" : "https:\/\/svtter.github.io\/",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/svtter.github.io\/2014\/11\/21\/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/svtter.github.io\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/svtter.github.io\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+
+<meta property="og:title" content="Linux系统函数简介" />
+<meta property="og:description" content="本文出自&lt;svtter.github.io&gt;
+系统调用函数说明、参数值及定义
+本文摘自老师的资料= =
+使用这些函数的时候记得将头文件unistd.h包含到程序中
+1、fork() 创建一个新进程
+int fork()
+其中返回int取值意义如下:
+0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败
+2、lockf(files,function,size): 用作锁定文件的某些段或者整个文件,本函数适用的头文件为:
+#include&lt;unistd.h&gt;
+参数定义:
+int lockf(files,function,size)
+int files,function;
+long size;
+其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。
+3、msgget(key,flag): 获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。
+该函数使用偷文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;
+参数定义
+int msgget(key,flag)
+key_tkey;
+int flag;
+语法格式:msgqid=msgget(key,flag)
+其中:msgid是该系统调用返回的描述符,失败则返回-1;flag 本身由操作允许权和控制命令值相或得到。
+如:
+IP_CREAT|0400 是否该队列应被创建;
+IP_EXCL |0400 是否该队列的创建应是互斥的;等。
+msgsnd(id,msgp,size,flag): 发送一消息。
+该函数是用头文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;
+参数定义
+int msgnd(id,msgp,size,flag)
+int id,size,flag;
+struct msgbuf * msgp;
+其中:id是返回消息队列的描述符;msgp是指向用户存储区的一个构造体指针,size指示由msgp
+指向的数据结构中字符数组的长度;即消息的长度。这个数组的最大值由MSG-MAX系统可调用参数来确
+定。flag规定当核心用尽内部缓冲空间时应执行的动作;若在标志flag中末设置IPC_NOWAIT位,则当
+41该消息队列中字节数超过一最大值时,或系统范围的消息数超过某一最大值时,调用msgsnd进程睡眠。
+若是设置IPC_NOWAIT,则在此情况下,msgsnd立即返回。
+msgrcv(id,msgp,size,type,flag): 接受一消息。
+该函数调用使用头文件如下:
+#include&lt;sy/types.h&gt;
+#include&lt;sy/ipc.h&gt;
+#include&lt;sy/msg.h&gt;">
+<meta property="og:url" content="https://svtter.github.io/2014/11/21/linux%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E7%AE%80%E4%BB%8B/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+  <meta name="twitter:title" content="Linux系统函数简介" />
+  <meta name="twitter:description" content="本文出自&lt;svtter.github.io&gt;
+系统调用函数说明、参数值及定义
+本文摘自老师的资料= =
+使用这些函数的时候记得将头文件unistd.h包含到程序中
+1、fork() 创建一个新进程
+int fork()
+其中返回int取值意义如下:
+0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1: …">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Crack_svtter" />
+  <meta name="twitter:creator" content="@Crack_svtter" />
+  <meta name="generator" content="Hugo 0.129.0">
+  <link rel="alternate" href="https://svtter.github.io/zh-cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://svtter.github.io/css/syntax.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QDQHY3FGN"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6QDQHY3FGN');
+        }
+      </script>
+    
+  
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Categories" href="/zh-cn/categories/">Categories</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Daily ML" href="/zh-cn/daily-ml/">Daily ML</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/zh-cn/tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/zh-cn/page/about/">About</a>
+            </li>
+          
+        
+
+        
+          
+            <li>
+              
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Linux系统函数简介</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 21, 2014
+  
+  
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>本文出自&lt;svtter.github.io&gt;</p>
+<p>系统调用函数说明、参数值及定义</p>
+<p>本文摘自老师的资料= =</p>
+<p><strong>使用这些函数的时候记得将头文件unistd.h包含到程序中</strong></p>
+<h2 id="1fork">1、fork()</h2>
+<blockquote>
+<p>创建一个新进程</p>
+</blockquote>
+<blockquote>
+<p>int fork()</p>
+</blockquote>
+<blockquote>
+<p>其中返回int取值意义如下:</p>
+</blockquote>
+<blockquote>
+<p>0:创建子进程,从子进程返回的id值大于0:从父进程返回的子进程id值 -1:创建失败</p>
+</blockquote>
+<h2 id="2lockffilesfunctionsize">2、lockf(files,function,size):</h2>
+<blockquote>
+<p>用作锁定文件的某些段或者整个文件,本函数适用的头文件为:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;unistd.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int lockf(files,function,size)</p>
+</blockquote>
+<blockquote>
+<p>int files,function;</p>
+</blockquote>
+<blockquote>
+<p>long size;</p>
+</blockquote>
+<blockquote>
+<p>其中:files是文件描述符:function是锁定和解锁;1表示锁定,0表示解锁。size是锁定和解锁的字节数,若用0,表示从文件的当前位置到文件尾。</p>
+</blockquote>
+<h2 id="3msggetkeyflag">3、msgget(key,flag):</h2>
+<blockquote>
+<p>获得一个消息的描述符,该描述符指定一个消息队列以便用于其他系统调用。</p>
+</blockquote>
+<blockquote>
+<p>该函数使用偷文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgget(key,flag)</p>
+</blockquote>
+<blockquote>
+<p><code>key_tkey;</code></p>
+</blockquote>
+<blockquote>
+<p><code>int flag;</code></p>
+</blockquote>
+<blockquote>
+<p>语法格式:msgqid=msgget(key,flag)</p>
+</blockquote>
+<blockquote>
+<p>其中:msgid是该系统调用返回的描述符,失败则返回-1;flag 本身由操作允许权和控制命令值相或得到。</p>
+</blockquote>
+<blockquote>
+<p>如:</p>
+</blockquote>
+<blockquote>
+<p><code>IP_CREAT|0400</code> 是否该队列应被创建;</p>
+</blockquote>
+<blockquote>
+<p><code>IP_EXCL |0400</code> 是否该队列的创建应是互斥的;等。</p>
+</blockquote>
+<h2 id="msgsndidmsgpsizeflag">msgsnd(id,msgp,size,flag):</h2>
+<blockquote>
+<p>发送一消息。</p>
+</blockquote>
+<blockquote>
+<p>该函数是用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgnd(id,msgp,size,flag)</p>
+</blockquote>
+<blockquote>
+<p>int id,size,flag;</p>
+</blockquote>
+<blockquote>
+<p>struct msgbuf * msgp;</p>
+</blockquote>
+<blockquote>
+<p>其中:id是返回消息队列的描述符;msgp是指向用户存储区的一个构造体指针,size指示由msgp</p>
+</blockquote>
+<blockquote>
+<p>指向的数据结构中字符数组的长度;即消息的长度。这个数组的最大值由MSG-MAX系统可调用参数来确</p>
+</blockquote>
+<blockquote>
+<p>定。flag规定当核心用尽内部缓冲空间时应执行的动作;若在标志flag中末设置IPC_NOWAIT位,则当</p>
+</blockquote>
+<blockquote>
+<p>41该消息队列中字节数超过一最大值时,或系统范围的消息数超过某一最大值时,调用msgsnd进程睡眠。</p>
+</blockquote>
+<blockquote>
+<p>若是设置IPC_NOWAIT,则在此情况下,msgsnd立即返回。</p>
+</blockquote>
+<h2 id="msgrcvidmsgpsizetypeflag">msgrcv(id,msgp,size,type,flag):</h2>
+<blockquote>
+<p>接受一消息。</p>
+</blockquote>
+<blockquote>
+<p>该函数调用使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgrcv(id,msgp,size,type,flag)</p>
+</blockquote>
+<blockquote>
+<p>int id,size,type,flag;</p>
+</blockquote>
+<blockquote>
+<p>struct msgbuf * msgq;</p>
+</blockquote>
+<blockquote>
+<p>struct sgbuf{long mtpe;chat mtext[];};</p>
+</blockquote>
+<blockquote>
+<p>语法格式:</p>
+</blockquote>
+<blockquote>
+<p>count=msgrcv(id,msgp,size,type,flag)</p>
+</blockquote>
+<blockquote>
+<p>其中:id是用来存放欲接收消息的拥护数据结构的地址;size是msgp中数据数组的大小; type是</p>
+</blockquote>
+<blockquote>
+<p>用户要读的消息类型:</p>
+</blockquote>
+<blockquote>
+<p>type为0:接收该队列的第一个消息;</p>
+</blockquote>
+<blockquote>
+<p>type为正:接收类型type的第一个消息;</p>
+</blockquote>
+<blockquote>
+<p>type为负:接收小于或等于type绝对值的最低类型的第一个消息。</p>
+</blockquote>
+<blockquote>
+<p>flag规定倘若该队列无消息,核心应当做什么事,如果此时设置了IPC_NOWAIT标志,则立即返回,</p>
+</blockquote>
+<blockquote>
+<p>若在flag中设置了MSG_NOERROR,且所接收的消息大小大于size,核心截断所接受的消息。</p>
+</blockquote>
+<blockquote>
+<p>count是返回消息正文的字节数。</p>
+</blockquote>
+<h2 id="msgctlidcmdbuf">msgctl(id,cmd,buf):</h2>
+<blockquote>
+<p>查询一个消息描述符的状态,设置它的状态及删除一个消息描述符。</p>
+</blockquote>
+<blockquote>
+<p>调用该函数使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义</p>
+</blockquote>
+<blockquote>
+<p>int msgctl(id,cmd,buf)</p>
+</blockquote>
+<blockquote>
+<p>int id,cmd;</p>
+</blockquote>
+<blockquote>
+<p>struct msgbuf * msgq;</p>
+</blockquote>
+<blockquote>
+<p>struct msqid_ds * buf;</p>
+</blockquote>
+<blockquote>
+<p>其中:函数调用成功时返回0,调用不成功时返回-1。id用来识别该消息的描述符;cmd规定命令的</p>
+</blockquote>
+<blockquote>
+<p>类型。</p>
+</blockquote>
+<blockquote>
+<p>IPC_START将与id相关联的消息队列首标读入buf。</p>
+</blockquote>
+<blockquote>
+<p>IPC_SET为这个消息序列设置有效的用户和小组标识及操作允许权和字节的数量。</p>
+</blockquote>
+<blockquote>
+<p>IPC_RMID删除id的消息队列。</p>
+</blockquote>
+<blockquote>
+<p>buf是含有控制参数或查询结果的用户数据结构的地址。</p>
+</blockquote>
+<blockquote>
+<p>附:msgid_ds结构定义如下:</p>
+</blockquote>
+<blockquote>
+<p>struct msgid_ds</p>
+</blockquote>
+<blockquote>
+<p>{struct ipc_perm msg_perm; /<em>许可权结构</em>/</p>
+</blockquote>
+<blockquote>
+<p>shot padl[7];</p>
+</blockquote>
+<blockquote>
+<p>/<em>由系统使用</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort onsg_qnum;</p>
+</blockquote>
+<blockquote>
+<p>/<em>队列上消息数</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort msg_qbytes;</p>
+</blockquote>
+<blockquote>
+<p>/<em>队列上最大字节数</em>/</p>
+</blockquote>
+<blockquote>
+<p>42ushort msg_lspid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后发送消息的PID</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort msg_lrpid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后接收消息的PID</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t msg__stime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后发送消息的时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t msg_rtime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后接收消息的时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>me_t msg_ctime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后更改时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>};</p>
+</blockquote>
+<blockquote>
+<p>struct ipc_perm</p>
+</blockquote>
+<blockquote>
+<p>{ushort uid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>当前用户id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort gid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>当前进程组id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort cuid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>创建用户id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort cgid</p>
+</blockquote>
+<blockquote>
+<p>/<em>创建进程组id</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort mode;</p>
+</blockquote>
+<blockquote>
+<p>/<em>存取许可权</em>/</p>
+</blockquote>
+<blockquote>
+<p>{shot patl;long pad2} /<em>由系统使用</em>/</p>
+</blockquote>
+<blockquote>
+<p>};</p>
+</blockquote>
+<h2 id="shmgetkeysizeflag">shmget(key,size,flag):</h2>
+<blockquote>
+<p>获得一个共享存储区。</p>
+</blockquote>
+<blockquote>
+<p>该函数使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/shm.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>语法格式:</p>
+</blockquote>
+<blockquote>
+<p>shmid=shmaget(key,size,flag)</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int shmaget(key,size,flag)</p>
+</blockquote>
+<blockquote>
+<p>key_t key;</p>
+</blockquote>
+<blockquote>
+<p>int size,flag;</p>
+</blockquote>
+<blockquote>
+<p>其中:size是存储区的字节数,key和flag与系统调用msgget中的参数含义相同。</p>
+</blockquote>
+<blockquote>
+<p>附:</p>
+</blockquote>
+<blockquote>
+<p>操作允许权</p>
+</blockquote>
+<blockquote>
+<p>八进制数</p>
+</blockquote>
+<blockquote>
+<p>用户可读 00400</p>
+</blockquote>
+<blockquote>
+<p>用户可读 00200</p>
+</blockquote>
+<blockquote>
+<p>小组可读 00040</p>
+</blockquote>
+<blockquote>
+<p>小组可读 00020</p>
+</blockquote>
+<blockquote>
+<p>其他可读 00004</p>
+</blockquote>
+<blockquote>
+<p>其他可读 00002</p>
+</blockquote>
+<blockquote>
+<p>控制命令 值</p>
+</blockquote>
+<blockquote>
+<p>IPC_CREAT</p>
+</blockquote>
+<blockquote>
+<p>0001000</p>
+</blockquote>
+<blockquote>
+<p>IPC_EXCL</p>
+</blockquote>
+<blockquote>
+<p>0002000</p>
+</blockquote>
+<blockquote>
+<p>如:shmid=shmget(key,size,(IPC_CREAT|0400));</p>
+</blockquote>
+<blockquote>
+<p>创建一个关键字为key,长度为size的共享存储区。</p>
+</blockquote>
+<h2 id="shmatidaddrflag">shmat(id,addr,flag):</h2>
+<blockquote>
+<p>从逻辑上将一个共享存储区附接到进程的虚拟地址空间上。</p>
+</blockquote>
+<blockquote>
+<p>该函数调用使用头文件如下:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>43#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/msg.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>char * shmat(id,addr,flag)</p>
+</blockquote>
+<blockquote>
+<p>int id,flag;</p>
+</blockquote>
+<blockquote>
+<p>char * addr;</p>
+</blockquote>
+<blockquote>
+<p>语法格式:virtaddr=shmat(id,addr,flag)</p>
+</blockquote>
+<blockquote>
+<p>其中:id是共享存储区的标识符,addr是用户要使用共享存储区附接的虚地址,若addr是0,系统</p>
+</blockquote>
+<blockquote>
+<p>是否对应用户规定的地址做舍入操作。如果flag中设置了shm_rnd即表示操作系统在必要时舍去这个地</p>
+</blockquote>
+<blockquote>
+<p>址。如果设置了shm_rdonly,即表示只允许读操作。viraddr是附接的虚地址。</p>
+</blockquote>
+<h2 id="shmdtaddr">shmdt(addr):</h2>
+<blockquote>
+<p>把一个共享存储区从指定进程的虚地址空间分开。</p>
+</blockquote>
+<blockquote>
+<p>调用该函数使用头文件:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/mhm.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int shmdt(addr)</p>
+</blockquote>
+<blockquote>
+<p>char * addr</p>
+</blockquote>
+<blockquote>
+<p>其中,当调用成功时,返回0值,调用不成功,返回-1,addr是系统调用shmat所返回的地址。</p>
+</blockquote>
+<blockquote>
+<p>10、shmctl(id,cmd,buf):</p>
+</blockquote>
+<blockquote>
+<p>对与共享存储区关联的各种参数进行操作,从而对共享存储区进行控制。</p>
+</blockquote>
+<blockquote>
+<p>调用该函数使用头文件:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/types.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/ipc.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;sy/shm.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>int shmctl(id,cmd,buf)</p>
+</blockquote>
+<blockquote>
+<p>int id,cmd;</p>
+</blockquote>
+<blockquote>
+<p>struct shmid_ds * buf;</p>
+</blockquote>
+<blockquote>
+<p>其中:调用成功返回0,否则返回-1。id为被共享存储区的标识符。cmd规定操作的类型。规定如下:</p>
+</blockquote>
+<blockquote>
+<p>IPC_STAT:返回包含在指定的shmid相关数据结构中的状态信息,并且把它放置在用户存储区中的_but</p>
+</blockquote>
+<blockquote>
+<p>指针所指的数据结构中。执行此命令的进程必须有读取允许权。</p>
+</blockquote>
+<blockquote>
+<p>IPC_SET:对于指定的shmid,为它设置有效用户和小组标识和操作存取权。</p>
+</blockquote>
+<blockquote>
+<p>IPC_RMID:删除指定的shmid以及与它相关的共享存储区的数据结构。</p>
+</blockquote>
+<blockquote>
+<p>SHM_LOCK:在内存中锁定指定的共享存储区,必须是超级用户才可以进行此项操作。</p>
+</blockquote>
+<blockquote>
+<p>Buf是一个用户级数据结构地址。</p>
+</blockquote>
+<blockquote>
+<p>附:</p>
+</blockquote>
+<blockquote>
+<p>shmid_ds</p>
+</blockquote>
+<blockquote>
+<p>{struct ipc_perm shm_perm;</p>
+</blockquote>
+<blockquote>
+<p>/<em>允许权结构</em>/</p>
+</blockquote>
+<blockquote>
+<p>int shm_segsz;</p>
+</blockquote>
+<blockquote>
+<p>/<em>段大小</em>/</p>
+</blockquote>
+<blockquote>
+<p>int padl;</p>
+</blockquote>
+<blockquote>
+<p>/<em>由系统使用;</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort shm_lpid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后操作的进程id;</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort shm_cpid;</p>
+</blockquote>
+<blockquote>
+<p>/<em>创建者的进程id;</em>/</p>
+</blockquote>
+<blockquote>
+<p>ushort shm_nattch;</p>
+</blockquote>
+<blockquote>
+<p>/<em>当前附界数;</em>/</p>
+</blockquote>
+<blockquote>
+<p>44short pad2;</p>
+</blockquote>
+<blockquote>
+<p>/<em>由系统使用;</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t shm_atime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后附接时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t shm_dtime;</p>
+</blockquote>
+<blockquote>
+<p>/<em>最后段接时间</em>/</p>
+</blockquote>
+<blockquote>
+<p>time_t shm_ctime;</p>
+</blockquote>
+<blockquote>
+<p>/_最后修改时间*/</p>
+</blockquote>
+<blockquote>
+<p>}</p>
+</blockquote>
+<h2 id="signalsigfunction">signal(sig,function):</h2>
+<blockquote>
+<p>允许调用进程控制软中断信号的处理。</p>
+</blockquote>
+<blockquote>
+<p>头文件为:</p>
+</blockquote>
+<blockquote>
+<p>#include&lt;signal.h&gt;</p>
+</blockquote>
+<blockquote>
+<p>参数定义:</p>
+</blockquote>
+<blockquote>
+<p>signal(sig,function);</p>
+</blockquote>
+<blockquote>
+<p>int sig;</p>
+</blockquote>
+<blockquote>
+<p>void(*func)();</p>
+</blockquote>
+<blockquote>
+<p>其中:sig的值是:</p>
+</blockquote>
+<blockquote>
+<p>SIGHVP 挂起</p>
+</blockquote>
+<blockquote>
+<p>SIGINT 键盘按^c键或break键</p>
+</blockquote>
+<blockquote>
+<p>键盘按quit键</p>
+</blockquote>
+<blockquote>
+<p>SIGQUIT</p>
+</blockquote>
+<blockquote>
+<p>SIGILL 非法指令</p>
+</blockquote>
+<blockquote>
+<p>SIGIOT IOT指令</p>
+</blockquote>
+<blockquote>
+<p>SIGEMT EMT指令</p>
+</blockquote>
+<blockquote>
+<p>SIGFPE 浮点运算溢出</p>
+</blockquote>
+<blockquote>
+<p>SIGKILL 要求终止进程</p>
+</blockquote>
+<blockquote>
+<p>SIGBUS 总线错</p>
+</blockquote>
+<blockquote>
+<p>段违例</p>
+</blockquote>
+<blockquote>
+<p>SIGSEGV</p>
+</blockquote>
+<blockquote>
+<p>SIGSYS 系统调用参数错</p>
+</blockquote>
+<blockquote>
+<p>SIGPIPE 向无读者管道上写</p>
+</blockquote>
+<blockquote>
+<p>闹钟</p>
+</blockquote>
+<blockquote>
+<p>SIGALRM</p>
+</blockquote>
+<blockquote>
+<p>软件终结</p>
+</blockquote>
+<blockquote>
+<p>SIGTERM</p>
+</blockquote>
+<blockquote>
+<p>用户定义信号</p>
+</blockquote>
+<blockquote>
+<p>SIGUSRI</p>
+</blockquote>
+<blockquote>
+<p>第二个用户定义信号</p>
+</blockquote>
+<blockquote>
+<p>SIGUSR2</p>
+</blockquote>
+<blockquote>
+<p>SIGCLD 子进程死</p>
+</blockquote>
+<blockquote>
+<p>SIGPWR电源故障</p>
+</blockquote>
+<blockquote>
+<p>function的解释如下:</p>
+</blockquote>
+<blockquote>
+<p>SIG_DEL:缺省操作。对除SIGPWR和SIGCLD外所有信号的缺省操作是进程终结对信号</p>
+</blockquote>
+<blockquote>
+<p>SIGQUIT,SIGILL,SIGTRA,SIGIOT,SIGEMT,SIGFPE,SIGBUS,SIGSEGV和SIGSYS它产生一内存映</p>
+</blockquote>
+<blockquote>
+<p>像文件。</p>
+</blockquote>
+<blockquote>
+<p>SIG_IGN:忽视该信号的出现。</p>
+</blockquote>
+<blockquote>
+<p>Function:在该进程中的一个函数地址,在核心返回用户态时,它以软中断信号的序号作为参数调用</p>
+</blockquote>
+<blockquote>
+<p>该函数,对除了信号SIGILL,SIGTRAP和SIGTWR以外的信号,核心自动地重新设置软中断信号处理程序</p>
+</blockquote>
+<blockquote>
+<p>的值为SIG_DEL,一个进程不能捕获SIGKILL信</p>
+</blockquote>
+
+
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://svtter.github.io/2014/11/21/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/" data-toggle="tooltip" data-placement="top" title="python的自动补全">&larr; 前一篇</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://svtter.github.io/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" data-toggle="tooltip" data-placement="top" title="Linux-同步互斥">后一篇 &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      <footer>
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+		
+		  <a href="https://github.com/svtter" title="GitHub">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+		
+		  <a href="https://twitter.com/Crack_svtter" title="Twitter">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              svtter
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2024
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          由 <a href="https://gohugo.io">Hugo v0.129.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script src="https://svtter.github.io/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://svtter.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
