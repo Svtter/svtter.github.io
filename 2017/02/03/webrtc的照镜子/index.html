@@ -105,11 +105,12 @@ Source code &lt;style type=&#34;text/css&#34;&gt; body { margin: …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
-  <link rel="alternate" href="https://svtter.github.io/zh-cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <meta name="generator" content="Hugo 0.129.0">
+  <link rel="alternate" href="https://svtter.github.io/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://svtter.github.io/css/syntax.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://svtter.github.io/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
   
@@ -143,7 +144,7 @@ Source code &lt;style type=&#34;text/css&#34;&gt; body { margin: …">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+      <a class="navbar-brand" href="https://svtter.github.io/">Svtter&#39;s Blog</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -151,25 +152,25 @@ Source code &lt;style type=&#34;text/css&#34;&gt; body { margin: …">
         
           
             <li>
-              <a title="Categories" href="/zh-cn/categories/">Categories</a>
+              <a title="Categories" href="/categories/">Categories</a>
             </li>
           
         
           
             <li>
-              <a title="Daily ML" href="/zh-cn/daily-ml/">Daily ML</a>
+              <a title="Daily ML" href="/daily-ml/">Daily ML</a>
             </li>
           
         
           
             <li>
-              <a title="Tags" href="/zh-cn/tags/">Tags</a>
+              <a title="Tags" href="/tags/">Tags</a>
             </li>
           
         
           
             <li>
-              <a title="About" href="/zh-cn/page/about/">About</a>
+              <a title="About" href="/page/about/">About</a>
             </li>
           
         
@@ -310,49 +311,104 @@ Source code &lt;style type=&#34;text/css&#34;&gt; body { margin: …">
 </blockquote>
 <p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
 <h3 id="source-code">Source code</h3>
-<pre tabindex="0"><code>&lt;style type=&#34;text/css&#34;&gt;
-body {
-  margin: px;
-  padding: px;
-}
-#player {
-  width: 100%;
-  height: 100%;
-}
- &lt;/style&gt;
- &lt;script&gt;
-(function(){
-  var mediaOptions = { audio: false, video: true };
-  if (!navigator.getUserMedia) {
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-  }
-  if (!navigator.getUserMedia){
-    return alert(&#39;getUserMedia not supported in this browser.&#39;);
-  }
-  navigator.getUserMedia(mediaOptions, success, function(e) {
-    console.log(e);
-  });
-  function success(stream){
-    var video = document.querySelector(&#34;#player&#34;);
-    video.src = window.URL.createObjectURL(stream);
-  }
-})();
- &lt;/script&gt;
-&lt;video id=&#34;player&#34; autoplay=&#34;true&#34;&gt;&lt;/video&gt;
-</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">style</span> <span class="n">type</span><span class="o">=</span><span class="s2">&#34;text/css&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">body</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">margin</span><span class="p">:</span> <span class="n">px</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">padding</span><span class="p">:</span> <span class="n">px</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#player {</span>
+</span></span><span class="line"><span class="cl">  <span class="n">width</span><span class="p">:</span> <span class="mi">100</span><span class="o">%</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">height</span><span class="p">:</span> <span class="mi">100</span><span class="o">%</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"> <span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"> <span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">function</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">  <span class="k">var</span> <span class="n">mediaOptions</span> <span class="o">=</span> <span class="p">{</span> <span class="n">audio</span><span class="p">:</span> <span class="bp">false</span><span class="p">,</span> <span class="n">video</span><span class="p">:</span> <span class="bp">true</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">navigator</span><span class="o">.</span><span class="n">getUserMedia</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">navigator</span><span class="o">.</span><span class="n">getUserMedia</span> <span class="o">=</span> <span class="n">navigator</span><span class="o">.</span><span class="n">getUserMedia</span> <span class="o">||</span> <span class="n">navigator</span><span class="o">.</span><span class="n">webkitGetUserMedia</span> <span class="o">||</span> <span class="n">navigator</span><span class="o">.</span><span class="n">mozGetUserMedia</span> <span class="o">||</span> <span class="n">navigator</span><span class="o">.</span><span class="n">msGetUserMedia</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">navigator</span><span class="o">.</span><span class="n">getUserMedia</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">alert</span><span class="p">(</span><span class="s1">&#39;getUserMedia not supported in this browser.&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">navigator</span><span class="o">.</span><span class="n">getUserMedia</span><span class="p">(</span><span class="n">mediaOptions</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="n">function</span> <span class="n">success</span><span class="p">(</span><span class="n">stream</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="n">video</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">querySelector</span><span class="p">(</span><span class="s2">&#34;#player&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">video</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">createObjectURL</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})();</span>
+</span></span><span class="line"><span class="cl"> <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">video</span> <span class="n">id</span><span class="o">=</span><span class="s2">&#34;player&#34;</span> <span class="n">autoplay</span><span class="o">=</span><span class="s2">&#34;true&#34;</span><span class="o">&gt;&lt;/</span><span class="n">video</span><span class="o">&gt;</span>
+</span></span></code></pre></div>
 
         
           <div class="blog-tags">
             
               
-              <a href="https://svtter.github.io/zh-cn/tags/webrtc/">webrtc</a>&nbsp;
+              <a href="https://svtter.github.io/tags/webrtc/">webrtc</a>&nbsp;
             
               
-              <a href="https://svtter.github.io/zh-cn/tags/javascript/">javascript</a>&nbsp;
+              <a href="https://svtter.github.io/tags/javascript/">javascript</a>&nbsp;
             
           </div>
         
 
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=https%3a%2f%2fsvtter.github.io%2f2017%2f02%2f03%2fwebrtc%25E7%259A%2584%25E7%2585%25A7%25E9%2595%259C%25E5%25AD%2590%2f&amp;text=WebRTC%e7%9a%84%e7%85%a7%e9%95%9c%e5%ad%90&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsvtter.github.io%2f2017%2f02%2f03%2fwebrtc%25E7%259A%2584%25E7%2585%25A7%25E9%2595%259C%25E5%25AD%2590%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=https%3a%2f%2fsvtter.github.io%2f2017%2f02%2f03%2fwebrtc%25E7%259A%2584%25E7%2585%25A7%25E9%2595%259C%25E5%25AD%2590%2f&amp;title=WebRTC%e7%9a%84%e7%85%a7%e9%95%9c%e5%ad%90" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fsvtter.github.io%2f2017%2f02%2f03%2fwebrtc%25E7%259A%2584%25E7%2585%25A7%25E9%2595%259C%25E5%25AD%2590%2f&amp;title=WebRTC%e7%9a%84%e7%85%a7%e9%95%9c%e5%ad%90" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fsvtter.github.io%2f2017%2f02%2f03%2fwebrtc%25E7%259A%2584%25E7%2585%25A7%25E9%2595%259C%25E5%25AD%2590%2f&amp;title=WebRTC%e7%9a%84%e7%85%a7%e9%95%9c%e5%ad%90" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fsvtter.github.io%2f2017%2f02%2f03%2fwebrtc%25E7%259A%2584%25E7%2585%25A7%25E9%2595%259C%25E5%25AD%2590%2f&amp;description=WebRTC%e7%9a%84%e7%85%a7%e9%95%9c%e5%ad%90" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+
+              </div>
+            </section>
         
 
         
@@ -446,12 +502,12 @@ body {
 
           
             &nbsp;&bull;&nbsp;
-            <a href="https://svtter.github.io/zh-cn/">Svtter&#39;s Blog</a>
+            <a href="https://svtter.github.io/">Svtter&#39;s Blog</a>
           
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.129.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -462,7 +518,10 @@ body {
 <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
-<script src="https://svtter.github.io/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://svtter.github.io/js/main.js"></script>
+<script src="https://svtter.github.io/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://svtter.github.io/js/load-photoswipe.js"></script>
 
 
