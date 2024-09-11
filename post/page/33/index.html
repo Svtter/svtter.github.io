@@ -252,6 +252,68 @@
         <div class="posts-list">
           
             <article class="post-preview">
+    <a href="https://svtter.github.io/2014/11/10/linux-selinux-httpd%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE/">
+        <h2 class="post-title">Linux-SELinux-httpd无法访问</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 10, 2014
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;46&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <h1 id="目录的问题">目录的问题</h1>
+<p>由于SELinux造成的httpd中的目录无法访问，可以使用</p>
+<ul>
+<li><code>chcon -R -t httpd_user_content_t &lt;path to web files&gt;</code></li>
+<li><code>chcon -R -t httpd_sys_content_t &lt;path to web files&gt;</code></li>
+</ul>
+<p>mark一个网站()[http://www.jb51.net/os/RedHat/1303.html]</p>
+<h1 id="文件夹访问权限">文件夹访问权限</h1>
+<p>以上方法解决了SELinux的问题，但是我的目录依然没有访问权限。</p>
+<p>然后看了一下文件的基本属性: <code>-rw-r--r--. 1 root root   21 11月 11 12:27 index.html</code></p>
+<p>应该也是没有问题的。</p>
+<h1 id="再查selinux">再查SElinux</h1>
+<p>随后使用<code>cat /var/log/messages</code>探索一番，依然没有找到问题所在——SELinux没有报错。</p>
+<p>防火墙的问题？不是阿。因为我本身是在内网访问，防火墙应该不会出问题。</p>
+<p>那应该是什么问题呢？</p>
+<h1 id="配置文件">配置文件</h1>
+<p>终于在配置文件中找到了问题。</p>
+<p>apache在进入2.4.*以后，不再使用<code>Allow from all</code>这种形式了，取而代之，使用<code>Require from granted</code>这种格式。晕，就是在此处，<code>&lt;Directory&gt;</code>没有设置好，坑了好久阿。。</p>
+<p>相对的我这几天一直都在deepin下开发——因为<code>apt-get</code>得到的apache之前比较习惯，此外deepin没有se也是省了很多功夫。不过通过这一次，总算是把问题解决了！</p>
+<p>鼓励！</p>
+
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.github.io/post/2014-11-10-%E4%BB%8Egrubrescue%E4%BF%AE%E5%A4%8D/">
         <h2 class="post-title">从grub rescue修复</h2>
         
@@ -696,64 +758,6 @@
         
     </div>
 
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.github.io/2014/11/07/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
-        <h2 class="post-title">正则表达式</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 November 7, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;222&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <h2 id="在php中">在php中</h2>
-<p>使用<code>preg_match(&quot;/&lt;title&gt;(.*)&lt;title&gt;/isU&quot;)</code></p>
-<ul>
-<li>/****/表示中间的部分匹配。</li>
-<li>(.*)表示匹配的部分。</li>
-<li>i表示忽略大小写</li>
-<li>s使点号能匹配所有字符包括换行符</li>
-<li>U最短匹配。注意U一定要大写才有效果</li>
-</ul>
-        <a href="https://svtter.github.io/2014/11/07/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="post-read-more">[阅读全文]</a>
-        
-    </div>
-
-    
-    <div class="blog-tags">
-        
-       
-       <a href="https://svtter.github.io/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a>&nbsp;
-         
-    </div>
     
 
 </article>
