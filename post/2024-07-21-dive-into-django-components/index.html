@@ -17,7 +17,7 @@
 
       <title>Dive Into Django Components - </title>
 
-  <meta name="description" content="为了实现有效的 django 组件复用，像前端一样的组件是必不可少的。这篇文章，让我们探索一下 django components。">
+  <meta name="description" content="为了实现有效的 django 组件复用，现有的 django template 总让人感觉有所不足。如果能够像前端一样，使用 component 来进行代码复用，那么一定能方便做很多工作。django-components 就是这样的工具。这篇文章，让我们探索一下 django components。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -66,9 +66,9 @@
     "name" : "svtter"
   },
   "headline": "Dive Into Django Components",
-  "description" : "为了实现有效的 django 组件复用，像前端一样的组件是必不可少的。这篇文章，让我们探索一下 django components。\n",
+  "description" : "为了实现有效的 django 组件复用，现有的 django template 总让人感觉有所不足。如果能够像前端一样，使用 component 来进行代码复用，那么一定能方便做很多工作。django-components 就是这样的工具。这篇文章，让我们探索一下 django components。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  87 ,
+  "wordCount":  111 ,
   "datePublished" : "2024-07-21T10:48:40\u002b08:00",
   "dateModified" : "2024-07-21T10:48:40\u002b08:00",
   "image" : "http:\/\/192.168.2.39:1313\/",
@@ -89,13 +89,13 @@
 
 
 <meta property="og:title" content="Dive Into Django Components" />
-<meta property="og:description" content="为了实现有效的 django 组件复用，像前端一样的组件是必不可少的。这篇文章，让我们探索一下 django components。">
+<meta property="og:description" content="为了实现有效的 django 组件复用，现有的 django template 总让人感觉有所不足。如果能够像前端一样，使用 component 来进行代码复用，那么一定能方便做很多工作。django-components 就是这样的工具。这篇文章，让我们探索一下 django components。">
 <meta property="og:url" content="http://192.168.2.39:1313/post/2024-07-21-dive-into-django-components/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="Dive Into Django Components" />
-  <meta name="twitter:description" content="为了实现有效的 django 组件复用，像前端一样的组件是必不可少的。这篇文章，让我们探索一下 django components。">
+  <meta name="twitter:description" content="为了实现有效的 django 组件复用，现有的 django template 总让人感觉有所不足。如果能够像前端一样，使用 component 来进行代码复用，那么一定能方便做很多工作。django-components 就是这样的工具。这篇文章，让我们探索一下 django components。">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
@@ -255,7 +255,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;87&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;111&nbsp;个字
   
   
     
@@ -281,7 +281,8 @@
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        <p>为了实现有效的 django 组件复用，像前端一样的组件是必不可少的。这篇文章，让我们探索一下 django components。</p>
+        <p>为了实现有效的 django 组件复用，现有的 django template 总让人感觉有所不足。如果能够像前端一样，使用 component 来进行代码复用，那么一定能方便做很多工作。<a href="https://github.com/EmilStenstrom/django-components">django-components</a> 就是这样的工具。这篇文章，让我们探索一下 django components。</p>
+<h2 id="django-components-介绍">django components 介绍</h2>
 <p>我们可以从 github 上面找到 <a href="https://github.com/EmilStenstrom/django-components">EmilStenstrom/django-components</a>。它不是一个官方的概念或者组件，但确实是个好玩意。</p>
 <p>django component 可以将 html,js,css 文件一起打包，然后在另外一个 django template (后面简称 template) 中使用。django component 以及所有划分组件的项目，都可以有效的降低单位心智复杂度，即在编码时候需要掌握的信息复杂度。</p>
 <p>那么，django components 是如何实现的呢？我们可以在使用方法中初窥端倪。这是 Template 配置项。</p>
@@ -302,10 +303,16 @@
 </span></span><span class="line"><span class="cl">        <span class="p">},</span>
 </span></span><span class="line"><span class="cl">    <span class="p">},</span>
 </span></span><span class="line"><span class="cl"><span class="p">]</span>
-</span></span></code></pre></div><p>Django 的 <a href="https://docs.djangoproject.com/en/5.0/ref/templates/api/#the-dirs-option">Template</a> 设置项是用来设置 django template 渲染的位置。我们经常将其修改为 <code>'APP_DIRS': True</code>，来让 django 从我们的 app 文件夹中的 template 渲染 html 文件。例如，我们从 django 中学习到的第一个 app，是<code>polls</code>。
+</span></span></code></pre></div><p>Django 的 <code>settings.py </code>中，<a href="https://docs.djangoproject.com/en/5.0/ref/templates/api/#the-dirs-option">Templates</a> 设置项可以用来设置 django template 渲染的位置。
+我们经常将其修改为 <code>'APP_DIRS': True</code>，来让 django 从我们的 app 文件夹中的 template 渲染 html 文件。例如，我们从 django 中 tutorials 中学习到的第一个 app，是<code>polls</code>。
 通过设置<code>APP_DIR</code>，可以让我们的程序在<code>polls/templates</code>下寻找对应的html 文件。</p>
 <p>在 Loader 中添加 django-components 定义的 <a href="https://github.com/EmilStenstrom/django-components/blob/master/src/django_components/template_loader.py">template loader</a>，目的是能够让 django 从不同目录下的 <code>components</code> 进行检索。</p>
+<blockquote>
 <p>注意，如果要使用 django components 的话，就不能使用默认的 <code>APP_DIRS</code> 了。所以在引入这个库之前，要好好考虑一下代码目录如何规划。</p>
+</blockquote>
+<p>我们尝试使用一下 django components。我们启动 django components 的<a href="https://github.com/EmilStenstrom/django-components/tree/master/sampleproject">官方示例项目</a>。</p>
+<h2 id="实现">实现</h2>
+<p>component 用法主要靠 <code>/src/django_components/template_parser.py</code> 文件来实现。</p>
 
         
           <div class="blog-tags">
