@@ -1,0 +1,847 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-cn" itemscope itemtype="http://schema.org/WebPage">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="Keywords" content="python,svtter,django,软件架构,公众号,小程序,博客,项目管理,">
+
+ 
+
+
+      <title>使用函数式编程遇到的问题 - </title>
+
+  <meta name="description" content="我在使用函数式编程时，遇到了一个问题，背景是这样的：一个项目中存在了大量的函数，这些函数之间的相互调用，使得导致代码逻辑比较复杂。当我想要修改一个逻辑的时候，需要反复的查看代码，以及定义新的函数。
+函数相对独立，本身是一个很好的特点。然而，正是因为相互独立，使得函数和函数的依赖关系缺失，反而造成了程序设计与改动的不方便。">
+  <meta name="author" content="svtter"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Svtter\u0027s Blog",
+    
+    "url": "http:\/\/192.168.2.39:1313\/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "http:\/\/192.168.2.39:1313\/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "http:\/\/192.168.2.39:1313\/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "http:\/\/192.168.2.39:1313\/post\/2024-12-18-functional-programming.md\/",
+          "name": "使用函数式编程遇到的问题"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "svtter"
+  },
+  "headline": "使用函数式编程遇到的问题",
+  "description" : "我在使用函数式编程时，遇到了一个问题，背景是这样的：一个项目中存在了大量的函数，这些函数之间的相互调用，使得导致代码逻辑比较复杂。当我想要修改一个逻辑的时候，需要反复的查看代码，以及定义新的函数。\n函数相对独立，本身是一个很好的特点。然而，正是因为相互独立，使得函数和函数的依赖关系缺失，反而造成了程序设计与改动的不方便。\n",
+  "inLanguage" : "zh-cn",
+  "wordCount":  763 ,
+  "datePublished" : "2024-12-18T11:16:08\u002b08:00",
+  "dateModified" : "2024-12-18T11:16:08\u002b08:00",
+  "image" : "http:\/\/192.168.2.39:1313\/",
+  "keywords" : [ "functional programming, programming" ],
+  "mainEntityOfPage" : "http:\/\/192.168.2.39:1313\/post\/2024-12-18-functional-programming.md\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "http:\/\/192.168.2.39:1313\/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "http:\/\/192.168.2.39:1313\/",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+
+<meta property="og:title" content="使用函数式编程遇到的问题" />
+<meta property="og:description" content="我在使用函数式编程时，遇到了一个问题，背景是这样的：一个项目中存在了大量的函数，这些函数之间的相互调用，使得导致代码逻辑比较复杂。当我想要修改一个逻辑的时候，需要反复的查看代码，以及定义新的函数。
+函数相对独立，本身是一个很好的特点。然而，正是因为相互独立，使得函数和函数的依赖关系缺失，反而造成了程序设计与改动的不方便。">
+<meta property="og:url" content="http://192.168.2.39:1313/post/2024-12-18-functional-programming.md/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Svtter&#39;s Blog" />
+
+  <meta name="twitter:title" content="使用函数式编程遇到的问题" />
+  <meta name="twitter:description" content="我在使用函数式编程时，遇到了一个问题，背景是这样的：一个项目中存在了大量的函数，这些函数之间的相互调用，使得导致代码逻辑比较复杂。当我想要修改一个逻辑的时候，需要反复的查看代码，以及定义新的函数。
+函数相对独立，本身是一个很好的特点。然而，正是因为相互独立，使得函数和函数的依赖关系缺失，反而造成了程序设计与改动的不方便。">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@Crack_svtter" />
+  <meta name="twitter:creator" content="@Crack_svtter" />
+  <meta name="generator" content="Hugo 0.130.0">
+  <link rel="alternate" href="http://192.168.2.39:1313/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="http://192.168.2.39:1313/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://192.168.2.39:1313/css/highlight.min.css" /><link rel="stylesheet" href="http://192.168.2.39:1313/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">切换导航</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://192.168.2.39:1313/">Svtter&#39;s Blog</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Categories" href="/categories/">Categories</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Daily ML" href="/daily-ml/">Daily ML</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+
+        
+          
+            <li>
+              
+            </li>
+          
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>使用函数式编程遇到的问题</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 December 18, 2024
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;4&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;763&nbsp;个字
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>我在使用函数式编程时，遇到了一个问题，背景是这样的：一个项目中存在了大量的函数，这些函数之间的相互调用，使得导致代码逻辑比较复杂。当我想要修改一个逻辑的时候，需要反复的查看代码，以及定义新的函数。</p>
+<p>函数相对独立，本身是一个很好的特点。然而，正是因为相互独立，使得函数和函数的依赖关系缺失，反而造成了程序设计与改动的不方便。</p>
+<p>当我们使用函数的时候，为了能够较好的修改原本的逻辑，可以通过默认参数来构成依赖关系。参数的可替代性，可以使得代码更容易被修改。但是相比于类这个机制，这个依赖关系隐式，且更容易理解。</p>
+<p>在函数跳转的时候，借助ide或者编辑器，跳转也更加方便。</p>
+<p>然而我这个想法真的正确吗？是否是因为函数编程本身有一些特性我没有使用到呢？</p>
+<p>我遇到问题，代码如下：</p>
+<p>函数式代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nd">@validate</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">compute_single</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">get_id_and_params</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">Params</span><span class="p">]],</span>
+</span></span><span class="line"><span class="cl">      <span class="n">get_full_path</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="o">*</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">func_set</span><span class="p">:</span> <span class="n">BasicFuncSet</span> <span class="o">=</span> <span class="n">FuncSet</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">      <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;compute single values.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">      is_write: write to file
+</span></span></span><span class="line"><span class="cl"><span class="s2">      &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">id</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">get_id_and_params</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">input_data</span> <span class="o">=</span> <span class="n">InputData</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">filelist</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ResultFile</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># 生成写入数据的函数</span>
+</span></span><span class="line"><span class="cl">      <span class="n">write_data</span> <span class="o">=</span> <span class="n">use_write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="nb">id</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">params</span><span class="p">[</span><span class="s2">&#34;udl2_file&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">          <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">current_type</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">is_zhiliu</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># ac 0, dc 1. zhiliu is dc</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># filter period</span>
+</span></span><span class="line"><span class="cl">      <span class="n">df</span> <span class="o">=</span> <span class="n">func_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">input_data</span><span class="o">=</span><span class="n">input_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="n">is_write</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="n">write_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&#34;udl2_file&#34;</span><span class="p">],</span> <span class="n">get_full_path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_1&#34;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># stat period, support multiple files, but not use this is api call</span>
+</span></span><span class="line"><span class="cl">      <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="n">func_set</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">interval_jihua</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;interval_jihua&#34;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="n">is_write</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="n">write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_1&#34;</span><span class="p">],</span> <span class="n">get_full_path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_2&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># model period</span>
+</span></span><span class="line"><span class="cl">      <span class="n">df</span> <span class="o">=</span> <span class="n">func_set</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="n">is_write</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="n">write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_2&#34;</span><span class="p">],</span> <span class="n">get_full_path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_3&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># 包含了三级文件</span>
+</span></span><span class="line"><span class="cl">      <span class="n">file_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">status</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">success</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">msg</span><span class="o">=</span><span class="s2">&#34;success!&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">data</span><span class="o">=</span><span class="n">filelist</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># 返回文件以及最终的DataFrame</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">file_result</span><span class="p">,</span> <span class="n">df</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">write_final_files</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ac_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">dc_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">output_path_fn</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalFiles</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;写入 ac dc 文件&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ac_file</span> <span class="o">=</span> <span class="n">output_path_fn</span><span class="p">(</span><span class="s2">&#34;ac&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">dc_file</span> <span class="o">=</span> <span class="n">output_path_fn</span><span class="p">(</span><span class="s2">&#34;dc&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">fileutils</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">ac_df</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ac_file</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">      <span class="n">fileutils</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">dc_df</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dc_file</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalFiles</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">ac</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">ResultFile</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">current_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">original_filename</span><span class="o">=</span><span class="s2">&#34;all udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">original_filepath</span><span class="o">=</span><span class="s2">&#34;null&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">in_filename</span><span class="o">=</span><span class="s2">&#34;all results of udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">filename</span><span class="o">=</span><span class="n">fileutils</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ac_file</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">              <span class="n">filepath</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ac_file</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dc</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">ResultFile</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">current_type</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">original_filename</span><span class="o">=</span><span class="s2">&#34;all udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">original_filepath</span><span class="o">=</span><span class="s2">&#34;null&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">in_filename</span><span class="o">=</span><span class="s2">&#34;all results of udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">filename</span><span class="o">=</span><span class="n">fileutils</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dc_file</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">              <span class="n">filepath</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">dc_file</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">collect_files</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">param_group</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">ParamGroup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">compute_single</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">ComputeFunc</span> <span class="o">=</span> <span class="n">compute_single</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">      对参数列表里面的数据进行计算，并返回结果列表
+</span></span></span><span class="line"><span class="cl"><span class="s2">      compute_single: 计算单一文件的函数
+</span></span></span><span class="line"><span class="cl"><span class="s2">      &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">res</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">df_list</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_group</span><span class="p">[</span><span class="s2">&#34;param_list&#34;</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="k">def</span> <span class="nf">get_id_and_params</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">              <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">r</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">compute_single</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">get_id_and_params</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">param_group</span><span class="p">[</span><span class="s2">&#34;get_full_path&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">              <span class="n">is_write</span><span class="o">=</span><span class="n">is_write</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="c1"># r contains stage-1, stage-2, stage-3 files</span>
+</span></span><span class="line"><span class="cl">          <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">df_list</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">param_group</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">ParamGroup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">collect_files</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">CollectFilesFunc</span> <span class="o">=</span> <span class="n">collect_files</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalResult</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">      计算并返回最终结果
+</span></span></span><span class="line"><span class="cl"><span class="s2">      collect_files 是收集文件的函数，也包含了计算单个文件的过程
+</span></span></span><span class="line"><span class="cl"><span class="s2">      &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">res</span><span class="p">,</span> <span class="n">df_list</span> <span class="o">=</span> <span class="n">collect_files</span><span class="p">(</span><span class="n">param_group</span><span class="p">,</span> <span class="n">is_write</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1"># 整理最终的文件</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ac_df</span><span class="p">,</span> <span class="n">dc_df</span> <span class="o">=</span> <span class="n">fileutils</span><span class="o">.</span><span class="n">merge_files</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">df_list</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">output_fn</span> <span class="o">=</span> <span class="n">param_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;output_path&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="n">output_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&#34;output_path is None&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">final_files</span> <span class="o">=</span> <span class="n">write_final_files</span><span class="p">(</span><span class="n">ac_df</span><span class="p">,</span> <span class="n">dc_df</span><span class="p">,</span> <span class="n">output_fn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalResult</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">status</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">success</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">msg</span><span class="o">=</span><span class="s2">&#34;success!&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">compute_result</span><span class="o">=</span><span class="n">res</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">final_files</span><span class="o">=</span><span class="n">final_files</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span>
+</span></span></code></pre></div><p>当我需要调整 funcset 的实现时，如果我想对当前的代码进行复用，会写成这样</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">get_compute</span><span class="p">(</span><span class="n">funcset</span><span class="p">:</span> <span class="n">BasicFuncSet</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;隐藏了其他函数的复杂性，直接调用本函数即可完成 compute 函数的生成&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">controller</span><span class="o">.</span><span class="n">compute</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">collect_files</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">controller</span><span class="o">.</span><span class="n">collect_files</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">compute_single</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">controller</span><span class="o">.</span><span class="n">compute_single</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">func_set</span><span class="o">=</span><span class="n">funcset</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="p">),</span>
+</span></span><span class="line"><span class="cl">  	<span class="p">)</span>
+</span></span></code></pre></div><p>为了能够修改<code>funset</code>中的内容，我需要不停的重新查看代码，需要不停的查文档，然后来编写代码。尽管这里使用了柯里化来简化代码的参数，但在我看来，实际上帮助不是很大。我仍然需要不停的查询函数的参数，从而降低了编程的速度。</p>
+<p>基于 OOP（面向对象编程）的代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">  <span class="k">class</span> <span class="nc">Controller</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funcset</span><span class="p">:</span> <span class="n">BasicFuncSet</span> <span class="o">=</span> <span class="n">FuncSet</span><span class="p">()):</span>
+</span></span><span class="line"><span class="cl">          <span class="bp">self</span><span class="o">.</span><span class="n">funcset</span> <span class="o">=</span> <span class="n">funcset</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="nd">@validate</span>
+</span></span><span class="line"><span class="cl">      <span class="k">def</span> <span class="nf">compute_single</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">get_id_and_params</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">Params</span><span class="p">]],</span>
+</span></span><span class="line"><span class="cl">          <span class="n">get_full_path</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">          <span class="o">*</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;&#34;&#34;compute single values.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">          is_write: write to file
+</span></span></span><span class="line"><span class="cl"><span class="s2">          &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="nb">id</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">get_id_and_params</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">input_data</span> <span class="o">=</span> <span class="n">InputData</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">filelist</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ResultFile</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 生成写入数据的函数</span>
+</span></span><span class="line"><span class="cl">          <span class="n">write_data</span> <span class="o">=</span> <span class="n">use_write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="nb">id</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">params</span><span class="p">[</span><span class="s2">&#34;udl2_file&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">              <span class="n">filelist</span><span class="o">.</span><span class="n">append</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">current_type</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">is_zhiliu</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># ac 0, dc 1. zhiliu is dc</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># filter period</span>
+</span></span><span class="line"><span class="cl">          <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">input_data</span><span class="o">=</span><span class="n">input_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="n">is_write</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">              <span class="n">write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&#34;udl2_file&#34;</span><span class="p">],</span> <span class="n">get_full_path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_1&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">              <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># stat period, support multiple files, but not use this is api call</span>
+</span></span><span class="line"><span class="cl">          <span class="n">df</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="bp">self</span><span class="o">.</span><span class="n">funcset</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">interval_jihua</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;interval_jihua&#34;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="n">is_write</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">              <span class="n">write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_1&#34;</span><span class="p">],</span> <span class="n">get_full_path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_2&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">              <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># model period</span>
+</span></span><span class="line"><span class="cl">          <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">funcset</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="n">is_write</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">              <span class="n">write_data</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">df</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_2&#34;</span><span class="p">],</span> <span class="n">get_full_path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&#34;out_file_path_3&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">              <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 包含了三级文件</span>
+</span></span><span class="line"><span class="cl">          <span class="n">file_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">status</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">success</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">msg</span><span class="o">=</span><span class="s2">&#34;success!&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">data</span><span class="o">=</span><span class="n">filelist</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 返回文件以及最终的DataFrame</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">file_result</span><span class="p">,</span> <span class="n">df</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">def</span> <span class="nf">write_final_files</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">ac_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dc_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">output_path_fn</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalFiles</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;&#34;&#34;写入 ac dc 文件&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">ac_file</span> <span class="o">=</span> <span class="n">output_path_fn</span><span class="p">(</span><span class="s2">&#34;ac&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dc_file</span> <span class="o">=</span> <span class="n">output_path_fn</span><span class="p">(</span><span class="s2">&#34;dc&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">fileutils</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">ac_df</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ac_file</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">          <span class="n">fileutils</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">dc_df</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dc_file</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalFiles</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">ac</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">ResultFile</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">current_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">original_filename</span><span class="o">=</span><span class="s2">&#34;all udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">original_filepath</span><span class="o">=</span><span class="s2">&#34;null&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">in_filename</span><span class="o">=</span><span class="s2">&#34;all results of udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">filename</span><span class="o">=</span><span class="n">fileutils</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ac_file</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">filepath</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ac_file</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">              <span class="p">),</span>
+</span></span><span class="line"><span class="cl">              <span class="n">dc</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">ResultFile</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">current_type</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">original_filename</span><span class="o">=</span><span class="s2">&#34;all udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">original_filepath</span><span class="o">=</span><span class="s2">&#34;null&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">in_filename</span><span class="o">=</span><span class="s2">&#34;all results of udl2_files&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">filename</span><span class="o">=</span><span class="n">fileutils</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dc_file</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">filepath</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">dc_file</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">              <span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">def</span> <span class="nf">collect_files</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">param_group</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">ParamGroup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">          对参数列表里面的数据进行计算，并返回结果列表
+</span></span></span><span class="line"><span class="cl"><span class="s2">          compute_single: 计算单一文件的函数
+</span></span></span><span class="line"><span class="cl"><span class="s2">          &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">res</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">df_list</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">          <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_group</span><span class="p">[</span><span class="s2">&#34;param_list&#34;</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">              <span class="k">def</span> <span class="nf">get_id_and_params</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                  <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">              <span class="n">r</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_single</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">get_id_and_params</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">param_group</span><span class="p">[</span><span class="s2">&#34;get_full_path&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">is_write</span><span class="o">=</span><span class="n">is_write</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="c1"># r contains stage-1, stage-2, stage-3 files</span>
+</span></span><span class="line"><span class="cl">              <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">              <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">df_list</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="bp">self</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">param_group</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">ParamGroup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalResult</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">          计算并返回最终结果
+</span></span></span><span class="line"><span class="cl"><span class="s2">          collect_files 是收集文件的函数，也包含了计算单个文件的过程
+</span></span></span><span class="line"><span class="cl"><span class="s2">          &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">res</span><span class="p">,</span> <span class="n">df_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_files</span><span class="p">(</span><span class="n">param_group</span><span class="p">,</span> <span class="n">is_write</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 整理最终的文件</span>
+</span></span><span class="line"><span class="cl">          <span class="n">ac_df</span><span class="p">,</span> <span class="n">dc_df</span> <span class="o">=</span> <span class="n">fileutils</span><span class="o">.</span><span class="n">merge_files</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">df_list</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">output_fn</span> <span class="o">=</span> <span class="n">param_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;output_path&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="n">output_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">              <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&#34;output_path is None&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">final_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_final_files</span><span class="p">(</span><span class="n">ac_df</span><span class="p">,</span> <span class="n">dc_df</span><span class="p">,</span> <span class="n">output_fn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">FinalResult</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">status</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">success</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">msg</span><span class="o">=</span><span class="s2">&#34;success!&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">compute_result</span><span class="o">=</span><span class="n">res</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">final_files</span><span class="o">=</span><span class="n">final_files</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span></code></pre></div><p>相比之下，基于类的编程，我只需要这样做：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">get_compute</span><span class="p">(</span><span class="n">funcset</span><span class="p">:</span> <span class="n">BasicFuncSet</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;隐藏了其他函数的复杂性，直接调用本函数即可完成 compute 函数的生成&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">c</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">Controller</span><span class="p">(</span><span class="n">funcset</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">compute</span>
+</span></span></code></pre></div><h2 id="分析">分析</h2>
+<p>实际上，为了实现新需求，修改计算逻辑，对 <code>funcset</code> 的修改是不可或缺的。然而，第一种函数式编程的设计，并非没有这个依赖关系，而是使得依赖被隐藏起来了。也就是说，<strong>关键的逻辑，被放在了调用栈深处</strong>。</p>
+<p>那么，能否将<code>funcset</code>放在可以被简单修改的地方呢？</p>
+<h3 id="原来的代码是什么样子的">原来的代码是什么样子的？</h3>
+<ol>
+<li><code>get_compute</code> 这个方法不存在</li>
+</ol>
+<p>可以采用 Controller 的方式。只不过修改代码的时候，需要查看每个方法的类型。</p>
+<p>区别是，我们愿不愿意根据原本的调用链条，来重新组织代码。使用编辑器 DEBUG 模式，就能看到完整的调用链条。</p>
+<p>在当前阶段明确问题，然后寻找解决办法。并非一股劲儿盲干。</p>
+<h3 id="依然函数式">依然函数式</h3>
+<p>实际上，以下这段代码就起到了这个作用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">get_compute</span><span class="p">(</span><span class="n">funcset</span><span class="p">:</span> <span class="n">BasicFuncSet</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;&#34;&#34;隐藏了其他函数的复杂性，直接调用本函数即可完成 compute 函数的生成&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">controller</span><span class="o">.</span><span class="n">compute</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">collect_files</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="n">controller</span><span class="o">.</span><span class="n">collect_files</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="n">compute_single</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">controller</span><span class="o">.</span><span class="n">compute_single</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">func_set</span><span class="o">=</span><span class="n">funcset</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="p">),</span>
+</span></span><span class="line"><span class="cl">          <span class="p">),</span>
+</span></span><span class="line"><span class="cl">  	<span class="p">)</span>
+</span></span></code></pre></div><p>实际上，尽管看起来代码量很多，就做了一件事情。把 <code>compute_single</code> 中的参数改成了 <code>funcset</code>。</p>
+<p>还有一种方法，就是将默认参数拿出来。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">  <span class="k">def</span> <span class="nf">collect_files</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">param_group</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">ParamGroup</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">is_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">compute_single</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">ComputeFunc</span> <span class="o">=</span> <span class="n">compute_single</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">funcset</span><span class="p">:</span> <span class="n">BasicFuncSet</span> <span class="o">=</span> <span class="n">FuncSet</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">ComputeResult</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+</span></span><span class="line"><span class="cl">      <span class="c1"># ignore</span>
+</span></span></code></pre></div><h3 id="使用-oop面向对象编程">使用 OOP（面向对象编程）</h3>
+<blockquote>
+<p>相比之下，如果直接使用<code>Controller</code>聚合为一个类，还是更加清晰一些。因此，此处使用面向类编程的设计，更好的适应项目不停修改的需求。</p>
+</blockquote>
+<p>使用 OOP 并没有更加清晰。只不过是将原本明确的，函数之间的依赖关系隐藏起来了。这反而是没有必要的。</p>
+<p>我是否失去了函数式编程的灵活性呢？非也。这段代码不会被多处引用。虽然会被多次潜在运行。</p>
+<h3 id="besides-">Besides &hellip;</h3>
+<p>然而，如果我一开始就使用面向对象的设计，<code>funcset</code> 也不见得一定暴露在外（能够被轻松的修改）。可能也会引入其他的复杂性。如果使用类，则应该更好的去定义子类，让代码变得更加可读。除此之外，还有其他的复杂性。例如，使用类的方式，会使得测试代码的编写变得相对困难，需要引入 mock 等方法。如果想要简化，可能还得利用结构化的数据进行简化，例如 <code>from pydantic import BaseModel</code>，去生成<code>yaml</code>文件。</p>
+<h3 id="第一次编写代码的时候">第一次编写代码的时候&hellip;</h3>
+<p>我在最初编写这段代码的时候能没有想到这段代码需要被复用。是在后续的逻辑中，对代码的逻辑进行调整，从而使得其能够被复用。换句话说，不论采用何种编程模式，测试+重构是让代码质量提升，更快的修改代码的一个很好的途径。一个很明显的例子是，sqlite 虽然是开源的，但是其测试套件是专有的。</p>
+<h3 id="其他的问题">其他的问题</h3>
+<ol>
+<li>当<code>get_compute</code>方法被写好之后，<code>Controller</code>这个改动还是有必要的吗？</li>
+</ol>
+<p>可能不是必要的。如果需要进一步了解相关的代码，一定会阅读 <code>get_compute</code> 的代码。相比之下，<code>Controller</code>反而更加复杂。因为 <code>get_compute</code> 已经将代码的调用关系非常清晰的展示出来了。</p>
+<p>如果要修改，有两个思路：</p>
+<ol>
+<li>如果是OOP，使用工具，查看<code>funcset</code>在<code>Controller</code>中被引用的地方。</li>
+<li>如果是FP，直接查看 <code>compute_single</code> 函数。</li>
+</ol>
+<p>第一时间想看简单的东西，还是直接看逻辑。我认为 FP 的方式更加友好，可控性更强。</p>
+
+        
+          <div class="blog-tags">
+            
+              
+              <a href="http://192.168.2.39:1313/tags/functional-programming/">functional programming</a>&nbsp;
+            
+              
+              <a href="http://192.168.2.39:1313/tags/programming/">programming</a>&nbsp;
+            
+          </div>
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=http%3a%2f%2f192.168.2.39%3a1313%2fpost%2f2024-12-18-functional-programming.md%2f&amp;text=%e4%bd%bf%e7%94%a8%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%81%87%e5%88%b0%e7%9a%84%e9%97%ae%e9%a2%98&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2f192.168.2.39%3a1313%2fpost%2f2024-12-18-functional-programming.md%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=http%3a%2f%2f192.168.2.39%3a1313%2fpost%2f2024-12-18-functional-programming.md%2f&amp;title=%e4%bd%bf%e7%94%a8%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%81%87%e5%88%b0%e7%9a%84%e9%97%ae%e9%a2%98" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2f192.168.2.39%3a1313%2fpost%2f2024-12-18-functional-programming.md%2f&amp;title=%e4%bd%bf%e7%94%a8%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%81%87%e5%88%b0%e7%9a%84%e9%97%ae%e9%a2%98" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=http%3a%2f%2f192.168.2.39%3a1313%2fpost%2f2024-12-18-functional-programming.md%2f&amp;title=%e4%bd%bf%e7%94%a8%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%81%87%e5%88%b0%e7%9a%84%e9%97%ae%e9%a2%98" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=http%3a%2f%2f192.168.2.39%3a1313%2fpost%2f2024-12-18-functional-programming.md%2f&amp;description=%e4%bd%bf%e7%94%a8%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%81%87%e5%88%b0%e7%9a%84%e9%97%ae%e9%a2%98" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+
+              </div>
+            </section>
+        
+
+        
+          
+
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="http://192.168.2.39:1313/post/2024-12-17-thinking-about-out-sourcing-company.md/" data-toggle="tooltip" data-placement="top" title="关于软件外包公司的一些思考">&larr; 前一篇</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+      
+      
+      
+      
+        
+      
+
+    </div>
+  </div>
+</div>
+
+      <footer>
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+		
+		  <a href="https://github.com/svtter" title="GitHub">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+		
+		  <a href="https://twitter.com/Crack_svtter" title="Twitter">
+		
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              svtter
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2024
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="http://192.168.2.39:1313/">Svtter&#39;s Blog</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+<script src="http://192.168.2.39:1313/js/main.js"></script>
+<script src="http://192.168.2.39:1313/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="http://192.168.2.39:1313/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
