@@ -19,22 +19,42 @@
 
   <meta name="description" content="binary_search 经常被认为是很难快速，一遍写对的算法，我也是这么认为的（笑），但是最近观察了c&#43;&#43; 标准库中的 binary_search ，其实现使用了 std::lower_bound，让我觉得似乎这个事情被我想复杂了。
 另外，C&#43;&#43; 使用指针的时候，应该自豪的使用 unique_ptr，来避免工程上忘记 delete 的问题。
-STL 中可能的实现 这种实现，最后一个元素不作为可用的元素。
-一般的写法 from geek 需要熟悉的 container std::advacne, std::distance.">
+STL 中可能的实现
+template&lt;class ForwardIt, class T&gt;
+ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& value)
+{
+    ForwardIt it;
+    typename std::iterator_traits&lt;ForwardIt&gt;::difference_type count, step;
+    count = std::distance(first, last);
+
+    while (count &gt; 0) {
+        it = first;
+        step = count / 2;
+        std::advance(it, step);
+        if (*it &lt; value) {
+            first = &#43;&#43;it;
+            count -= step &#43; 1;
+        }
+        else
+            count = step;
+    }
+    return first;
+}
+这种实现，最后一个元素不作为可用的元素。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
     "@type": "WebSite",
     "name": "Svtter\u0027s Blog",
     
-    "url": "http:\/\/192.168.2.39:1313\/"
+    "url": "http:\/\/192.168.2.14:1313\/"
 }
 </script><script type="application/ld+json">
 {
   "@context": "http://schema.org",
   "@type": "Organization",
   "name": "",
-  "url": "http:\/\/192.168.2.39:1313\/"
+  "url": "http:\/\/192.168.2.14:1313\/"
   
   
   
@@ -49,14 +69,14 @@ STL 中可能的实现 这种实现，最后一个元素不作为可用的元素
         "@type": "ListItem",
         "position": 1,
         "item": {
-          "@id": "http:\/\/192.168.2.39:1313\/",
+          "@id": "http:\/\/192.168.2.14:1313\/",
           "name": "home"
         }
     },{
         "@type": "ListItem",
         "position": 3,
         "item": {
-          "@id": "http:\/\/192.168.2.39:1313\/?p=388\/",
+          "@id": "http:\/\/192.168.2.14:1313\/?p=388\/",
           "name": "Algorithm binary search"
         }
     }]
@@ -69,20 +89,20 @@ STL 中可能的实现 这种实现，最后一个元素不作为可用的元素
     "name" : "svtter"
   },
   "headline": "algorithm binary_search",
-  "description" : "binary_search 经常被认为是很难快速，一遍写对的算法，我也是这么认为的（笑），但是最近观察了c\u002b\u002b 标准库中的 binary_search ，其实现使用了 std::lower_bound，让我觉得似乎这个事情被我想复杂了。\n另外，C\u002b\u002b 使用指针的时候，应该自豪的使用 unique_ptr，来避免工程上忘记 delete 的问题。\nSTL 中可能的实现 这种实现，最后一个元素不作为可用的元素。\n一般的写法 from geek 需要熟悉的 container std::advacne, std::distance.",
+  "description" : "binary_search 经常被认为是很难快速，一遍写对的算法，我也是这么认为的（笑），但是最近观察了c\u002b\u002b 标准库中的 binary_search ，其实现使用了 std::lower_bound，让我觉得似乎这个事情被我想复杂了。\n另外，C\u002b\u002b 使用指针的时候，应该自豪的使用 unique_ptr，来避免工程上忘记 delete 的问题。\nSTL 中可能的实现 template\u0026lt;class ForwardIt, class T\u003e ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T\u0026 value) { ForwardIt it; typename std::iterator_traits\u0026lt;ForwardIt\u003e::difference_type count, step; count = std::distance(first, last); while (count \u003e 0) { it = first; step = count \/ 2; std::advance(it, step); if (*it \u0026lt; value) { first = \u002b\u002bit; count -= step \u002b 1; } else count = step; } return first; } 这种实现，最后一个元素不作为可用的元素。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  21 ,
+  "wordCount":  181 ,
   "datePublished" : "2018-08-29T01:00:00\u002b08:00",
   "dateModified" : "2018-08-29T01:00:00\u002b08:00",
-  "image" : "http:\/\/192.168.2.39:1313\/",
+  "image" : "http:\/\/192.168.2.14:1313\/",
   "keywords" : [ "" ],
-  "mainEntityOfPage" : "http:\/\/192.168.2.39:1313\/?p=388\/",
+  "mainEntityOfPage" : "http:\/\/192.168.2.14:1313\/?p=388\/",
   "publisher" : {
     "@type": "Organization",
-    "name" : "http:\/\/192.168.2.39:1313\/",
+    "name" : "http:\/\/192.168.2.14:1313\/",
     "logo" : {
         "@type" : "ImageObject",
-        "url" : "http:\/\/192.168.2.39:1313\/",
+        "url" : "http:\/\/192.168.2.14:1313\/",
         "height" :  60 ,
         "width" :  60
     }
@@ -94,25 +114,45 @@ STL 中可能的实现 这种实现，最后一个元素不作为可用的元素
 <meta property="og:title" content="algorithm binary_search" />
 <meta property="og:description" content="binary_search 经常被认为是很难快速，一遍写对的算法，我也是这么认为的（笑），但是最近观察了c&#43;&#43; 标准库中的 binary_search ，其实现使用了 std::lower_bound，让我觉得似乎这个事情被我想复杂了。
 另外，C&#43;&#43; 使用指针的时候，应该自豪的使用 unique_ptr，来避免工程上忘记 delete 的问题。
-STL 中可能的实现 这种实现，最后一个元素不作为可用的元素。
-一般的写法 from geek 需要熟悉的 container std::advacne, std::distance.">
-<meta property="og:url" content="http://192.168.2.39:1313/?p=388/" />
+STL 中可能的实现
+template&lt;class ForwardIt, class T&gt;
+ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& value)
+{
+    ForwardIt it;
+    typename std::iterator_traits&lt;ForwardIt&gt;::difference_type count, step;
+    count = std::distance(first, last);
+
+    while (count &gt; 0) {
+        it = first;
+        step = count / 2;
+        std::advance(it, step);
+        if (*it &lt; value) {
+            first = &#43;&#43;it;
+            count -= step &#43; 1;
+        }
+        else
+            count = step;
+    }
+    return first;
+}
+这种实现，最后一个元素不作为可用的元素。">
+<meta property="og:url" content="http://192.168.2.14:1313/?p=388/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="algorithm binary_search" />
   <meta name="twitter:description" content="binary_search 经常被认为是很难快速，一遍写对的算法，我也是这么认为的（笑），但是最近观察了c&#43;&#43; 标准库中的 binary_search ，其实现使用了 std::lower_bound，让我觉得似乎这个事情被我想复杂了。
 另外，C&#43;&#43; 使用指针的时候，应该自豪的使用 unique_ptr，来避免工程上忘记 delete 的问题。
-STL 中可能的实现 这种实现，最后一个元素不作为可 …">
+STL …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
-  <link rel="alternate" href="http://192.168.2.39:1313/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <meta name="generator" content="Hugo 0.142.0">
+  <link rel="alternate" href="http://192.168.2.14:1313/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="http://192.168.2.39:1313/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="http://192.168.2.14:1313/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
-  <link rel="stylesheet" href="http://192.168.2.39:1313/css/highlight.min.css" /><link rel="stylesheet" href="http://192.168.2.39:1313/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="http://192.168.2.14:1313/css/highlight.min.css" /><link rel="stylesheet" href="http://192.168.2.14:1313/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
   </head>
@@ -126,7 +166,7 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="http://192.168.2.39:1313/">Svtter&#39;s Blog</a>
+      <a class="navbar-brand" href="http://192.168.2.14:1313/">Svtter&#39;s Blog</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -259,7 +299,7 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;21&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;181&nbsp;个字
   
   
     
@@ -290,12 +330,65 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
         <p>binary_search 经常被认为是很难快速，一遍写对的算法，我也是这么认为的（笑），但是最近观察了c++ 标准库中的 binary_search ，其实现使用了 std::lower_bound，让我觉得似乎这个事情被我想复杂了。</p>
 <p>另外，C++ 使用指针的时候，应该自豪的使用 unique_ptr，来避免工程上忘记 delete 的问题。</p>
 <h2 id="stl-中可能的实现">STL 中可能的实现</h2>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<pre class="wp-block-code"><code lang="clike" class="language-clike">template&lt;class ForwardIt, class T>
+ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& value)
+{
+    ForwardIt it;
+    typename std::iterator_traits&lt;ForwardIt>::difference_type count, step;
+    count = std::distance(first, last);
+
+    while (count > 0) {
+        it = first;
+        step = count / 2;
+        std::advance(it, step);
+        if (*it &lt; value) {
+            first = ++it;
+            count -= step + 1;
+        }
+        else
+            count = step;
+    }
+    return first;
+}</code></pre>
 <p>这种实现，最后一个元素不作为可用的元素。</p>
 <h2 id="一般的写法-from-geek">一般的写法 from geek</h2>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<pre class="wp-block-code"><code lang="clike" class="language-clike">
+class Solution {
+public:
+
+    int binarySearch(int l, int r, vector&lt;int> &nums) {
+
+        if (r >= l) {
+            int mid = l + (r - l) / 2;
+            # printf("%d %d %d\n", l, mid, r);
+
+            if (nums[mid] > nums[mid-1] && nums[mid] > nums[mid+1])
+                return mid;
+
+            auto res = binarySearch(l, mid - 1, nums);
+            if (res == -1)
+                return binarySearch(mid + 1, r, nums);
+            else
+                return res;
+        }
+
+        return -1;
+    }
+
+    int findPeakElement(vector&lt;int>& nums) {
+        if (nums.size() == 0)
+            return -1;
+
+        if (nums.size() == 1)
+            return 0;
+
+        int size = nums.size();
+        nums.insert(nums.begin(), INT_MIN);
+        nums.push_back(INT_MIN);
+
+        return binarySearch(1, size, nums) - 1;
+    }
+};</code></pre>
 <h2 id="需要熟悉的-container">需要熟悉的 container</h2>
 <p>std::advacne, std::distance.</p>
 
@@ -312,42 +405,42 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
     <ul class="share">
       
       <li>
-        <a href="//twitter.com/share?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d388%2f&amp;text=algorithm%20binary_search&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
+        <a href="//twitter.com/share?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d388%2f&amp;text=algorithm%20binary_search&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d388%2f" target="_blank" title="Share on Facebook">
+        <a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d388%2f" target="_blank" title="Share on Facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//reddit.com/submit?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d388%2f&amp;title=algorithm%20binary_search" target="_blank" title="Share on Reddit">
+        <a href="//reddit.com/submit?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d388%2f&amp;title=algorithm%20binary_search" target="_blank" title="Share on Reddit">
           <i class="fab fa-reddit"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d388%2f&amp;title=algorithm%20binary_search" target="_blank" title="Share on LinkedIn">
+        <a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d388%2f&amp;title=algorithm%20binary_search" target="_blank" title="Share on LinkedIn">
           <i class="fab fa-linkedin"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.stumbleupon.com/submit?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d388%2f&amp;title=algorithm%20binary_search" target="_blank" title="Share on StumbleUpon">
+        <a href="//www.stumbleupon.com/submit?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d388%2f&amp;title=algorithm%20binary_search" target="_blank" title="Share on StumbleUpon">
           <i class="fab fa-stumbleupon"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.pinterest.com/pin/create/button/?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d388%2f&amp;description=algorithm%20binary_search" target="_blank" title="Share on Pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d388%2f&amp;description=algorithm%20binary_search" target="_blank" title="Share on Pinterest">
           <i class="fab fa-pinterest"></i>
         </a>
       </li>
@@ -370,12 +463,12 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
         <ul class="pager blog-pager">
           
             <li class="previous">
-              <a href="http://192.168.2.39:1313/post/2018-08-29-cpp-tips/" data-toggle="tooltip" data-placement="top" title="CPP tips">&larr; 前一篇</a>
+              <a href="http://192.168.2.14:1313/post/2018-08-29-cpp-tips/" data-toggle="tooltip" data-placement="top" title="CPP tips">&larr; 前一篇</a>
             </li>
           
           
             <li class="next">
-              <a href="http://192.168.2.39:1313/2018/09/13/classifier-%E6%96%87%E4%BB%B6%E5%88%86%E7%B1%BB/" data-toggle="tooltip" data-placement="top" title="classifier 文件分类">后一篇 &rarr;</a>
+              <a href="http://192.168.2.14:1313/2018/09/13/classifier-%E6%96%87%E4%BB%B6%E5%88%86%E7%B1%BB/" data-toggle="tooltip" data-placement="top" title="classifier 文件分类">后一篇 &rarr;</a>
             </li>
           
         </ul>
@@ -387,6 +480,20 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="http://192.168.2.14:1313/?p=388">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'http:\/\/192.168.2.14:1313\/?p=388';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -439,12 +546,12 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
 
           
             &nbsp;&bull;&nbsp;
-            <a href="http://192.168.2.39:1313/">Svtter&#39;s Blog</a>
+            <a href="http://192.168.2.14:1313/">Svtter&#39;s Blog</a>
           
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -455,17 +562,39 @@ STL 中可能的实现 这种实现，最后一个元素不作为可 …">
 <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
-<script src="http://192.168.2.39:1313/js/main.js"></script>
-<script src="http://192.168.2.39:1313/js/highlight.min.js"></script>
+<script src="http://192.168.2.14:1313/js/main.js"></script>
+<script src="http://192.168.2.14:1313/js/highlight.min.js"></script>
 <script> hljs.initHighlightingOnLoad(); </script>
 <script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="http://192.168.2.39:1313/js/load-photoswipe.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="http://192.168.2.14:1313/js/load-photoswipe.js"></script>
 
 
 
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

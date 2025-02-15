@@ -242,6 +242,87 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2015/04/23/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+        <h2 class="post-title">软件设计模式 — 适配器模式</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 April 23, 2015
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;104&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。</p>
+<p>例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。</p>
+<h1 id="示意代码">示意代码</h1>
+<div class="codehilite">
+  <pre><span></span><span class="kn">package</span> <span class="nn">adapter</span><span class="o">;</span>
+<span class="kd">interface</span> <span class="nc">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Adaptee</span> <span class="o">{</span> <span class="c1">//适配者</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"this is specRequest."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ClassAdapter</span> <span class="kd">extends</span> <span class="n">Adaptee</span> <span class="kd">implements</span> <span class="n">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"This is request in ClassAdapter."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ObjectAdapter</span> <span class="kd">implements</span> <span class="n">Target</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Adaptee</span> <span class="n">adaptee</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Adaptee</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"this. is request in ObjectAdapter."</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">adaptee</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Target</span> <span class="n">ctarget</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClassAdapter</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Target</span> <span class="n">otarget</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectAdapter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
+        <span class="n">ctarget</span><span class="o">.</span><span class="na">request</span><span class="o">();</span>
+        <span class="n">ctarget</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+        <span class="n">otarget</span><span class="o">.</span><span class="na">request</span><span class="o">();</span>
+        <span class="n">otarget</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2015/04/21/%E5%B1%B1%E4%B8%9C%E7%9C%81%E7%AC%AC%E4%BA%94%E5%B1%8A%E7%9C%81%E8%B5%9Bcircle/">
         <h2 class="post-title">山东省第五届省赛  Circle</h2>
         
@@ -1413,245 +1494,6 @@
 <h2 id="指导">指导</h2>
 <p><img src="http://leanote.com/api/file/getImage?fileId=5524f9fd38f411636b00069d" alt="enter image description here"></p>
 
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2015/03/12/%E5%A4%A7%E7%99%BD%E5%88%B7%E9%A2%98%E5%BD%95/">
-        <h2 class="post-title">大白刷题录</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 March 12, 2015
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;5&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;886&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <h2 id="uva-11729">UVa 11729</h2>
-<div class="codehilite">
-  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="k">struct</span> <span class="n">Ant</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span> <span class="kt">int</span> <span class="n">p</span><span class="p">;</span> <span class="kt">int</span> <span class="n">d</span><span class="p">;</span>
-    <span class="kt">bool</span> <span class="k">operator</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">const</span> <span class="n">Ant</span><span class="o">&</span> <span class="n">a</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">p</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-<span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">10010</span><span class="p">;</span>
-<span class="k">const</span> <span class="kt">char</span> <span class="n">dirName</span><span class="p">[][</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">"L"</span><span class="p">,</span> <span class="s">"Turning"</span><span class="p">,</span> <span class="s">"R"</span><span class="p">};</span>
-<span class="n">Ant</span> <span class="n">before</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">after</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-<span class="kt">int</span> <span class="n">order</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-    <span class="n">freopen</span><span class="p">(</span><span class="s">"input"</span><span class="p">,</span> <span class="s">"r"</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">t</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">L</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">;</span>
-    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-    <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">t</span><span class="p">);</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">kase</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">kase</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">;</span> <span class="n">kase</span><span class="o">++</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">"Case #%d:</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">kase</span><span class="p">);</span>
-        <span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">L</span><span class="p">,</span> <span class="o">&</span><span class="n">T</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">scanf</span><span class="p">(</span><span class="s">"%d %c"</span><span class="p">,</span> <span class="o">&</span><span class="n">p</span><span class="p">,</span> <span class="o">&</span><span class="n">c</span><span class="p">);</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;L&#39;</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="n">before</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ant</span><span class="p">)</span> <span class="p">{</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">};</span>
-            <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ant</span><span class="p">)</span> <span class="p">{</span><span class="mi"></span><span class="p">,</span> <span class="n">p</span><span class="o">+</span><span class="n">T</span><span class="o">*</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">};</span>
-        <span class="p">}</span>
-        <span class="n">sort</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">before</span><span class="o">+</span><span class="n">n</span><span class="p">);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span> <span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span><span class="n">i</span> <span class="o">++</span><span class="p">)</span>
-            <span class="n">order</span><span class="p">[</span><span class="n">before</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
-        <span class="n">sort</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">after</span><span class="o">+</span><span class="n">n</span><span class="p">);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">p</span> <span class="o">==</span> <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">p</span><span class="p">)</span> <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">d</span> <span class="o">=</span> <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">d</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">order</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">p</span> <span class="o">&lt;</span> <span class="mi"></span> <span class="o">||</span> <span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">p</span> <span class="o">&gt;</span> <span class="n">L</span><span class="p">)</span> <span class="n">puts</span><span class="p">(</span><span class="s">"Fell off"</span><span class="p">);</span>
-            <span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%d %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">p</span><span class="p">,</span> <span class="n">dirName</span><span class="p">[</span><span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">]);</span>
-        <span class="p">}</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="k">struct</span> <span class="n">Ant</span>
-<span class="p">{</span>
-    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span> <span class="kt">int</span> <span class="n">p</span><span class="p">;</span> <span class="kt">int</span> <span class="n">d</span><span class="p">;</span>
-    <span class="kt">bool</span> <span class="k">operator</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">const</span> <span class="n">Ant</span><span class="o">&</span> <span class="n">a</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">p</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-<span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">10010</span><span class="p">;</span>
-<span class="k">const</span> <span class="kt">char</span> <span class="n">dirName</span><span class="p">[][</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">"L"</span><span class="p">,</span> <span class="s">"Turning"</span><span class="p">,</span> <span class="s">"R"</span><span class="p">};</span>
-<span class="n">Ant</span> <span class="n">before</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">after</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-<span class="kt">int</span> <span class="n">order</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-    <span class="n">freopen</span><span class="p">(</span><span class="s">"input"</span><span class="p">,</span> <span class="s">"r"</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">t</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">L</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">;</span>
-    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-    <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">t</span><span class="p">);</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">kase</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">kase</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">;</span> <span class="n">kase</span><span class="o">++</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">"Case #%d:</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">kase</span><span class="p">);</span>
-        <span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">L</span><span class="p">,</span> <span class="o">&</span><span class="n">T</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">scanf</span><span class="p">(</span><span class="s">"%d %c"</span><span class="p">,</span> <span class="o">&</span><span class="n">p</span><span class="p">,</span> <span class="o">&</span><span class="n">c</span><span class="p">);</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;L&#39;</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="n">before</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ant</span><span class="p">)</span> <span class="p">{</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">};</span>
-            <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ant</span><span class="p">)</span> <span class="p">{</span><span class="mi"></span><span class="p">,</span> <span class="n">p</span><span class="o">+</span><span class="n">T</span><span class="o">*</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">};</span>
-        <span class="p">}</span>
-        <span class="n">sort</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">before</span><span class="o">+</span><span class="n">n</span><span class="p">);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span> <span class="p">;</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span><span class="n">i</span> <span class="o">++</span><span class="p">)</span>
-            <span class="n">order</span><span class="p">[</span><span class="n">before</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
-        <span class="n">sort</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">after</span><span class="o">+</span><span class="n">n</span><span class="p">);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">p</span> <span class="o">==</span> <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">p</span><span class="p">)</span> <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">d</span> <span class="o">=</span> <span class="n">after</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">d</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">order</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">p</span> <span class="o">&lt;</span> <span class="mi"></span> <span class="o">||</span> <span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">p</span> <span class="o">&gt;</span> <span class="n">L</span><span class="p">)</span> <span class="n">puts</span><span class="p">(</span><span class="s">"Fell off"</span><span class="p">);</span>
-            <span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%d %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">p</span><span class="p">,</span> <span class="n">dirName</span><span class="p">[</span><span class="n">after</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">]);</span>
-        <span class="p">}</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-</div>
-<h2 id="uva-11292-勇士斗恶龙">UVa 11292 勇士斗恶龙</h2>
-<p>排序，贪心</p>
-<div class="codehilite">
-  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
-<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="c1">// freopen("input", "r", stdin);</span>
-    <span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">20010</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">dra</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-    <span class="kt">int</span> <span class="n">sol</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-    <span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">,</span> <span class="o">&</span><span class="n">m</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="n">m</span> <span class="o">&&</span> <span class="n">n</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">dra</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">sol</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-        <span class="n">sort</span><span class="p">(</span><span class="n">dra</span><span class="p">,</span> <span class="n">dra</span><span class="o">+</span><span class="n">n</span><span class="p">);</span> <span class="n">sort</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">sol</span><span class="o">+</span><span class="n">m</span><span class="p">);</span>
-        <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">cost</span><span class="p">;</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">=</span> <span class="n">cost</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(;;)</span>
-        <span class="p">{</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">n</span> <span class="o">||</span> <span class="n">j</span> <span class="o">==</span> <span class="n">m</span><span class="p">)</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">dra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">sol</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="n">j</span><span class="o">++</span><span class="p">;</span>
-            <span class="k">else</span>
-            <span class="p">{</span>
-                <span class="n">cost</span> <span class="o">+=</span> <span class="n">sol</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
-                <span class="n">i</span><span class="o">++</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>  <span class="n">cost</span><span class="p">);</span>
-        <span class="k">else</span> <span class="n">puts</span><span class="p">(</span><span class="s">"Loowater is doomed!"</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-</div>
-<h2 id="uva-11300">UVa 11300</h2>
-<p>这个题目很有价值。</p>
-<p>一方面通过数学推导得出结论。</p>
-<p>编号为i的人初始有$A_i$枚金币。对于1号，给了4号$x_1$枚金币，自己还有$A_1-x_1$枚。然后从2号拿走$x_2$枚金币，现在有$A_1-x_1+x_2$枚金币，另外，设平均金币值为$A_1-x_1+x_2=M$。</p>
-<p>由此可类推得到</p>
-<p>$A_n-x_n+x_1 \Rightarrow x_n=M-A_n+x_1=x_n-C_n$</p>
-<p>我们可以得到类推公式</p>
-<p>$$C_i = C_{i-1} + A_i – M $$</p>
-<p>证明:</p>
-<p>$$x_2 = x_1 – C_1$$</p>
-<p>$$x_3 = M-A_2+x_2 =2M-A_1-A_2+x_1=x_1-C_2$$\</p>
-<p>以此类推。</p>
-<p>可以求得，需要求的结果为:</p>
-<p>$$|x_1|+|x_1-C_1|+|x_1-C_2|….|x_1-C_n-1|$$</p>
-<p>即求这个式子值最小，即求$C_1, C_2, …C_n$的中位数。</p>
-<div class="codehilite">
-  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
-<span class="cp">#define lln long long</span>
-<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">1000000</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
-<span class="n">lln</span> <span class="n">gold</span><span class="p">[</span><span class="n">MAXN</span><span class="p">],</span> <span class="n">C</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="c1">// freopen("input", "r", stdin);</span>
-    <span class="n">lln</span> <span class="n">n</span><span class="p">,</span> <span class="n">sum</span><span class="p">,</span> <span class="n">per</span><span class="p">,</span> <span class="n">cnt</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%lld"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="n">sum</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">scanf</span><span class="p">(</span><span class="s">"%lld"</span><span class="p">,</span> <span class="o">&</span><span class="n">gold</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-            <span class="n">sum</span> <span class="o">+=</span> <span class="n">gold</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="n">per</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">/</span> <span class="n">n</span><span class="p">;</span>
-        <span class="n">C</span><span class="p">[</span><span class="mi"></span><span class="p">]</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">gold</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">per</span><span class="p">;</span>
-        <span class="n">sort</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="o">+</span><span class="n">n</span><span class="p">);</span>
-        <span class="n">cnt</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="n">lln</span> <span class="n">x1</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">];</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-            <span class="n">cnt</span> <span class="o">+=</span> <span class="n">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">"%lld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">cnt</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-</div>
-<h2 id="la-3708">LA 3708</h2>
-<p>这个题目也是比较有水平</p>
-<p>使用了按比例缩小的技巧。其中，按逆时针编号，固定一个点作为原点，建立新坐标。原来的位置呈现在新坐标的位置为$pos = i/n*(n+m)$，如此，求移动距离则是$fabs(pos – floor(pos+0.5))/(n+m)$</p>
-        <a href="https://svtter.cn/2015/03/12/%E5%A4%A7%E7%99%BD%E5%88%B7%E9%A2%98%E5%BD%95/" class="post-read-more">[阅读全文]</a>
         
     </div>
 

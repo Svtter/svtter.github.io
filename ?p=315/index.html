@@ -17,24 +17,91 @@
 
       <title># leetcode 电话号码的字母组合 - </title>
 
-  <meta name="description" content=" Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
+  <meta name="description" content="
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
 A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
 这个题目做的有点水了；我原来的做法是开两个队列来进行交叉，提交之后100%速度也就没有很在意，回头一看似乎方法麻烦很多，也不符合回溯法的一般做法。
-原本做法 ">
+原本做法
+
+  class Solution {
+public:
+    map &lt;char, string&gt; dict;
+    void init() {
+        dict[&#39;2&#39;] = &#34;abc&#34;;
+        dict[&#39;3&#39;] = &#34;def&#34;;
+        dict[&#39;4&#39;] = &#34;ghi&#34;;
+        dict[&#39;5&#39;] = &#34;jkl&#34;;
+        dict[&#39;6&#39;] = &#34;mno&#34;;
+        dict[&#39;7&#39;] = &#34;pqrs&#34;;
+        dict[&#39;8&#39;] = &#34;tuv&#34;;
+        dict[&#39;9&#39;] = &#34;wxyz&#34;;
+    }
+    void expand(queue&lt;string&gt; &q, queue&lt;string&gt; &q1, char ch) {
+        while(!q.empty())
+        {
+            string f = q.front();
+            q.pop();
+            string temp = dict[ch];
+            for (int i = ; i &lt; temp.size(); i&#43;&#43;)
+            {
+                q1.push(f &#43; temp[i]);
+            }
+        }
+    }
+    vector&lt;string&gt; trans(queue&lt;string&gt; q) {
+        vector&lt;string&gt; res;
+        while(!q.empty()) {
+            res.push_back(q.front());
+            q.pop();
+        }
+        return res;
+    }
+    vector&lt;string&gt; expand(string digits) {
+        queue &lt;string&gt; q;
+        queue &lt;string&gt; q1;
+        string first = dict[digits[]];
+        vector &lt;string&gt; res;
+        for (int i = ; i &lt; first.size(); i&#43;&#43;)
+        {
+            q.push({first[i]});
+        }
+        for (int i = 1; i &lt; digits.size(); i&#43;&#43;)
+        {
+            if (i % 2)
+                expand(q, q1, digits[i]);
+            else
+                expand(q1, q, digits[i]);
+        }
+        if (q.empty())
+            return trans(q1);
+        else
+            return trans(q);
+    }
+    vector&lt;string&gt; letterCombinations(string digits) {
+        init();
+        vector &lt;string&gt; res;
+        if (digits.size() == )
+            return res;
+        return expand(digits);
+    }
+};
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
     "@type": "WebSite",
     "name": "Svtter\u0027s Blog",
     
-    "url": "http:\/\/192.168.2.39:1313\/"
+    "url": "http:\/\/192.168.2.14:1313\/"
 }
 </script><script type="application/ld+json">
 {
   "@context": "http://schema.org",
   "@type": "Organization",
   "name": "",
-  "url": "http:\/\/192.168.2.39:1313\/"
+  "url": "http:\/\/192.168.2.14:1313\/"
   
   
   
@@ -49,14 +116,14 @@ A mapping of digit to letters (just like on the telephone buttons) is given belo
         "@type": "ListItem",
         "position": 1,
         "item": {
-          "@id": "http:\/\/192.168.2.39:1313\/",
+          "@id": "http:\/\/192.168.2.14:1313\/",
           "name": "home"
         }
     },{
         "@type": "ListItem",
         "position": 3,
         "item": {
-          "@id": "http:\/\/192.168.2.39:1313\/?p=315\/",
+          "@id": "http:\/\/192.168.2.14:1313\/?p=315\/",
           "name": "# leetcode 电话号码的字母组合"
         }
     }]
@@ -69,20 +136,20 @@ A mapping of digit to letters (just like on the telephone buttons) is given belo
     "name" : "svtter"
   },
   "headline": "# leetcode 电话号码的字母组合",
-  "description" : " Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.\nA mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.\n这个题目做的有点水了；我原来的做法是开两个队列来进行交叉，提交之后100%速度也就没有很在意，回头一看似乎方法麻烦很多，也不符合回溯法的一般做法。\n原本做法 ",
+  "description" : " Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.\nA mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.\n这个题目做的有点水了；我原来的做法是开两个队列来进行交叉，提交之后100%速度也就没有很在意，回头一看似乎方法麻烦很多，也不符合回溯法的一般做法。\n原本做法 class Solution { public: map \u0026lt;char, string\u0026gt; dict; void init() { dict[\u00272\u0027] = \u0022abc\u0022; dict[\u00273\u0027] = \u0022def\u0022; dict[\u00274\u0027] = \u0022ghi\u0022; dict[\u00275\u0027] = \u0022jkl\u0022; dict[\u00276\u0027] = \u0022mno\u0022; dict[\u00277\u0027] = \u0022pqrs\u0022; dict[\u00278\u0027] = \u0022tuv\u0022; dict[\u00279\u0027] = \u0022wxyz\u0022; } void expand(queue\u0026lt;string\u0026gt; \u0026q, queue\u0026lt;string\u0026gt; \u0026q1, char ch) { while(!q.empty()) { string f = q.front(); q.pop(); string temp = dict[ch]; for (int i = ; i \u0026lt; temp.size(); i\u002b\u002b) { q1.push(f \u002b temp[i]); } } } vector\u0026lt;string\u0026gt; trans(queue\u0026lt;string\u0026gt; q) { vector\u0026lt;string\u0026gt; res; while(!q.empty()) { res.push_back(q.front()); q.pop(); } return res; } vector\u0026lt;string\u0026gt; expand(string digits) { queue \u0026lt;string\u0026gt; q; queue \u0026lt;string\u0026gt; q1; string first = dict[digits[]]; vector \u0026lt;string\u0026gt; res; for (int i = ; i \u0026lt; first.size(); i\u002b\u002b) { q.push({first[i]}); } for (int i = 1; i \u0026lt; digits.size(); i\u002b\u002b) { if (i % 2) expand(q, q1, digits[i]); else expand(q1, q, digits[i]); } if (q.empty()) return trans(q1); else return trans(q); } vector\u0026lt;string\u0026gt; letterCombinations(string digits) { init(); vector \u0026lt;string\u0026gt; res; if (digits.size() == ) return res; return expand(digits); } }; ",
   "inLanguage" : "zh-cn",
-  "wordCount":  44 ,
+  "wordCount":  206 ,
   "datePublished" : "2018-08-27T01:00:00\u002b08:00",
   "dateModified" : "2018-08-27T01:00:00\u002b08:00",
-  "image" : "http:\/\/192.168.2.39:1313\/",
+  "image" : "http:\/\/192.168.2.14:1313\/",
   "keywords" : [ "" ],
-  "mainEntityOfPage" : "http:\/\/192.168.2.39:1313\/?p=315\/",
+  "mainEntityOfPage" : "http:\/\/192.168.2.14:1313\/?p=315\/",
   "publisher" : {
     "@type": "Organization",
-    "name" : "http:\/\/192.168.2.39:1313\/",
+    "name" : "http:\/\/192.168.2.14:1313\/",
     "logo" : {
         "@type" : "ImageObject",
-        "url" : "http:\/\/192.168.2.39:1313\/",
+        "url" : "http:\/\/192.168.2.14:1313\/",
         "height" :  60 ,
         "width" :  60
     }
@@ -92,26 +159,94 @@ A mapping of digit to letters (just like on the telephone buttons) is given belo
 
 
 <meta property="og:title" content="# leetcode 电话号码的字母组合" />
-<meta property="og:description" content=" Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
+<meta property="og:description" content="
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
 A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
 这个题目做的有点水了；我原来的做法是开两个队列来进行交叉，提交之后100%速度也就没有很在意，回头一看似乎方法麻烦很多，也不符合回溯法的一般做法。
-原本做法 ">
-<meta property="og:url" content="http://192.168.2.39:1313/?p=315/" />
+原本做法
+
+  class Solution {
+public:
+    map &lt;char, string&gt; dict;
+    void init() {
+        dict[&#39;2&#39;] = &#34;abc&#34;;
+        dict[&#39;3&#39;] = &#34;def&#34;;
+        dict[&#39;4&#39;] = &#34;ghi&#34;;
+        dict[&#39;5&#39;] = &#34;jkl&#34;;
+        dict[&#39;6&#39;] = &#34;mno&#34;;
+        dict[&#39;7&#39;] = &#34;pqrs&#34;;
+        dict[&#39;8&#39;] = &#34;tuv&#34;;
+        dict[&#39;9&#39;] = &#34;wxyz&#34;;
+    }
+    void expand(queue&lt;string&gt; &q, queue&lt;string&gt; &q1, char ch) {
+        while(!q.empty())
+        {
+            string f = q.front();
+            q.pop();
+            string temp = dict[ch];
+            for (int i = ; i &lt; temp.size(); i&#43;&#43;)
+            {
+                q1.push(f &#43; temp[i]);
+            }
+        }
+    }
+    vector&lt;string&gt; trans(queue&lt;string&gt; q) {
+        vector&lt;string&gt; res;
+        while(!q.empty()) {
+            res.push_back(q.front());
+            q.pop();
+        }
+        return res;
+    }
+    vector&lt;string&gt; expand(string digits) {
+        queue &lt;string&gt; q;
+        queue &lt;string&gt; q1;
+        string first = dict[digits[]];
+        vector &lt;string&gt; res;
+        for (int i = ; i &lt; first.size(); i&#43;&#43;)
+        {
+            q.push({first[i]});
+        }
+        for (int i = 1; i &lt; digits.size(); i&#43;&#43;)
+        {
+            if (i % 2)
+                expand(q, q1, digits[i]);
+            else
+                expand(q1, q, digits[i]);
+        }
+        if (q.empty())
+            return trans(q1);
+        else
+            return trans(q);
+    }
+    vector&lt;string&gt; letterCombinations(string digits) {
+        init();
+        vector &lt;string&gt; res;
+        if (digits.size() == )
+            return res;
+        return expand(digits);
+    }
+};
+
+">
+<meta property="og:url" content="http://192.168.2.14:1313/?p=315/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="# leetcode 电话号码的字母组合" />
-  <meta name="twitter:description" content=" Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
+  <meta name="twitter:description" content="
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
 A mapping of digit to letters (just like on the telephone buttons) is …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
-  <link rel="alternate" href="http://192.168.2.39:1313/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
+  <meta name="generator" content="Hugo 0.142.0">
+  <link rel="alternate" href="http://192.168.2.14:1313/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="http://192.168.2.39:1313/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="http://192.168.2.14:1313/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
-  <link rel="stylesheet" href="http://192.168.2.39:1313/css/highlight.min.css" /><link rel="stylesheet" href="http://192.168.2.39:1313/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="http://192.168.2.14:1313/css/highlight.min.css" /><link rel="stylesheet" href="http://192.168.2.14:1313/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
   </head>
@@ -125,7 +260,7 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="http://192.168.2.39:1313/">Svtter&#39;s Blog</a>
+      <a class="navbar-brand" href="http://192.168.2.14:1313/">Svtter&#39;s Blog</a>
     </div>
 
     <div class="collapse navbar-collapse" id="main-navbar">
@@ -258,7 +393,7 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;44&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;206&nbsp;个字
   
   
     
@@ -292,8 +427,71 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
 </blockquote>
 <p>这个题目做的有点水了；我原来的做法是开两个队列来进行交叉，提交之后100%速度也就没有很在意，回头一看似乎方法麻烦很多，也不符合回溯法的一般做法。</p>
 <h2 id="原本做法">原本做法</h2>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">map</span> <span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;</span> <span class="n">dict</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'2'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"abc"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'3'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"def"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'4'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"ghi"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'5'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"jkl"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'6'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"mno"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'7'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"pqrs"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'8'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"tuv"</span><span class="p">;</span>
+        <span class="n">dict</span><span class="p">[</span><span class="sc">'9'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"wxyz"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="nf">expand</span><span class="p">(</span><span class="n">queue</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&</span><span class="n">q</span><span class="p">,</span> <span class="n">queue</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">&</span><span class="n">q1</span><span class="p">,</span> <span class="kt">char</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">string</span> <span class="n">f</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+            <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="n">string</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">dict</span><span class="p">[</span><span class="n">ch</span><span class="p">];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">temp</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">q1</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">trans</span><span class="p">(</span><span class="n">queue</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">());</span>
+            <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">expand</span><span class="p">(</span><span class="n">string</span> <span class="n">digits</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">queue</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+        <span class="n">queue</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">q1</span><span class="p">;</span>
+        <span class="n">string</span> <span class="n">first</span> <span class="o">=</span> <span class="n">dict</span><span class="p">[</span><span class="n">digits</span><span class="p">[</span><span class="mi"></span><span class="p">]];</span>
+        <span class="n">vector</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">first</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">first</span><span class="p">[</span><span class="n">i</span><span class="p">]});</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">digits</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">expand</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">q1</span><span class="p">,</span> <span class="n">digits</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="k">else</span>
+                <span class="nf">expand</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">digits</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">trans</span><span class="p">(</span><span class="n">q1</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="k">return</span> <span class="nf">trans</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">letterCombinations</span><span class="p">(</span><span class="n">string</span> <span class="n">digits</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">init</span><span class="p">();</span>
+        <span class="n">vector</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">digits</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nf">expand</span><span class="p">(</span><span class="n">digits</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre>
+</div>
 
         
 
@@ -307,42 +505,42 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
     <ul class="share">
       
       <li>
-        <a href="//twitter.com/share?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d315%2f&amp;text=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
+        <a href="//twitter.com/share?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d315%2f&amp;text=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d315%2f" target="_blank" title="Share on Facebook">
+        <a href="//www.facebook.com/sharer/sharer.php?u=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d315%2f" target="_blank" title="Share on Facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//reddit.com/submit?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d315%2f&amp;title=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on Reddit">
+        <a href="//reddit.com/submit?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d315%2f&amp;title=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on Reddit">
           <i class="fab fa-reddit"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d315%2f&amp;title=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on LinkedIn">
+        <a href="//www.linkedin.com/shareArticle?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d315%2f&amp;title=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on LinkedIn">
           <i class="fab fa-linkedin"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.stumbleupon.com/submit?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d315%2f&amp;title=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on StumbleUpon">
+        <a href="//www.stumbleupon.com/submit?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d315%2f&amp;title=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on StumbleUpon">
           <i class="fab fa-stumbleupon"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.pinterest.com/pin/create/button/?url=http%3a%2f%2f192.168.2.39%3a1313%2f%3fp%3d315%2f&amp;description=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on Pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=http%3a%2f%2f192.168.2.14%3a1313%2f%3fp%3d315%2f&amp;description=%23%20leetcode%20%e7%94%b5%e8%af%9d%e5%8f%b7%e7%a0%81%e7%9a%84%e5%ad%97%e6%af%8d%e7%bb%84%e5%90%88" target="_blank" title="Share on Pinterest">
           <i class="fab fa-pinterest"></i>
         </a>
       </li>
@@ -365,12 +563,12 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
         <ul class="pager blog-pager">
           
             <li class="previous">
-              <a href="http://192.168.2.39:1313/post/2018-08-27-leetcode-k-top/" data-toggle="tooltip" data-placement="top" title="# leetcode 前 K 个高频元素">&larr; 前一篇</a>
+              <a href="http://192.168.2.14:1313/post/2018-08-27-leetcode-k-top/" data-toggle="tooltip" data-placement="top" title="# leetcode 前 K 个高频元素">&larr; 前一篇</a>
             </li>
           
           
             <li class="next">
-              <a href="http://192.168.2.39:1313/2018/08/27/difference-between-map-unordered_map/" data-toggle="tooltip" data-placement="top" title="# Difference between map &amp; unordered_map">后一篇 &rarr;</a>
+              <a href="http://192.168.2.14:1313/2018/08/27/difference-between-map-unordered_map/" data-toggle="tooltip" data-placement="top" title="# Difference between map &amp; unordered_map">后一篇 &rarr;</a>
             </li>
           
         </ul>
@@ -382,6 +580,20 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="http://192.168.2.14:1313/?p=315">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'http:\/\/192.168.2.14:1313\/?p=315';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -434,12 +646,12 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
 
           
             &nbsp;&bull;&nbsp;
-            <a href="http://192.168.2.39:1313/">Svtter&#39;s Blog</a>
+            <a href="http://192.168.2.14:1313/">Svtter&#39;s Blog</a>
           
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -450,17 +662,39 @@ A mapping of digit to letters (just like on the telephone buttons) is …">
 <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha384-w5y/xIeYixWvfM+A1cEbmHPURnvyqmVg5eVENruEdDjcyRLUSNej7512JQGspFUr" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
-<script src="http://192.168.2.39:1313/js/main.js"></script>
-<script src="http://192.168.2.39:1313/js/highlight.min.js"></script>
+<script src="http://192.168.2.14:1313/js/main.js"></script>
+<script src="http://192.168.2.14:1313/js/highlight.min.js"></script>
 <script> hljs.initHighlightingOnLoad(); </script>
 <script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="http://192.168.2.39:1313/js/load-photoswipe.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="http://192.168.2.14:1313/js/load-photoswipe.js"></script>
 
 
 
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 
