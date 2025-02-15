@@ -246,6 +246,84 @@
         <div class="posts-list">
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2015/05/23/ubuntu-samba_server/">
+        <h2 class="post-title">Ubuntu – samba_server</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 May 23, 2015
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;120&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>原来发了一篇博文说遇到问题先查Ubuntu的docs。但是docs没有怎么办呢？还是查鸟哥私房菜或者archwiki吧。。。</p>
+<p>比如说samba配置，ubuntu给的文档就比较差劲。</p>
+<p><a href="http://wiki.ubuntu.com.cn/Samba">http://wiki.ubuntu.com.cn/Samba</a></p>
+<p>卸载以后systemctl直接启动不起来了。</p>
+<p><strong>samba服务可以提供打印，视频流，文件共享等服务。</strong></p>
+<p>解决方法是<code>dpkg-reconfigure samba-common</code>，或者<code>cp /usr/share/samba/smb.conf</code>来解决没有conf的问题。</p>
+<p>今天因为要传考研视频觉得有些麻烦顺便搞搞这个。哎，什么时候才能有个考研座位啊！！我想复习啊！！！</p>
+<p>对了，ubuntu的问题还可以到这里http://askubuntu.com/</p>
+<p>但是很讨厌的是，国内的访问速度并不怎么样。</p>
+<p>/ <em>当个运维也是很不错啊= =。hacker是不是很多都会个运维啊。</em>/</p>
+<p>配置文件搞的不太行，直接贴一个askubuntu上比较好用的：</p>
+<div class="codehilite">
+  <pre><span></span><span class="k">[global]</span>
+   <span class="na">workgroup</span> <span class="o">=</span> <span class="s">WORKGROUP</span>
+<span class="s">   server string = %h server (Samba, Ubuntu)</span>
+<span class="s">   dns proxy = no</span>
+<span class="s">   log file = /var/log/samba/log.%m</span>
+<span class="s">   max log size = 1000</span>
+<span class="s">   syslog = 0</span>
+<span class="s">   panic action = /usr/share/samba/panic-action %d</span>
+<span class="s">   encrypt passwords = true</span>
+<span class="s">   passdb backend = tdbsam</span>
+<span class="s">   obey pam restrictions = yes</span>
+<span class="s">   unix password sync = yes</span>
+<span class="s">   passwd program = /usr/bin/passwd %u</span>
+<span class="s">   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .</span>
+<span class="s">   pam password change = yes</span>
+<span class="s">   map to guest = bad user</span>
+<span class="s">        usershare allow guests = yes</span>
+<span class="s">        username map = /etc/samba/smbusers</span>
+<span class="s">        security = user</span>
+<span class="s">        guest ok = yes</span>
+<span class="s">        guest account = nobody</span>
+<span class="s">  usershare max shares = 100</span>
+<span class="s">  usershare owner only = False</span>
+</pre>
+</div>
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2015/05/21/%E5%8D%9A%E5%AE%A2%E4%B8%80%E8%B0%88/">
         <h2 class="post-title">博客一谈</h2>
         
@@ -1011,178 +1089,6 @@
 <h2 id="另外">另外</h2>
 <p>可以将一部分相关的func转移。</p>
 
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2015/05/04/%E7%81%AD%E7%81%AB/">
-        <h2 class="post-title">灭火</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 May 4, 2015
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;3&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;427&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>火会蔓延，人被火追着跑，能否跑出边界的问题。</p>
-<p>bfs火之后bfs人，或火和人放在一个队列里面bfs</p>
-<p>坑是没有火的情况，如果从0更新火势图而不是inf开始，那么可能造成没火不能跑的情况。</p>
-<div class="codehilite">
-  <pre><span></span><span class="cm">/*=============================================================================</span>
-<span class="cm">#</span>
-<span class="cm"># Author: svtter - svtter@qq.com</span>
-<span class="cm">#</span>
-<span class="cm"># QQ : 57180160</span>
-<span class="cm">#</span>
-<span class="cm"># Last modified: 2015-05-04 09:50</span>
-<span class="cm">#</span>
-<span class="cm"># Filename: 11634.cpp</span>
-<span class="cm">#</span>
-<span class="cm"># Description: </span>
-<span class="cm">#</span>
-<span class="cm">=============================================================================*/</span>
-<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;assert.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
-<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="cp">#define INF 0x3f3f3f3f</span>
-<span class="cp">#define ll long long int</span>
-<span class="cp">#define MEM(a) memset(a, 0, sizeof(a))</span>
-<span class="cp">#define MEMM(a) memset(a, -1, sizeof(a))</span>
-<span class="cp">#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
-<span class="cp">#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)++)</span>
-<span class="cp">#define CR printf("\n")</span>
-<span class="k">const</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
-<span class="k">const</span> <span class="kt">int</span> <span class="n">maxn</span> <span class="o">=</span> <span class="mi">1010</span><span class="p">;</span>
-<span class="kt">char</span> <span class="n">g</span><span class="p">[</span><span class="n">maxn</span><span class="p">][</span><span class="n">maxn</span><span class="p">];</span>
-<span class="kt">int</span> <span class="n">gex</span><span class="p">[</span><span class="n">maxn</span><span class="p">][</span><span class="n">maxn</span><span class="p">];</span>
-<span class="kt">bool</span> <span class="n">vis</span><span class="p">[</span><span class="n">maxn</span><span class="p">][</span><span class="n">maxn</span><span class="p">];</span>
-<span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">dx</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi"></span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">};</span>
-<span class="kt">int</span> <span class="n">dy</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
-<span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">t</span><span class="p">;</span>
-    <span class="n">Node</span><span class="p">()</span> <span class="p">{}</span>
-    <span class="n">Node</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">,</span> <span class="kt">int</span> <span class="n">t</span><span class="p">)</span><span class="o">:</span><span class="n">i</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">j</span><span class="p">(</span><span class="n">j</span><span class="p">),</span> <span class="n">t</span><span class="p">(</span><span class="n">t</span><span class="p">){}</span>
-<span class="p">};</span>
-<span class="kr">inline</span> <span class="kt">int</span> <span class="nf">judge</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi"></span> <span class="o">&&</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">r</span> <span class="o">&&</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="mi"></span> <span class="o">&&</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="kt">void</span> <span class="nf">init</span><span class="p">(</span><span class="n">queue</span> <span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="o">&</span><span class="n">q</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Node</span> <span class="n">temp</span><span class="p">,</span> <span class="n">next</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
-        <span class="n">temp</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">(),</span> <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-        <span class="n">temp</span><span class="p">.</span><span class="n">t</span><span class="o">++</span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">nx</span> <span class="o">=</span> <span class="n">temp</span><span class="p">.</span><span class="n">i</span> <span class="o">+</span> <span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-            <span class="n">ny</span> <span class="o">=</span> <span class="n">temp</span><span class="p">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">nx</span><span class="p">][</span><span class="n">ny</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;#&#39;</span> <span class="o">&&</span> <span class="n">judge</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span> <span class="o">&&</span> <span class="n">gex</span><span class="p">[</span><span class="n">nx</span><span class="p">][</span><span class="n">ny</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">temp</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">next</span><span class="p">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">nx</span><span class="p">;</span>
-                <span class="n">next</span><span class="p">.</span><span class="n">j</span> <span class="o">=</span> <span class="n">ny</span><span class="p">;</span>
-                <span class="n">next</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">temp</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
-                <span class="n">gex</span><span class="p">[</span><span class="n">nx</span><span class="p">][</span><span class="n">ny</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
-                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">next</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="kt">int</span> <span class="nf">bfs</span><span class="p">(</span><span class="n">queue</span> <span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="o">&</span><span class="n">q</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Node</span> <span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">(),</span> <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">i</span> <span class="o">==</span> <span class="n">r</span><span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">t</span><span class="p">.</span><span class="n">j</span> <span class="o">==</span> <span class="n">c</span><span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">t</span><span class="p">.</span><span class="n">i</span> <span class="o">==</span> <span class="mi"></span> <span class="o">||</span> <span class="n">t</span><span class="p">.</span><span class="n">j</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span> <span class="k">return</span> <span class="n">t</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
-        <span class="n">t</span><span class="p">.</span><span class="n">t</span> <span class="o">++</span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">nx</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">i</span> <span class="o">+</span> <span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-            <span class="n">ny</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">vis</span><span class="p">[</span><span class="n">nx</span><span class="p">][</span><span class="n">ny</span><span class="p">]</span> <span class="o">&&</span> <span class="n">gex</span><span class="p">[</span><span class="n">nx</span><span class="p">][</span><span class="n">ny</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">t</span><span class="p">.</span><span class="n">t</span> <span class="o">&&</span> <span class="n">judge</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">))</span>
-            <span class="p">{</span>
-                <span class="n">n</span><span class="p">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">nx</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">j</span> <span class="o">=</span> <span class="n">ny</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
-                <span class="n">vis</span><span class="p">[</span><span class="n">nx</span><span class="p">][</span><span class="n">ny</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-<span class="cp">#ifdef DEBUG</span>
-    <span class="n">freopen</span><span class="p">(</span><span class="s">"input"</span><span class="p">,</span> <span class="s">"r"</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>       <span class="c1">//从input文件中读入</span>
-    <span class="c1">// freopen("output", "w", stdout);     //输出到output文件</span>
-<span class="cp">#endif</span>
-    <span class="kt">int</span> <span class="n">t</span><span class="p">;</span>
-    <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">t</span><span class="p">);</span>
-    <span class="n">queue</span> <span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
-    <span class="k">while</span><span class="p">(</span><span class="n">t</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-        <span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">r</span><span class="p">,</span> <span class="o">&</span><span class="n">c</span><span class="p">);</span>
-        <span class="n">MEM</span><span class="p">(</span><span class="n">vis</span><span class="p">);</span> <span class="n">Node</span> <span class="n">joe</span><span class="p">;</span>
-        <span class="n">memset</span><span class="p">(</span><span class="n">gex</span><span class="p">,</span> <span class="n">INF</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">gex</span><span class="p">));</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-            <span class="n">scanf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">;</span><span class="n">j</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;F&#39;</span><span class="p">)</span>
-                <span class="p">{</span>
-                    <span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-                    <span class="n">gex</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-                    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">Node</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;J&#39;</span><span class="p">)</span>
-                <span class="p">{</span>
-                    <span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-                    <span class="n">joe</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;#&#39;</span><span class="p">)</span> <span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="n">init</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
-        <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">joe</span><span class="p">);</span>
-        <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">bfs</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">ans</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span> <span class="n">puts</span><span class="p">(</span><span class="s">"IMPOSSIBLE"</span><span class="p">);</span>
-        <span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ans</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-</div>
         
     </div>
 

@@ -242,6 +242,101 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2014/11/26/%E4%BD%BF%E7%94%A8cd%E5%BF%AB%E9%80%9F%E5%9C%A8%E7%9B%AE%E5%BD%95%E9%97%B4%E7%A7%BB%E5%8A%A8/">
+        <h2 class="post-title">使用cd快速在目录间移动</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 26, 2014
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;142&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <ul>
+<li>本文出自&lt;svtter.github.io&gt;</li>
+</ul>
+<p>难得看见一篇好文= =</p>
+<h2 id="操作方法">操作方法</h2>
+<p>在此学习并且记录。</p>
+<ul>
+<li>标记一个书签: mark [书签]</li>
+<li>进入一个书签: g [书签]</li>
+<li>输出全部标签: gs</li>
+</ul>
+<h2 id="实现原理">实现原理</h2>
+<p><code>sudo vim /etc/profile</code></p>
+<p>也可以使用<code>:w !sudo tee %</code>这种方式来保存</p>
+<div class="codehilite">
+  <pre><span></span><span class="c1"># mark</span>
+<span class="nb">export</span> <span class="nv">MARKPATH</span><span class="o">=</span><span class="nv">$HOME</span>/.marks
+<span class="nb">export</span> <span class="nv">MARKDEFAULT</span><span class="o">=</span>sanguo#设置你的默认书签，可以直接输入g跳转
+<span class="k">function</span> g <span class="o">{</span>
+   <span class="nb">local</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$1</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$m</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$MARKDEFAULT</span><span class="p">;</span> <span class="k">fi</span>
+   <span class="nb">cd</span> -P <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span> <span class="m">2</span>&gt;/dev/null <span class="o">||</span> <span class="nb">echo</span> <span class="s2">"No such mark: </span><span class="nv">$m</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="k">function</span> mark <span class="o">{</span>
+   mkdir -p <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">"</span>
+   <span class="nb">local</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$1</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$m</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$MARKDEFAULT</span><span class="p">;</span> <span class="k">fi</span>
+   rm -f <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span>
+   ln -s <span class="s2">"</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="k">function</span> unmark <span class="o">{</span>
+   <span class="nb">local</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$1</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$m</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$MARKDEFAULT</span><span class="p">;</span> <span class="k">fi</span>
+   rm -i <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="k">function</span> gs <span class="o">{</span>
+   ls -l <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">"</span> <span class="p">|</span> grep ^l <span class="p">|</span> cut -d <span class="s1">&#39; &#39;</span> -f <span class="m">13</span>-
+<span class="o">}</span>
+_completemarks<span class="o">()</span> <span class="o">{</span>
+   <span class="nb">local</span> <span class="nv">curw</span><span class="o">=</span><span class="si">${</span><span class="nv">COMP_WORDS</span><span class="p">[COMP_CWORD]</span><span class="si">}</span>
+   <span class="nb">local</span> <span class="nv">wordlist</span><span class="o">=</span><span class="k">$(</span>ls -l <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">"</span> <span class="p">|</span> grep ^l <span class="p">|</span> cut -d <span class="s1">&#39; &#39;</span> -f <span class="m">13</span><span class="k">)</span>
+   <span class="nv">COMPREPLY</span><span class="o">=(</span><span class="k">$(</span><span class="nb">compgen</span> -W <span class="s1">&#39;${wordlist[@]}&#39;</span> -- <span class="s2">"</span><span class="nv">$curw</span><span class="s2">"</span><span class="k">)</span><span class="o">)</span>
+   <span class="k">return</span> <span class="m"></span>
+<span class="o">}</span>
+<span class="nb">complete</span> -F _completemarks g unmark
+</pre>
+</div>
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/shell/">shell</a>&nbsp;
+         
+    </div>
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2014/11/22/%E5%85%B3%E4%BA%8E%E6%9C%80%E8%BF%91/">
         <h2 class="post-title">关于最近</h2>
         
@@ -1318,49 +1413,6 @@
        <a href="https://svtter.cn/tags/centos/">CentOS</a>&nbsp;
          
     </div>
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2014/11/14/linux-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">
-        <h2 class="post-title">Linux-存储管理</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 November 14, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>还未动笔</p>
-
-        
-    </div>
-
     
 
 </article>

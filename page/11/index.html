@@ -242,6 +242,64 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2018/06/14/maven%E5%B0%8F%E8%AE%B0/">
+        <h2 class="post-title">Maven小记</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 June 14, 2018
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;28&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <blockquote>
+<p>发现maven与Java，别有一番乐趣</p>
+</blockquote>
+<p>入门建议：</p>
+<p><a href="https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html">https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html</a></p>
+<p>现在很多文章其实写的都不如官方的文章，但是人们总是习惯性的从百度获取自己想要的某些资源。</p>
+        <a href="https://svtter.cn/2018/06/14/maven%E5%B0%8F%E8%AE%B0/" class="post-read-more">[阅读全文]</a>
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/maven/">maven</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/java/">java</a>&nbsp;
+         
+    </div>
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2018/06/12/python%E6%8B%86%E5%8C%85%E7%9A%84%E5%A5%BD%E5%A4%84/">
         <h2 class="post-title">Python拆包的好处</h2>
         
@@ -807,91 +865,6 @@ sudo apt-get install grub-customizer
 <p>即可。</p>
 <h2 id="参考">参考</h2>
 <p><a href="https://stackoverflow.com/questions/45135263/class-has-no-objects-member">https://stackoverflow.com/questions/45135263/class-has-no-objects-member</a></p>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2018/02/06/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/">
-        <h2 class="post-title">python如何使用不可变量const</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 6, 2018
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;100&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <div class="codehilite">
-  <pre><span></span><span class="c1"># python2</span>
-<span class="c1"># Put in const.py...:</span>
-<span class="k">class</span> <span class="nc">_const</span><span class="p">:</span>
-    <span class="k">class</span> <span class="nc">ConstError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span> <span class="k">pass</span>
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">ConstError</span><span class="p">,</span> <span class="s2">"Can&#39;t rebind const(</span><span class="si">%s</span><span class="s2">)"</span><span class="o">%</span><span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">]</span><span class="o">=</span><span class="n">_const</span><span class="p">()</span>
-<span class="c1"># that&#39;s all -- now any client-code can</span>
-<span class="kn">import</span> <span class="nn">const</span>
-<span class="c1"># and bind an attribute ONCE:</span>
-<span class="n">const</span><span class="o">.</span><span class="n">magic</span> <span class="o">=</span> <span class="mi">23</span>
-<span class="c1"># but NOT re-bind it:</span>
-<span class="n">const</span><span class="o">.</span><span class="n">magic</span> <span class="o">=</span> <span class="mi">88</span>      <span class="c1"># raises const.ConstError</span>
-<span class="c1"># you may also want to add the obvious __delattr__</span>
-</pre>
-</div>
-<hr>
-<div class="codehilite">
-  <pre><span></span><span class="c1"># python3 version</span>
-<span class="k">class</span> <span class="nc">_const</span><span class="p">:</span>
-    <span class="k">class</span> <span class="nc">ConstError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
-        <span class="k">pass</span>
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">ConstError</span><span class="p">(</span><span class="s2">"Can&#39;t rebind const(</span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">_const</span><span class="p">()</span>
-</pre>
-</div>
-<p>这样一来，就可以在python中使用不可变量了。其中，利用魔术方法<code>__setattr__</code>，把一个变量当作是<code>const</code>类的属性，然后使用<code>__dict__</code>来判断当前变量是否已经存在。</p>
-<p>通过这个技巧我们还能构造出一系列有意思的东西——</p>
-<h2 id="运行截图">运行截图</h2>
-<img alt="" src="https://i2.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fo6qa3mr0mj20ve0kg0vx.jpg?w=625&#038;ssl=1" data-recalc-dims="1" />
-<h2 id="refer">refer</h2>
-<ul>
-<li><a href="https://gist.github.com/Svtter/c96e3259e264621e8bc1ab45b4c2675a">https://gist.github.com/Svtter/c96e3259e264621e8bc1ab45b4c2675a</a></li>
-<li><a href="http://code.activestate.com/recipes/65207-constants-in-python/?in=user-97991">http://code.activestate.com/recipes/65207-constants-in-python/?in=user-97991</a></li>
-</ul>
 
         
     </div>
