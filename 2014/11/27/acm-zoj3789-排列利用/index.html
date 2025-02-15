@@ -17,12 +17,121 @@
 
       <title>ACM-zoj3789-排列利用 - </title>
 
-  <meta name="description" content="本文出自&lt;svtter.github.io&gt; 利用排列找规律。
+  <meta name="description" content="
+
+本文出自&lt;svtter.github.io&gt;
+
+利用排列找规律。
 首先利用next_permutation函数进行求排列
+
+  #include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+#define INF 0x3f3f3f3f
+int a[30];
+int cal(int n)
+{
+    int sum = ;
+    int i;
+    for (i = 1; i &lt;= n; i&#43;&#43;) {
+        /* code */
+        sum = abs(sum - a[i]);
+    }
+    return sum;
+}
+void parray(int a[], int len)
+{
+    int i;
+    for (i = 1; i &lt;= len; i&#43;&#43;) {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+void cp(int a[], int b[], int n)
+{
+    int i;
+    for (i = ; i &lt;= n; i&#43;&#43;) {
+        a[i] = b[i];
+    }
+}
+int main(int argc, const char *argv[])
+{
+    int i;
+    for (i = 1; i &lt;= 30; i&#43;&#43;) {
+        a[i] = i;
+    }
+    int n;
+    int maxa[30], mina[30];
+    while (~scanf(&#34;%d&#34;, &n)) {
+        int max = -INF;
+        int min = INF;
+        if (n == 1) {
+            cout &lt;&lt; &#34;1 1&#34; &lt;&lt; endl;
+            cout &lt;&lt; &#34;1&#34; &lt;&lt; endl &lt;&lt; &#34;1&#34; &lt;&lt; endl;
+            continue;
+        }
+        while (next_permutation(a&#43;1, a&#43;n&#43;1)) {
+            /* code */
+            int temp = cal(n);
+            if (temp &gt;= max) {
+                max = temp;
+                cp(maxa, a, n);
+            }
+            if (temp &lt;= min) {
+                min = temp;
+                cp(mina, a, n);
+            }
+        }
+        cout &lt;&lt; min &lt;&lt; &#34; &#34; &lt;&lt; max &lt;&lt; endl;
+        for (i = 1; i &lt;= n; i&#43;&#43;) {
+            cout &lt;&lt; mina[i] &lt;&lt; &#34; &#34;;
+        }
+        cout &lt;&lt; endl;
+        for (i = 1; i &lt;= n; i&#43;&#43;) {
+            cout &lt;&lt; maxa[i] &lt;&lt; &#34; &#34;;
+        }
+        cout &lt;&lt; endl;
+    }
+    return ;
+}
+
+
 代码如上。
 可以观察出规律，然后即可AC。
 详细代码下次再写= =
-AC代码 规律在代码中，很明确。">
+AC代码
+
+  #include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;cmath&gt;
+using namespace std;
+int main()
+{
+    int i, n;
+    int max, min;
+    while(~scanf(&#34;%d&#34;, &n))
+    {
+        max = min = ;
+        for(i = n; i &gt;= 1; i--)
+            min = abs(min - i);
+        for(i = n-1; i &gt;= 1; i--)
+            max = abs(max - i);
+        max = abs(max - n);
+        printf(&#34;%d %d\n&#34;, min, max);
+        for(i = n; i &gt;1 ; i--)
+            printf(&#34;%d &#34;, i);
+        puts(&#34;1&#34;);
+        for(i = n-1; i &gt;= 1; i--)
+            printf(&#34;%d &#34;, i);
+        printf(&#34;%d\n&#34;, n);
+    }
+    return ;
+}
+
+
+规律在代码中，很明确。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -71,9 +180,9 @@ AC代码 规律在代码中，很明确。">
     "name" : "svtter"
   },
   "headline": "ACM-zoj3789-排列利用",
-  "description" : "本文出自\u0026lt;svtter.github.io\u0026gt; 利用排列找规律。\n首先利用next_permutation函数进行求排列\n代码如上。\n可以观察出规律，然后即可AC。\n详细代码下次再写= =\nAC代码 规律在代码中，很明确。",
+  "description" : " 本文出自\u0026lt;svtter.github.io\u0026gt; 利用排列找规律。\n首先利用next_permutation函数进行求排列\n#include \u0026lt;cstdio\u0026gt; #include \u0026lt;cstring\u0026gt; #include \u0026lt;iostream\u0026gt; #include \u0026lt;algorithm\u0026gt; using namespace std; #define INF 0x3f3f3f3f int a[30]; int cal(int n) { int sum = ; int i; for (i = 1; i \u0026lt;= n; i\u002b\u002b) { \/* code *\/ sum = abs(sum - a[i]); } return sum; } void parray(int a[], int len) { int i; for (i = 1; i \u0026lt;= len; i\u002b\u002b) { cout \u0026lt;\u0026lt; a[i] \u0026lt;\u0026lt; \u0022 \u0022; } cout \u0026lt;\u0026lt; endl; } void cp(int a[], int b[], int n) { int i; for (i = ; i \u0026lt;= n; i\u002b\u002b) { a[i] = b[i]; } } int main(int argc, const char *argv[]) { int i; for (i = 1; i \u0026lt;= 30; i\u002b\u002b) { a[i] = i; } int n; int maxa[30], mina[30]; while (~scanf(\u0022%d\u0022, \u0026n)) { int max = -INF; int min = INF; if (n == 1) { cout \u0026lt;\u0026lt; \u00221 1\u0022 \u0026lt;\u0026lt; endl; cout \u0026lt;\u0026lt; \u00221\u0022 \u0026lt;\u0026lt; endl \u0026lt;\u0026lt; \u00221\u0022 \u0026lt;\u0026lt; endl; continue; } while (next_permutation(a\u002b1, a\u002bn\u002b1)) { \/* code *\/ int temp = cal(n); if (temp \u0026gt;= max) { max = temp; cp(maxa, a, n); } if (temp \u0026lt;= min) { min = temp; cp(mina, a, n); } } cout \u0026lt;\u0026lt; min \u0026lt;\u0026lt; \u0022 \u0022 \u0026lt;\u0026lt; max \u0026lt;\u0026lt; endl; for (i = 1; i \u0026lt;= n; i\u002b\u002b) { cout \u0026lt;\u0026lt; mina[i] \u0026lt;\u0026lt; \u0022 \u0022; } cout \u0026lt;\u0026lt; endl; for (i = 1; i \u0026lt;= n; i\u002b\u002b) { cout \u0026lt;\u0026lt; maxa[i] \u0026lt;\u0026lt; \u0022 \u0022; } cout \u0026lt;\u0026lt; endl; } return ; } 代码如上。\n可以观察出规律，然后即可AC。\n详细代码下次再写= =\nAC代码 #include \u0026lt;stdio.h\u0026gt; #include \u0026lt;string.h\u0026gt; #include \u0026lt;cmath\u0026gt; using namespace std; int main() { int i, n; int max, min; while(~scanf(\u0022%d\u0022, \u0026n)) { max = min = ; for(i = n; i \u0026gt;= 1; i--) min = abs(min - i); for(i = n-1; i \u0026gt;= 1; i--) max = abs(max - i); max = abs(max - n); printf(\u0022%d %d\\n\u0022, min, max); for(i = n; i \u0026gt;1 ; i--) printf(\u0022%d \u0022, i); puts(\u00221\u0022); for(i = n-1; i \u0026gt;= 1; i--) printf(\u0022%d \u0022, i); printf(\u0022%d\\n\u0022, n); } return ; } 规律在代码中，很明确。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  9 ,
+  "wordCount":  343 ,
   "datePublished" : "2014-11-27T01:00:00\u002b08:00",
   "dateModified" : "2014-11-27T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -94,27 +203,142 @@ AC代码 规律在代码中，很明确。">
 
 
 <meta property="og:title" content="ACM-zoj3789-排列利用" />
-<meta property="og:description" content="本文出自&lt;svtter.github.io&gt; 利用排列找规律。
+<meta property="og:description" content="
+
+本文出自&lt;svtter.github.io&gt;
+
+利用排列找规律。
 首先利用next_permutation函数进行求排列
+
+  #include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+#define INF 0x3f3f3f3f
+int a[30];
+int cal(int n)
+{
+    int sum = ;
+    int i;
+    for (i = 1; i &lt;= n; i&#43;&#43;) {
+        /* code */
+        sum = abs(sum - a[i]);
+    }
+    return sum;
+}
+void parray(int a[], int len)
+{
+    int i;
+    for (i = 1; i &lt;= len; i&#43;&#43;) {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+void cp(int a[], int b[], int n)
+{
+    int i;
+    for (i = ; i &lt;= n; i&#43;&#43;) {
+        a[i] = b[i];
+    }
+}
+int main(int argc, const char *argv[])
+{
+    int i;
+    for (i = 1; i &lt;= 30; i&#43;&#43;) {
+        a[i] = i;
+    }
+    int n;
+    int maxa[30], mina[30];
+    while (~scanf(&#34;%d&#34;, &n)) {
+        int max = -INF;
+        int min = INF;
+        if (n == 1) {
+            cout &lt;&lt; &#34;1 1&#34; &lt;&lt; endl;
+            cout &lt;&lt; &#34;1&#34; &lt;&lt; endl &lt;&lt; &#34;1&#34; &lt;&lt; endl;
+            continue;
+        }
+        while (next_permutation(a&#43;1, a&#43;n&#43;1)) {
+            /* code */
+            int temp = cal(n);
+            if (temp &gt;= max) {
+                max = temp;
+                cp(maxa, a, n);
+            }
+            if (temp &lt;= min) {
+                min = temp;
+                cp(mina, a, n);
+            }
+        }
+        cout &lt;&lt; min &lt;&lt; &#34; &#34; &lt;&lt; max &lt;&lt; endl;
+        for (i = 1; i &lt;= n; i&#43;&#43;) {
+            cout &lt;&lt; mina[i] &lt;&lt; &#34; &#34;;
+        }
+        cout &lt;&lt; endl;
+        for (i = 1; i &lt;= n; i&#43;&#43;) {
+            cout &lt;&lt; maxa[i] &lt;&lt; &#34; &#34;;
+        }
+        cout &lt;&lt; endl;
+    }
+    return ;
+}
+
+
 代码如上。
 可以观察出规律，然后即可AC。
 详细代码下次再写= =
-AC代码 规律在代码中，很明确。">
+AC代码
+
+  #include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;cmath&gt;
+using namespace std;
+int main()
+{
+    int i, n;
+    int max, min;
+    while(~scanf(&#34;%d&#34;, &n))
+    {
+        max = min = ;
+        for(i = n; i &gt;= 1; i--)
+            min = abs(min - i);
+        for(i = n-1; i &gt;= 1; i--)
+            max = abs(max - i);
+        max = abs(max - n);
+        printf(&#34;%d %d\n&#34;, min, max);
+        for(i = n; i &gt;1 ; i--)
+            printf(&#34;%d &#34;, i);
+        puts(&#34;1&#34;);
+        for(i = n-1; i &gt;= 1; i--)
+            printf(&#34;%d &#34;, i);
+        printf(&#34;%d\n&#34;, n);
+    }
+    return ;
+}
+
+
+规律在代码中，很明确。">
 <meta property="og:url" content="https://svtter.cn/2014/11/27/acm-zoj3789-%E6%8E%92%E5%88%97%E5%88%A9%E7%94%A8/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="ACM-zoj3789-排列利用" />
-  <meta name="twitter:description" content="本文出自&lt;svtter.github.io&gt; 利用排列找规律。
+  <meta name="twitter:description" content="
+
+本文出自&lt;svtter.github.io&gt;
+
+利用排列找规律。
 首先利用next_permutation函数进行求排列
-代码如上。
-可以观察出规律，然后即可AC。
-详细代码下次再写= =
-AC代码 规律在代码中，很明确。">
+
+  #include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+using namespace std; …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -122,8 +346,6 @@ AC代码 规律在代码中，很明确。">
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -138,10 +360,6 @@ AC代码 规律在代码中，很明确。">
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -283,10 +501,10 @@ AC代码 规律在代码中，很明确。">
   <i class="fas fa-calendar"></i>&nbsp;发表于 November 27, 2014
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;9&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;343&nbsp;个字
   
   
     
@@ -320,12 +538,114 @@ AC代码 规律在代码中，很明确。">
 </ul>
 <p>利用排列找规律。</p>
 <p>首先利用<code>next_permutation</code>函数进行求排列</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define INF 0x3f3f3f3f</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">cal</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* code */</span>
+        <span class="n">sum</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">sum</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">parray</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">cp</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">b</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">30</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">maxa</span><span class="p">[</span><span class="mi">30</span><span class="p">],</span> <span class="n">mina</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">max</span> <span class="o">=</span> <span class="o">-</span><span class="n">INF</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">INF</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"1 1"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"1"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">"1"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">next_permutation</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+            <span class="cm">/* code */</span>
+            <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">cal</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">temp</span> <span class="o">&gt;=</span> <span class="n">max</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">max</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+                <span class="n">cp</span><span class="p">(</span><span class="n">maxa</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">temp</span> <span class="o">&lt;=</span> <span class="n">min</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">min</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+                <span class="n">cp</span><span class="p">(</span><span class="n">mina</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">min</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">max</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">mina</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">maxa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>代码如上。</p>
 <p>可以观察出规律，然后即可AC。</p>
 <p>详细代码下次再写= =</p>
 <h2 id="ac代码">AC代码</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">max</span><span class="p">,</span> <span class="n">min</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">max</span> <span class="o">=</span> <span class="n">min</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">min</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">min</span> <span class="o">-</span> <span class="n">i</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">max</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">max</span> <span class="o">-</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">max</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">max</span> <span class="o">-</span> <span class="n">n</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span><span class="mi">1</span> <span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"1"</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>规律在代码中，很明确。</p>
 
 
@@ -416,6 +736,20 @@ AC代码 规律在代码中，很明确。">
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/11/27/acm-zoj3789-%E6%8E%92%E5%88%97%E5%88%A9%E7%94%A8">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/11\/27\/acm-zoj3789-%E6%8E%92%E5%88%97%E5%88%A9%E7%94%A8';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -473,7 +807,7 @@ AC代码 规律在代码中，很明确。">
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -495,6 +829,28 @@ AC代码 规律在代码中，很明确。">
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

@@ -20,7 +20,79 @@
   <meta name="description" content="一开始在扩展gcd上想了许久没有办法将得出的数字直接转换成为相应的输出，后来发现就是模方程。
 因为不求最佳解，所以直接使用ca*x = n (mod cb)即可。这个方程的解可以覆盖全部的n，因为该方程如果有解，则n是gcd(ca, cb)的倍数。因为ca, cb互质 gcd (ca, cb) = 1，所以明显通过单纯的加满B，向A中倒，然后清空A就可以遍历所有n的解（尽管可能不是最佳解）。
 不能是cb*x = n (mod ca)，因为n可能大于ca.
-如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。">
+如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。
+
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;set&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt;
+#include &lt;bitset&gt;
+using namespace std;
+// 大数，内存处理
+#define INF 0x3f3f3f3f
+#define ll long long int
+#define MEM(a) memset(a, 0, sizeof(a))
+#define MEMM(a) memset(a, -1, sizeof(a))
+#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)&#43;&#43;)
+const double PI = acos(-1.0);
+#define CR printf(&#34;\n&#34;)
+// 调试用
+    template &lt;class Type&gt;
+void debug(Type a[], int len)
+{
+    for(int i = ; i &lt; len ; i&#43;&#43;)
+    {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+int main()
+{
+#ifdef DEBUG
+    // freopen(&#34;input&#34;, &#34;r&#34;, stdin);       //从input文件中读入
+    // freopen(&#34;output&#34;, &#34;w&#34;, stdout);     //输出到output文件
+#endif
+    int ca, cb, n;
+    while(scanf(&#34;%d%d%d&#34;, &ca, &cb, &n) != EOF)
+    {
+        //解模方程 ax = n(mod b)
+        int a = , b = ;
+        while(b != n)
+        {
+            if(a == )
+            {
+                puts(&#34;fill A&#34;);
+                a = ca;
+            }
+            if(b == cb)
+            {
+                puts(&#34;empty B&#34;);
+                b = ;
+            }
+            if(a &gt; cb - b)
+            {
+                a = a - (cb-b);
+                b = cb;
+            }
+            else
+            {
+                b &#43;= a;
+                a = ;
+            }
+            puts(&#34;pour A B&#34;);
+        }
+        puts(&#34;success&#34;);
+    }
+    return ;
+}
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -69,9 +141,9 @@
     "name" : "svtter"
   },
   "headline": "ACM – UVA571 – 模方程",
-  "description" : "一开始在扩展gcd上想了许久没有办法将得出的数字直接转换成为相应的输出，后来发现就是模方程。\n因为不求最佳解，所以直接使用ca*x = n (mod cb)即可。这个方程的解可以覆盖全部的n，因为该方程如果有解，则n是gcd(ca, cb)的倍数。因为ca, cb互质 gcd (ca, cb) = 1，所以明显通过单纯的加满B，向A中倒，然后清空A就可以遍历所有n的解（尽管可能不是最佳解）。\n不能是cb*x = n (mod ca)，因为n可能大于ca.\n如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。",
+  "description" : "一开始在扩展gcd上想了许久没有办法将得出的数字直接转换成为相应的输出，后来发现就是模方程。\n因为不求最佳解，所以直接使用ca*x = n (mod cb)即可。这个方程的解可以覆盖全部的n，因为该方程如果有解，则n是gcd(ca, cb)的倍数。因为ca, cb互质 gcd (ca, cb) = 1，所以明显通过单纯的加满B，向A中倒，然后清空A就可以遍历所有n的解（尽管可能不是最佳解）。\n不能是cb*x = n (mod ca)，因为n可能大于ca.\n如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。\n#include \u0026lt;iostream\u0026gt; #include \u0026lt;cstdio\u0026gt; #include \u0026lt;cstring\u0026gt; #include \u0026lt;set\u0026gt; #include \u0026lt;vector\u0026gt; #include \u0026lt;map\u0026gt; #include \u0026lt;algorithm\u0026gt; #include \u0026lt;queue\u0026gt; #include \u0026lt;cmath\u0026gt; #include \u0026lt;bitset\u0026gt; using namespace std; \/\/ 大数，内存处理 #define INF 0x3f3f3f3f #define ll long long int #define MEM(a) memset(a, 0, sizeof(a)) #define MEMM(a) memset(a, -1, sizeof(a)) #define DEB(x, n) cout \u0026lt;\u0026lt; (x) \u0026lt;\u0026lt; \u0022 \u0022 \u0026lt;\u0026lt; (n) \u0026lt;\u0026lt; endl #define FOR(i, s, e) for(int (i) = (s); (i) \u0026lt; (e); (i)\u002b\u002b) const double PI = acos(-1.0); #define CR printf(\u0022\\n\u0022) \/\/ 调试用 template \u0026lt;class Type\u0026gt; void debug(Type a[], int len) { for(int i = ; i \u0026lt; len ; i\u002b\u002b) { cout \u0026lt;\u0026lt; a[i] \u0026lt;\u0026lt; \u0022 \u0022; } cout \u0026lt;\u0026lt; endl; } int main() { #ifdef DEBUG \/\/ freopen(\u0022input\u0022, \u0022r\u0022, stdin); \/\/从input文件中读入 \/\/ freopen(\u0022output\u0022, \u0022w\u0022, stdout); \/\/输出到output文件 #endif int ca, cb, n; while(scanf(\u0022%d%d%d\u0022, \u0026ca, \u0026cb, \u0026n) != EOF) { \/\/解模方程 ax = n(mod b) int a = , b = ; while(b != n) { if(a == ) { puts(\u0022fill A\u0022); a = ca; } if(b == cb) { puts(\u0022empty B\u0022); b = ; } if(a \u0026gt; cb - b) { a = a - (cb-b); b = cb; } else { b \u002b= a; a = ; } puts(\u0022pour A B\u0022); } puts(\u0022success\u0022); } return ; } ",
   "inLanguage" : "zh-cn",
-  "wordCount":  19 ,
+  "wordCount":  223 ,
   "datePublished" : "2015-05-01T01:00:00\u002b08:00",
   "dateModified" : "2015-05-01T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -95,7 +167,79 @@
 <meta property="og:description" content="一开始在扩展gcd上想了许久没有办法将得出的数字直接转换成为相应的输出，后来发现就是模方程。
 因为不求最佳解，所以直接使用ca*x = n (mod cb)即可。这个方程的解可以覆盖全部的n，因为该方程如果有解，则n是gcd(ca, cb)的倍数。因为ca, cb互质 gcd (ca, cb) = 1，所以明显通过单纯的加满B，向A中倒，然后清空A就可以遍历所有n的解（尽管可能不是最佳解）。
 不能是cb*x = n (mod ca)，因为n可能大于ca.
-如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。">
+如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。
+
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;set&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt;
+#include &lt;bitset&gt;
+using namespace std;
+// 大数，内存处理
+#define INF 0x3f3f3f3f
+#define ll long long int
+#define MEM(a) memset(a, 0, sizeof(a))
+#define MEMM(a) memset(a, -1, sizeof(a))
+#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)&#43;&#43;)
+const double PI = acos(-1.0);
+#define CR printf(&#34;\n&#34;)
+// 调试用
+    template &lt;class Type&gt;
+void debug(Type a[], int len)
+{
+    for(int i = ; i &lt; len ; i&#43;&#43;)
+    {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+int main()
+{
+#ifdef DEBUG
+    // freopen(&#34;input&#34;, &#34;r&#34;, stdin);       //从input文件中读入
+    // freopen(&#34;output&#34;, &#34;w&#34;, stdout);     //输出到output文件
+#endif
+    int ca, cb, n;
+    while(scanf(&#34;%d%d%d&#34;, &ca, &cb, &n) != EOF)
+    {
+        //解模方程 ax = n(mod b)
+        int a = , b = ;
+        while(b != n)
+        {
+            if(a == )
+            {
+                puts(&#34;fill A&#34;);
+                a = ca;
+            }
+            if(b == cb)
+            {
+                puts(&#34;empty B&#34;);
+                b = ;
+            }
+            if(a &gt; cb - b)
+            {
+                a = a - (cb-b);
+                b = cb;
+            }
+            else
+            {
+                b &#43;= a;
+                a = ;
+            }
+            puts(&#34;pour A B&#34;);
+        }
+        puts(&#34;success&#34;);
+    }
+    return ;
+}
+
+">
 <meta property="og:url" content="https://svtter.cn/2015/05/01/acm-uva571-%E6%A8%A1%E6%96%B9%E7%A8%8B/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
@@ -107,7 +251,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -115,8 +259,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -131,10 +273,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -276,10 +414,10 @@
   <i class="fas fa-calendar"></i>&nbsp;发表于 May 1, 2015
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;19&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;223&nbsp;个字
   
   
     
@@ -311,8 +449,78 @@
 <p>因为不求最佳解，所以直接使用ca*x = n (mod cb)即可。这个方程的解可以覆盖全部的n，因为该方程如果有解，则n是gcd(ca, cb)的倍数。因为ca, cb互质 gcd (ca, cb) = 1，所以明显通过单纯的加满B，向A中倒，然后清空A就可以遍历所有n的解（尽管可能不是最佳解）。</p>
 <p><strong>不能是cb*x = n (mod ca)，因为n可能大于ca.</strong></p>
 <p>如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。</p>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;set&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;bitset&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="c1">// 大数，内存处理</span>
+<span class="cp">#define INF 0x3f3f3f3f</span>
+<span class="cp">#define ll long long int</span>
+<span class="cp">#define MEM(a) memset(a, 0, sizeof(a))</span>
+<span class="cp">#define MEMM(a) memset(a, -1, sizeof(a))</span>
+<span class="cp">#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
+<span class="cp">#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)++)</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
+<span class="cp">#define CR printf("\n")</span>
+<span class="c1">// 调试用</span>
+    <span class="n">template</span> <span class="o">&lt;</span><span class="n">class</span> <span class="n">Type</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">debug</span><span class="p">(</span><span class="n">Type</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="cp">#ifdef DEBUG</span>
+    <span class="c1">// freopen("input", "r", stdin);       //从input文件中读入</span>
+    <span class="c1">// freopen("output", "w", stdout);     //输出到output文件</span>
+<span class="cp">#endif</span>
+    <span class="kt">int</span> <span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">ca</span><span class="p">,</span> <span class="o">&</span><span class="n">cb</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">)</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//解模方程 ax = n(mod b)</span>
+        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi"></span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">b</span> <span class="o">!=</span> <span class="n">n</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">puts</span><span class="p">(</span><span class="s">"fill A"</span><span class="p">);</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">ca</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="n">cb</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">puts</span><span class="p">(</span><span class="s">"empty B"</span><span class="p">);</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">cb</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="p">(</span><span class="n">cb</span><span class="o">-</span><span class="n">b</span><span class="p">);</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">cb</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">b</span> <span class="o">+=</span> <span class="n">a</span><span class="p">;</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">puts</span><span class="p">(</span><span class="s">"pour A B"</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"success"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 
         
 
@@ -401,6 +609,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2015/05/01/acm-uva571-%E6%A8%A1%E6%96%B9%E7%A8%8B">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2015\/05\/01\/acm-uva571-%E6%A8%A1%E6%96%B9%E7%A8%8B';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -458,7 +680,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -480,6 +702,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

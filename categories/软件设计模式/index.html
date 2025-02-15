@@ -47,7 +47,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -55,8 +55,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -71,10 +69,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -436,7 +430,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;5&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;80&nbsp;个字
   
   
     
@@ -456,10 +450,39 @@
 <p><strong>核心是：创造私有的构造函数</strong></p>
 <p>例如：只有一个实例的东西。</p>
 <h2 id="singletonjava">Singleton.java</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="kn">package</span> <span class="nn">singleton</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Singleton</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Singleton</span> <span class="n">singleton</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Singleton</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="nf">Singleton</span><span class="o">()</span> <span class="o">{</span> <span class="c1">// 限制产生多个对象</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"已产生对象实例"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Singleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span> <span class="c1">// 通过该方法获得实例对象</span>
+        <span class="k">return</span> <span class="n">singleton</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">operation</span><span class="o">()</span> <span class="o">{</span> <span class="c1">// 类中其他方法，尽量是static</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
 <h2 id="client">Client</h2>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="kn">package</span> <span class="nn">singleton</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Start."</span><span class="o">);</span>
+        <span class="n">Singleton</span> <span class="n">obj1</span> <span class="o">=</span> <span class="n">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+        <span class="n">Singleton</span> <span class="n">obj2</span> <span class="o">=</span> <span class="n">Singleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">obj1</span> <span class="o">==</span> <span class="n">obj2</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"obj1和obj2是同一对象实例"</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"obj1和obj2并非同一对象实例"</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"End."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
         
     </div>
 
@@ -485,7 +508,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;104&nbsp;个字
   
   
     
@@ -504,8 +527,43 @@
         <p>4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。</p>
 <p>例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。</p>
 <h1 id="示意代码">示意代码</h1>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="kn">package</span> <span class="nn">adapter</span><span class="o">;</span>
+<span class="kd">interface</span> <span class="nc">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Adaptee</span> <span class="o">{</span> <span class="c1">//适配者</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"this is specRequest."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ClassAdapter</span> <span class="kd">extends</span> <span class="n">Adaptee</span> <span class="kd">implements</span> <span class="n">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"This is request in ClassAdapter."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ObjectAdapter</span> <span class="kd">implements</span> <span class="n">Target</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Adaptee</span> <span class="n">adaptee</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Adaptee</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"this. is request in ObjectAdapter."</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">adaptee</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Target</span> <span class="n">ctarget</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClassAdapter</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Target</span> <span class="n">otarget</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectAdapter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
+        <span class="n">ctarget</span><span class="o">.</span><span class="na">request</span><span class="o">();</span>
+        <span class="n">ctarget</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+        <span class="n">otarget</span><span class="o">.</span><span class="na">request</span><span class="o">();</span>
+        <span class="n">otarget</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
         
     </div>
 
@@ -531,7 +589,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;6&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;99&nbsp;个字
   
   
     
@@ -550,7 +608,44 @@
         <p>依据<strong>里氏代换原则</strong>，子类型必须能够替换掉它们的父类型，子类继承了父类，那么子类可以以父类的身份出现 — 在软件中，把父类都替换成它的子类，程序的行为没有变化。</p>
 <p>所以从这个角度而言，正方形并非是长方形的子类。</p>
 <p>举个例子，如果长方形中存在一个方法，目的是改变长宽的值，但是正方形只有一个边长，那么就可能出现问题。例如如下代码。</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="kd">interface</span> <span class="nc">Conic</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getMajor_axis</span><span class="o">();</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getShort_axis</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">class</span> <span class="nc">Ellipse</span> <span class="kd">implements</span> <span class="n">Conic</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="kt">long</span> <span class="n">major_axis</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">long</span> <span class="n">short_axis</span><span class="o">;</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMajor_axis</span><span class="o">(</span><span class="kt">long</span> <span class="n">major_axis</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">major_axis</span> <span class="o">=</span> <span class="n">major_axis</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getMajor_axis</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">major_axis</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setShort_axis</span><span class="o">(</span><span class="kt">long</span> <span class="n">short_axis</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">short_axis</span> <span class="o">=</span> <span class="n">short_axis</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getShort_axis</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">short_axis</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">class</span> <span class="nc">Circle</span> <span class="kd">implements</span> <span class="n">Conic</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="kt">long</span> <span class="n">radius</span><span class="o">;</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRadius</span><span class="o">(</span><span class="kt">long</span> <span class="n">radius</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getRadius</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">radius</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getMajor_axis</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">getRadius</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getShort_axis</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">getRadius</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</pre>
+</div>
 <p>上面是椭圆形的代码。可以改写成矩形来解释这个问题，不过太麻烦我还是先做后面的题目了。</p>
 
         
@@ -625,7 +720,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -647,6 +742,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

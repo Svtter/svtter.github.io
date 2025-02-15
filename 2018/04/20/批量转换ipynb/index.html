@@ -18,7 +18,30 @@
       <title>批量转换ipynb - </title>
 
   <meta name="description" content="一段脚本将ipython notebook转化为py文件。
-It’s hard to make notebook file to import so it’s important to make notebook importable.">
+It’s hard to make notebook file to import so it’s important to make notebook importable.
+
+  #!/usr/bin/env python
+# coding: utf-8
+import nbformat
+from nbconvert import PythonExporter
+def convertNotebook(notebookPath, modulePath):
+  with open(notebookPath) as fh:
+    nb = nbformat.reads(fh.read(), nbformat.NO_CONVERT)
+  exporter = PythonExporter()
+  source, meta = exporter.from_notebook_node(nb)
+  with open(modulePath, &#39;w&#43;&#39;) as fh:
+    fh.writelines(source)
+def trans_all():
+    import os
+    path = &#39;.&#39;
+    list_dirs = os.listdir(path)
+    for filename in list_dirs:
+        if filename.endswith(&#39;.ipynb&#39;):
+            print(filename, filename[:-5] &#43; &#39;py&#39;)
+            convertNotebook(filename, filename[:-5] &#43; &#39;py&#39;)
+trans_all()
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -67,9 +90,9 @@ It’s hard to make notebook file to import so it’s important to make notebook
     "name" : "svtter"
   },
   "headline": "批量转换ipynb",
-  "description" : "一段脚本将ipython notebook转化为py文件。\nIt’s hard to make notebook file to import so it’s important to make notebook importable.",
+  "description" : "一段脚本将ipython notebook转化为py文件。\nIt’s hard to make notebook file to import so it’s important to make notebook importable.\n#!\/usr\/bin\/env python # coding: utf-8 import nbformat from nbconvert import PythonExporter def convertNotebook(notebookPath, modulePath): with open(notebookPath) as fh: nb = nbformat.reads(fh.read(), nbformat.NO_CONVERT) exporter = PythonExporter() source, meta = exporter.from_notebook_node(nb) with open(modulePath, \u0026#39;w\u002b\u0026#39;) as fh: fh.writelines(source) def trans_all(): import os path = \u0026#39;.\u0026#39; list_dirs = os.listdir(path) for filename in list_dirs: if filename.endswith(\u0026#39;.ipynb\u0026#39;): print(filename, filename[:-5] \u002b \u0026#39;py\u0026#39;) convertNotebook(filename, filename[:-5] \u002b \u0026#39;py\u0026#39;) trans_all() ",
   "inLanguage" : "zh-cn",
-  "wordCount":  17 ,
+  "wordCount":  77 ,
   "datePublished" : "2018-04-20T01:00:00\u002b08:00",
   "dateModified" : "2018-04-20T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -91,18 +114,46 @@ It’s hard to make notebook file to import so it’s important to make notebook
 
 <meta property="og:title" content="批量转换ipynb" />
 <meta property="og:description" content="一段脚本将ipython notebook转化为py文件。
-It’s hard to make notebook file to import so it’s important to make notebook importable.">
+It’s hard to make notebook file to import so it’s important to make notebook importable.
+
+  #!/usr/bin/env python
+# coding: utf-8
+import nbformat
+from nbconvert import PythonExporter
+def convertNotebook(notebookPath, modulePath):
+  with open(notebookPath) as fh:
+    nb = nbformat.reads(fh.read(), nbformat.NO_CONVERT)
+  exporter = PythonExporter()
+  source, meta = exporter.from_notebook_node(nb)
+  with open(modulePath, &#39;w&#43;&#39;) as fh:
+    fh.writelines(source)
+def trans_all():
+    import os
+    path = &#39;.&#39;
+    list_dirs = os.listdir(path)
+    for filename in list_dirs:
+        if filename.endswith(&#39;.ipynb&#39;):
+            print(filename, filename[:-5] &#43; &#39;py&#39;)
+            convertNotebook(filename, filename[:-5] &#43; &#39;py&#39;)
+trans_all()
+
+">
 <meta property="og:url" content="https://svtter.cn/2018/04/20/%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2ipynb/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="批量转换ipynb" />
   <meta name="twitter:description" content="一段脚本将ipython notebook转化为py文件。
-It’s hard to make notebook file to import so it’s important to make notebook importable.">
+It’s hard to make notebook file to import so it’s important to make notebook importable.
+
+  #!/usr/bin/env python
+# coding: utf-8
+import nbformat
+from nbconvert import …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -110,8 +161,6 @@ It’s hard to make notebook file to import so it’s important to make notebook
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -126,10 +175,6 @@ It’s hard to make notebook file to import so it’s important to make notebook
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -274,7 +319,7 @@ It’s hard to make notebook file to import so it’s important to make notebook
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;17&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;77&nbsp;个字
   
   
     
@@ -304,8 +349,29 @@ It’s hard to make notebook file to import so it’s important to make notebook
       <article role="main" class="blog-post">
         <p>一段脚本将<code>ipython notebook</code>转化为<code>py</code>文件。</p>
 <p>It’s hard to make <code>notebook</code> file to <code>import</code> so it’s important to make <code>notebook</code> importable.</p>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">nbformat</span>
+<span class="kn">from</span> <span class="nn">nbconvert</span> <span class="kn">import</span> <span class="n">PythonExporter</span>
+<span class="k">def</span> <span class="nf">convertNotebook</span><span class="p">(</span><span class="n">notebookPath</span><span class="p">,</span> <span class="n">modulePath</span><span class="p">):</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">notebookPath</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">NO_CONVERT</span><span class="p">)</span>
+  <span class="n">exporter</span> <span class="o">=</span> <span class="n">PythonExporter</span><span class="p">()</span>
+  <span class="n">source</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">from_notebook_node</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">modulePath</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">trans_all</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+    <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ipynb&#39;</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;py&#39;</span><span class="p">)</span>
+            <span class="n">convertNotebook</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;py&#39;</span><span class="p">)</span>
+<span class="n">trans_all</span><span class="p">()</span>
+</pre>
+</div>
 
         
 
@@ -394,6 +460,20 @@ It’s hard to make notebook file to import so it’s important to make notebook
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2018/04/20/%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2ipynb">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2018\/04\/20\/%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2ipynb';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -451,7 +531,7 @@ It’s hard to make notebook file to import so it’s important to make notebook
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -473,6 +553,28 @@ It’s hard to make notebook file to import so it’s important to make notebook
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

@@ -17,9 +17,81 @@
 
       <title>Linux-软中断通信 - </title>
 
-  <meta name="description" content="本文出自svtter.github.io
+  <meta name="description" content="
+本文出自svtter.github.io
+
+
 本文可以随意转载，但是转载请保留本信息.
-执行结果 e3.png">
+
+
+  #include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;wait.h&gt;
+void waiting(), stop(), alarming();
+int wait_mark;
+int main()
+{
+    int p1, p2;
+    if(p1 = fork())
+    {
+        if(p2 = fork())
+        {
+            wait_mark = 1;
+            signal(SIGINT, stop);
+            signal(SIGALRM, alarming);
+            waiting();
+            kill(p1, 16);
+            kill(p2, 17);
+            wait();
+            wait();
+            printf(&#34;parent process is killed!\n&#34;);
+            exit();
+        }
+        else
+        {
+            wait_mark = 1;
+            signal(17, stop);
+            signal(SIGINT, SIG_IGN);
+            while(wait_mark!=);
+            lockf(1,1,);
+            printf(&#34;child process2 is killed by parent!\n&#34;);
+            lockf(1,,);
+            exit();
+        }
+    }
+    else
+    {
+        wait_mark = 1;
+        signal(16, stop);
+        signal(SIGINT, SIG_IGN);
+        while(wait_mark!=);
+        lockf(1, 1, );
+        printf(&#34;child process1 is killed by parent!\n&#34;);
+        lockf(1, , );
+        exit();
+    }
+    return ;
+}
+void waiting()
+{
+    sleep(5);
+    if(wait_mark != )
+        kill(getpid(), SIGALRM);
+}
+void alarming()
+{
+    wait_mark = ;
+}
+void stop()
+{
+    wait_mark = ;
+}
+
+
+执行结果
+e3.png">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -68,9 +140,9 @@
     "name" : "svtter"
   },
   "headline": "Linux-软中断通信",
-  "description" : "本文出自svtter.github.io\n本文可以随意转载，但是转载请保留本信息.\n执行结果 e3.png",
+  "description" : " 本文出自svtter.github.io\n本文可以随意转载，但是转载请保留本信息.\n#include \u0026lt;stdio.h\u0026gt; #include \u0026lt;unistd.h\u0026gt; #include \u0026lt;signal.h\u0026gt; #include \u0026lt;unistd.h\u0026gt; #include \u0026lt;wait.h\u0026gt; void waiting(), stop(), alarming(); int wait_mark; int main() { int p1, p2; if(p1 = fork()) { if(p2 = fork()) { wait_mark = 1; signal(SIGINT, stop); signal(SIGALRM, alarming); waiting(); kill(p1, 16); kill(p2, 17); wait(); wait(); printf(\u0022parent process is killed!\\n\u0022); exit(); } else { wait_mark = 1; signal(17, stop); signal(SIGINT, SIG_IGN); while(wait_mark!=); lockf(1,1,); printf(\u0022child process2 is killed by parent!\\n\u0022); lockf(1,,); exit(); } } else { wait_mark = 1; signal(16, stop); signal(SIGINT, SIG_IGN); while(wait_mark!=); lockf(1, 1, ); printf(\u0022child process1 is killed by parent!\\n\u0022); lockf(1, , ); exit(); } return ; } void waiting() { sleep(5); if(wait_mark != ) kill(getpid(), SIGALRM); } void alarming() { wait_mark = ; } void stop() { wait_mark = ; } 执行结果 e3.png\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  4 ,
+  "wordCount":  126 ,
   "datePublished" : "2014-12-23T01:00:00\u002b08:00",
   "dateModified" : "2014-12-23T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -91,21 +163,103 @@
 
 
 <meta property="og:title" content="Linux-软中断通信" />
-<meta property="og:description" content="本文出自svtter.github.io
+<meta property="og:description" content="
+本文出自svtter.github.io
+
+
 本文可以随意转载，但是转载请保留本信息.
-执行结果 e3.png">
+
+
+  #include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;wait.h&gt;
+void waiting(), stop(), alarming();
+int wait_mark;
+int main()
+{
+    int p1, p2;
+    if(p1 = fork())
+    {
+        if(p2 = fork())
+        {
+            wait_mark = 1;
+            signal(SIGINT, stop);
+            signal(SIGALRM, alarming);
+            waiting();
+            kill(p1, 16);
+            kill(p2, 17);
+            wait();
+            wait();
+            printf(&#34;parent process is killed!\n&#34;);
+            exit();
+        }
+        else
+        {
+            wait_mark = 1;
+            signal(17, stop);
+            signal(SIGINT, SIG_IGN);
+            while(wait_mark!=);
+            lockf(1,1,);
+            printf(&#34;child process2 is killed by parent!\n&#34;);
+            lockf(1,,);
+            exit();
+        }
+    }
+    else
+    {
+        wait_mark = 1;
+        signal(16, stop);
+        signal(SIGINT, SIG_IGN);
+        while(wait_mark!=);
+        lockf(1, 1, );
+        printf(&#34;child process1 is killed by parent!\n&#34;);
+        lockf(1, , );
+        exit();
+    }
+    return ;
+}
+void waiting()
+{
+    sleep(5);
+    if(wait_mark != )
+        kill(getpid(), SIGALRM);
+}
+void alarming()
+{
+    wait_mark = ;
+}
+void stop()
+{
+    wait_mark = ;
+}
+
+
+执行结果
+e3.png">
 <meta property="og:url" content="https://svtter.cn/2014/12/23/linux-%E8%BD%AF%E4%B8%AD%E6%96%AD%E9%80%9A%E4%BF%A1/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="Linux-软中断通信" />
-  <meta name="twitter:description" content="本文出自svtter.github.io
+  <meta name="twitter:description" content="
+本文出自svtter.github.io
+
+
 本文可以随意转载，但是转载请保留本信息.
-执行结果 e3.png">
+
+
+  #include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;wait.h&gt;
+void waiting(), stop(), …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -113,8 +267,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -129,10 +281,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -277,7 +425,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;4&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;126&nbsp;个字
   
   
     
@@ -311,9 +459,75 @@
 <blockquote>
 <p>本文可以随意转载，但是转载请保留本信息.</p>
 </blockquote>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;wait.h&gt;</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">waiting</span><span class="p">(),</span> <span class="n">stop</span><span class="p">(),</span> <span class="n">alarming</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">wait_mark</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p1</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p2</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+            <span class="n">signal</span><span class="p">(</span><span class="n">SIGALRM</span><span class="p">,</span> <span class="n">alarming</span><span class="p">);</span>
+            <span class="n">waiting</span><span class="p">();</span>
+            <span class="n">kill</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+            <span class="n">kill</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="mi">17</span><span class="p">);</span>
+            <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"parent process is killed!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">signal</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+            <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">SIG_IGN</span><span class="p">);</span>
+            <span class="k">while</span><span class="p">(</span><span class="n">wait_mark</span><span class="o">!=</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"child process2 is killed by parent!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi"></span><span class="p">,</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">signal</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+        <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">SIG_IGN</span><span class="p">);</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">wait_mark</span><span class="o">!=</span><span class="mi"></span><span class="p">);</span>
+        <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"child process1 is killed by parent!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+        <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">waiting</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">wait_mark</span> <span class="o">!=</span> <span class="mi"></span><span class="p">)</span>
+        <span class="n">kill</span><span class="p">(</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">SIGALRM</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">alarming</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">stop</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h2 id="执行结果">执行结果</h2>
-<p><a href="/">e3.png</a></p>
+<p><a href="">e3.png</a></p>
 
 
         
@@ -403,6 +617,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/12/23/linux-%E8%BD%AF%E4%B8%AD%E6%96%AD%E9%80%9A%E4%BF%A1">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/12\/23\/linux-%E8%BD%AF%E4%B8%AD%E6%96%AD%E9%80%9A%E4%BF%A1';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -460,7 +688,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -482,6 +710,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

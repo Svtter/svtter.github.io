@@ -23,7 +23,60 @@
 $a = \Sigma t^{gcd(i,n)}$。
 翻转。翻转奇数情况和偶数情况是不一样的，因为奇数情况会多一个不定点，这个不定点就是在轴上的点。剩余的不定点的个数就是$n/2$，总共不定点的个数就是$nt^{(n&#43;1)/2}$。偶数的情况下，如果正好切在两个珠子上，那么循环长度为2的点有$n/2-1$个，长度为1的循环有2个，所以总共$n/2&#43;1$个。如果没有切在珠子上，不定点的个数为$n/2$，和为$b = n/2*(t^{n/2&#43;1} &#43; t^{n/2})$。
 然后我们可以计算出项链的个数$a/n$，手镯的个数$(a&#43;b)/2n$
-列出式子以后代码就方便了。记得求pow的时候可以顺手打表">
+列出式子以后代码就方便了。记得求pow的时候可以顺手打表
+
+  /*=============================================================================
+#
+# Author: svtter - svtter@qq.com
+#
+# QQ : 57180160
+#
+# Last modified: 2015-05-03 18:48
+#
+# Filename: 10294.cpp
+#
+# Description: 
+#
+=============================================================================*/
+#include &lt;bits/stdc&#43;&#43;.h&gt;
+using namespace std;
+#define INF 0x3f3f3f3f
+#define ll long long int
+#define MEM(a) memset(a, 0, sizeof(a))
+#define MEMM(a) memset(a, -1, sizeof(a))
+#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)&#43;&#43;)
+#define CR printf(&#34;\n&#34;)
+const double PI = acos(-1.0);
+int gcd(int a, int b)
+{
+    return b ==  ? a : gcd(b, a%b);
+}
+const int maxn = 60;
+ll po[maxn];
+int main()
+{
+#ifdef DEBUG
+    // freopen(&#34;input&#34;, &#34;r&#34;, stdin);       //从input文件中读入
+    // freopen(&#34;output&#34;, &#34;w&#34;, stdout);     //输出到output文件
+#endif
+    int n, t;
+    ll ans, ans2;
+    while(scanf(&#34;%d%d&#34;, &n, &t) != EOF && n)
+    {
+        po[] = 1;
+        ans = ;
+        for(int i = 1; i &lt;= n; i&#43;&#43;) po[i] = po[i-1] * t;
+        for(int i = ; i &lt; n;i&#43;&#43;) ans &#43;= po[gcd(i, n)];
+        ans2 = ans;
+        if(n & 1) ans2 &#43;= n*po[(n&#43;1)/2];
+        else ans2 &#43;= n/2*(po[n/2&#43;1] &#43; po[n/2]);
+        printf(&#34;%lld %lld\n&#34;, ans/n, ans2/(2*n));
+    }
+    return ;
+}
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -72,9 +125,9 @@ $a = \Sigma t^{gcd(i,n)}$。
     "name" : "svtter"
   },
   "headline": "ACM – Uva10294 – 置换",
-  "description" : "项链和手镯。\n项链的问题在于不可以翻转，因此少了一种置换，而手镯则可以反转。然后我们计算旋转的置换。\n旋转的步长可以是0,i,2i…然后我们可以得出循环一共有n\/gcd(i,n)个元素，因此，我们可以计算出一共有gcd(i,n)个循环。则不定点的个数为\n$a = \\Sigma t^{gcd(i,n)}$。\n翻转。翻转奇数情况和偶数情况是不一样的，因为奇数情况会多一个不定点，这个不定点就是在轴上的点。剩余的不定点的个数就是$n\/2$，总共不定点的个数就是$nt^{(n\u002b1)\/2}$。偶数的情况下，如果正好切在两个珠子上，那么循环长度为2的点有$n\/2-1$个，长度为1的循环有2个，所以总共$n\/2\u002b1$个。如果没有切在珠子上，不定点的个数为$n\/2$，和为$b = n\/2*(t^{n\/2\u002b1} \u002b t^{n\/2})$。\n然后我们可以计算出项链的个数$a\/n$，手镯的个数$(a\u002bb)\/2n$\n列出式子以后代码就方便了。记得求pow的时候可以顺手打表",
+  "description" : "项链和手镯。\n项链的问题在于不可以翻转，因此少了一种置换，而手镯则可以反转。然后我们计算旋转的置换。\n旋转的步长可以是0,i,2i…然后我们可以得出循环一共有n\/gcd(i,n)个元素，因此，我们可以计算出一共有gcd(i,n)个循环。则不定点的个数为\n$a = \\Sigma t^{gcd(i,n)}$。\n翻转。翻转奇数情况和偶数情况是不一样的，因为奇数情况会多一个不定点，这个不定点就是在轴上的点。剩余的不定点的个数就是$n\/2$，总共不定点的个数就是$nt^{(n\u002b1)\/2}$。偶数的情况下，如果正好切在两个珠子上，那么循环长度为2的点有$n\/2-1$个，长度为1的循环有2个，所以总共$n\/2\u002b1$个。如果没有切在珠子上，不定点的个数为$n\/2$，和为$b = n\/2*(t^{n\/2\u002b1} \u002b t^{n\/2})$。\n然后我们可以计算出项链的个数$a\/n$，手镯的个数$(a\u002bb)\/2n$\n列出式子以后代码就方便了。记得求pow的时候可以顺手打表\n\/*============================================================================= # # Author: svtter - svtter@qq.com # # QQ : 57180160 # # Last modified: 2015-05-03 18:48 # # Filename: 10294.cpp # # Description: # =============================================================================*\/ #include \u0026lt;bits\/stdc\u002b\u002b.h\u0026gt; using namespace std; #define INF 0x3f3f3f3f #define ll long long int #define MEM(a) memset(a, 0, sizeof(a)) #define MEMM(a) memset(a, -1, sizeof(a)) #define DEB(x, n) cout \u0026lt;\u0026lt; (x) \u0026lt;\u0026lt; \u0022 \u0022 \u0026lt;\u0026lt; (n) \u0026lt;\u0026lt; endl #define FOR(i, s, e) for(int (i) = (s); (i) \u0026lt; (e); (i)\u002b\u002b) #define CR printf(\u0022\\n\u0022) const double PI = acos(-1.0); int gcd(int a, int b) { return b == ? a : gcd(b, a%b); } const int maxn = 60; ll po[maxn]; int main() { #ifdef DEBUG \/\/ freopen(\u0022input\u0022, \u0022r\u0022, stdin); \/\/从input文件中读入 \/\/ freopen(\u0022output\u0022, \u0022w\u0022, stdout); \/\/输出到output文件 #endif int n, t; ll ans, ans2; while(scanf(\u0022%d%d\u0022, \u0026n, \u0026t) != EOF \u0026\u0026 n) { po[] = 1; ans = ; for(int i = 1; i \u0026lt;= n; i\u002b\u002b) po[i] = po[i-1] * t; for(int i = ; i \u0026lt; n;i\u002b\u002b) ans \u002b= po[gcd(i, n)]; ans2 = ans; if(n \u0026 1) ans2 \u002b= n*po[(n\u002b1)\/2]; else ans2 \u002b= n\/2*(po[n\/2\u002b1] \u002b po[n\/2]); printf(\u0022%lld %lld\\n\u0022, ans\/n, ans2\/(2*n)); } return ; } ",
   "inLanguage" : "zh-cn",
-  "wordCount":  14 ,
+  "wordCount":  202 ,
   "datePublished" : "2015-05-03T01:00:00\u002b08:00",
   "dateModified" : "2015-05-03T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -101,7 +154,60 @@ $a = \Sigma t^{gcd(i,n)}$。
 $a = \Sigma t^{gcd(i,n)}$。
 翻转。翻转奇数情况和偶数情况是不一样的，因为奇数情况会多一个不定点，这个不定点就是在轴上的点。剩余的不定点的个数就是$n/2$，总共不定点的个数就是$nt^{(n&#43;1)/2}$。偶数的情况下，如果正好切在两个珠子上，那么循环长度为2的点有$n/2-1$个，长度为1的循环有2个，所以总共$n/2&#43;1$个。如果没有切在珠子上，不定点的个数为$n/2$，和为$b = n/2*(t^{n/2&#43;1} &#43; t^{n/2})$。
 然后我们可以计算出项链的个数$a/n$，手镯的个数$(a&#43;b)/2n$
-列出式子以后代码就方便了。记得求pow的时候可以顺手打表">
+列出式子以后代码就方便了。记得求pow的时候可以顺手打表
+
+  /*=============================================================================
+#
+# Author: svtter - svtter@qq.com
+#
+# QQ : 57180160
+#
+# Last modified: 2015-05-03 18:48
+#
+# Filename: 10294.cpp
+#
+# Description: 
+#
+=============================================================================*/
+#include &lt;bits/stdc&#43;&#43;.h&gt;
+using namespace std;
+#define INF 0x3f3f3f3f
+#define ll long long int
+#define MEM(a) memset(a, 0, sizeof(a))
+#define MEMM(a) memset(a, -1, sizeof(a))
+#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)&#43;&#43;)
+#define CR printf(&#34;\n&#34;)
+const double PI = acos(-1.0);
+int gcd(int a, int b)
+{
+    return b ==  ? a : gcd(b, a%b);
+}
+const int maxn = 60;
+ll po[maxn];
+int main()
+{
+#ifdef DEBUG
+    // freopen(&#34;input&#34;, &#34;r&#34;, stdin);       //从input文件中读入
+    // freopen(&#34;output&#34;, &#34;w&#34;, stdout);     //输出到output文件
+#endif
+    int n, t;
+    ll ans, ans2;
+    while(scanf(&#34;%d%d&#34;, &n, &t) != EOF && n)
+    {
+        po[] = 1;
+        ans = ;
+        for(int i = 1; i &lt;= n; i&#43;&#43;) po[i] = po[i-1] * t;
+        for(int i = ; i &lt; n;i&#43;&#43;) ans &#43;= po[gcd(i, n)];
+        ans2 = ans;
+        if(n & 1) ans2 &#43;= n*po[(n&#43;1)/2];
+        else ans2 &#43;= n/2*(po[n/2&#43;1] &#43; po[n/2]);
+        printf(&#34;%lld %lld\n&#34;, ans/n, ans2/(2*n));
+    }
+    return ;
+}
+
+">
 <meta property="og:url" content="https://svtter.cn/2015/05/03/acm-uva10294-%E7%BD%AE%E6%8D%A2/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
@@ -115,7 +221,7 @@ $a = \Sigma t^{gcd(i,n)}$。
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -123,8 +229,6 @@ $a = \Sigma t^{gcd(i,n)}$。
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -139,10 +243,6 @@ $a = \Sigma t^{gcd(i,n)}$。
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -287,7 +387,7 @@ $a = \Sigma t^{gcd(i,n)}$。
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;14&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;202&nbsp;个字
   
   
     
@@ -322,8 +422,59 @@ $a = \Sigma t^{gcd(i,n)}$。
 <p>翻转。翻转奇数情况和偶数情况是不一样的，因为奇数情况会多一个不定点，这个不定点就是在轴上的点。剩余的不定点的个数就是$n/2$，总共不定点的个数就是$nt^{(n+1)/2}$。偶数的情况下，如果正好切在两个珠子上，那么循环长度为2的点有$n/2-1$个，长度为1的循环有2个，所以总共$n/2+1$个。如果没有切在珠子上，不定点的个数为$n/2$，和为$b = n/2*(t^{n/2+1} + t^{n/2})$。</p>
 <p>然后我们可以计算出项链的个数$a/n$，手镯的个数$(a+b)/2n$</p>
 <p>列出式子以后代码就方便了。记得求pow的时候可以顺手打表</p>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="cm">/*=============================================================================</span>
+<span class="cm">#</span>
+<span class="cm"># Author: svtter - svtter@qq.com</span>
+<span class="cm">#</span>
+<span class="cm"># QQ : 57180160</span>
+<span class="cm">#</span>
+<span class="cm"># Last modified: 2015-05-03 18:48</span>
+<span class="cm">#</span>
+<span class="cm"># Filename: 10294.cpp</span>
+<span class="cm">#</span>
+<span class="cm"># Description: </span>
+<span class="cm">#</span>
+<span class="cm">=============================================================================*/</span>
+<span class="cp">#include</span> <span class="cpf">&lt;bits/stdc++.h&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define INF 0x3f3f3f3f</span>
+<span class="cp">#define ll long long int</span>
+<span class="cp">#define MEM(a) memset(a, 0, sizeof(a))</span>
+<span class="cp">#define MEMM(a) memset(a, -1, sizeof(a))</span>
+<span class="cp">#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
+<span class="cp">#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)++)</span>
+<span class="cp">#define CR printf("\n")</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="o">==</span> <span class="mi"></span> <span class="o">?</span> <span class="nl">a</span> <span class="p">:</span> <span class="n">gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">%</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxn</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+<span class="n">ll</span> <span class="n">po</span><span class="p">[</span><span class="n">maxn</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="cp">#ifdef DEBUG</span>
+    <span class="c1">// freopen("input", "r", stdin);       //从input文件中读入</span>
+    <span class="c1">// freopen("output", "w", stdout);     //输出到output文件</span>
+<span class="cp">#endif</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">;</span>
+    <span class="n">ll</span> <span class="n">ans</span><span class="p">,</span> <span class="n">ans2</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">,</span> <span class="o">&</span><span class="n">t</span><span class="p">)</span> <span class="o">!=</span> <span class="n">EOF</span> <span class="o">&&</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">po</span><span class="p">[</span><span class="mi"></span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">po</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">po</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">t</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">ans</span> <span class="o">+=</span> <span class="n">po</span><span class="p">[</span><span class="n">gcd</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">)];</span>
+        <span class="n">ans2</span> <span class="o">=</span> <span class="n">ans</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&</span> <span class="mi">1</span><span class="p">)</span> <span class="n">ans2</span> <span class="o">+=</span> <span class="n">n</span><span class="o">*</span><span class="n">po</span><span class="p">[(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">];</span>
+        <span class="k">else</span> <span class="n">ans2</span> <span class="o">+=</span> <span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">po</span><span class="p">[</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">po</span><span class="p">[</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">]);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%lld %lld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ans</span><span class="o">/</span><span class="n">n</span><span class="p">,</span> <span class="n">ans2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 
         
 
@@ -412,6 +563,20 @@ $a = \Sigma t^{gcd(i,n)}$。
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2015/05/03/acm-uva10294-%E7%BD%AE%E6%8D%A2">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2015\/05\/03\/acm-uva10294-%E7%BD%AE%E6%8D%A2';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -469,7 +634,7 @@ $a = \Sigma t^{gcd(i,n)}$。
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -491,6 +656,28 @@ $a = \Sigma t^{gcd(i,n)}$。
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

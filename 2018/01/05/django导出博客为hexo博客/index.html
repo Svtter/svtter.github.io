@@ -19,7 +19,45 @@
 
   <meta name="description" content="Django导出主要使用render_to_string方法来进行；
 可以参考的源码如下：
+
+  from article.models import Article
+from django.template.loader import render_to_string
+posts = Article.objects.all()
+for post in posts:
+    title = post.title
+    title = title.replace(&#39;[&#39;, &#39;&#39;)
+    title = title.replace(&#39;]&#39;, &#39;&#39;)
+    context = {
+        &#39;title&#39;: title,
+        &#39;cre_date&#39;: post.cre_date,
+        &#39;updated&#39;: post.up_date,
+        &#39;content&#39;: post.content,
+        &#39;category&#39;: post.category.name,
+        &#39;tag&#39;: post.tag
+    }
+    content = render_to_string(&#39;article.html&#39;, context)
+    filename = &#39;export/&#39; &#43; post.title &#43; &#39;.md&#39;
+    with open(filename, &#39;w&#39;) as f:
+        f.write(content)
+
+
 对应的渲染article.html
+
+  title: {{ title }}
+date: 2018-01-05T01:00:00&#43;08:00
+updated: {{ updated | date:&#34;Y/m/d H:i:s&#34; }}
+tags: [
+{% for tag in tags %}
+    &#39;{{ tag.name }}&#39;,
+{% endfor %}
+]
+categories: [
+    &#39;{{ category }}&#39;,
+]
+---
+{{ content | safe }}
+
+
 运行的时候，python manage.py shell，然后导入export 包即可。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
@@ -69,9 +107,9 @@
     "name" : "svtter"
   },
   "headline": "Django导出博客为hexo博客",
-  "description" : "Django导出主要使用render_to_string方法来进行；\n可以参考的源码如下：\n对应的渲染article.html\n运行的时候，python manage.py shell，然后导入export 包即可。",
+  "description" : "Django导出主要使用render_to_string方法来进行；\n可以参考的源码如下：\nfrom article.models import Article from django.template.loader import render_to_string posts = Article.objects.all() for post in posts: title = post.title title = title.replace(\u0026#39;[\u0026#39;, \u0026#39;\u0026#39;) title = title.replace(\u0026#39;]\u0026#39;, \u0026#39;\u0026#39;) context = { \u0026#39;title\u0026#39;: title, \u0026#39;cre_date\u0026#39;: post.cre_date, \u0026#39;updated\u0026#39;: post.up_date, \u0026#39;content\u0026#39;: post.content, \u0026#39;category\u0026#39;: post.category.name, \u0026#39;tag\u0026#39;: post.tag } content = render_to_string(\u0026#39;article.html\u0026#39;, context) filename = \u0026#39;export\/\u0026#39; \u002b post.title \u002b \u0026#39;.md\u0026#39; with open(filename, \u0026#39;w\u0026#39;) as f: f.write(content) 对应的渲染article.html\ntitle: {{ title }} date: 2018-01-05T01:00:00\u002b08:00 updated: {{ updated | date:\u0022Y\/m\/d H:i:s\u0022 }} tags: [ {% for tag in tags %} \u0026#39;{{ tag.name }}\u0026#39;, {% endfor %} ] categories: [ \u0026#39;{{ category }}\u0026#39;, ] --- {{ content | safe }} 运行的时候，python manage.py shell，然后导入export 包即可。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  7 ,
+  "wordCount":  106 ,
   "datePublished" : "2018-01-05T01:00:00\u002b08:00",
   "dateModified" : "2018-01-05T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -94,7 +132,45 @@
 <meta property="og:title" content="Django导出博客为hexo博客" />
 <meta property="og:description" content="Django导出主要使用render_to_string方法来进行；
 可以参考的源码如下：
+
+  from article.models import Article
+from django.template.loader import render_to_string
+posts = Article.objects.all()
+for post in posts:
+    title = post.title
+    title = title.replace(&#39;[&#39;, &#39;&#39;)
+    title = title.replace(&#39;]&#39;, &#39;&#39;)
+    context = {
+        &#39;title&#39;: title,
+        &#39;cre_date&#39;: post.cre_date,
+        &#39;updated&#39;: post.up_date,
+        &#39;content&#39;: post.content,
+        &#39;category&#39;: post.category.name,
+        &#39;tag&#39;: post.tag
+    }
+    content = render_to_string(&#39;article.html&#39;, context)
+    filename = &#39;export/&#39; &#43; post.title &#43; &#39;.md&#39;
+    with open(filename, &#39;w&#39;) as f:
+        f.write(content)
+
+
 对应的渲染article.html
+
+  title: {{ title }}
+date: 2018-01-05T01:00:00&#43;08:00
+updated: {{ updated | date:&#34;Y/m/d H:i:s&#34; }}
+tags: [
+{% for tag in tags %}
+    &#39;{{ tag.name }}&#39;,
+{% endfor %}
+]
+categories: [
+    &#39;{{ category }}&#39;,
+]
+---
+{{ content | safe }}
+
+
 运行的时候，python manage.py shell，然后导入export 包即可。">
 <meta property="og:url" content="https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2/" />
 <meta property="og:type" content="website" />
@@ -103,12 +179,16 @@
   <meta name="twitter:title" content="Django导出博客为hexo博客" />
   <meta name="twitter:description" content="Django导出主要使用render_to_string方法来进行；
 可以参考的源码如下：
-对应的渲染article.html
-运行的时候，python manage.py shell，然后导入export 包即可。">
+
+  from article.models import Article
+from django.template.loader import render_to_string
+posts = Article.objects.all()
+for post in posts:
+    title = …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -116,8 +196,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -132,10 +210,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -280,7 +354,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;7&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;106&nbsp;个字
   
   
     
@@ -310,9 +384,45 @@
       <article role="main" class="blog-post">
         <p>Django导出主要使用<code>render_to_string</code>方法来进行；</p>
 <p>可以参考的源码如下：</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="kn">from</span> <span class="nn">article.models</span> <span class="kn">import</span> <span class="n">Article</span>
+<span class="kn">from</span> <span class="nn">django.template.loader</span> <span class="kn">import</span> <span class="n">render_to_string</span>
+<span class="n">posts</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">post</span> <span class="ow">in</span> <span class="n">posts</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">title</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+        <span class="s1">&#39;cre_date&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">cre_date</span><span class="p">,</span>
+        <span class="s1">&#39;updated&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">up_date</span><span class="p">,</span>
+        <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+        <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">tag</span>
+    <span class="p">}</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">render_to_string</span><span class="p">(</span><span class="s1">&#39;article.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;export/&#39;</span> <span class="o">+</span> <span class="n">post</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s1">&#39;.md&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+</pre>
+</div>
 <p>对应的渲染<code>article.html</code></p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span>title: {{ title }}
+date: 2018-01-05T01:00:00+08:00
+updated: {{ updated | date:"Y/m/d H:i:s" }}
+tags: [
+{% for tag in tags %}
+    &#39;{{ tag.name }}&#39;,
+{% endfor %}
+]
+categories: [
+    &#39;{{ category }}&#39;,
+]
+---
+{{ content | safe }}
+</pre>
+</div>
 <p>运行的时候，<code>python manage.py shell</code>，然后导入<code>export</code> 包即可。</p>
 
 
@@ -403,6 +513,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2018\/01\/05\/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -460,7 +584,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -482,6 +606,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

@@ -17,7 +17,83 @@
 
       <title>php-测试表单的php文件 - </title>
 
-  <meta name="description" content="本文出自svtter.github.io 用于测试form, 上传的文件">
+  <meta name="description" content="
+本文出自svtter.github.io
+
+用于测试form, 上传的文件
+
+  &lt;?php
+// 乱码问题
+// 页面设置为gb2312, 如果是utf-8, 则改为uft-8
+header(&#34;Content-type: text/html; charset=gb2312&#34;);
+// 针对ajax, 
+// iconv( &#34;UTF-8&#34;, &#34;gb2312&#34; , $_POST[&#34;post&#34;]);
+//用于测试submit, 显示所有上传的变量
+function test_submit()
+{
+    while(list($key,$val) = each($_POST))
+    {
+        echo &#34;$key =&gt; $val&lt;br /&gt;&#34;;
+    }
+}
+test_submit();
+//保存到固定文件，重新转存
+function one_file_upload($name)
+{
+    // 测试单文件
+    if ($_FILES[$name][&#34;error&#34;] &gt; )
+    {
+        echo &#34;Error: &#34; . $_FILES[$name][&#34;error&#34;] . &#34;&lt;br /&gt;&#34;;
+    }
+    else
+    {
+        echo &#34;Upload: &#34; . $_FILES[$name][&#34;name&#34;] . &#34;&lt;br /&gt;&#34;;
+        echo &#34;Type: &#34; . $_FILES[$name][&#34;type&#34;] . &#34;&lt;br /&gt;&#34;;
+        echo &#34;Size: &#34; . ($_FILES[$name][&#34;size&#34;] / 1024) . &#34; Kb&lt;br /&gt;&#34;;
+        echo &#34;Stored in: &#34; . $_FILES[$name][&#34;tmp_name&#34;];
+    }
+}
+// one_file(&#34;file&#34;);
+//  save in a array
+function reArrayFiles(&$file_post) {
+    //  用于规格化输入的字符
+    $file_ary = array();
+    $file_count = count($file_post[&#39;name&#39;]);
+    $file_keys = array_keys($file_post);
+    for ($i=; $i&lt;$file_count; $i&#43;&#43;) {
+        foreach ($file_keys as $key) {
+            $file_ary[$i][$key] = $file_post[$key][$i];
+        }
+    }
+    return $file_ary;
+}
+// 显示上传的文件
+function show($name) {
+    if ($_FILES[$name][&#39;size&#39;]) {
+        $file_ary = reArrayFiles($_FILES[$name]);
+        foreach ($file_ary as $file) {
+            print &#39;File Name: &#39; . $file[&#39;name&#39;] . &#39;&lt;br/&gt;&#39;;
+            print &#39;File Type: &#39; . $file[&#39;type&#39;] . &#39;&lt;br/&gt;&#39;;
+            print &#39;File Size: &#39; . $file[&#39;size&#39;] . &#39;&lt;br/&gt;&#39;;
+            print &#39;&lt;br/&gt;&#39;;
+        }
+    }
+    else {
+        echo &#34;Files upload == 0&#34; . &#34;&lt;br/&gt;&#34;;
+    }
+}
+show(&#39;userpic&#39;);
+show(&#39;userfile&#39;);
+// 测试服务器
+function test_server() {
+    while( list($key,$val) = each($_SERVER))
+    {
+        echo &#34;$key=&gt; $val&lt;br /&gt;&#34;;
+    }
+}
+?&gt;
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -66,9 +142,9 @@
     "name" : "svtter"
   },
   "headline": "php-测试表单的php文件",
-  "description" : "本文出自svtter.github.io 用于测试form, 上传的文件",
+  "description" : " 本文出自svtter.github.io 用于测试form, 上传的文件\n\u0026lt;?php \/\/ 乱码问题 \/\/ 页面设置为gb2312, 如果是utf-8, 则改为uft-8 header(\u0022Content-type: text\/html; charset=gb2312\u0022); \/\/ 针对ajax, \/\/ iconv( \u0022UTF-8\u0022, \u0022gb2312\u0022 , $_POST[\u0022post\u0022]); \/\/用于测试submit, 显示所有上传的变量 function test_submit() { while(list($key,$val) = each($_POST)) { echo \u0022$key =\u0026gt; $val\u0026lt;br \/\u0026gt;\u0022; } } test_submit(); \/\/保存到固定文件，重新转存 function one_file_upload($name) { \/\/ 测试单文件 if ($_FILES[$name][\u0022error\u0022] \u0026gt; ) { echo \u0022Error: \u0022 . $_FILES[$name][\u0022error\u0022] . \u0022\u0026lt;br \/\u0026gt;\u0022; } else { echo \u0022Upload: \u0022 . $_FILES[$name][\u0022name\u0022] . \u0022\u0026lt;br \/\u0026gt;\u0022; echo \u0022Type: \u0022 . $_FILES[$name][\u0022type\u0022] . \u0022\u0026lt;br \/\u0026gt;\u0022; echo \u0022Size: \u0022 . ($_FILES[$name][\u0022size\u0022] \/ 1024) . \u0022 Kb\u0026lt;br \/\u0026gt;\u0022; echo \u0022Stored in: \u0022 . $_FILES[$name][\u0022tmp_name\u0022]; } } \/\/ one_file(\u0022file\u0022); \/\/ save in a array function reArrayFiles(\u0026$file_post) { \/\/ 用于规格化输入的字符 $file_ary = array(); $file_count = count($file_post[\u0026#39;name\u0026#39;]); $file_keys = array_keys($file_post); for ($i=; $i\u0026lt;$file_count; $i\u002b\u002b) { foreach ($file_keys as $key) { $file_ary[$i][$key] = $file_post[$key][$i]; } } return $file_ary; } \/\/ 显示上传的文件 function show($name) { if ($_FILES[$name][\u0026#39;size\u0026#39;]) { $file_ary = reArrayFiles($_FILES[$name]); foreach ($file_ary as $file) { print \u0026#39;File Name: \u0026#39; . $file[\u0026#39;name\u0026#39;] . \u0026#39;\u0026lt;br\/\u0026gt;\u0026#39;; print \u0026#39;File Type: \u0026#39; . $file[\u0026#39;type\u0026#39;] . \u0026#39;\u0026lt;br\/\u0026gt;\u0026#39;; print \u0026#39;File Size: \u0026#39; . $file[\u0026#39;size\u0026#39;] . \u0026#39;\u0026lt;br\/\u0026gt;\u0026#39;; print \u0026#39;\u0026lt;br\/\u0026gt;\u0026#39;; } } else { echo \u0022Files upload == 0\u0022 . \u0022\u0026lt;br\/\u0026gt;\u0022; } } show(\u0026#39;userpic\u0026#39;); show(\u0026#39;userfile\u0026#39;); \/\/ 测试服务器 function test_server() { while( list($key,$val) = each($_SERVER)) { echo \u0022$key=\u0026gt; $val\u0026lt;br \/\u0026gt;\u0022; } } ?\u0026gt; ",
   "inLanguage" : "zh-cn",
-  "wordCount":  3 ,
+  "wordCount":  208 ,
   "datePublished" : "2014-12-02T01:00:00\u002b08:00",
   "dateModified" : "2014-12-02T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -89,17 +165,103 @@
 
 
 <meta property="og:title" content="php-测试表单的php文件" />
-<meta property="og:description" content="本文出自svtter.github.io 用于测试form, 上传的文件">
+<meta property="og:description" content="
+本文出自svtter.github.io
+
+用于测试form, 上传的文件
+
+  &lt;?php
+// 乱码问题
+// 页面设置为gb2312, 如果是utf-8, 则改为uft-8
+header(&#34;Content-type: text/html; charset=gb2312&#34;);
+// 针对ajax, 
+// iconv( &#34;UTF-8&#34;, &#34;gb2312&#34; , $_POST[&#34;post&#34;]);
+//用于测试submit, 显示所有上传的变量
+function test_submit()
+{
+    while(list($key,$val) = each($_POST))
+    {
+        echo &#34;$key =&gt; $val&lt;br /&gt;&#34;;
+    }
+}
+test_submit();
+//保存到固定文件，重新转存
+function one_file_upload($name)
+{
+    // 测试单文件
+    if ($_FILES[$name][&#34;error&#34;] &gt; )
+    {
+        echo &#34;Error: &#34; . $_FILES[$name][&#34;error&#34;] . &#34;&lt;br /&gt;&#34;;
+    }
+    else
+    {
+        echo &#34;Upload: &#34; . $_FILES[$name][&#34;name&#34;] . &#34;&lt;br /&gt;&#34;;
+        echo &#34;Type: &#34; . $_FILES[$name][&#34;type&#34;] . &#34;&lt;br /&gt;&#34;;
+        echo &#34;Size: &#34; . ($_FILES[$name][&#34;size&#34;] / 1024) . &#34; Kb&lt;br /&gt;&#34;;
+        echo &#34;Stored in: &#34; . $_FILES[$name][&#34;tmp_name&#34;];
+    }
+}
+// one_file(&#34;file&#34;);
+//  save in a array
+function reArrayFiles(&$file_post) {
+    //  用于规格化输入的字符
+    $file_ary = array();
+    $file_count = count($file_post[&#39;name&#39;]);
+    $file_keys = array_keys($file_post);
+    for ($i=; $i&lt;$file_count; $i&#43;&#43;) {
+        foreach ($file_keys as $key) {
+            $file_ary[$i][$key] = $file_post[$key][$i];
+        }
+    }
+    return $file_ary;
+}
+// 显示上传的文件
+function show($name) {
+    if ($_FILES[$name][&#39;size&#39;]) {
+        $file_ary = reArrayFiles($_FILES[$name]);
+        foreach ($file_ary as $file) {
+            print &#39;File Name: &#39; . $file[&#39;name&#39;] . &#39;&lt;br/&gt;&#39;;
+            print &#39;File Type: &#39; . $file[&#39;type&#39;] . &#39;&lt;br/&gt;&#39;;
+            print &#39;File Size: &#39; . $file[&#39;size&#39;] . &#39;&lt;br/&gt;&#39;;
+            print &#39;&lt;br/&gt;&#39;;
+        }
+    }
+    else {
+        echo &#34;Files upload == 0&#34; . &#34;&lt;br/&gt;&#34;;
+    }
+}
+show(&#39;userpic&#39;);
+show(&#39;userfile&#39;);
+// 测试服务器
+function test_server() {
+    while( list($key,$val) = each($_SERVER))
+    {
+        echo &#34;$key=&gt; $val&lt;br /&gt;&#34;;
+    }
+}
+?&gt;
+
+">
 <meta property="og:url" content="https://svtter.cn/2014/12/02/php-%E6%B5%8B%E8%AF%95%E8%A1%A8%E5%8D%95%E7%9A%84php%E6%96%87%E4%BB%B6/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="php-测试表单的php文件" />
-  <meta name="twitter:description" content="本文出自svtter.github.io 用于测试form, 上传的文件">
+  <meta name="twitter:description" content="
+本文出自svtter.github.io
+
+用于测试form, 上传的文件
+
+  &lt;?php
+// 乱码问题
+// 页面设置为gb2312, 如果是utf-8, 则改为uft-8
+header(&#34;Content-type: text/html; charset=gb2312&#34;);
+// 针对ajax, 
+// iconv( &#34;UTF-8&#34;, &#34;gb2312&#34; , …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -107,8 +269,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -123,10 +283,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -271,7 +427,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;208&nbsp;个字
   
   
     
@@ -303,7 +459,79 @@
 <li>本文出自<a href="http://svtter.github.io">svtter.github.io</a></li>
 </ul>
 <p>用于测试form, 上传的文件</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="c1">// 乱码问题</span>
+<span class="c1">// 页面设置为gb2312, 如果是utf-8, 则改为uft-8</span>
+<span class="nx">header</span><span class="p">(</span><span class="s2">"Content-type: text/html; charset=gb2312"</span><span class="p">);</span>
+<span class="c1">// 针对ajax, </span>
+<span class="c1">// iconv( "UTF-8", "gb2312" , $_POST["post"]);</span>
+<span class="c1">//用于测试submit, 显示所有上传的变量</span>
+<span class="kd">function</span> <span class="nx">test_submit</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="nx">list</span><span class="p">(</span><span class="nx">$key</span><span class="p">,</span><span class="nx">$val</span><span class="p">)</span> <span class="o">=</span> <span class="nx">each</span><span class="p">(</span><span class="nx">$_POST</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="nx">echo</span> <span class="s2">"$key =&gt; $val&lt;br /&gt;"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">test_submit</span><span class="p">();</span>
+<span class="c1">//保存到固定文件，重新转存</span>
+<span class="kd">function</span> <span class="nx">one_file_upload</span><span class="p">(</span><span class="nx">$name</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// 测试单文件</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s2">"error"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi"></span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nx">echo</span> <span class="s2">"Error: "</span> <span class="p">.</span> <span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s2">"error"</span><span class="p">]</span> <span class="p">.</span> <span class="s2">"&lt;br /&gt;"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="nx">echo</span> <span class="s2">"Upload: "</span> <span class="p">.</span> <span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s2">"name"</span><span class="p">]</span> <span class="p">.</span> <span class="s2">"&lt;br /&gt;"</span><span class="p">;</span>
+        <span class="nx">echo</span> <span class="s2">"Type: "</span> <span class="p">.</span> <span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s2">"type"</span><span class="p">]</span> <span class="p">.</span> <span class="s2">"&lt;br /&gt;"</span><span class="p">;</span>
+        <span class="nx">echo</span> <span class="s2">"Size: "</span> <span class="p">.</span> <span class="p">(</span><span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s2">"size"</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">)</span> <span class="p">.</span> <span class="s2">" Kb&lt;br /&gt;"</span><span class="p">;</span>
+        <span class="nx">echo</span> <span class="s2">"Stored in: "</span> <span class="p">.</span> <span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s2">"tmp_name"</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// one_file("file");</span>
+<span class="c1">//  save in a array</span>
+<span class="kd">function</span> <span class="nx">reArrayFiles</span><span class="p">(</span><span class="o">&</span><span class="nx">$file_post</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//  用于规格化输入的字符</span>
+    <span class="nx">$file_ary</span> <span class="o">=</span> <span class="nx">array</span><span class="p">();</span>
+    <span class="nx">$file_count</span> <span class="o">=</span> <span class="nx">count</span><span class="p">(</span><span class="nx">$file_post</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]);</span>
+    <span class="nx">$file_keys</span> <span class="o">=</span> <span class="nx">array_keys</span><span class="p">(</span><span class="nx">$file_post</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">$i</span><span class="o">=</span><span class="mi"></span><span class="p">;</span> <span class="nx">$i</span><span class="o">&lt;</span><span class="nx">$file_count</span><span class="p">;</span> <span class="nx">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">foreach</span> <span class="p">(</span><span class="nx">$file_keys</span> <span class="kr">as</span> <span class="nx">$key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$file_ary</span><span class="p">[</span><span class="nx">$i</span><span class="p">][</span><span class="nx">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">$file_post</span><span class="p">[</span><span class="nx">$key</span><span class="p">][</span><span class="nx">$i</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">$file_ary</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// 显示上传的文件</span>
+<span class="kd">function</span> <span class="nx">show</span><span class="p">(</span><span class="nx">$name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">$file_ary</span> <span class="o">=</span> <span class="nx">reArrayFiles</span><span class="p">(</span><span class="nx">$_FILES</span><span class="p">[</span><span class="nx">$name</span><span class="p">]);</span>
+        <span class="nx">foreach</span> <span class="p">(</span><span class="nx">$file_ary</span> <span class="kr">as</span> <span class="nx">$file</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">print</span> <span class="s1">&#39;File Name: &#39;</span> <span class="p">.</span> <span class="nx">$file</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="p">.</span> <span class="s1">&#39;&lt;br/&gt;&#39;</span><span class="p">;</span>
+            <span class="nx">print</span> <span class="s1">&#39;File Type: &#39;</span> <span class="p">.</span> <span class="nx">$file</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="p">.</span> <span class="s1">&#39;&lt;br/&gt;&#39;</span><span class="p">;</span>
+            <span class="nx">print</span> <span class="s1">&#39;File Size: &#39;</span> <span class="p">.</span> <span class="nx">$file</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="p">.</span> <span class="s1">&#39;&lt;br/&gt;&#39;</span><span class="p">;</span>
+            <span class="nx">print</span> <span class="s1">&#39;&lt;br/&gt;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">echo</span> <span class="s2">"Files upload == 0"</span> <span class="p">.</span> <span class="s2">"&lt;br/&gt;"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">show</span><span class="p">(</span><span class="s1">&#39;userpic&#39;</span><span class="p">);</span>
+<span class="nx">show</span><span class="p">(</span><span class="s1">&#39;userfile&#39;</span><span class="p">);</span>
+<span class="c1">// 测试服务器</span>
+<span class="kd">function</span> <span class="nx">test_server() {</span>
+    <span class="k">while</span><span class="p">(</span> <span class="nx">list</span><span class="p">(</span><span class="nx">$key</span><span class="p">,</span><span class="nx">$val</span><span class="p">)</span> <span class="o">=</span> <span class="nx">each</span><span class="p">(</span><span class="nx">$_SERVER</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="nx">echo</span> <span class="s2">"$key=&gt; $val&lt;br /&gt;"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">?&gt;</span>
+</pre>
+</div>
 
 
         
@@ -411,6 +639,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/12/02/php-%E6%B5%8B%E8%AF%95%E8%A1%A8%E5%8D%95%E7%9A%84php%E6%96%87%E4%BB%B6">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/12\/02\/php-%E6%B5%8B%E8%AF%95%E8%A1%A8%E5%8D%95%E7%9A%84php%E6%96%87%E4%BB%B6';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -468,7 +710,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -490,6 +732,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

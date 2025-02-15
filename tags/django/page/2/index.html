@@ -47,7 +47,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -55,8 +55,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -71,10 +69,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -250,7 +244,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;116&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;138&nbsp;个字
   
   
     
@@ -266,12 +260,16 @@
     </p>
     <div class="post-entry">
         
-        这两天感觉博客访问量已经不能靠用嘴宣传了，于是决定做一下sitemap，但是发现django自带的sitemap生成器存在这样的问题：生成的sitemap是依照container的hostname来显示的。
-为此我查询了一下其他人是怎么搞的，发现他们都把nginx和django放在一个容器下——但是如此构建不仅麻烦，似乎违背了docker的构建思路，在一个container里面放了多个进程。因此，我认为下面的方案是合理的。
-解决方案 Enabling the sites framework To enable the sites framework, follow these steps:
-Add ‘django.contrib.sites’ to your INSTALLED_APPS setting.
-Define a SITE_ID setting: SITE_ID = 1
-Run migrate. django.contrib.sites registers a post_migrate signal handler which creates a default site named example.com with the domain example.com. This site will also be created after Django creates the test database. To set the correct name and domain for your project, you can use a data migration.
+        <p>这两天感觉博客访问量已经不能靠用嘴宣传了，于是决定做一下sitemap，但是发现django自带的sitemap生成器存在这样的问题：生成的sitemap是依照container的hostname来显示的。</p>
+<p>为此我查询了一下其他人是怎么搞的，发现他们都把nginx和django放在一个容器下——但是如此构建不仅麻烦，似乎违背了docker的构建思路，在一个container里面放了多个进程。因此，我认为下面的方案是合理的。</p>
+<h2 id="解决方案">解决方案</h2>
+<h3 id="enabling-the-sites-framework">Enabling the sites framework</h3>
+<p>To enable the sites framework, follow these steps:</p>
+<p>Add ‘django.contrib.sites’ to your INSTALLED_APPS setting.</p>
+<h3 id="define-a-site_id-setting">Define a SITE_ID setting:</h3>
+<p><code>SITE_ID = 1</code></p>
+<h3 id="run-migrate">Run migrate.</h3>
+<p>django.contrib.sites registers a post_migrate signal handler which creates a default site named example.com with the domain example.com. This site will also be created after Django creates the test database. To set the correct name and domain for your project, you can use a data migration.</p>
         <a href="https://svtter.cn/2017/12/27/%E4%BD%BF%E7%94%A8docker%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84sitemap%E9%97%AE%E9%A2%98/" class="post-read-more">[阅读全文]</a>
         
     </div>
@@ -364,7 +362,7 @@ Run migrate. django.contrib.sites registers a post_migrate signal handler which 
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -386,6 +384,28 @@ Run migrate. django.contrib.sites registers a post_migrate signal handler which 
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

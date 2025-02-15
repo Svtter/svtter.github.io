@@ -18,11 +18,79 @@
       <title>Linux-进程管理 - </title>
 
   <meta name="description" content="本文出自&lt;svtter.github.io&gt;
-进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
-运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？
+进程的创建
+用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
+
+  #include &lt;stdio.h&gt;
+void main()
+{
+    int p1, p2;
+    if (p1 = fork()) //父进程返回1， 子进程返回0
+        putchar(&#39;b&#39;);
+    else
+    {
+        if(p2 = fork())
+            putchar(&#39;c&#39;);
+        else
+            putchar(&#39;a&#39;);
+    }
+}
+
+
+运行结果
+
+进程的控制
+在这段代码中使用了lockf, 和wait函数。作用是什么呢？
+
+
 lockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。
+
+
 wait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0
-运行结果 ">
+
+
+
+  #include &lt;stdio.h&gt;
+#include &lt;wait.h&gt;
+// 利用lockf(1, 1, 0)锁定输出设备
+// lockf(1, 0, 0)解锁输出设备
+int main()
+{
+    int p1, p2, i;
+    if(p1 = fork())
+    {
+        lockf(1, 1, );
+        for(i = ; i &lt; 500; i&#43;&#43;)
+            printf(&#34;parent%d\n&#34;, i);
+        lockf(1, , );
+        wait();        //confirm the father killed after child
+        exit();
+    }
+    else
+    {
+        if(p2 = fork())
+        {
+            lockf(1, 1, );
+            for(i = ; i &lt; 500; i&#43;&#43;)
+            printf(&#34;son %d\n&#34;, i);
+            lockf(1, , );
+            wait();        //
+            exit();
+        }
+        else
+        {
+            lockf(1, 1,);
+            for(i = ; i &lt; 500; i&#43;&#43;)
+                printf(&#34;grandchild%d\n&#34;, i);
+            lockf(1, ,);
+            exit();
+        }
+    }
+}
+
+
+运行结果
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -71,9 +139,9 @@ wait作用为等待子进程的返回信息。wait中的signal用于接受进程
     "name" : "svtter"
   },
   "headline": "Linux-进程管理",
-  "description" : "本文出自\u0026lt;svtter.github.io\u0026gt;\n进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid\n运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？\nlockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。\nwait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0\n运行结果 ",
+  "description" : "本文出自\u0026lt;svtter.github.io\u0026gt;\n进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid\n#include \u0026lt;stdio.h\u0026gt; void main() { int p1, p2; if (p1 = fork()) \/\/父进程返回1， 子进程返回0 putchar(\u0026#39;b\u0026#39;); else { if(p2 = fork()) putchar(\u0026#39;c\u0026#39;); else putchar(\u0026#39;a\u0026#39;); } } 运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？\nlockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。\nwait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0\n#include \u0026lt;stdio.h\u0026gt; #include \u0026lt;wait.h\u0026gt; \/\/ 利用lockf(1, 1, 0)锁定输出设备 \/\/ lockf(1, 0, 0)解锁输出设备 int main() { int p1, p2, i; if(p1 = fork()) { lockf(1, 1, ); for(i = ; i \u0026lt; 500; i\u002b\u002b) printf(\u0022parent%d\\n\u0022, i); lockf(1, , ); wait(); \/\/confirm the father killed after child exit(); } else { if(p2 = fork()) { lockf(1, 1, ); for(i = ; i \u0026lt; 500; i\u002b\u002b) printf(\u0022son %d\\n\u0022, i); lockf(1, , ); wait(); \/\/ exit(); } else { lockf(1, 1,); for(i = ; i \u0026lt; 500; i\u002b\u002b) printf(\u0022grandchild%d\\n\u0022, i); lockf(1, ,); exit(); } } } 运行结果 ",
   "inLanguage" : "zh-cn",
-  "wordCount":  15 ,
+  "wordCount":  132 ,
   "datePublished" : "2014-11-14T01:00:00\u002b08:00",
   "dateModified" : "2014-11-14T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -95,25 +163,98 @@ wait作用为等待子进程的返回信息。wait中的signal用于接受进程
 
 <meta property="og:title" content="Linux-进程管理" />
 <meta property="og:description" content="本文出自&lt;svtter.github.io&gt;
-进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
-运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？
+进程的创建
+用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
+
+  #include &lt;stdio.h&gt;
+void main()
+{
+    int p1, p2;
+    if (p1 = fork()) //父进程返回1， 子进程返回0
+        putchar(&#39;b&#39;);
+    else
+    {
+        if(p2 = fork())
+            putchar(&#39;c&#39;);
+        else
+            putchar(&#39;a&#39;);
+    }
+}
+
+
+运行结果
+
+进程的控制
+在这段代码中使用了lockf, 和wait函数。作用是什么呢？
+
+
 lockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。
+
+
 wait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0
-运行结果 ">
+
+
+
+  #include &lt;stdio.h&gt;
+#include &lt;wait.h&gt;
+// 利用lockf(1, 1, 0)锁定输出设备
+// lockf(1, 0, 0)解锁输出设备
+int main()
+{
+    int p1, p2, i;
+    if(p1 = fork())
+    {
+        lockf(1, 1, );
+        for(i = ; i &lt; 500; i&#43;&#43;)
+            printf(&#34;parent%d\n&#34;, i);
+        lockf(1, , );
+        wait();        //confirm the father killed after child
+        exit();
+    }
+    else
+    {
+        if(p2 = fork())
+        {
+            lockf(1, 1, );
+            for(i = ; i &lt; 500; i&#43;&#43;)
+            printf(&#34;son %d\n&#34;, i);
+            lockf(1, , );
+            wait();        //
+            exit();
+        }
+        else
+        {
+            lockf(1, 1,);
+            for(i = ; i &lt; 500; i&#43;&#43;)
+                printf(&#34;grandchild%d\n&#34;, i);
+            lockf(1, ,);
+            exit();
+        }
+    }
+}
+
+
+运行结果
+">
 <meta property="og:url" content="https://svtter.cn/2014/11/14/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="Linux-进程管理" />
   <meta name="twitter:description" content="本文出自&lt;svtter.github.io&gt;
-进程的创建 用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
-运行结果 进程的控制 在这段代码中使用了lockf, 和wait函数。作用是什么呢？
-lockf顾名思义是锁定file. lockf(1, 1, 0)锁定资源，lockf(1, 0, 0)释放资源。
-wait作用为等待子进程 …">
+进程的创建
+用于进程的创建。fork()的作用是，从当前位置创建一个子进程，并执行。fork的返回值为子进程的pid
+
+  #include &lt;stdio.h&gt;
+void main()
+{
+    int p1, p2;
+    if (p1 = fork()) //父进程返回1， 子进程返回0
+        putchar( …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -121,8 +262,6 @@ wait作用为等待子进程 …">
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -137,10 +276,6 @@ wait作用为等待子进程 …">
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -285,7 +420,7 @@ wait作用为等待子进程 …">
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;15&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;132&nbsp;个字
   
   
     
@@ -316,9 +451,25 @@ wait作用为等待子进程 …">
         <p>本文出自&lt;svtter.github.io&gt;</p>
 <h2 id="进程的创建">进程的创建</h2>
 <p>用于进程的创建。fork()的作用是，从<strong>当前位置</strong>创建一个子进程，并执行。fork的返回值为子进程的pid</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p1</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span> <span class="c1">//父进程返回1， 子进程返回0</span>
+        <span class="n">putchar</span><span class="p">(</span><span class="sc">&#39;b&#39;</span><span class="p">);</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p2</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+            <span class="n">putchar</span><span class="p">(</span><span class="sc">&#39;c&#39;</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">putchar</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h3 id="运行结果">运行结果</h3>
-<!-- raw HTML omitted -->
+<img alt="运行结果" src="https://i1.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emivyoryqoj205704d3yg.jpg?w=625" data-recalc-dims="1" />
 <h2 id="进程的控制">进程的控制</h2>
 <p>在这段代码中使用了lockf, 和wait函数。作用是什么呢？</p>
 <ul>
@@ -329,10 +480,48 @@ wait作用为等待子进程 …">
 <p>wait作用为等待子进程的返回信息。wait中的signal用于接受进程的返回信号，即exit(0)中的0</p>
 </li>
 </ul>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;wait.h&gt;</span><span class="cp"></span>
+<span class="c1">// 利用lockf(1, 1, 0)锁定输出设备</span>
+<span class="c1">// lockf(1, 0, 0)解锁输出设备</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p1</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">500</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"parent%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>        <span class="c1">//confirm the father killed after child</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p2</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+            <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">500</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"son %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+            <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>        <span class="c1">//</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi"></span><span class="p">);</span>
+            <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">500</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">"grandchild%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h3 id="运行结果-1">运行结果</h3>
-<!-- raw HTML omitted -->
-
+<img alt="运行结果" src="https://i2.wp.com/ww4.sinaimg.cn/mw690/c53b1907jw1emivx24ob6j20hy0dhgmh.jpg?w=625" data-recalc-dims="1" />
 
         
 
@@ -421,6 +610,20 @@ wait作用为等待子进程 …">
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/11/14/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/11\/14\/linux-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -478,7 +681,7 @@ wait作用为等待子进程 …">
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -500,6 +703,28 @@ wait作用为等待子进程 …">
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

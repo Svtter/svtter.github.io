@@ -17,7 +17,87 @@
 
       <title>山东省第五届ACM省赛 Weighted Median - </title>
 
-  <meta name="description" content=" ">
+  <meta name="description" content="
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt;
+#include &lt;bitset&gt;
+using namespace std;
+// 大数，内存处理
+#define inf 0x3f3f3f3f
+#define lln long long int
+#define mem(a) memset(a, 0, sizeof(a))
+#define memm(a) memset(b, -1, sizeof(b))
+#define deb(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define cr printf(&#34;\n&#34;)
+// 调试用
+    template &lt;class type&gt;
+void debug(type a[], int len)
+{
+    for(int i = ; i &lt; len ; i&#43;&#43;)
+    {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+const int maxn = 10000000&#43;10;
+lln sum[maxn];
+struct ele
+{
+    lln x, w;
+};
+int cmp(ele a, ele b)
+{
+    return a.x &lt; b.x;
+}
+ele e[maxn];
+int main()
+{
+#ifdef debug
+    // freopen(&#34;input&#34;, &#34;r&#34;, stdin);
+#endif
+    int n;
+    while(scanf(&#34;%d&#34;, &n) != eof)
+    {
+        for(int i = ; i &lt; n; i&#43;&#43;) scanf(&#34;%lld&#34;, &e[i].x);
+        for(int i = ; i &lt; n; i&#43;&#43;) scanf(&#34;%lld&#34;, &e[i].w);
+        sort(e, e&#43;n, cmp);
+        sum[] = e[].w;
+        for(int i = 1; i &lt; n;i &#43;&#43;) sum[i] = e[i].w &#43; sum[i-1];
+        double sm = sum[n-1]/2.0;
+        bool flag;
+        int i;
+        for(i = ; i &lt; n; i&#43;&#43;)
+        {
+            int ti, tj;
+            ti = tj = i;
+            if(i != ) while(e[ti].x == e[ti-1].x) ti--;
+            else ti = -1;
+            if(i != n-1) while(e[tj].x == e[tj&#43;1].x) tj&#43;&#43;;
+            else tj = n;
+            flag = 1;
+            // wi &lt;= s/2
+            if(ti == -1) {}
+            else if(sum[ti-1] &lt;= sm) {}
+            else flag = ;
+            // wi &lt; s/2
+            if(tj == n) {}
+            else if (sum[n-1] - sum[tj] &lt; sm){}
+            else flag = ;
+            if(flag) break;
+            i = tj;
+        }
+        printf(&#34;%lld\n&#34;, e[i].x);
+    }
+    return ;
+}
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -66,9 +146,9 @@
     "name" : "svtter"
   },
   "headline": "山东省第五届ACM省赛 Weighted Median",
-  "description" : " ",
+  "description" : " #include \u0026lt;iostream\u0026gt; #include \u0026lt;cstdio\u0026gt; #include \u0026lt;cstring\u0026gt; #include \u0026lt;vector\u0026gt; #include \u0026lt;map\u0026gt; #include \u0026lt;algorithm\u0026gt; #include \u0026lt;queue\u0026gt; #include \u0026lt;cmath\u0026gt; #include \u0026lt;bitset\u0026gt; using namespace std; \/\/ 大数，内存处理 #define inf 0x3f3f3f3f #define lln long long int #define mem(a) memset(a, 0, sizeof(a)) #define memm(a) memset(b, -1, sizeof(b)) #define deb(x, n) cout \u0026lt;\u0026lt; (x) \u0026lt;\u0026lt; \u0022 \u0022 \u0026lt;\u0026lt; (n) \u0026lt;\u0026lt; endl #define cr printf(\u0022\\n\u0022) \/\/ 调试用 template \u0026lt;class type\u0026gt; void debug(type a[], int len) { for(int i = ; i \u0026lt; len ; i\u002b\u002b) { cout \u0026lt;\u0026lt; a[i] \u0026lt;\u0026lt; \u0022 \u0022; } cout \u0026lt;\u0026lt; endl; } const int maxn = 10000000\u002b10; lln sum[maxn]; struct ele { lln x, w; }; int cmp(ele a, ele b) { return a.x \u0026lt; b.x; } ele e[maxn]; int main() { #ifdef debug \/\/ freopen(\u0022input\u0022, \u0022r\u0022, stdin); #endif int n; while(scanf(\u0022%d\u0022, \u0026n) != eof) { for(int i = ; i \u0026lt; n; i\u002b\u002b) scanf(\u0022%lld\u0022, \u0026e[i].x); for(int i = ; i \u0026lt; n; i\u002b\u002b) scanf(\u0022%lld\u0022, \u0026e[i].w); sort(e, e\u002bn, cmp); sum[] = e[].w; for(int i = 1; i \u0026lt; n;i \u002b\u002b) sum[i] = e[i].w \u002b sum[i-1]; double sm = sum[n-1]\/2.0; bool flag; int i; for(i = ; i \u0026lt; n; i\u002b\u002b) { int ti, tj; ti = tj = i; if(i != ) while(e[ti].x == e[ti-1].x) ti--; else ti = -1; if(i != n-1) while(e[tj].x == e[tj\u002b1].x) tj\u002b\u002b; else tj = n; flag = 1; \/\/ wi \u0026lt;= s\/2 if(ti == -1) {} else if(sum[ti-1] \u0026lt;= sm) {} else flag = ; \/\/ wi \u0026lt; s\/2 if(tj == n) {} else if (sum[n-1] - sum[tj] \u0026lt; sm){} else flag = ; if(flag) break; i = tj; } printf(\u0022%lld\\n\u0022, e[i].x); } return ; } ",
   "inLanguage" : "zh-cn",
-  "wordCount":  0 ,
+  "wordCount":  269 ,
   "datePublished" : "2015-04-19T01:00:00\u002b08:00",
   "dateModified" : "2015-04-19T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -89,17 +169,105 @@
 
 
 <meta property="og:title" content="山东省第五届ACM省赛 Weighted Median" />
-<meta property="og:description" content=" ">
+<meta property="og:description" content="
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt;
+#include &lt;bitset&gt;
+using namespace std;
+// 大数，内存处理
+#define inf 0x3f3f3f3f
+#define lln long long int
+#define mem(a) memset(a, 0, sizeof(a))
+#define memm(a) memset(b, -1, sizeof(b))
+#define deb(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define cr printf(&#34;\n&#34;)
+// 调试用
+    template &lt;class type&gt;
+void debug(type a[], int len)
+{
+    for(int i = ; i &lt; len ; i&#43;&#43;)
+    {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+const int maxn = 10000000&#43;10;
+lln sum[maxn];
+struct ele
+{
+    lln x, w;
+};
+int cmp(ele a, ele b)
+{
+    return a.x &lt; b.x;
+}
+ele e[maxn];
+int main()
+{
+#ifdef debug
+    // freopen(&#34;input&#34;, &#34;r&#34;, stdin);
+#endif
+    int n;
+    while(scanf(&#34;%d&#34;, &n) != eof)
+    {
+        for(int i = ; i &lt; n; i&#43;&#43;) scanf(&#34;%lld&#34;, &e[i].x);
+        for(int i = ; i &lt; n; i&#43;&#43;) scanf(&#34;%lld&#34;, &e[i].w);
+        sort(e, e&#43;n, cmp);
+        sum[] = e[].w;
+        for(int i = 1; i &lt; n;i &#43;&#43;) sum[i] = e[i].w &#43; sum[i-1];
+        double sm = sum[n-1]/2.0;
+        bool flag;
+        int i;
+        for(i = ; i &lt; n; i&#43;&#43;)
+        {
+            int ti, tj;
+            ti = tj = i;
+            if(i != ) while(e[ti].x == e[ti-1].x) ti--;
+            else ti = -1;
+            if(i != n-1) while(e[tj].x == e[tj&#43;1].x) tj&#43;&#43;;
+            else tj = n;
+            flag = 1;
+            // wi &lt;= s/2
+            if(ti == -1) {}
+            else if(sum[ti-1] &lt;= sm) {}
+            else flag = ;
+            // wi &lt; s/2
+            if(tj == n) {}
+            else if (sum[n-1] - sum[tj] &lt; sm){}
+            else flag = ;
+            if(flag) break;
+            i = tj;
+        }
+        printf(&#34;%lld\n&#34;, e[i].x);
+    }
+    return ;
+}
+
+">
 <meta property="og:url" content="https://svtter.cn/2015/04/19/%E5%B1%B1%E4%B8%9C%E7%9C%81%E7%AC%AC%E4%BA%94%E5%B1%8Aacm%E7%9C%81%E8%B5%9Bweightedmedian/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="山东省第五届ACM省赛 Weighted Median" />
-  <meta name="twitter:description" content=" ">
+  <meta name="twitter:description" content="
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt; …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -107,8 +275,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -123,10 +289,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -268,10 +430,10 @@
   <i class="fas fa-calendar"></i>&nbsp;发表于 April 19, 2015
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;0&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;269&nbsp;个字
   
   
     
@@ -299,8 +461,87 @@
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        <!-- raw HTML omitted -->
-
+        <div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;bitset&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="c1">// 大数，内存处理</span>
+<span class="cp">#define inf 0x3f3f3f3f</span>
+<span class="cp">#define lln long long int</span>
+<span class="cp">#define mem(a) memset(a, 0, sizeof(a))</span>
+<span class="cp">#define memm(a) memset(b, -1, sizeof(b))</span>
+<span class="cp">#define deb(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
+<span class="cp">#define cr printf("\n")</span>
+<span class="c1">// 调试用</span>
+    <span class="n">template</span> <span class="o">&lt;</span><span class="n">class</span> <span class="n">type</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">debug</span><span class="p">(</span><span class="n">type</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxn</span> <span class="o">=</span> <span class="mi">10000000</span><span class="o">+</span><span class="mi">10</span><span class="p">;</span>
+<span class="n">lln</span> <span class="n">sum</span><span class="p">[</span><span class="n">maxn</span><span class="p">];</span>
+<span class="k">struct</span> <span class="n">ele</span>
+<span class="p">{</span>
+    <span class="n">lln</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="kt">int</span> <span class="nf">cmp</span><span class="p">(</span><span class="n">ele</span> <span class="n">a</span><span class="p">,</span> <span class="n">ele</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">ele</span> <span class="n">e</span><span class="p">[</span><span class="n">maxn</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="cp">#ifdef debug</span>
+    <span class="c1">// freopen("input", "r", stdin);</span>
+<span class="cp">#endif</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">)</span> <span class="o">!=</span> <span class="n">eof</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%lld"</span><span class="p">,</span> <span class="o">&</span><span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%lld"</span><span class="p">,</span> <span class="o">&</span><span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">w</span><span class="p">);</span>
+        <span class="n">sort</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">e</span><span class="o">+</span><span class="n">n</span><span class="p">,</span> <span class="n">cmp</span><span class="p">);</span>
+        <span class="n">sum</span><span class="p">[</span><span class="mi"></span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="p">[</span><span class="mi"></span><span class="p">].</span><span class="n">w</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span><span class="n">i</span> <span class="o">++</span><span class="p">)</span> <span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">w</span> <span class="o">+</span> <span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+        <span class="kt">double</span> <span class="n">sm</span> <span class="o">=</span> <span class="n">sum</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">;</span>
+        <span class="kt">bool</span> <span class="n">flag</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">ti</span><span class="p">,</span> <span class="n">tj</span><span class="p">;</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="n">tj</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="mi"></span><span class="p">)</span> <span class="k">while</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">ti</span><span class="p">].</span><span class="n">x</span> <span class="o">==</span> <span class="n">e</span><span class="p">[</span><span class="n">ti</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="n">x</span><span class="p">)</span> <span class="n">ti</span><span class="o">--</span><span class="p">;</span>
+            <span class="k">else</span> <span class="n">ti</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">while</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">tj</span><span class="p">].</span><span class="n">x</span> <span class="o">==</span> <span class="n">e</span><span class="p">[</span><span class="n">tj</span><span class="o">+</span><span class="mi">1</span><span class="p">].</span><span class="n">x</span><span class="p">)</span> <span class="n">tj</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">else</span> <span class="n">tj</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="c1">// wi &lt;= s/2</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">ti</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">sum</span><span class="p">[</span><span class="n">ti</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">sm</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="k">else</span> <span class="n">flag</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+            <span class="c1">// wi &lt; s/2</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">tj</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">sum</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sum</span><span class="p">[</span><span class="n">tj</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">sm</span><span class="p">){}</span>
+            <span class="k">else</span> <span class="n">flag</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">tj</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%lld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">e</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 
         
 
@@ -389,6 +630,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2015/04/19/%E5%B1%B1%E4%B8%9C%E7%9C%81%E7%AC%AC%E4%BA%94%E5%B1%8Aacm%E7%9C%81%E8%B5%9Bweightedmedian">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2015\/04\/19\/%E5%B1%B1%E4%B8%9C%E7%9C%81%E7%AC%AC%E4%BA%94%E5%B1%8Aacm%E7%9C%81%E8%B5%9Bweightedmedian';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -446,7 +701,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -468,6 +723,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

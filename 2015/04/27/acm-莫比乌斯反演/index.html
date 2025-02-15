@@ -18,24 +18,79 @@
       <title>ACM – 莫比乌斯反演 - </title>
 
   <meta name="description" content="昨天卡了这道题目，今天特意来看看莫比乌斯反演。
+
 其中，$∑_{d|n}$含义为整除.
+
 ACdreamer大大的讲解
+
 看了这篇文章即可= =
-wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
+wikipedia的公式:
+
+
+以上就是具体的公式，此外，还有线性筛法:
+
+  void Init()
+{
+    memset(vis,,sizeof(vis));
+    mu[1] = 1;
+    cnt = ;
+    for(int i=2; i&lt;N; i&#43;&#43;)
+    {
+        if(!vis[i])
+        {
+            prime[cnt&#43;&#43;] = i;
+            mu[i] = -1;
+        }
+        for(int j=; j&lt;cnt&&i*prime[j]&lt;N; j&#43;&#43;)
+        {
+            vis[i*prime[j]] = 1;
+            if(i%prime[j]) mu[i*prime[j]] = -mu[i];
+            else
+            {
+                mu[i*prime[j]] = ;
+                break;
+            }
+        }
+    }
+}
+
+
 这段代码也是摘自AC大大。我们得到这个东西有什么用？
 简单来说，就是简化计算数论函数和的计算的过程，进行加速。
 在HDU5212中，给出的题解是：
+
 这道题需要一些莫比乌斯反演、线性筛的知识
+
+
 定义$f(x)=x∗(x−1)$
+
+
 题目所求即为$\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$
+
+
 先用线性筛求出miu在[1,10000]的函数值
+
+
 利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)/miu$）在[1,10000]的函数值，其中g满足：
+
+
 $\Sigma(g(d)|x)$
+
+
 这样所求答案即为：
+
+
 $\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：
+
+
 cnt(x)=在a1,a2,..,an中是x的倍数的个数
+
+
 而cnt的取值也可以$O(vlogv)$暴力计算出
+
+
 所以总的时间复杂度就是$O(vlogv)$的
+
 就是这样。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
@@ -85,9 +140,9 @@ cnt(x)=在a1,a2,..,an中是x的倍数的个数
     "name" : "svtter"
   },
   "headline": "ACM – 莫比乌斯反演",
-  "description" : "昨天卡了这道题目，今天特意来看看莫比乌斯反演。\n其中，$∑_{d|n}$含义为整除.\nACdreamer大大的讲解\n看了这篇文章即可= =\nwikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:\n这段代码也是摘自AC大大。我们得到这个东西有什么用？\n简单来说，就是简化计算数论函数和的计算的过程，进行加速。\n在HDU5212中，给出的题解是：\n这道题需要一些莫比乌斯反演、线性筛的知识\n定义$f(x)=x∗(x−1)$\n题目所求即为$\\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$\n先用线性筛求出miu在[1,10000]的函数值\n利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)\/miu$）在[1,10000]的函数值，其中g满足：\n$\\Sigma(g(d)|x)$\n这样所求答案即为：\n$\\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：\ncnt(x)=在a1,a2,..,an中是x的倍数的个数\n而cnt的取值也可以$O(vlogv)$暴力计算出\n所以总的时间复杂度就是$O(vlogv)$的\n就是这样。",
+  "description" : "昨天卡了这道题目，今天特意来看看莫比乌斯反演。\n其中，$∑_{d|n}$含义为整除.\nACdreamer大大的讲解\n看了这篇文章即可= =\nwikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:\nvoid Init() { memset(vis,,sizeof(vis)); mu[1] = 1; cnt = ; for(int i=2; i\u0026lt;N; i\u002b\u002b) { if(!vis[i]) { prime[cnt\u002b\u002b] = i; mu[i] = -1; } for(int j=; j\u0026lt;cnt\u0026\u0026i*prime[j]\u0026lt;N; j\u002b\u002b) { vis[i*prime[j]] = 1; if(i%prime[j]) mu[i*prime[j]] = -mu[i]; else { mu[i*prime[j]] = ; break; } } } } 这段代码也是摘自AC大大。我们得到这个东西有什么用？\n简单来说，就是简化计算数论函数和的计算的过程，进行加速。\n在HDU5212中，给出的题解是：\n这道题需要一些莫比乌斯反演、线性筛的知识\n定义$f(x)=x∗(x−1)$\n题目所求即为$\\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$\n先用线性筛求出miu在[1,10000]的函数值\n利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)\/miu$）在[1,10000]的函数值，其中g满足：\n$\\Sigma(g(d)|x)$\n这样所求答案即为：\n$\\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：\ncnt(x)=在a1,a2,..,an中是x的倍数的个数\n而cnt的取值也可以$O(vlogv)$暴力计算出\n所以总的时间复杂度就是$O(vlogv)$的\n就是这样。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  22 ,
+  "wordCount":  68 ,
   "datePublished" : "2015-04-27T01:00:00\u002b08:00",
   "dateModified" : "2015-04-27T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -109,24 +164,79 @@ cnt(x)=在a1,a2,..,an中是x的倍数的个数
 
 <meta property="og:title" content="ACM – 莫比乌斯反演" />
 <meta property="og:description" content="昨天卡了这道题目，今天特意来看看莫比乌斯反演。
+
 其中，$∑_{d|n}$含义为整除.
+
 ACdreamer大大的讲解
+
 看了这篇文章即可= =
-wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
+wikipedia的公式:
+
+
+以上就是具体的公式，此外，还有线性筛法:
+
+  void Init()
+{
+    memset(vis,,sizeof(vis));
+    mu[1] = 1;
+    cnt = ;
+    for(int i=2; i&lt;N; i&#43;&#43;)
+    {
+        if(!vis[i])
+        {
+            prime[cnt&#43;&#43;] = i;
+            mu[i] = -1;
+        }
+        for(int j=; j&lt;cnt&&i*prime[j]&lt;N; j&#43;&#43;)
+        {
+            vis[i*prime[j]] = 1;
+            if(i%prime[j]) mu[i*prime[j]] = -mu[i];
+            else
+            {
+                mu[i*prime[j]] = ;
+                break;
+            }
+        }
+    }
+}
+
+
 这段代码也是摘自AC大大。我们得到这个东西有什么用？
 简单来说，就是简化计算数论函数和的计算的过程，进行加速。
 在HDU5212中，给出的题解是：
+
 这道题需要一些莫比乌斯反演、线性筛的知识
+
+
 定义$f(x)=x∗(x−1)$
+
+
 题目所求即为$\Sigma(f(gcd(ai,aj)|i!=j,1≤i,j≤n)$
+
+
 先用线性筛求出miu在[1,10000]的函数值
+
+
 利用莫比乌斯反演公式我们可以$O(vlogv)$暴力求解出函数g（就是$f(n)/miu$）在[1,10000]的函数值，其中g满足：
+
+
 $\Sigma(g(d)|x)$
+
+
 这样所求答案即为：
+
+
 $\Sigma(g(d)∗cnt(d)∗cnt(d)|1≤d≤10000)$，其中cnt函数满足：
+
+
 cnt(x)=在a1,a2,..,an中是x的倍数的个数
+
+
 而cnt的取值也可以$O(vlogv)$暴力计算出
+
+
 所以总的时间复杂度就是$O(vlogv)$的
+
 就是这样。">
 <meta property="og:url" content="https://svtter.cn/2015/04/27/acm-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94/" />
 <meta property="og:type" content="website" />
@@ -134,19 +244,27 @@ cnt(x)=在a1,a2,..,an中是x的倍数的个数
 
   <meta name="twitter:title" content="ACM – 莫比乌斯反演" />
   <meta name="twitter:description" content="昨天卡了这道题目，今天特意来看看莫比乌斯反演。
+
 其中，$∑_{d|n}$含义为整除.
+
 ACdreamer大大的讲解
+
 看了这篇文章即可= =
-wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
-这段代码也是摘自AC大大。我们得到这个东西有什么用？
-简单来说，就是简化计算数论函数和的计算的过程，进行加速。
-在HDU5212中，给出的题解是：
-这道题需要一些莫比乌斯反演、线性筛的知识
- …">
+wikipedia的公式:
+
+
+以上就是具体的公式，此外，还有线性筛法:
+
+  void Init()
+{
+    memset(vis,,sizeof(vis));
+    mu[1] = 1;
+    cnt = ;
+    for(int i=2; …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -154,8 +272,6 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -170,10 +286,6 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -318,7 +430,7 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;22&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;68&nbsp;个字
   
   
     
@@ -347,17 +459,43 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
         <p>昨天卡了这道题目，今天特意来看看莫比乌斯反演。</p>
-<p><img alt="title" src="http://leanote.com/api/file/getImage?fileId=553e576c38f4115a430008a1"></p>
+<p><img src="http://leanote.com/api/file/getImage?fileId=553e576c38f4115a430008a1" alt="title"></p>
 <p>其中，$∑_{d|n}$含义为整除.</p>
 <hr>
 <p><a href="http://blog.csdn.net/acdreamers/article/details/8542292">ACdreamer大大的讲解</a></p>
 <hr>
 <p>看了这篇文章即可= =</p>
 <h2 id="wikipedia的公式">wikipedia的公式:</h2>
-<p><img alt="title" src="http://leanote.com/api/file/getImage?fileId=553e6bf138f4115a430008ea"></p>
-<p><img alt="title" src="http://leanote.com/api/file/getImage?fileId=553e6be938f4115a430008e8"></p>
+<p><img src="http://leanote.com/api/file/getImage?fileId=553e6bf138f4115a430008ea" alt="title"></p>
+<p><img src="http://leanote.com/api/file/getImage?fileId=553e6be938f4115a430008e8" alt="title"></p>
 <p>以上就是具体的公式，此外，还有线性筛法:</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="kt">void</span> <span class="nf">Init</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">vis</span><span class="p">,</span><span class="mi"></span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">vis</span><span class="p">));</span>
+    <span class="n">mu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="p">{</span>
+            <span class="n">prime</span><span class="p">[</span><span class="n">cnt</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi"></span><span class="p">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">cnt</span><span class="o">&&</span><span class="n">i</span><span class="o">*</span><span class="n">prime</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">&lt;</span><span class="n">N</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">prime</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="n">prime</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">prime</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">prime</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>这段代码也是摘自AC大大。我们得到这个东西有什么用？</p>
 <p>简单来说，就是简化计算数论函数和的计算的过程，进行加速。</p>
 <p>在HDU5212中，给出的题解是：</p>
@@ -484,6 +622,20 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2015/04/27/acm-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2015\/04\/27\/acm-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -541,7 +693,7 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -563,6 +715,28 @@ wikipedia的公式: 以上就是具体的公式，此外，还有线性筛法:
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

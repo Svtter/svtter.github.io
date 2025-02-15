@@ -22,6 +22,158 @@
 实现了Java, MPI, openmp, pthread, win32, MFC, .NET 的并行枚举排序，测试机是双核四线程的ThinkpadE430.
 MPI的环境是archlinux . openmpi
 贴一个MPI的源代码, 运行结果都在源代码对应的文件夹中保存，这里就不贴了。
+
+  /*=============================================================================
+#
+# Author: svtter - svtter@qq.com
+#
+# QQ : 57180160
+#
+# Last modified: 2014-11-02 17:08
+#
+# Filename: enum_sort_MPI.cpp
+#
+# Description: 
+#
+=============================================================================*/
+#include &#34;mpi.h&#34;
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+#include &lt;string.h&gt;
+#include &lt;iostream&gt;
+using namespace std;
+#define MAXN 10000
+#define PMAX 1000
+void build(int a[], int b[])
+{
+    srand(time(NULL));
+    for(int i = 1; i &lt;= MAXN; i&#43;&#43;)
+        a[i] = b[i] = random()%PMAX;
+}
+//serial enum sort
+double serial_enum_sort(int a[], int at[])
+{
+    double t1, t2;
+    t1 = MPI_Wtime();
+    int k, i, j;
+    for(i = 1; i &lt;= MAXN; i&#43;&#43;)
+    {
+        k = 1;
+        for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+            if(a[i] &gt; a[j] || (a[i] == a[j] && i &gt; j))
+                k&#43;&#43;;
+        at[k] = a[i];
+    }
+    t2 = MPI_Wtime();
+    return (t2 - t1);
+}
+// 用于调试数组
+void debug(int a[], int len)
+{
+    for(int i = 1; i &lt;= len; i&#43;&#43;)
+    {
+        fprintf(stderr, &#34;%5d&#34;, a[i]);
+    }
+    fprintf(stderr, &#34;\n&#34;);
+}
+int a[MAXN&#43;10], b[MAXN&#43;10], at[MAXN&#43;10], bt[MAXN&#43;10];
+void ensort(int rank[], int &myid, int &numprocs)
+{
+    int i, j, k;
+    for(i = myid; i &lt;= MAXN; i&#43;=numprocs)
+    {
+        k = 1;
+        for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+        {
+            if(b[i] &gt; b[j] || (b[i] == b[j] && (i &gt; j)))
+                k&#43;&#43;;
+        }
+        rank[i] = k;
+    }
+}
+int main(int argc, char *argv[])
+{
+    int myid, numprocs;
+    int namelen;
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    double c1 = , c2;
+    double start, end;
+    int i;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Get_processor_name(processor_name, &namelen);
+    // fprintf(stderr, &#34;Hello world! Processor %d of %d on %s\n&#34;, myid, numprocs, processor_name);
+    //serial
+    if(myid == )
+    {
+        build(a, b);
+        c1 = serial_enum_sort(a, at);
+        cout &lt;&lt; &#34;original array is: &#34; &lt;&lt; endl;
+        debug(a, 100);
+        cout &lt;&lt; endl;
+        cout &lt;&lt; &#34;serial sorted array is: &#34; &lt;&lt; endl;
+        debug(at, 100);
+        cout &lt;&lt; endl;
+        cout &lt;&lt; &#34;serial cost time is: &#34; &lt;&lt; c1 &lt;&lt; endl;
+        cout &lt;&lt; endl;
+    }
+    int con[numprocs][MAXN&#43;10];
+    int pt[MAXN&#43;10];
+    memset(con ,, sizeof(con));
+    memset(pt,, sizeof(pt));
+    // int **con = new int*[numprocs];
+    // for(int i = 0; i &lt; numprocs; i&#43;&#43;)
+        // con[i] = new int[MAXN&#43;10];
+    start = MPI_Wtime();
+    // P0 send b to ALL
+    MPI_Bcast(b, MAXN&#43;10, MPI_INT, , MPI_COMM_WORLD);
+    ensort(pt, myid, numprocs);
+    // Gather
+    MPI_Gather(pt, MAXN&#43;10, MPI_INT, con[myid], MAXN&#43;10, MPI_INT, , MPI_COMM_WORLD);
+    // if(myid == 0)
+    // {
+        // fprintf(stderr, &#34;myid: %d\n&#34;, myid);
+        // fprintf(stderr, &#34;con: %d\n&#34;, myid);
+        // debug(con[1], 100);
+        // fprintf(stderr, &#34;pt: %d\n&#34;, myid);
+        // debug(pt, 100);
+        // fprintf(stderr, &#34;\n&#34;);
+    // }
+    if(myid == )
+    {
+        int j;
+        // for(i = 0; i &lt; numprocs; i&#43;&#43;)
+        // {
+            // printf(&#34;i: %d\n&#34;, i);
+            // for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+                // printf(&#34;%5d&#34;, con[i][j]);
+            // puts(&#34;&#34;);
+        // }
+        // rank[k] = i
+        for(i = ; i &lt; numprocs; i&#43;&#43;)
+            for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+                bt[con[i][j]] = b[j];
+        // fprintf(stderr, &#34;bt: \n&#34;);
+        cout &lt;&lt; &#34;parallel sorted array is: &#34; &lt;&lt; endl;
+        debug(bt, 100);
+        cout &lt;&lt; endl;
+        end = MPI_Wtime();
+        c2 = end - start;
+        fprintf(stderr, &#34;parallel cost time is: %lf\n&#34;, c2);
+        fprintf(stderr, &#34;加速比为： %lf\n&#34;, c1 / c2);
+    }
+    // for(i = 0; i &lt; numprocs; i&#43;&#43;)
+        // delete con[i];
+    // delete con;
+    MPI_Finalize();
+    return ;
+}
+
+
 并行计算非常有趣，有时间肯定会再在这条道路上探寻…">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
@@ -71,9 +223,9 @@ MPI的环境是archlinux . openmpi
     "name" : "svtter"
   },
   "headline": "n种方法实现并行枚举排序",
-  "description" : "这篇文章一直没有写，因为并行计算的报告写的比较潦草。此外，没有实现fork。\n文件的源代码贴在 https:\/\/github.com\/Svtter\/workspace\/tree\/master\/parallel\/enum_sort\n实现了Java, MPI, openmp, pthread, win32, MFC, .NET 的并行枚举排序，测试机是双核四线程的ThinkpadE430.\nMPI的环境是archlinux . openmpi\n贴一个MPI的源代码, 运行结果都在源代码对应的文件夹中保存，这里就不贴了。\n并行计算非常有趣，有时间肯定会再在这条道路上探寻…",
+  "description" : "这篇文章一直没有写，因为并行计算的报告写的比较潦草。此外，没有实现fork。\n文件的源代码贴在 https:\/\/github.com\/Svtter\/workspace\/tree\/master\/parallel\/enum_sort\n实现了Java, MPI, openmp, pthread, win32, MFC, .NET 的并行枚举排序，测试机是双核四线程的ThinkpadE430.\nMPI的环境是archlinux . openmpi\n贴一个MPI的源代码, 运行结果都在源代码对应的文件夹中保存，这里就不贴了。\n\/*============================================================================= # # Author: svtter - svtter@qq.com # # QQ : 57180160 # # Last modified: 2014-11-02 17:08 # # Filename: enum_sort_MPI.cpp # # Description: # =============================================================================*\/ #include \u0022mpi.h\u0022 #include \u0026lt;stdio.h\u0026gt; #include \u0026lt;math.h\u0026gt; #include \u0026lt;sys\/time.h\u0026gt; #include \u0026lt;stdlib.h\u0026gt; #include \u0026lt;time.h\u0026gt; #include \u0026lt;string.h\u0026gt; #include \u0026lt;iostream\u0026gt; using namespace std; #define MAXN 10000 #define PMAX 1000 void build(int a[], int b[]) { srand(time(NULL)); for(int i = 1; i \u0026lt;= MAXN; i\u002b\u002b) a[i] = b[i] = random()%PMAX; } \/\/serial enum sort double serial_enum_sort(int a[], int at[]) { double t1, t2; t1 = MPI_Wtime(); int k, i, j; for(i = 1; i \u0026lt;= MAXN; i\u002b\u002b) { k = 1; for(j = 1; j \u0026lt;= MAXN; j\u002b\u002b) if(a[i] \u0026gt; a[j] || (a[i] == a[j] \u0026\u0026 i \u0026gt; j)) k\u002b\u002b; at[k] = a[i]; } t2 = MPI_Wtime(); return (t2 - t1); } \/\/ 用于调试数组 void debug(int a[], int len) { for(int i = 1; i \u0026lt;= len; i\u002b\u002b) { fprintf(stderr, \u0022%5d\u0022, a[i]); } fprintf(stderr, \u0022\\n\u0022); } int a[MAXN\u002b10], b[MAXN\u002b10], at[MAXN\u002b10], bt[MAXN\u002b10]; void ensort(int rank[], int \u0026myid, int \u0026numprocs) { int i, j, k; for(i = myid; i \u0026lt;= MAXN; i\u002b=numprocs) { k = 1; for(j = 1; j \u0026lt;= MAXN; j\u002b\u002b) { if(b[i] \u0026gt; b[j] || (b[i] == b[j] \u0026\u0026 (i \u0026gt; j))) k\u002b\u002b; } rank[i] = k; } } int main(int argc, char *argv[]) { int myid, numprocs; int namelen; char processor_name[MPI_MAX_PROCESSOR_NAME]; double c1 = , c2; double start, end; int i; MPI_Init(\u0026argc, \u0026argv); MPI_Comm_rank(MPI_COMM_WORLD, \u0026myid); MPI_Comm_size(MPI_COMM_WORLD, \u0026numprocs); MPI_Get_processor_name(processor_name, \u0026namelen); \/\/ fprintf(stderr, \u0022Hello world! Processor %d of %d on %s\\n\u0022, myid, numprocs, processor_name); \/\/serial if(myid == ) { build(a, b); c1 = serial_enum_sort(a, at); cout \u0026lt;\u0026lt; \u0022original array is: \u0022 \u0026lt;\u0026lt; endl; debug(a, 100); cout \u0026lt;\u0026lt; endl; cout \u0026lt;\u0026lt; \u0022serial sorted array is: \u0022 \u0026lt;\u0026lt; endl; debug(at, 100); cout \u0026lt;\u0026lt; endl; cout \u0026lt;\u0026lt; \u0022serial cost time is: \u0022 \u0026lt;\u0026lt; c1 \u0026lt;\u0026lt; endl; cout \u0026lt;\u0026lt; endl; } int con[numprocs][MAXN\u002b10]; int pt[MAXN\u002b10]; memset(con ,, sizeof(con)); memset(pt,, sizeof(pt)); \/\/ int **con = new int*[numprocs]; \/\/ for(int i = 0; i \u0026lt; numprocs; i\u002b\u002b) \/\/ con[i] = new int[MAXN\u002b10]; start = MPI_Wtime(); \/\/ P0 send b to ALL MPI_Bcast(b, MAXN\u002b10, MPI_INT, , MPI_COMM_WORLD); ensort(pt, myid, numprocs); \/\/ Gather MPI_Gather(pt, MAXN\u002b10, MPI_INT, con[myid], MAXN\u002b10, MPI_INT, , MPI_COMM_WORLD); \/\/ if(myid == 0) \/\/ { \/\/ fprintf(stderr, \u0022myid: %d\\n\u0022, myid); \/\/ fprintf(stderr, \u0022con: %d\\n\u0022, myid); \/\/ debug(con[1], 100); \/\/ fprintf(stderr, \u0022pt: %d\\n\u0022, myid); \/\/ debug(pt, 100); \/\/ fprintf(stderr, \u0022\\n\u0022); \/\/ } if(myid == ) { int j; \/\/ for(i = 0; i \u0026lt; numprocs; i\u002b\u002b) \/\/ { \/\/ printf(\u0022i: %d\\n\u0022, i); \/\/ for(j = 1; j \u0026lt;= MAXN; j\u002b\u002b) \/\/ printf(\u0022%5d\u0022, con[i][j]); \/\/ puts(\u0022\u0022); \/\/ } \/\/ rank[k] = i for(i = ; i \u0026lt; numprocs; i\u002b\u002b) for(j = 1; j \u0026lt;= MAXN; j\u002b\u002b) bt[con[i][j]] = b[j]; \/\/ fprintf(stderr, \u0022bt: \\n\u0022); cout \u0026lt;\u0026lt; \u0022parallel sorted array is: \u0022 \u0026lt;\u0026lt; endl; debug(bt, 100); cout \u0026lt;\u0026lt; endl; end = MPI_Wtime(); c2 = end - start; fprintf(stderr, \u0022parallel cost time is: %lf\\n\u0022, c2); fprintf(stderr, \u0022加速比为： %lf\\n\u0022, c1 \/ c2); } \/\/ for(i = 0; i \u0026lt; numprocs; i\u002b\u002b) \/\/ delete con[i]; \/\/ delete con; MPI_Finalize(); return ; } 并行计算非常有趣，有时间肯定会再在这条道路上探寻…\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  17 ,
+  "wordCount":  528 ,
   "datePublished" : "2014-11-08T01:00:00\u002b08:00",
   "dateModified" : "2014-11-08T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -99,6 +251,158 @@ MPI的环境是archlinux . openmpi
 实现了Java, MPI, openmp, pthread, win32, MFC, .NET 的并行枚举排序，测试机是双核四线程的ThinkpadE430.
 MPI的环境是archlinux . openmpi
 贴一个MPI的源代码, 运行结果都在源代码对应的文件夹中保存，这里就不贴了。
+
+  /*=============================================================================
+#
+# Author: svtter - svtter@qq.com
+#
+# QQ : 57180160
+#
+# Last modified: 2014-11-02 17:08
+#
+# Filename: enum_sort_MPI.cpp
+#
+# Description: 
+#
+=============================================================================*/
+#include &#34;mpi.h&#34;
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+#include &lt;string.h&gt;
+#include &lt;iostream&gt;
+using namespace std;
+#define MAXN 10000
+#define PMAX 1000
+void build(int a[], int b[])
+{
+    srand(time(NULL));
+    for(int i = 1; i &lt;= MAXN; i&#43;&#43;)
+        a[i] = b[i] = random()%PMAX;
+}
+//serial enum sort
+double serial_enum_sort(int a[], int at[])
+{
+    double t1, t2;
+    t1 = MPI_Wtime();
+    int k, i, j;
+    for(i = 1; i &lt;= MAXN; i&#43;&#43;)
+    {
+        k = 1;
+        for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+            if(a[i] &gt; a[j] || (a[i] == a[j] && i &gt; j))
+                k&#43;&#43;;
+        at[k] = a[i];
+    }
+    t2 = MPI_Wtime();
+    return (t2 - t1);
+}
+// 用于调试数组
+void debug(int a[], int len)
+{
+    for(int i = 1; i &lt;= len; i&#43;&#43;)
+    {
+        fprintf(stderr, &#34;%5d&#34;, a[i]);
+    }
+    fprintf(stderr, &#34;\n&#34;);
+}
+int a[MAXN&#43;10], b[MAXN&#43;10], at[MAXN&#43;10], bt[MAXN&#43;10];
+void ensort(int rank[], int &myid, int &numprocs)
+{
+    int i, j, k;
+    for(i = myid; i &lt;= MAXN; i&#43;=numprocs)
+    {
+        k = 1;
+        for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+        {
+            if(b[i] &gt; b[j] || (b[i] == b[j] && (i &gt; j)))
+                k&#43;&#43;;
+        }
+        rank[i] = k;
+    }
+}
+int main(int argc, char *argv[])
+{
+    int myid, numprocs;
+    int namelen;
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    double c1 = , c2;
+    double start, end;
+    int i;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Get_processor_name(processor_name, &namelen);
+    // fprintf(stderr, &#34;Hello world! Processor %d of %d on %s\n&#34;, myid, numprocs, processor_name);
+    //serial
+    if(myid == )
+    {
+        build(a, b);
+        c1 = serial_enum_sort(a, at);
+        cout &lt;&lt; &#34;original array is: &#34; &lt;&lt; endl;
+        debug(a, 100);
+        cout &lt;&lt; endl;
+        cout &lt;&lt; &#34;serial sorted array is: &#34; &lt;&lt; endl;
+        debug(at, 100);
+        cout &lt;&lt; endl;
+        cout &lt;&lt; &#34;serial cost time is: &#34; &lt;&lt; c1 &lt;&lt; endl;
+        cout &lt;&lt; endl;
+    }
+    int con[numprocs][MAXN&#43;10];
+    int pt[MAXN&#43;10];
+    memset(con ,, sizeof(con));
+    memset(pt,, sizeof(pt));
+    // int **con = new int*[numprocs];
+    // for(int i = 0; i &lt; numprocs; i&#43;&#43;)
+        // con[i] = new int[MAXN&#43;10];
+    start = MPI_Wtime();
+    // P0 send b to ALL
+    MPI_Bcast(b, MAXN&#43;10, MPI_INT, , MPI_COMM_WORLD);
+    ensort(pt, myid, numprocs);
+    // Gather
+    MPI_Gather(pt, MAXN&#43;10, MPI_INT, con[myid], MAXN&#43;10, MPI_INT, , MPI_COMM_WORLD);
+    // if(myid == 0)
+    // {
+        // fprintf(stderr, &#34;myid: %d\n&#34;, myid);
+        // fprintf(stderr, &#34;con: %d\n&#34;, myid);
+        // debug(con[1], 100);
+        // fprintf(stderr, &#34;pt: %d\n&#34;, myid);
+        // debug(pt, 100);
+        // fprintf(stderr, &#34;\n&#34;);
+    // }
+    if(myid == )
+    {
+        int j;
+        // for(i = 0; i &lt; numprocs; i&#43;&#43;)
+        // {
+            // printf(&#34;i: %d\n&#34;, i);
+            // for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+                // printf(&#34;%5d&#34;, con[i][j]);
+            // puts(&#34;&#34;);
+        // }
+        // rank[k] = i
+        for(i = ; i &lt; numprocs; i&#43;&#43;)
+            for(j = 1; j &lt;= MAXN; j&#43;&#43;)
+                bt[con[i][j]] = b[j];
+        // fprintf(stderr, &#34;bt: \n&#34;);
+        cout &lt;&lt; &#34;parallel sorted array is: &#34; &lt;&lt; endl;
+        debug(bt, 100);
+        cout &lt;&lt; endl;
+        end = MPI_Wtime();
+        c2 = end - start;
+        fprintf(stderr, &#34;parallel cost time is: %lf\n&#34;, c2);
+        fprintf(stderr, &#34;加速比为： %lf\n&#34;, c1 / c2);
+    }
+    // for(i = 0; i &lt; numprocs; i&#43;&#43;)
+        // delete con[i];
+    // delete con;
+    MPI_Finalize();
+    return ;
+}
+
+
 并行计算非常有趣，有时间肯定会再在这条道路上探寻…">
 <meta property="og:url" content="https://svtter.cn/2014/11/08/n%E7%A7%8D%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%B9%B6%E8%A1%8C%E6%9E%9A%E4%B8%BE%E6%8E%92%E5%BA%8F/" />
 <meta property="og:type" content="website" />
@@ -112,7 +416,7 @@ MPI的环 …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -120,8 +424,6 @@ MPI的环 …">
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -136,10 +438,6 @@ MPI的环 …">
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -281,10 +579,10 @@ MPI的环 …">
   <i class="fas fa-calendar"></i>&nbsp;发表于 November 8, 2014
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;3&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;17&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;528&nbsp;个字
   
   
     
@@ -317,7 +615,158 @@ MPI的环 …">
 <p>实现了Java, MPI, openmp, pthread, win32, MFC, .NET 的并行枚举排序，测试机是双核四线程的ThinkpadE430.</p>
 <p>MPI的环境是archlinux . openmpi</p>
 <p>贴一个MPI的源代码, 运行结果都在源代码对应的文件夹中保存，这里就不贴了。</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cm">/*=============================================================================</span>
+<span class="cm">#</span>
+<span class="cm"># Author: svtter - svtter@qq.com</span>
+<span class="cm">#</span>
+<span class="cm"># QQ : 57180160</span>
+<span class="cm">#</span>
+<span class="cm"># Last modified: 2014-11-02 17:08</span>
+<span class="cm">#</span>
+<span class="cm"># Filename: enum_sort_MPI.cpp</span>
+<span class="cm">#</span>
+<span class="cm"># Description: </span>
+<span class="cm">#</span>
+<span class="cm">=============================================================================*/</span>
+<span class="cp">#include</span> <span class="cpf">"mpi.h"</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/time.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define MAXN 10000</span>
+<span class="cp">#define PMAX 1000</span>
+<span class="kr">void</span> <span class="nf">build</span><span class="p">(</span><span class="kr">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kr">int</span> <span class="n">b</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="n">srand</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
+    <span class="k">for</span><span class="p">(</span><span class="kr">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nf">random</span><span class="p">()</span><span class="o">%</span><span class="n">PMAX</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//serial enum sort</span>
+<span class="kr">double</span> <span class="nf">serial_enum_sort</span><span class="p">(</span><span class="kr">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kr">int</span> <span class="n">at</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kr">double</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">;</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">MPI_Wtime</span><span class="p">();</span>
+    <span class="kr">int</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&&</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">j</span><span class="p">))</span>
+                <span class="n">k</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">at</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">MPI_Wtime</span><span class="p">();</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// 用于调试数组</span>
+<span class="kr">void</span> <span class="nf">debug</span><span class="p">(</span><span class="kr">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kr">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kr">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">"%5d"</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kr">int</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">],</span> <span class="n">at</span><span class="p">[</span><span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">],</span> <span class="n">bt</span><span class="p">[</span><span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">];</span>
+<span class="kr">void</span> <span class="nf">ensort</span><span class="p">(</span><span class="kr">int</span> <span class="n">rank</span><span class="p">[],</span> <span class="kr">int</span> <span class="o">&</span><span class="n">myid</span><span class="p">,</span> <span class="kr">int</span> <span class="o">&</span><span class="n">numprocs</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kr">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">myid</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">i</span><span class="o">+=</span><span class="n">numprocs</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&&</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">j</span><span class="p">)))</span>
+                <span class="n">k</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">rank</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kr">int</span> <span class="nf">main</span><span class="p">(</span><span class="kr">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kr">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kr">int</span> <span class="n">myid</span><span class="p">,</span> <span class="n">numprocs</span><span class="p">;</span>
+    <span class="kr">int</span> <span class="n">namelen</span><span class="p">;</span>
+    <span class="kr">char</span> <span class="n">processor_name</span><span class="p">[</span><span class="n">MPI_MAX_PROCESSOR_NAME</span><span class="p">];</span>
+    <span class="kr">double</span> <span class="n">c1</span> <span class="o">=</span> <span class="mi"></span><span class="p">,</span> <span class="n">c2</span><span class="p">;</span>
+    <span class="kr">double</span> <span class="n">start</span><span class="p">,</span> <span class="nf">end</span><span class="p">;</span>
+    <span class="kr">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">MPI_Init</span><span class="p">(</span><span class="o">&</span><span class="n">argc</span><span class="p">,</span> <span class="o">&</span><span class="n">argv</span><span class="p">);</span>
+    <span class="n">MPI_Comm_rank</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span> <span class="o">&</span><span class="n">myid</span><span class="p">);</span>
+    <span class="n">MPI_Comm_size</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span> <span class="o">&</span><span class="n">numprocs</span><span class="p">);</span>
+    <span class="n">MPI_Get_processor_name</span><span class="p">(</span><span class="n">processor_name</span><span class="p">,</span> <span class="o">&</span><span class="n">namelen</span><span class="p">);</span>
+    <span class="c1">// fprintf(stderr, "Hello world! Processor %d of %d on %s\n", myid, numprocs, processor_name);</span>
+    <span class="c1">//serial</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">myid</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">build</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">serial_enum_sort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">at</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"original array is: "</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">debug</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"serial sorted array is: "</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">debug</span><span class="p">(</span><span class="n">at</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"serial cost time is: "</span> <span class="o">&lt;&lt;</span> <span class="n">c1</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kr">int</span> <span class="n">con</span><span class="p">[</span><span class="n">numprocs</span><span class="p">][</span><span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">];</span>
+    <span class="kr">int</span> <span class="n">pt</span><span class="p">[</span><span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">];</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">con</span> <span class="p">,</span><span class="mi"></span><span class="p">,</span> <span class="kr">sizeof</span><span class="p">(</span><span class="n">con</span><span class="p">));</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span><span class="mi"></span><span class="p">,</span> <span class="kr">sizeof</span><span class="p">(</span><span class="n">pt</span><span class="p">));</span>
+    <span class="c1">// int **con = new int*[numprocs];</span>
+    <span class="c1">// for(int i = 0; i &lt; numprocs; i++)</span>
+        <span class="c1">// con[i] = new int[MAXN+10];</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">MPI_Wtime</span><span class="p">();</span>
+    <span class="c1">// P0 send b to ALL</span>
+    <span class="n">MPI_Bcast</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span> <span class="n">MPI_INT</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="n">MPI_COMM_WORLD</span><span class="p">);</span>
+    <span class="n">ensort</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">myid</span><span class="p">,</span> <span class="n">numprocs</span><span class="p">);</span>
+    <span class="c1">// Gather</span>
+    <span class="n">MPI_Gather</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span> <span class="n">MPI_INT</span><span class="p">,</span> <span class="n">con</span><span class="p">[</span><span class="n">myid</span><span class="p">],</span> <span class="n">MAXN</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span> <span class="n">MPI_INT</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="n">MPI_COMM_WORLD</span><span class="p">);</span>
+    <span class="c1">// if(myid == 0)</span>
+    <span class="c1">// {</span>
+        <span class="c1">// fprintf(stderr, "myid: %d\n", myid);</span>
+        <span class="c1">// fprintf(stderr, "con: %d\n", myid);</span>
+        <span class="c1">// debug(con[1], 100);</span>
+        <span class="c1">// fprintf(stderr, "pt: %d\n", myid);</span>
+        <span class="c1">// debug(pt, 100);</span>
+        <span class="c1">// fprintf(stderr, "\n");</span>
+    <span class="c1">// }</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">myid</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kr">int</span> <span class="n">j</span><span class="p">;</span>
+        <span class="c1">// for(i = 0; i &lt; numprocs; i++)</span>
+        <span class="c1">// {</span>
+            <span class="c1">// printf("i: %d\n", i);</span>
+            <span class="c1">// for(j = 1; j &lt;= MAXN; j++)</span>
+                <span class="c1">// printf("%5d", con[i][j]);</span>
+            <span class="c1">// puts("");</span>
+        <span class="c1">// }</span>
+        <span class="c1">// rank[k] = i</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numprocs</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">bt</span><span class="p">[</span><span class="n">con</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+        <span class="c1">// fprintf(stderr, "bt: \n");</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"parallel sorted array is: "</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="n">debug</span><span class="p">(</span><span class="n">bt</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="nf">end</span> <span class="o">=</span> <span class="n">MPI_Wtime</span><span class="p">();</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="nf">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">"parallel cost time is: %lf</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">c2</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">"加速比为： %lf</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">c1</span> <span class="o">/</span> <span class="n">c2</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">// for(i = 0; i &lt; numprocs; i++)</span>
+        <span class="c1">// delete con[i];</span>
+    <span class="c1">// delete con;</span>
+    <span class="n">MPI_Finalize</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>并行计算非常有趣，有时间肯定会再在这条道路上探寻…</p>
 
 
@@ -418,6 +867,20 @@ MPI的环 …">
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/11/08/n%E7%A7%8D%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%B9%B6%E8%A1%8C%E6%9E%9A%E4%B8%BE%E6%8E%92%E5%BA%8F">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/11\/08\/n%E7%A7%8D%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%B9%B6%E8%A1%8C%E6%9E%9A%E4%B8%BE%E6%8E%92%E5%BA%8F';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -475,7 +938,7 @@ MPI的环 …">
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -497,6 +960,28 @@ MPI的环 …">
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

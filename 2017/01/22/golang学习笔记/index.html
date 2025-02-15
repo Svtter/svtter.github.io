@@ -68,7 +68,7 @@
   "headline": "Golang学习笔记",
   "description" : "Golang的学习笔记。目前初步计划是学习 Go-tour\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  64 ,
+  "wordCount":  171 ,
   "datePublished" : "2017-01-22T01:00:00\u002b08:00",
   "dateModified" : "2017-01-22T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -99,7 +99,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -107,8 +107,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -123,10 +121,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -271,7 +265,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;64&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;171&nbsp;个字
   
   
     
@@ -308,10 +302,24 @@
 <h3 id="defer">defer</h3>
 <p>defer 语句会延迟函数的执行直到上层函数返回。</p>
 <p>延迟调用的参数会立刻生成，但是在上层函数返回前函数都不会被调用。</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="n">package</span> <span class="n">main</span>
+<span class="kn">import</span> <span class="s2">"fmt"</span>
+<span class="n">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">defer</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">"world"</span><span class="p">)</span>
+        <span class="o">//</span><span class="n">defer</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">"!"</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">"hello"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>很有趣的一个特性，记录一下。</p>
 <p>注释掉的内容会输出</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span>hello
+!
+world
+</pre>
+</div>
 <p>延迟的函数调用被压入一个栈中。当函数返回时， 会按照后进先出的顺序调用被延迟的函数调用。</p>
 <h3 id="range">range</h3>
 <p>for 循环的 range 格式可以对 slice 或者 map 进行迭代循环。</p>
@@ -326,7 +334,24 @@
 <h2 id="方法">方法</h2>
 <p>Go 没有类。然而，仍然可以在结构体类型上定义方法。</p>
 <p>方法接收者 出现在 func 关键字和方法名之间的参数中。</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="n">package</span> <span class="n">main</span>
+<span class="kn">import</span> <span class="p">(</span>
+        <span class="s2">"fmt"</span>
+        <span class="s2">"math"</span>
+<span class="p">)</span>
+<span class="nb">type</span> <span class="n">Vertex</span> <span class="n">struct</span> <span class="p">{</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="n">float64</span>
+<span class="p">}</span>
+<span class="n">func</span> <span class="p">(</span><span class="n">v</span> <span class="o">*</span><span class="n">Vertex</span><span class="p">)</span> <span class="n">Abs</span><span class="p">()</span> <span class="n">float64</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">Sqrt</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">X</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">X</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">Y</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">v</span> <span class="p">:</span><span class="o">=</span> <span class="o">&</span><span class="n">Vertex</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">Abs</span><span class="p">())</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>func 后面紧跟<code>(v *Vertx)</code>，可以看作类方法。</p>
 <h2 id="错误">错误</h2>
 <p><a href="https://tour.go-zh.org/methods/8">https://tour.go-zh.org/methods/8</a></p>
@@ -334,11 +359,40 @@
 <p>Reader</p>
 <p>rot-Reader</p>
 <h2 id="http处理">Http处理</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="n">package</span> <span class="n">main</span>
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s2">"fmt"</span>
+    <span class="s2">"log"</span>
+    <span class="s2">"net/http"</span>
+<span class="p">)</span>
+<span class="nb">type</span> <span class="n">Hello</span> <span class="n">struct</span><span class="p">{}</span>
+<span class="n">func</span> <span class="p">(</span><span class="n">h</span> <span class="n">Hello</span><span class="p">)</span> <span class="n">ServeHTTP</span><span class="p">(</span>
+    <span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span>
+    <span class="n">r</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Fprint</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s2">"Hello!"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">h</span> <span class="n">Hello</span>
+    <span class="n">err</span> <span class="p">:</span><span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="s2">"localhost:4000"</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>练习：</p>
 <h2 id="image">Image</h2>
 <p>image在golang中的定义是：</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span>package image
+type Image interface {
+    ColorModel() color.Model
+    Bounds() Rectangle
+    At(x, y int) color.Color
+}
+</pre>
+</div>
 <p>练习：</p>
 <h2 id="goroutine">goroutine</h2>
 <p>练习：</p>
@@ -457,6 +511,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2017/01/22/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2017\/01\/22\/golang%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -514,7 +582,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -536,6 +604,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

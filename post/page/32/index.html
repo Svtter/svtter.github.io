@@ -47,7 +47,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -55,8 +55,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -71,10 +69,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -217,7 +211,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 11, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 15, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
@@ -252,6 +246,99 @@
         <div class="posts-list">
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2014/11/30/archlinux-%E5%AE%89%E8%A3%85%E7%AC%94%E8%AE%B0/">
+        <h2 class="post-title">archlinux-安装笔记</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 30, 2014
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;61&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <ul>
+<li>本文出自&lt;svtter.github.io&gt;</li>
+</ul>
+<p>花了一些时间安装arch，记录一下注意事项。</p>
+<h2 id="多重引导">多重引导</h2>
+<ul>
+<li>
+<p>安装多重引导支持</p>
+<p><code>pacman -S os-prober</code></p>
+</li>
+<li>
+<p>更新grub</p>
+<p><code>grub-mkconfig -o /boot/grub/grub.cfg</code></p>
+</li>
+<li>
+<p>写入mbr</p>
+<p><code>grub-install --target=i386-pc --recheck /dev/sda</code></p>
+</li>
+</ul>
+<h2 id="图形化的网络服务">图形化的网络服务</h2>
+<p><code>systemctl enable NetWorkManager.service</code></p>
+<h2 id="wifi配置">wifi配置</h2>
+<ul>
+<li>如果你想使用wifi（在图形界面下），首先你要停止dhcp服务<code>systemctl stop dhcpcd.service</code></li>
+<li>开机停止运行<code>systemctl disable dhcpcd.service</code></li>
+<li>我们之所以这样，是为了保证我们的NetWorkManager正常服务。</li>
+</ul>
+<h2 id="session控制器">session控制器</h2>
+<p>我选择的是gdm，原因是slim我不太会配置。</p>
+<p><code>pacman -S gdm</code></p>
+<p>另外patheon在我书写这篇blog的时候，还是存在不少bug.官方的wiki在这个时候也不是很好用了。期待patheon！</p>
+<p><strong>添加了官方给的patheon库，会出现一个gnome-lib的冲突</strong></p>
+<h2 id="输入法的注意事项">输入法的注意事项</h2>
+<p>使用fcitx需要注意.xprofile的配置问题。</p>
+<div class="codehilite">
+  <pre><span></span>export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+</pre>
+</div>
+<p>其他的安装情况可以看看官方的wiki</p>
+<h2 id="sudoer的配置">sudoer的配置</h2>
+<p>使用pacman安装sudoer</p>
+<p><code>pacman -S sudo</code></p>
+<p>编辑<code>/etc/sudoers</code>，取消<code>wheel</code>用户组的注释.</p>
+<h2 id="vim配置">vim配置</h2>
+<p>在<strong>gvim</strong>中，直接使用synatic on而不用判断，否则会造成代码高亮失效。</p>
+<h2 id="locate配置">locate配置</h2>
+<p>安装以后发现<strong>locate</strong>命令无法使用，安装<code>pacman -S mlocate</code></p>
+<h2 id="另外-mark一个项目gitbook-很好很强大">另外, mark一个项目:<code>gitbook</code>, 很好很强大</h2>
+<p>应该涵盖了所有的我安装时候遇到的问题，如果还有什么问题，我再后续添加。</p>
+
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2014/11/28/linux-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1/">
         <h2 class="post-title">Linux-进程间的通信</h2>
         
@@ -269,7 +356,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;63&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;204&nbsp;个字
   
   
     
@@ -315,10 +402,75 @@
 <p>可以使用<code>ipcs -q</code>命令查看</p>
 </blockquote>
 <h2 id="源代码">源代码</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/ipc.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/msg.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/wait.h&gt;</span><span class="cp"></span>
+<span class="cp">#define MSGKEY 75</span>
+<span class="k">struct</span> <span class="n">msgform</span>
+<span class="p">{</span>
+    <span class="kt">long</span> <span class="n">mtype</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">mtexe</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+<span class="p">}</span><span class="n">msg</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">msgqid</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">CLIENT</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">msgqid</span> <span class="o">=</span> <span class="n">msgget</span><span class="p">(</span><span class="n">MSGKEY</span><span class="p">,</span> <span class="mo">0777</span><span class="o">|</span><span class="n">IPC_CREAT</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">msgqid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"client error in build"</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"client qid is: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msgqid</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">--</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">msg</span><span class="p">.</span><span class="n">mtype</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"(client)sent mtype %ld.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">.</span><span class="n">mtype</span><span class="p">);</span>
+        <span class="n">msgsnd</span><span class="p">(</span><span class="n">msgqid</span><span class="p">,</span> <span class="o">&</span><span class="n">msg</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">mtexe</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">"client exit..."</span><span class="p">);</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">SERVER</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">msgqid</span> <span class="o">=</span> <span class="n">msgget</span><span class="p">(</span><span class="n">MSGKEY</span><span class="p">,</span> <span class="mo">0777</span><span class="o">|</span><span class="n">IPC_CREAT</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">msgqid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"error in build.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"server qid is: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msgqid</span><span class="p">);</span>
+    <span class="k">do</span>
+    <span class="p">{</span>
+        <span class="n">msgrcv</span><span class="p">(</span><span class="n">msgqid</span><span class="p">,</span> <span class="o">&</span><span class="n">msg</span><span class="p">,</span> <span class="mi">1030</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"(server)received mtype %ld.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">.</span><span class="n">mtype</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">mtype</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">msgctl</span><span class="p">(</span><span class="n">msgqid</span><span class="p">,</span> <span class="n">IPC_RMID</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">"server exit..."</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fork</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">SERVER</span><span class="p">();</span>
+        <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">CLIENT</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h2 id="运行结果">运行结果</h2>
-<!-- raw HTML omitted -->
-
+<img alt="进程间的通信" src="https://i0.wp.com/ww3.sinaimg.cn/mw690/c53b1907jw1emqt8omadvj207n0demyj.jpg?w=625" data-recalc-dims="1" />
         
     </div>
 
@@ -341,10 +493,10 @@
   <i class="fas fa-calendar"></i>&nbsp;发表于 November 27, 2014
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;9&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;343&nbsp;个字
   
   
     
@@ -366,12 +518,114 @@
 </ul>
 <p>利用排列找规律。</p>
 <p>首先利用<code>next_permutation</code>函数进行求排列</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define INF 0x3f3f3f3f</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">cal</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* code */</span>
+        <span class="n">sum</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">sum</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">parray</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">cp</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">b</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">30</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">maxa</span><span class="p">[</span><span class="mi">30</span><span class="p">],</span> <span class="n">mina</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">max</span> <span class="o">=</span> <span class="o">-</span><span class="n">INF</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">INF</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"1 1"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"1"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">"1"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">next_permutation</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+            <span class="cm">/* code */</span>
+            <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">cal</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">temp</span> <span class="o">&gt;=</span> <span class="n">max</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">max</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+                <span class="n">cp</span><span class="p">(</span><span class="n">maxa</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">temp</span> <span class="o">&lt;=</span> <span class="n">min</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">min</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+                <span class="n">cp</span><span class="p">(</span><span class="n">mina</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">min</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span> <span class="o">&lt;&lt;</span> <span class="n">max</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">mina</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">maxa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>代码如上。</p>
 <p>可以观察出规律，然后即可AC。</p>
 <p>详细代码下次再写= =</p>
 <h2 id="ac代码">AC代码</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">max</span><span class="p">,</span> <span class="n">min</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">max</span> <span class="o">=</span> <span class="n">min</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">min</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">min</span> <span class="o">-</span> <span class="n">i</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">max</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">max</span> <span class="o">-</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">max</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">max</span> <span class="o">-</span> <span class="n">n</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span><span class="mi">1</span> <span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"1"</span><span class="p">);</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>规律在代码中，很明确。</p>
 
         
@@ -622,7 +876,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;14&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;60&nbsp;个字
   
   
     
@@ -661,7 +915,21 @@
 <p>不可能：i会一直到n，也就是整个范围都会包含在内。</p>
 </blockquote>
 <h2 id="代码">代码：</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="n">memset</span><span class="p">(</span><span class="n">Prime</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Prime</span><span class="p">));</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">IsPrime</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">IsPrime</span><span class="p">));</span>
+<span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">IsPrime</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">Prime</span><span class="p">[</span><span class="n">num</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">num</span> <span class="o">&&</span> <span class="n">i</span> <span class="o">*</span> <span class="n">Prime</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">IsPrime</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">Prime</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">Prime</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
 <p>之前的错误在于筛素数的时候没有筛去2的倍数，所以出现后面的值错误。</p>
 
         
@@ -689,7 +957,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;21&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;142&nbsp;个字
   
   
     
@@ -719,8 +987,39 @@
 <h2 id="实现原理">实现原理</h2>
 <p><code>sudo vim /etc/profile</code></p>
 <p>也可以使用<code>:w !sudo tee %</code>这种方式来保存</p>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="c1"># mark</span>
+<span class="nb">export</span> <span class="nv">MARKPATH</span><span class="o">=</span><span class="nv">$HOME</span>/.marks
+<span class="nb">export</span> <span class="nv">MARKDEFAULT</span><span class="o">=</span>sanguo#设置你的默认书签，可以直接输入g跳转
+<span class="k">function</span> g <span class="o">{</span>
+   <span class="nb">local</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$1</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$m</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$MARKDEFAULT</span><span class="p">;</span> <span class="k">fi</span>
+   <span class="nb">cd</span> -P <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span> <span class="m">2</span>&gt;/dev/null <span class="o">||</span> <span class="nb">echo</span> <span class="s2">"No such mark: </span><span class="nv">$m</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="k">function</span> mark <span class="o">{</span>
+   mkdir -p <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">"</span>
+   <span class="nb">local</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$1</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$m</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$MARKDEFAULT</span><span class="p">;</span> <span class="k">fi</span>
+   rm -f <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span>
+   ln -s <span class="s2">"</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">"</span> <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="k">function</span> unmark <span class="o">{</span>
+   <span class="nb">local</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$1</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$m</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">m</span><span class="o">=</span><span class="nv">$MARKDEFAULT</span><span class="p">;</span> <span class="k">fi</span>
+   rm -i <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">/</span><span class="nv">$m</span><span class="s2">"</span>
+<span class="o">}</span>
+<span class="k">function</span> gs <span class="o">{</span>
+   ls -l <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">"</span> <span class="p">|</span> grep ^l <span class="p">|</span> cut -d <span class="s1">&#39; &#39;</span> -f <span class="m">13</span>-
+<span class="o">}</span>
+_completemarks<span class="o">()</span> <span class="o">{</span>
+   <span class="nb">local</span> <span class="nv">curw</span><span class="o">=</span><span class="si">${</span><span class="nv">COMP_WORDS</span><span class="p">[COMP_CWORD]</span><span class="si">}</span>
+   <span class="nb">local</span> <span class="nv">wordlist</span><span class="o">=</span><span class="k">$(</span>ls -l <span class="s2">"</span><span class="nv">$MARKPATH</span><span class="s2">"</span> <span class="p">|</span> grep ^l <span class="p">|</span> cut -d <span class="s1">&#39; &#39;</span> -f <span class="m">13</span><span class="k">)</span>
+   <span class="nv">COMPREPLY</span><span class="o">=(</span><span class="k">$(</span><span class="nb">compgen</span> -W <span class="s1">&#39;${wordlist[@]}&#39;</span> -- <span class="s2">"</span><span class="nv">$curw</span><span class="s2">"</span><span class="k">)</span><span class="o">)</span>
+   <span class="k">return</span> <span class="m"></span>
+<span class="o">}</span>
+<span class="nb">complete</span> -F _completemarks g unmark
+</pre>
+</div>
         
     </div>
 
@@ -788,76 +1087,6 @@
 <p>哈哈= =</p>
 <p>生活中缺少一股紧张的气息，所以可能做的不够。这是目前给自己找的原因。我想我需要一个时间好好的思考一下，处理一下自己究竟应该怎么处理自己的学习问题。</p>
 <p>如果每次都是有些遗留，或者忘记了自己本来的目的，那么真是浪费时间了。</p>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2014/11/21/linux-%E7%AE%A1%E9%81%93/">
-        <h2 class="post-title">Linux-管道</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 November 21, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;19&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <ul>
-<li>
-<p>本文出自&lt;svtter.github.io&gt;</p>
-</li>
-<li>
-<p><strong>头文件</strong>: #include&lt;unistd.h&gt;</p>
-</li>
-<li>
-<p><strong>使用方法</strong>: int pipe(int chan[2]);</p>
-</li>
-<li>
-<p><strong>说明</strong>: pipe会建立管道，并将文件描述词通过chan返回。一般chan[0]为管道的读取端，chan[1]是写入端。</p>
-</li>
-<li>
-<p><strong>返回值</strong>: 成功返回0，失败返回-1，错误信息保存在errno中</p>
-</li>
-<li>
-<p><strong>错误信息</strong>:</p>
-<ul>
-<li>EMFILE 进程已用完文件描述词最大量。</li>
-<li>ENFILE 系统已无文件描述词可用。</li>
-<li>EFAULT 参数filedes数组地址不合法</li>
-</ul>
-</li>
-</ul>
-<!-- raw HTML omitted -->
-<h2 id="运行结果">运行结果：</h2>
-<!-- raw HTML omitted -->
 
         
     </div>
@@ -944,7 +1173,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -966,6 +1195,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

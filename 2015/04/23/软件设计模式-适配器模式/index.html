@@ -19,7 +19,44 @@
 
   <meta name="description" content="4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。
 例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。
-示意代码 ">
+示意代码
+
+  package adapter;
+interface Target {
+    public void request();
+    public void specRequest();
+}
+class Adaptee { //适配者
+    public void specRequest() {
+        System.out.println(&#34;this is specRequest.&#34;);
+    }
+}
+class ClassAdapter extends Adaptee implements Target {
+    public void request() {
+        System.out.println(&#34;This is request in ClassAdapter.&#34;);
+    }
+}
+class ObjectAdapter implements Target {
+    private Adaptee adaptee = new Adaptee();
+    public void request() {
+        System.out.println(&#34;this. is request in ObjectAdapter.&#34;);
+    }
+    public void specRequest() {
+        adaptee.specRequest();
+    }
+}
+public class Client {
+    private static Target ctarget = new ClassAdapter();
+    private static Target otarget = new ObjectAdapter();
+    public static void main(String args[]) {
+        ctarget.request();
+        ctarget.specRequest();
+        otarget.request();
+        otarget.specRequest();
+    }
+}
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -68,9 +105,9 @@
     "name" : "svtter"
   },
   "headline": "软件设计模式 — 适配器模式",
-  "description" : "4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。\n例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。\n示意代码 ",
+  "description" : "4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。\n例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。\n示意代码 package adapter; interface Target { public void request(); public void specRequest(); } class Adaptee { \/\/适配者 public void specRequest() { System.out.println(\u0022this is specRequest.\u0022); } } class ClassAdapter extends Adaptee implements Target { public void request() { System.out.println(\u0022This is request in ClassAdapter.\u0022); } } class ObjectAdapter implements Target { private Adaptee adaptee = new Adaptee(); public void request() { System.out.println(\u0022this. is request in ObjectAdapter.\u0022); } public void specRequest() { adaptee.specRequest(); } } public class Client { private static Target ctarget = new ClassAdapter(); private static Target otarget = new ObjectAdapter(); public static void main(String args[]) { ctarget.request(); ctarget.specRequest(); otarget.request(); otarget.specRequest(); } } ",
   "inLanguage" : "zh-cn",
-  "wordCount":  3 ,
+  "wordCount":  104 ,
   "datePublished" : "2015-04-23T01:00:00\u002b08:00",
   "dateModified" : "2015-04-23T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -93,7 +130,44 @@
 <meta property="og:title" content="软件设计模式 — 适配器模式" />
 <meta property="og:description" content="4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。
 例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。
-示意代码 ">
+示意代码
+
+  package adapter;
+interface Target {
+    public void request();
+    public void specRequest();
+}
+class Adaptee { //适配者
+    public void specRequest() {
+        System.out.println(&#34;this is specRequest.&#34;);
+    }
+}
+class ClassAdapter extends Adaptee implements Target {
+    public void request() {
+        System.out.println(&#34;This is request in ClassAdapter.&#34;);
+    }
+}
+class ObjectAdapter implements Target {
+    private Adaptee adaptee = new Adaptee();
+    public void request() {
+        System.out.println(&#34;this. is request in ObjectAdapter.&#34;);
+    }
+    public void specRequest() {
+        adaptee.specRequest();
+    }
+}
+public class Client {
+    private static Target ctarget = new ClassAdapter();
+    private static Target otarget = new ObjectAdapter();
+    public static void main(String args[]) {
+        ctarget.request();
+        ctarget.specRequest();
+        otarget.request();
+        otarget.specRequest();
+    }
+}
+
+">
 <meta property="og:url" content="https://svtter.cn/2015/04/23/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
@@ -101,11 +175,15 @@
   <meta name="twitter:title" content="软件设计模式 — 适配器模式" />
   <meta name="twitter:description" content="4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。
 例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。
-示意代码 ">
+示意代码
+
+  package adapter;
+interface Target {
+    public …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -113,8 +191,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -129,10 +205,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -277,7 +349,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;104&nbsp;个字
   
   
     
@@ -308,8 +380,43 @@
         <p>4该模式的目标是，通过一个代理(Adapter)，在原来的类(Adaptee)和客户(Client)之间进行协调，从而达到兼容的目的。</p>
 <p>例如：我的项目中Davinci中使用的模式，将整体的游戏类作为Adapter，把用于通讯的Server类作为成员变量（也就是ObjectAdapter）。</p>
 <h1 id="示意代码">示意代码</h1>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="kn">package</span> <span class="nn">adapter</span><span class="o">;</span>
+<span class="kd">interface</span> <span class="nc">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">Adaptee</span> <span class="o">{</span> <span class="c1">//适配者</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"this is specRequest."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ClassAdapter</span> <span class="kd">extends</span> <span class="n">Adaptee</span> <span class="kd">implements</span> <span class="n">Target</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"This is request in ClassAdapter."</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">class</span> <span class="nc">ObjectAdapter</span> <span class="kd">implements</span> <span class="n">Target</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Adaptee</span> <span class="n">adaptee</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Adaptee</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">request</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"this. is request in ObjectAdapter."</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">specRequest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">adaptee</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Client</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Target</span> <span class="n">ctarget</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClassAdapter</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Target</span> <span class="n">otarget</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectAdapter</span><span class="o">();</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
+        <span class="n">ctarget</span><span class="o">.</span><span class="na">request</span><span class="o">();</span>
+        <span class="n">ctarget</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+        <span class="n">otarget</span><span class="o">.</span><span class="na">request</span><span class="o">();</span>
+        <span class="n">otarget</span><span class="o">.</span><span class="na">specRequest</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
 
         
 
@@ -398,6 +505,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2015/04/23/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2015\/04\/23\/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -455,7 +576,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -477,6 +598,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

@@ -17,11 +17,105 @@
 
       <title>Linux-进程间的通信 - </title>
 
-  <meta name="description" content=" 本文出自&lt;svtter.github.io&gt; 实验内容 消息的创建，发送，和接收。
-&lt;任务&gt; 使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
-程序设计 为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息, 则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。 CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个 消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。 父进程在 SERVER 和 CLIENT 均退出后结束。 使用的函数 并非每次创建消息队列都会成功，所以重新添加-1情况的判断。
+  <meta name="description" content="
+本文出自&lt;svtter.github.io&gt;
+
+实验内容
+消息的创建，发送，和接收。
+&lt;任务&gt;
+使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
+程序设计
+
+为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。
+SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息,
+
+则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。
+
+
+CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个
+
+消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。
+
+
+父进程在 SERVER 和 CLIENT 均退出后结束。
+
+使用的函数
+
+并非每次创建消息队列都会成功，所以重新添加-1情况的判断。
+
+
 可以使用ipcs -q命令查看
-源代码 运行结果 ">
+
+源代码
+
+  #include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+#include &lt;sys/wait.h&gt;
+#define MSGKEY 75
+struct msgform
+{
+    long mtype;
+    char mtexe[100];
+}msg;
+int msgqid, i;
+void CLIENT()
+{
+    int i;
+    msgqid = msgget(MSGKEY, 0777|IPC_CREAT);
+    if( msgqid == -1)
+    {
+        puts(&#34;client error in build&#34;);
+        return;
+    }
+    else
+        printf(&#34;client qid is: %d\n&#34;, msgqid);
+    for (i = 10; i &gt;= 1; i --)
+    {
+        msg.mtype = i;
+        printf(&#34;(client)sent mtype %ld.\n&#34;, msg.mtype);
+        msgsnd(msgqid, &msg, strlen(msg.mtexe)&#43;1, );
+    }
+    puts(&#34;client exit...&#34;);
+    exit();
+}
+void SERVER()
+{
+    msgqid = msgget(MSGKEY, 0777|IPC_CREAT);
+    if( msgqid == -1)
+    {
+        printf(&#34;error in build.\n&#34;);
+        return;
+    }
+    else
+        printf(&#34;server qid is: %d\n&#34;, msgqid);
+    do
+    {
+        msgrcv(msgqid, &msg, 1030, , );
+        printf(&#34;(server)received mtype %ld.\n&#34;, msg.mtype);
+    } while (msg.mtype != 1);
+    msgctl(msgqid, IPC_RMID, );
+    puts(&#34;server exit...&#34;);
+}
+int main ()
+{
+    if(fork())
+    {
+        SERVER();
+        wait();
+    }
+    else
+        CLIENT();
+    return ;
+}
+
+
+运行结果
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -70,9 +164,9 @@
     "name" : "svtter"
   },
   "headline": "Linux-进程间的通信",
-  "description" : " 本文出自\u0026lt;svtter.github.io\u0026gt; 实验内容 消息的创建，发送，和接收。\n\u0026lt;任务\u0026gt; 使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。\n程序设计 为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息, 则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。 CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个 消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。 父进程在 SERVER 和 CLIENT 均退出后结束。 使用的函数 并非每次创建消息队列都会成功，所以重新添加-1情况的判断。\n可以使用ipcs -q命令查看\n源代码 运行结果 ",
+  "description" : " 本文出自\u0026lt;svtter.github.io\u0026gt; 实验内容 消息的创建，发送，和接收。\n\u0026lt;任务\u0026gt; 使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。\n程序设计 为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息, 则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。 CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个 消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。 父进程在 SERVER 和 CLIENT 均退出后结束。 使用的函数 并非每次创建消息队列都会成功，所以重新添加-1情况的判断。\n可以使用ipcs -q命令查看\n源代码 #include \u0026lt;stdio.h\u0026gt; #include \u0026lt;unistd.h\u0026gt; #include \u0026lt;stdlib.h\u0026gt; #include \u0026lt;string.h\u0026gt; #include \u0026lt;sys\/types.h\u0026gt; #include \u0026lt;sys\/ipc.h\u0026gt; #include \u0026lt;sys\/msg.h\u0026gt; #include \u0026lt;sys\/wait.h\u0026gt; #define MSGKEY 75 struct msgform { long mtype; char mtexe[100]; }msg; int msgqid, i; void CLIENT() { int i; msgqid = msgget(MSGKEY, 0777|IPC_CREAT); if( msgqid == -1) { puts(\u0022client error in build\u0022); return; } else printf(\u0022client qid is: %d\\n\u0022, msgqid); for (i = 10; i \u0026gt;= 1; i --) { msg.mtype = i; printf(\u0022(client)sent mtype %ld.\\n\u0022, msg.mtype); msgsnd(msgqid, \u0026msg, strlen(msg.mtexe)\u002b1, ); } puts(\u0022client exit...\u0022); exit(); } void SERVER() { msgqid = msgget(MSGKEY, 0777|IPC_CREAT); if( msgqid == -1) { printf(\u0022error in build.\\n\u0022); return; } else printf(\u0022server qid is: %d\\n\u0022, msgqid); do { msgrcv(msgqid, \u0026msg, 1030, , ); printf(\u0022(server)received mtype %ld.\\n\u0022, msg.mtype); } while (msg.mtype != 1); msgctl(msgqid, IPC_RMID, ); puts(\u0022server exit...\u0022); } int main () { if(fork()) { SERVER(); wait(); } else CLIENT(); return ; } 运行结果 ",
   "inLanguage" : "zh-cn",
-  "wordCount":  63 ,
+  "wordCount":  204 ,
   "datePublished" : "2014-11-28T01:00:00\u002b08:00",
   "dateModified" : "2014-11-28T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -93,23 +187,124 @@
 
 
 <meta property="og:title" content="Linux-进程间的通信" />
-<meta property="og:description" content=" 本文出自&lt;svtter.github.io&gt; 实验内容 消息的创建，发送，和接收。
-&lt;任务&gt; 使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
-程序设计 为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息, 则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。 CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个 消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。 父进程在 SERVER 和 CLIENT 均退出后结束。 使用的函数 并非每次创建消息队列都会成功，所以重新添加-1情况的判断。
+<meta property="og:description" content="
+本文出自&lt;svtter.github.io&gt;
+
+实验内容
+消息的创建，发送，和接收。
+&lt;任务&gt;
+使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
+程序设计
+
+为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。
+SERVER 端建立一个 Key 为 75 的消息队列,等待其他进程发来的消息。当遇到类型为 1 的消息,
+
+则作为结束信号,取消该队列,并退出 SERVER 。SERVER 每接收到一个消息后显示一句 “(server)received”。
+
+
+CLIENT 端使用 Key 为 75 的消息队列,先后发送类型从 10 到 1 的消息,然后退出。最后的一个
+
+消息,既是 SERVER 端需要的结束信号。CLIENT 每发送一条消息后显示一句“(client)sent”。
+
+
+父进程在 SERVER 和 CLIENT 均退出后结束。
+
+使用的函数
+
+并非每次创建消息队列都会成功，所以重新添加-1情况的判断。
+
+
 可以使用ipcs -q命令查看
-源代码 运行结果 ">
+
+源代码
+
+  #include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+#include &lt;sys/wait.h&gt;
+#define MSGKEY 75
+struct msgform
+{
+    long mtype;
+    char mtexe[100];
+}msg;
+int msgqid, i;
+void CLIENT()
+{
+    int i;
+    msgqid = msgget(MSGKEY, 0777|IPC_CREAT);
+    if( msgqid == -1)
+    {
+        puts(&#34;client error in build&#34;);
+        return;
+    }
+    else
+        printf(&#34;client qid is: %d\n&#34;, msgqid);
+    for (i = 10; i &gt;= 1; i --)
+    {
+        msg.mtype = i;
+        printf(&#34;(client)sent mtype %ld.\n&#34;, msg.mtype);
+        msgsnd(msgqid, &msg, strlen(msg.mtexe)&#43;1, );
+    }
+    puts(&#34;client exit...&#34;);
+    exit();
+}
+void SERVER()
+{
+    msgqid = msgget(MSGKEY, 0777|IPC_CREAT);
+    if( msgqid == -1)
+    {
+        printf(&#34;error in build.\n&#34;);
+        return;
+    }
+    else
+        printf(&#34;server qid is: %d\n&#34;, msgqid);
+    do
+    {
+        msgrcv(msgqid, &msg, 1030, , );
+        printf(&#34;(server)received mtype %ld.\n&#34;, msg.mtype);
+    } while (msg.mtype != 1);
+    msgctl(msgqid, IPC_RMID, );
+    puts(&#34;server exit...&#34;);
+}
+int main ()
+{
+    if(fork())
+    {
+        SERVER();
+        wait();
+    }
+    else
+        CLIENT();
+    return ;
+}
+
+
+运行结果
+">
 <meta property="og:url" content="https://svtter.cn/2014/11/28/linux-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="Linux-进程间的通信" />
-  <meta name="twitter:description" content=" 本文出自&lt;svtter.github.io&gt; 实验内容 消息的创建，发送，和接收。
-&lt;任务&gt; 使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
-程序设计 为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 …">
+  <meta name="twitter:description" content="
+本文出自&lt;svtter.github.io&gt;
+
+实验内容
+消息的创建，发送，和接收。
+&lt;任务&gt;
+使用系统调用 msgget( ), megsnd( ), msgrev( )及 msgctl()编制一长度为 1K 的消息发送和接收的程序 。
+程序设计
+
+为了便于操作和观察结, 用一个程序为引子 , 先后fork( )两个子进程 , SERVER 和 CLIENT,进行通信。 …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -117,8 +312,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -133,10 +326,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -281,7 +470,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;63&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;204&nbsp;个字
   
   
     
@@ -339,10 +528,75 @@
 <p>可以使用<code>ipcs -q</code>命令查看</p>
 </blockquote>
 <h2 id="源代码">源代码</h2>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/ipc.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/msg.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/wait.h&gt;</span><span class="cp"></span>
+<span class="cp">#define MSGKEY 75</span>
+<span class="k">struct</span> <span class="n">msgform</span>
+<span class="p">{</span>
+    <span class="kt">long</span> <span class="n">mtype</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">mtexe</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+<span class="p">}</span><span class="n">msg</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">msgqid</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">CLIENT</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">msgqid</span> <span class="o">=</span> <span class="n">msgget</span><span class="p">(</span><span class="n">MSGKEY</span><span class="p">,</span> <span class="mo">0777</span><span class="o">|</span><span class="n">IPC_CREAT</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">msgqid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"client error in build"</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"client qid is: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msgqid</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">--</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">msg</span><span class="p">.</span><span class="n">mtype</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"(client)sent mtype %ld.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">.</span><span class="n">mtype</span><span class="p">);</span>
+        <span class="n">msgsnd</span><span class="p">(</span><span class="n">msgqid</span><span class="p">,</span> <span class="o">&</span><span class="n">msg</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">mtexe</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">"client exit..."</span><span class="p">);</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">SERVER</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">msgqid</span> <span class="o">=</span> <span class="n">msgget</span><span class="p">(</span><span class="n">MSGKEY</span><span class="p">,</span> <span class="mo">0777</span><span class="o">|</span><span class="n">IPC_CREAT</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">msgqid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"error in build.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"server qid is: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msgqid</span><span class="p">);</span>
+    <span class="k">do</span>
+    <span class="p">{</span>
+        <span class="n">msgrcv</span><span class="p">(</span><span class="n">msgqid</span><span class="p">,</span> <span class="o">&</span><span class="n">msg</span><span class="p">,</span> <span class="mi">1030</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"(server)received mtype %ld.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">.</span><span class="n">mtype</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">mtype</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">msgctl</span><span class="p">(</span><span class="n">msgqid</span><span class="p">,</span> <span class="n">IPC_RMID</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">"server exit..."</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">fork</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">SERVER</span><span class="p">();</span>
+        <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">CLIENT</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h2 id="运行结果">运行结果</h2>
-<!-- raw HTML omitted -->
-
+<img alt="进程间的通信" src="https://i0.wp.com/ww3.sinaimg.cn/mw690/c53b1907jw1emqt8omadvj207n0demyj.jpg?w=625" data-recalc-dims="1" />
 
         
 
@@ -431,6 +685,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/11/28/linux-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/11\/28\/linux-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -488,7 +756,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -510,6 +778,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

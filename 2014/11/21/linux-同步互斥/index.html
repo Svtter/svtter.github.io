@@ -17,11 +17,270 @@
 
       <title>Linux-同步互斥 - </title>
 
-  <meta name="description" content=" 本文出自&lt;svtter.github.io&gt; 使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。
+  <meta name="description" content="
+本文出自&lt;svtter.github.io&gt;
+
+使用pthread实现经典问题：生产者消费者
+关于semaphore的相关信息就不再贴出来了。
 编译的时候记得-pthread选项。
-运行结果 操作系统经典问题：哲学家就餐问题 mutex是c&#43;&#43;11的新功能。记得添加C&#43;&#43;11支持。(在运行结果中包含编译选项。)
-运行结果 操作系统经典问题：读者写者问题 读者优先 使用了c&#43;&#43;11的新特性thread 运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。
-写者优先 使rsem中只有一个读者在等待，保证了如果有写者，写者优先写 运行结果 基本上结果就是写者写完，才会有读者阅读 ">
+
+  /*=============================================================================
+#
+# Author: svtter - svtter@qq.com
+#
+# QQ : 57180160
+#
+# Last modified: 2014-10-03 20:35
+#
+# Filename: producer_consumer.cc
+#
+# Description: 
+#
+=============================================================================*/
+#include &lt;cstdio&gt;
+#include &lt;unistd.h&gt;
+#include &lt;semaphore.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;iostream&gt;
+using namespace std;
+#define N 5
+#define item int
+// P/V操作
+void P(sem_t* sem)
+{
+    if(sem_wait(sem))
+        perror(&#34;P error!&#34;);
+}
+void V(sem_t* sem)
+{
+    if(sem_post(sem))
+        perror(&#34;V error!&#34;);
+}
+sem_t mutex;
+sem_t full;
+sem_t empty;
+item buffer[N];
+int i = , j = -1;
+void init_sem()
+{
+    sem_init(&mutex, , 1);
+    sem_init(&full, , );
+    sem_init(&empty, , N);
+}
+void* producer(void *arg)
+{
+    int product;
+    while(1)
+    {
+        //生成随机数字
+        product = rand()%100;
+        // cout &lt;&lt; &#34;producer running...&#34; &lt;&lt; endl;
+        P(&empty);
+        P(&mutex);
+        buffer[i] = product;
+        printf(&#34;producer produced %d @ %d pos\n&#34;,
+                product, i);
+        i=(i&#43;1)%N;
+        V(&mutex);
+        V(&full);
+        sleep(1);
+    }
+}
+void* consumer(void *arg)
+{
+    int product, temp;
+    while(1)
+    {
+        // cout &lt;&lt; &#34;consumer running...&#34; &lt;&lt; endl;
+        P(&full);
+        P(&mutex);
+        j = (j&#43;1)%N;
+        product = buffer[j];
+        V(&mutex);
+        V(&empty);
+        printf(&#34;Consumer consumed %d @ %d pos\n&#34;,
+                product, j);
+        sleep(3);
+    }
+}
+int main()
+{
+    //random num
+    srand(time(NULL));
+    init_sem();
+    int error;
+    pthread_t producer_t, consumer_t;
+    error = pthread_create(&producer_t, NULL, producer, NULL);
+    if(error != )
+        printf(&#34;error in create producer.\n&#34;);
+    else
+        printf(&#34;create producer success!\n&#34;);
+    pthread_create(&consumer_t, NULL, consumer, NULL);
+    if(error != )
+        printf(&#34;error in create consumer.\n&#34;);
+    else
+        printf(&#34;create consumer success!\n&#34;);
+    pthread_join(producer_t, NULL);
+    pthread_join(consumer_t, NULL);
+    return ;
+}
+
+
+运行结果
+
+操作系统经典问题：哲学家就餐问题
+mutex是c&#43;&#43;11的新功能。记得添加C&#43;&#43;11支持。(在运行结果中包含编译选项。)
+
+  #include &lt;iostream&gt;
+#include &lt;mutex&gt;
+#include &lt;cstdio&gt;
+#include &lt;thread&gt;
+#include &lt;semaphore.h&gt;
+using namespace std;
+#define THINK(i) printf(&#34;ph[%d] is thinking...\n&#34;, i)
+#define EAT(i) printf(&#34;ph[%d] eats.\n&#34;, i)
+void P(mutex &mt)
+{
+    mt.lock();
+}
+void V(mutex &mt)
+{
+    mt.unlock();
+}
+void P(sem_t* sem)
+{
+    if(sem_wait(sem))
+        perror(&#34;P error!&#34;);
+}
+void V(sem_t* sem)
+{
+    if(sem_post(sem))
+        perror(&#34;V error!&#34;);
+}
+// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写
+void delay()
+{
+    int sum=;
+    for(int i = ; i &lt; 10000000; i&#43;&#43;)
+        sum &#43;= i;
+}
+mutex fork[5];
+sem_t room;
+void init()
+{
+    sem_init(&room, , 4);
+}
+void philosopher (int i)
+{
+    for(int j = ; j &lt; 5; j&#43;&#43;)
+    {
+        THINK(i);
+        P(&room);
+        P(fork[i]);
+        P(fork[(i&#43;1)%5]);
+        EAT(i);
+        V(&room);
+        V(fork[i]);
+        V(fork[(i&#43;1)%5]);
+    }
+}
+int main()
+{
+    init();
+    thread t[] = {
+        thread(philosopher, ),
+        thread(philosopher, 1),
+        thread(philosopher, 2),
+        thread(philosopher, 3),
+        thread(philosopher, 4),
+    };
+    for(int k = ; k &lt; 5; k&#43;&#43;)
+        t[k].join();
+    return ;
+}
+
+
+运行结果
+
+操作系统经典问题：读者写者问题
+读者优先
+
+使用了c&#43;&#43;11的新特性thread
+
+
+  #include &lt;iostream&gt;
+#include &lt;mutex&gt;
+#include &lt;thread&gt;
+using namespace std;
+mutex mt, wsem;
+int readcount = ;
+#define READ(a) cout &lt;&lt; a &lt;&lt; &#34; is reading...&#34; &lt;&lt; endl;
+#define FINISH(a) cout &lt;&lt; a &lt;&lt; &#34; finished reading.&#34; &lt;&lt; endl;
+#define WRITE cout &lt;&lt; &#34;writing...&#34; &lt;&lt; endl;
+void P(mutex &mt)
+{
+    mt.lock();
+}
+void V(mutex &mt)
+{
+    mt.unlock();
+}
+// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写
+void delay()
+{
+    int sum=;
+    for(int i = ; i &lt; 10000000; i&#43;&#43;)
+        sum &#43;= i
+}
+void read(string a)
+{
+    for(int i = ; i &lt; 3; i&#43;&#43;)
+    {
+        P(mt);
+        readcount&#43;&#43;;
+        if(readcount == 1)
+            P(wsem);
+        V(mt);
+        READ(a);
+        delay();
+        P(mt);
+        readcount--;
+        FINISH(a);
+        if(readcount == )
+            V(wsem);
+        V(mt);
+    }
+}
+void write()
+{
+    for(int i = ; i &lt; 5; i&#43;&#43;)
+    {
+        P(wsem);
+        WRITE;
+        delay();
+        V(wsem);
+    }
+}
+int main()
+{
+    thread reader1(read, &#34;svtter&#34;);
+    thread reader2(read, &#34;sr&#34;);
+    thread reader3(read, &#34;yym&#34;);
+    thread reader4(read, &#34;xiaoniu&#34;);
+    thread writer(write);
+    reader1.join();
+    reader2.join();
+    reader3.join();
+    reader4.join();
+    writer.join();
+    return ;
+}
+
+
+运行结果
+由于可以同时阅读，所以读者reading输出可能出现少许问题。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -70,9 +329,9 @@
     "name" : "svtter"
   },
   "headline": "Linux-同步互斥",
-  "description" : " 本文出自\u0026lt;svtter.github.io\u0026gt; 使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。\n编译的时候记得-pthread选项。\n运行结果 操作系统经典问题：哲学家就餐问题 mutex是c\u002b\u002b11的新功能。记得添加C\u002b\u002b11支持。(在运行结果中包含编译选项。)\n运行结果 操作系统经典问题：读者写者问题 读者优先 使用了c\u002b\u002b11的新特性thread 运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。\n写者优先 使rsem中只有一个读者在等待，保证了如果有写者，写者优先写 运行结果 基本上结果就是写者写完，才会有读者阅读 ",
+  "description" : " 本文出自\u0026lt;svtter.github.io\u0026gt; 使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。\n编译的时候记得-pthread选项。\n\/*============================================================================= # # Author: svtter - svtter@qq.com # # QQ : 57180160 # # Last modified: 2014-10-03 20:35 # # Filename: producer_consumer.cc # # Description: # =============================================================================*\/ #include \u0026lt;cstdio\u0026gt; #include \u0026lt;unistd.h\u0026gt; #include \u0026lt;semaphore.h\u0026gt; #include \u0026lt;pthread.h\u0026gt; #include \u0026lt;sys\/types.h\u0026gt; #include \u0026lt;stdlib.h\u0026gt; #include \u0026lt;iostream\u0026gt; using namespace std; #define N 5 #define item int \/\/ P\/V操作 void P(sem_t* sem) { if(sem_wait(sem)) perror(\u0022P error!\u0022); } void V(sem_t* sem) { if(sem_post(sem)) perror(\u0022V error!\u0022); } sem_t mutex; sem_t full; sem_t empty; item buffer[N]; int i = , j = -1; void init_sem() { sem_init(\u0026mutex, , 1); sem_init(\u0026full, , ); sem_init(\u0026empty, , N); } void* producer(void *arg) { int product; while(1) { \/\/生成随机数字 product = rand()%100; \/\/ cout \u0026lt;\u0026lt; \u0022producer running...\u0022 \u0026lt;\u0026lt; endl; P(\u0026empty); P(\u0026mutex); buffer[i] = product; printf(\u0022producer produced %d @ %d pos\\n\u0022, product, i); i=(i\u002b1)%N; V(\u0026mutex); V(\u0026full); sleep(1); } } void* consumer(void *arg) { int product, temp; while(1) { \/\/ cout \u0026lt;\u0026lt; \u0022consumer running...\u0022 \u0026lt;\u0026lt; endl; P(\u0026full); P(\u0026mutex); j = (j\u002b1)%N; product = buffer[j]; V(\u0026mutex); V(\u0026empty); printf(\u0022Consumer consumed %d @ %d pos\\n\u0022, product, j); sleep(3); } } int main() { \/\/random num srand(time(NULL)); init_sem(); int error; pthread_t producer_t, consumer_t; error = pthread_create(\u0026producer_t, NULL, producer, NULL); if(error != ) printf(\u0022error in create producer.\\n\u0022); else printf(\u0022create producer success!\\n\u0022); pthread_create(\u0026consumer_t, NULL, consumer, NULL); if(error != ) printf(\u0022error in create consumer.\\n\u0022); else printf(\u0022create consumer success!\\n\u0022); pthread_join(producer_t, NULL); pthread_join(consumer_t, NULL); return ; } 运行结果 操作系统经典问题：哲学家就餐问题 mutex是c\u002b\u002b11的新功能。记得添加C\u002b\u002b11支持。(在运行结果中包含编译选项。)\n#include \u0026lt;iostream\u0026gt; #include \u0026lt;mutex\u0026gt; #include \u0026lt;cstdio\u0026gt; #include \u0026lt;thread\u0026gt; #include \u0026lt;semaphore.h\u0026gt; using namespace std; #define THINK(i) printf(\u0022ph[%d] is thinking...\\n\u0022, i) #define EAT(i) printf(\u0022ph[%d] eats.\\n\u0022, i) void P(mutex \u0026mt) { mt.lock(); } void V(mutex \u0026mt) { mt.unlock(); } void P(sem_t* sem) { if(sem_wait(sem)) perror(\u0022P error!\u0022); } void V(sem_t* sem) { if(sem_post(sem)) perror(\u0022V error!\u0022); } \/\/ 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写 void delay() { int sum=; for(int i = ; i \u0026lt; 10000000; i\u002b\u002b) sum \u002b= i; } mutex fork[5]; sem_t room; void init() { sem_init(\u0026room, , 4); } void philosopher (int i) { for(int j = ; j \u0026lt; 5; j\u002b\u002b) { THINK(i); P(\u0026room); P(fork[i]); P(fork[(i\u002b1)%5]); EAT(i); V(\u0026room); V(fork[i]); V(fork[(i\u002b1)%5]); } } int main() { init(); thread t[] = { thread(philosopher, ), thread(philosopher, 1), thread(philosopher, 2), thread(philosopher, 3), thread(philosopher, 4), }; for(int k = ; k \u0026lt; 5; k\u002b\u002b) t[k].join(); return ; } 运行结果 操作系统经典问题：读者写者问题 读者优先 使用了c\u002b\u002b11的新特性thread #include \u0026lt;iostream\u0026gt; #include \u0026lt;mutex\u0026gt; #include \u0026lt;thread\u0026gt; using namespace std; mutex mt, wsem; int readcount = ; #define READ(a) cout \u0026lt;\u0026lt; a \u0026lt;\u0026lt; \u0022 is reading...\u0022 \u0026lt;\u0026lt; endl; #define FINISH(a) cout \u0026lt;\u0026lt; a \u0026lt;\u0026lt; \u0022 finished reading.\u0022 \u0026lt;\u0026lt; endl; #define WRITE cout \u0026lt;\u0026lt; \u0022writing...\u0022 \u0026lt;\u0026lt; endl; void P(mutex \u0026mt) { mt.lock(); } void V(mutex \u0026mt) { mt.unlock(); } \/\/ 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写 void delay() { int sum=; for(int i = ; i \u0026lt; 10000000; i\u002b\u002b) sum \u002b= i } void read(string a) { for(int i = ; i \u0026lt; 3; i\u002b\u002b) { P(mt); readcount\u002b\u002b; if(readcount == 1) P(wsem); V(mt); READ(a); delay(); P(mt); readcount--; FINISH(a); if(readcount == ) V(wsem); V(mt); } } void write() { for(int i = ; i \u0026lt; 5; i\u002b\u002b) { P(wsem); WRITE; delay(); V(wsem); } } int main() { thread reader1(read, \u0022svtter\u0022); thread reader2(read, \u0022sr\u0022); thread reader3(read, \u0022yym\u0022); thread reader4(read, \u0022xiaoniu\u0022); thread writer(write); reader1.join(); reader2.join(); reader3.join(); reader4.join(); writer.join(); return ; } 运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  17 ,
+  "wordCount":  718 ,
   "datePublished" : "2014-11-21T01:00:00\u002b08:00",
   "dateModified" : "2014-11-21T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -93,24 +352,289 @@
 
 
 <meta property="og:title" content="Linux-同步互斥" />
-<meta property="og:description" content=" 本文出自&lt;svtter.github.io&gt; 使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。
+<meta property="og:description" content="
+本文出自&lt;svtter.github.io&gt;
+
+使用pthread实现经典问题：生产者消费者
+关于semaphore的相关信息就不再贴出来了。
 编译的时候记得-pthread选项。
-运行结果 操作系统经典问题：哲学家就餐问题 mutex是c&#43;&#43;11的新功能。记得添加C&#43;&#43;11支持。(在运行结果中包含编译选项。)
-运行结果 操作系统经典问题：读者写者问题 读者优先 使用了c&#43;&#43;11的新特性thread 运行结果 由于可以同时阅读，所以读者reading输出可能出现少许问题。
-写者优先 使rsem中只有一个读者在等待，保证了如果有写者，写者优先写 运行结果 基本上结果就是写者写完，才会有读者阅读 ">
+
+  /*=============================================================================
+#
+# Author: svtter - svtter@qq.com
+#
+# QQ : 57180160
+#
+# Last modified: 2014-10-03 20:35
+#
+# Filename: producer_consumer.cc
+#
+# Description: 
+#
+=============================================================================*/
+#include &lt;cstdio&gt;
+#include &lt;unistd.h&gt;
+#include &lt;semaphore.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;iostream&gt;
+using namespace std;
+#define N 5
+#define item int
+// P/V操作
+void P(sem_t* sem)
+{
+    if(sem_wait(sem))
+        perror(&#34;P error!&#34;);
+}
+void V(sem_t* sem)
+{
+    if(sem_post(sem))
+        perror(&#34;V error!&#34;);
+}
+sem_t mutex;
+sem_t full;
+sem_t empty;
+item buffer[N];
+int i = , j = -1;
+void init_sem()
+{
+    sem_init(&mutex, , 1);
+    sem_init(&full, , );
+    sem_init(&empty, , N);
+}
+void* producer(void *arg)
+{
+    int product;
+    while(1)
+    {
+        //生成随机数字
+        product = rand()%100;
+        // cout &lt;&lt; &#34;producer running...&#34; &lt;&lt; endl;
+        P(&empty);
+        P(&mutex);
+        buffer[i] = product;
+        printf(&#34;producer produced %d @ %d pos\n&#34;,
+                product, i);
+        i=(i&#43;1)%N;
+        V(&mutex);
+        V(&full);
+        sleep(1);
+    }
+}
+void* consumer(void *arg)
+{
+    int product, temp;
+    while(1)
+    {
+        // cout &lt;&lt; &#34;consumer running...&#34; &lt;&lt; endl;
+        P(&full);
+        P(&mutex);
+        j = (j&#43;1)%N;
+        product = buffer[j];
+        V(&mutex);
+        V(&empty);
+        printf(&#34;Consumer consumed %d @ %d pos\n&#34;,
+                product, j);
+        sleep(3);
+    }
+}
+int main()
+{
+    //random num
+    srand(time(NULL));
+    init_sem();
+    int error;
+    pthread_t producer_t, consumer_t;
+    error = pthread_create(&producer_t, NULL, producer, NULL);
+    if(error != )
+        printf(&#34;error in create producer.\n&#34;);
+    else
+        printf(&#34;create producer success!\n&#34;);
+    pthread_create(&consumer_t, NULL, consumer, NULL);
+    if(error != )
+        printf(&#34;error in create consumer.\n&#34;);
+    else
+        printf(&#34;create consumer success!\n&#34;);
+    pthread_join(producer_t, NULL);
+    pthread_join(consumer_t, NULL);
+    return ;
+}
+
+
+运行结果
+
+操作系统经典问题：哲学家就餐问题
+mutex是c&#43;&#43;11的新功能。记得添加C&#43;&#43;11支持。(在运行结果中包含编译选项。)
+
+  #include &lt;iostream&gt;
+#include &lt;mutex&gt;
+#include &lt;cstdio&gt;
+#include &lt;thread&gt;
+#include &lt;semaphore.h&gt;
+using namespace std;
+#define THINK(i) printf(&#34;ph[%d] is thinking...\n&#34;, i)
+#define EAT(i) printf(&#34;ph[%d] eats.\n&#34;, i)
+void P(mutex &mt)
+{
+    mt.lock();
+}
+void V(mutex &mt)
+{
+    mt.unlock();
+}
+void P(sem_t* sem)
+{
+    if(sem_wait(sem))
+        perror(&#34;P error!&#34;);
+}
+void V(sem_t* sem)
+{
+    if(sem_post(sem))
+        perror(&#34;V error!&#34;);
+}
+// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写
+void delay()
+{
+    int sum=;
+    for(int i = ; i &lt; 10000000; i&#43;&#43;)
+        sum &#43;= i;
+}
+mutex fork[5];
+sem_t room;
+void init()
+{
+    sem_init(&room, , 4);
+}
+void philosopher (int i)
+{
+    for(int j = ; j &lt; 5; j&#43;&#43;)
+    {
+        THINK(i);
+        P(&room);
+        P(fork[i]);
+        P(fork[(i&#43;1)%5]);
+        EAT(i);
+        V(&room);
+        V(fork[i]);
+        V(fork[(i&#43;1)%5]);
+    }
+}
+int main()
+{
+    init();
+    thread t[] = {
+        thread(philosopher, ),
+        thread(philosopher, 1),
+        thread(philosopher, 2),
+        thread(philosopher, 3),
+        thread(philosopher, 4),
+    };
+    for(int k = ; k &lt; 5; k&#43;&#43;)
+        t[k].join();
+    return ;
+}
+
+
+运行结果
+
+操作系统经典问题：读者写者问题
+读者优先
+
+使用了c&#43;&#43;11的新特性thread
+
+
+  #include &lt;iostream&gt;
+#include &lt;mutex&gt;
+#include &lt;thread&gt;
+using namespace std;
+mutex mt, wsem;
+int readcount = ;
+#define READ(a) cout &lt;&lt; a &lt;&lt; &#34; is reading...&#34; &lt;&lt; endl;
+#define FINISH(a) cout &lt;&lt; a &lt;&lt; &#34; finished reading.&#34; &lt;&lt; endl;
+#define WRITE cout &lt;&lt; &#34;writing...&#34; &lt;&lt; endl;
+void P(mutex &mt)
+{
+    mt.lock();
+}
+void V(mutex &mt)
+{
+    mt.unlock();
+}
+// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写
+void delay()
+{
+    int sum=;
+    for(int i = ; i &lt; 10000000; i&#43;&#43;)
+        sum &#43;= i
+}
+void read(string a)
+{
+    for(int i = ; i &lt; 3; i&#43;&#43;)
+    {
+        P(mt);
+        readcount&#43;&#43;;
+        if(readcount == 1)
+            P(wsem);
+        V(mt);
+        READ(a);
+        delay();
+        P(mt);
+        readcount--;
+        FINISH(a);
+        if(readcount == )
+            V(wsem);
+        V(mt);
+    }
+}
+void write()
+{
+    for(int i = ; i &lt; 5; i&#43;&#43;)
+    {
+        P(wsem);
+        WRITE;
+        delay();
+        V(wsem);
+    }
+}
+int main()
+{
+    thread reader1(read, &#34;svtter&#34;);
+    thread reader2(read, &#34;sr&#34;);
+    thread reader3(read, &#34;yym&#34;);
+    thread reader4(read, &#34;xiaoniu&#34;);
+    thread writer(write);
+    reader1.join();
+    reader2.join();
+    reader3.join();
+    reader4.join();
+    writer.join();
+    return ;
+}
+
+
+运行结果
+由于可以同时阅读，所以读者reading输出可能出现少许问题。">
 <meta property="og:url" content="https://svtter.cn/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
   <meta name="twitter:title" content="Linux-同步互斥" />
-  <meta name="twitter:description" content=" 本文出自&lt;svtter.github.io&gt; 使用pthread实现经典问题：生产者消费者 关于semaphore的相关信息就不再贴出来了。
+  <meta name="twitter:description" content="
+本文出自&lt;svtter.github.io&gt;
+
+使用pthread实现经典问题：生产者消费者
+关于semaphore的相关信息就不再贴出来了。
 编译的时候记得-pthread选项。
-运行结果 操作系统经典问题：哲学家就餐问题 mutex是c&#43;&#43;11的新功能。记得添加C&#43;&#43;11支持。(在运行结果中包含编译选项。)
-运行结果 操作系统经典问题：读者写者问题 读者优先 使用了c&#43;&#43;11的新特 …">
+
+  /*=============================================================================
+#
+# Author: svtter …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -118,8 +642,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -134,10 +656,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -279,10 +797,10 @@
   <i class="fas fa-calendar"></i>&nbsp;发表于 November 21, 2014
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;4&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;17&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;718&nbsp;个字
   
   
     
@@ -316,35 +834,358 @@
 <h2 id="使用pthread实现经典问题生产者消费者">使用pthread实现经典问题：生产者消费者</h2>
 <p>关于semaphore的相关信息就不再贴出来了。</p>
 <p>编译的时候记得<code>-pthread</code>选项。</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cm">/*=============================================================================</span>
+<span class="cm">#</span>
+<span class="cm"># Author: svtter - svtter@qq.com</span>
+<span class="cm">#</span>
+<span class="cm"># QQ : 57180160</span>
+<span class="cm">#</span>
+<span class="cm"># Last modified: 2014-10-03 20:35</span>
+<span class="cm">#</span>
+<span class="cm"># Filename: producer_consumer.cc</span>
+<span class="cm">#</span>
+<span class="cm"># Description: </span>
+<span class="cm">#</span>
+<span class="cm">=============================================================================*/</span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;semaphore.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define N 5</span>
+<span class="cp">#define item int</span>
+<span class="c1">// P/V操作</span>
+<span class="kt">void</span> <span class="nf">P</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">sem_wait</span><span class="p">(</span><span class="n">sem</span><span class="p">))</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">"P error!"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">V</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">sem_post</span><span class="p">(</span><span class="n">sem</span><span class="p">))</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">"V error!"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">sem_t</span> <span class="n">mutex</span><span class="p">;</span>
+<span class="n">sem_t</span> <span class="n">full</span><span class="p">;</span>
+<span class="n">sem_t</span> <span class="n">empty</span><span class="p">;</span>
+<span class="n">item</span> <span class="n">buffer</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">init_sem</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">sem_init</span><span class="p">(</span><span class="o">&</span><span class="n">mutex</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">sem_init</span><span class="p">(</span><span class="o">&</span><span class="n">full</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+    <span class="n">sem_init</span><span class="p">(</span><span class="o">&</span><span class="n">empty</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="o">*</span> <span class="nf">producer</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">product</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//生成随机数字</span>
+        <span class="n">product</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span><span class="o">%</span><span class="mi">100</span><span class="p">;</span>
+        <span class="c1">// cout &lt;&lt; "producer running..." &lt;&lt; endl;</span>
+        <span class="n">P</span><span class="p">(</span><span class="o">&</span><span class="n">empty</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="o">&</span><span class="n">mutex</span><span class="p">);</span>
+        <span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">product</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"producer produced %d @ %d pos</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+                <span class="n">product</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">i</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="p">;</span>
+        <span class="n">V</span><span class="p">(</span><span class="o">&</span><span class="n">mutex</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="o">&</span><span class="n">full</span><span class="p">);</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="o">*</span> <span class="nf">consumer</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">product</span><span class="p">,</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// cout &lt;&lt; "consumer running..." &lt;&lt; endl;</span>
+        <span class="n">P</span><span class="p">(</span><span class="o">&</span><span class="n">full</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="o">&</span><span class="n">mutex</span><span class="p">);</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">N</span><span class="p">;</span>
+        <span class="n">product</span> <span class="o">=</span> <span class="n">buffer</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+        <span class="n">V</span><span class="p">(</span><span class="o">&</span><span class="n">mutex</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="o">&</span><span class="n">empty</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"Consumer consumed %d @ %d pos</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+                <span class="n">product</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">//random num</span>
+    <span class="n">srand</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
+    <span class="n">init_sem</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">error</span><span class="p">;</span>
+    <span class="n">pthread_t</span> <span class="n">producer_t</span><span class="p">,</span> <span class="n">consumer_t</span><span class="p">;</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">pthread_create</span><span class="p">(</span><span class="o">&</span><span class="n">producer_t</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">producer</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">error</span> <span class="o">!=</span> <span class="mi"></span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"error in create producer.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"create producer success!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">pthread_create</span><span class="p">(</span><span class="o">&</span><span class="n">consumer_t</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">consumer</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">error</span> <span class="o">!=</span> <span class="mi"></span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"error in create consumer.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"create consumer success!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">pthread_join</span><span class="p">(</span><span class="n">producer_t</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="n">pthread_join</span><span class="p">(</span><span class="n">consumer_t</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h3 id="运行结果">运行结果</h3>
-<!-- raw HTML omitted -->
+<img alt="生产者消费者" src="https://i1.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emiuwm4ev0j20es07cwfi.jpg?w=625" data-recalc-dims="1" />
 <h2 id="操作系统经典问题哲学家就餐问题">操作系统经典问题：哲学家就餐问题</h2>
 <p>mutex是c++11的新功能。记得添加C++11支持。(在运行结果中包含编译选项。)</p>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mutex&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;semaphore.h&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define THINK(i) printf("ph[%d] is thinking...\n", i)</span>
+<span class="cp">#define EAT(i) printf("ph[%d] eats.\n", i)</span>
+<span class="kr">void</span> <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span> <span class="o">&</span><span class="n">mt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mt</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kr">void</span> <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span> <span class="o">&</span><span class="n">mt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mt</span><span class="p">.</span><span class="n">unlock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kr">void</span> <span class="nf">P</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">sem_wait</span><span class="p">(</span><span class="n">sem</span><span class="p">))</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">"P error!"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kr">void</span> <span class="nf">V</span><span class="p">(</span><span class="n">sem_t</span><span class="o">*</span> <span class="n">sem</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">sem_post</span><span class="p">(</span><span class="n">sem</span><span class="p">))</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s">"V error!"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写</span>
+<span class="kr">void</span> <span class="nf">delay</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kr">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi"></span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kr">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">mutex</span> <span class="n">fork</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+<span class="n">sem_t</span> <span class="n">room</span><span class="p">;</span>
+<span class="kr">void</span> <span class="nf">init</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">sem_init</span><span class="p">(</span><span class="o">&</span><span class="n">room</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kr">void</span> <span class="nf">philosopher</span> <span class="p">(</span><span class="kr">int</span> <span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kr">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">THINK</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="o">&</span><span class="n">room</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">fork</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">fork</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">5</span><span class="p">]);</span>
+        <span class="n">EAT</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="o">&</span><span class="n">room</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">fork</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">fork</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">5</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kr">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">init</span><span class="p">();</span>
+    <span class="kr">thread</span> <span class="n">t</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="kr">thread</span><span class="p">(</span><span class="n">philosopher</span><span class="p">,</span> <span class="mi"></span><span class="p">),</span>
+        <span class="kr">thread</span><span class="p">(</span><span class="n">philosopher</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="kr">thread</span><span class="p">(</span><span class="n">philosopher</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="kr">thread</span><span class="p">(</span><span class="n">philosopher</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="kr">thread</span><span class="p">(</span><span class="n">philosopher</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">};</span>
+    <span class="k">for</span><span class="p">(</span><span class="kr">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">].</span><span class="n">join</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h3 id="运行结果-1">运行结果</h3>
-<!-- raw HTML omitted -->
+<img alt="哲学家就餐" src="https://i1.wp.com/ww3.sinaimg.cn/mw690/c53b1907jw1emiwe5eqnyj20hq0b1q3w.jpg?w=625" data-recalc-dims="1" />
 <h2 id="操作系统经典问题读者写者问题">操作系统经典问题：读者写者问题</h2>
 <h3 id="读者优先">读者优先</h3>
 <ul>
 <li>使用了c++11的新特性thread</li>
 </ul>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mutex&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="n">mutex</span> <span class="n">mt</span><span class="p">,</span> <span class="n">wsem</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">readcount</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="cp">#define READ(a) cout &lt;&lt; a &lt;&lt; " is reading..." &lt;&lt; endl;</span>
+<span class="cp">#define FINISH(a) cout &lt;&lt; a &lt;&lt; " finished reading." &lt;&lt; endl;</span>
+<span class="cp">#define WRITE cout &lt;&lt; "writing..." &lt;&lt; endl;</span>
+<span class="kt">void</span> <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span> <span class="o">&</span><span class="n">mt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mt</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span> <span class="o">&</span><span class="n">mt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mt</span><span class="p">.</span><span class="n">unlock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="c1">// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写</span>
+<span class="kt">void</span> <span class="nf">delay</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi"></span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">read</span><span class="p">(</span><span class="n">string</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+        <span class="n">readcount</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">readcount</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">P</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+        <span class="n">READ</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+        <span class="n">delay</span><span class="p">();</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+        <span class="n">readcount</span><span class="o">--</span><span class="p">;</span>
+        <span class="n">FINISH</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">readcount</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+            <span class="n">V</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mt</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">write</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">WRITE</span><span class="p">;</span>
+        <span class="n">delay</span><span class="p">();</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kr">thread</span> <span class="n">reader1</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="s">"svtter"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">reader2</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="s">"sr"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">reader3</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="s">"yym"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">reader4</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="s">"xiaoniu"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">writer</span><span class="p">(</span><span class="n">write</span><span class="p">);</span>
+    <span class="n">reader1</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">reader2</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">reader3</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">reader4</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">writer</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h4 id="运行结果-2">运行结果</h4>
 <p>由于可以同时阅读，所以读者reading输出可能出现少许问题。</p>
-<!-- raw HTML omitted -->
+<img alt="运行结果" src="https://i2.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emiwlff732j20hl08t3z6.jpg?w=625" data-recalc-dims="1" />
 <h3 id="写者优先">写者优先</h3>
 <hr>
 <ul>
 <li>使rsem中只有一个读者在等待，保证了如果有写者，写者优先写</li>
 </ul>
-<!-- raw HTML omitted -->
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mutex&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define READ(a,i) cout &lt;&lt; a &lt;&lt; i&lt;&lt;" is reading..." &lt;&lt; endl;</span>
+<span class="cp">#define FINR(a,i) cout &lt;&lt; a &lt;&lt; i&lt;&lt;" finished reading." &lt;&lt; endl;</span>
+<span class="cp">#define WRITE(a,i) cout &lt;&lt; a &lt;&lt;i&lt;&lt;" is writing..." &lt;&lt; endl;</span>
+<span class="cp">#define FINW(a, i) cout &lt;&lt; a &lt;&lt;i&lt;&lt;" finished writing..." &lt;&lt; endl;</span>
+<span class="kt">void</span> <span class="nf">P</span><span class="p">(</span><span class="n">mutex</span> <span class="o">&</span><span class="n">mt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mt</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">V</span><span class="p">(</span><span class="n">mutex</span> <span class="o">&</span><span class="n">mt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">mt</span><span class="p">.</span><span class="n">unlock</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="c1">// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写</span>
+<span class="kt">void</span> <span class="nf">delay</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi"></span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">mutex</span> <span class="n">mr</span><span class="p">,</span> <span class="n">wsem</span><span class="p">,</span> <span class="n">rsem</span><span class="p">,</span> <span class="n">mrc</span><span class="p">,</span> <span class="n">mwc</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">readcount</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">writecount</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">read</span><span class="p">(</span><span class="n">string</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mr</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">rsem</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mrc</span><span class="p">);</span>
+        <span class="n">readcount</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">readcount</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">P</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mrc</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">rsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mr</span><span class="p">);</span>
+        <span class="n">READ</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mrc</span><span class="p">);</span>
+        <span class="n">FINR</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">readcount</span><span class="o">--</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">readcount</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+            <span class="n">V</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mrc</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">write</span><span class="p">(</span><span class="n">string</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mwc</span><span class="p">);</span>
+        <span class="n">writecount</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">writecount</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">P</span><span class="p">(</span><span class="n">rsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mwc</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">WRITE</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">FINW</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">wsem</span><span class="p">);</span>
+        <span class="n">P</span><span class="p">(</span><span class="n">mwc</span><span class="p">);</span>
+        <span class="n">writecount</span><span class="o">--</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">writecount</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+            <span class="n">V</span><span class="p">(</span><span class="n">rsem</span><span class="p">);</span>
+        <span class="n">V</span><span class="p">(</span><span class="n">mwc</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kr">thread</span> <span class="n">reader1</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="s">"svtter"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">writer1</span><span class="p">(</span><span class="n">write</span><span class="p">,</span> <span class="s">"sr"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">writer2</span><span class="p">(</span><span class="n">write</span><span class="p">,</span> <span class="s">"zs"</span><span class="p">);</span>
+    <span class="kr">thread</span> <span class="n">writer3</span><span class="p">(</span><span class="n">write</span><span class="p">,</span> <span class="s">"yym"</span><span class="p">);</span>
+    <span class="n">reader1</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">writer1</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">writer2</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="n">writer3</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 <h4 id="运行结果-3">运行结果</h4>
 <ul>
 <li>基本上结果就是写者写完，才会有读者阅读</li>
 </ul>
-<!-- raw HTML omitted -->
-
+<img alt="写者优先" src="https://i0.wp.com/ww4.sinaimg.cn/mw690/c53b1907jw1emiwotocqij20hp0d7q4e.jpg?w=625" data-recalc-dims="1" />
 
         
           <div class="blog-tags">
@@ -455,6 +1296,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2014/11/21/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2014\/11\/21\/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -512,7 +1367,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -534,6 +1389,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 

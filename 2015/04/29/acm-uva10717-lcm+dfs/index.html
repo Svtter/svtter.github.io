@@ -19,7 +19,120 @@
 
   <meta name="description" content="今天不适合刷题。。。
 题意：一个桌子4条腿，每条腿由一种硬币构成，四条腿必须一样长，请问如何最接近给出的标准桌子高度，输出两个最接近的值。
-更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。">
+更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。
+
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;set&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt;
+#include &lt;bitset&gt;
+using namespace std;
+// 大数，内存处理
+#define INF 0x3f3f3f3f
+#define ll long long int
+#define MEM(a) memset(a, 0, sizeof(a))
+#define MEMM(a) memset(a, -1, sizeof(a))
+#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)&#43;&#43;)
+const double PI = acos(-1.0);
+#define CR printf(&#34;\n&#34;)
+// 调试用
+    template &lt;class Type&gt;
+void debug(Type a[], int len)
+{
+    for(int i = ; i &lt; len ; i&#43;&#43;)
+    {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+int gcd(int a, int b)
+{
+    return b == ? a: gcd(b, a % b);
+}
+const int maxn = 50 &#43; 10;
+int a[maxn];
+int n, t;
+int table[15];
+int ans1[15];
+int ans2[15];
+void output()
+{
+    for(int i = ; i &lt; t; i&#43;&#43;)
+        printf(&#34;%d %d\n&#34;, ans1[i], ans2[i]);
+}
+// 寻找边界
+bool findmax(int lcm, int num, int &mint, int &maxt)
+{
+    // if(lcm &gt; num)
+    // return false;
+    int t = num / lcm * lcm;
+    if(t == num)
+    {
+        mint = num;
+        maxt = num;
+    }
+    else
+    {
+        mint = t;
+        maxt = t &#43; lcm;
+    }
+    // return 1;
+}
+// 检查
+void check(int lcm)
+{
+    int mint, maxt;
+    for(int i = ; i &lt; t; i&#43;&#43;)
+    {
+        findmax(lcm, table[i], mint, maxt);
+        if(ans1[i] == -1 || mint &gt; ans1[i]) ans1[i] = mint;
+        if(ans2[i] == -1 || maxt &lt; ans2[i]) ans2[i] = maxt;
+    }
+}
+// 枚举四个腿
+void fs(int c, int num, int lcm)
+{
+    if(num == 4)
+    {
+        check(lcm);
+        return;
+    }
+    for(int i = c; i &lt; n; i&#43;&#43;)
+    {
+        int temp = lcm;
+        lcm = lcm / gcd(lcm, a[i]) * a[i]; // 可能溢出
+        fs(i&#43;1, num&#43;1, lcm);
+        lcm = temp;
+    }
+}
+int main()
+{
+#ifdef DEBUG
+    freopen(&#34;input&#34;, &#34;r&#34;, stdin);       //从input文件中读入
+    // freopen(&#34;output&#34;, &#34;w&#34;, stdout);     //输出到output文件
+#endif
+    while(~scanf(&#34;%d%d&#34;, &n, &t) && n != )
+    {
+        for(int i = ; i&lt; n; i&#43;&#43;) scanf(&#34;%d&#34;, &a[i]);
+        for(int i = ; i &lt; t; i&#43;&#43;)
+        {
+            scanf(&#34;%d&#34;, &table[i]);
+            ans1[i] = -1;
+            ans2[i] = -1;
+        }
+        fs(, , 1);
+        output();
+    }
+    return ;
+}
+
+">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -68,9 +181,9 @@
     "name" : "svtter"
   },
   "headline": "ACM – Uva10717 – lcm\u002bdfs",
-  "description" : "今天不适合刷题。。。\n题意：一个桌子4条腿，每条腿由一种硬币构成，四条腿必须一样长，请问如何最接近给出的标准桌子高度，输出两个最接近的值。\n更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。",
+  "description" : "今天不适合刷题。。。\n题意：一个桌子4条腿，每条腿由一种硬币构成，四条腿必须一样长，请问如何最接近给出的标准桌子高度，输出两个最接近的值。\n更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。\n#include \u0026lt;iostream\u0026gt; #include \u0026lt;cstdio\u0026gt; #include \u0026lt;cstring\u0026gt; #include \u0026lt;set\u0026gt; #include \u0026lt;vector\u0026gt; #include \u0026lt;map\u0026gt; #include \u0026lt;algorithm\u0026gt; #include \u0026lt;queue\u0026gt; #include \u0026lt;cmath\u0026gt; #include \u0026lt;bitset\u0026gt; using namespace std; \/\/ 大数，内存处理 #define INF 0x3f3f3f3f #define ll long long int #define MEM(a) memset(a, 0, sizeof(a)) #define MEMM(a) memset(a, -1, sizeof(a)) #define DEB(x, n) cout \u0026lt;\u0026lt; (x) \u0026lt;\u0026lt; \u0022 \u0022 \u0026lt;\u0026lt; (n) \u0026lt;\u0026lt; endl #define FOR(i, s, e) for(int (i) = (s); (i) \u0026lt; (e); (i)\u002b\u002b) const double PI = acos(-1.0); #define CR printf(\u0022\\n\u0022) \/\/ 调试用 template \u0026lt;class Type\u0026gt; void debug(Type a[], int len) { for(int i = ; i \u0026lt; len ; i\u002b\u002b) { cout \u0026lt;\u0026lt; a[i] \u0026lt;\u0026lt; \u0022 \u0022; } cout \u0026lt;\u0026lt; endl; } int gcd(int a, int b) { return b == ? a: gcd(b, a % b); } const int maxn = 50 \u002b 10; int a[maxn]; int n, t; int table[15]; int ans1[15]; int ans2[15]; void output() { for(int i = ; i \u0026lt; t; i\u002b\u002b) printf(\u0022%d %d\\n\u0022, ans1[i], ans2[i]); } \/\/ 寻找边界 bool findmax(int lcm, int num, int \u0026mint, int \u0026maxt) { \/\/ if(lcm \u0026gt; num) \/\/ return false; int t = num \/ lcm * lcm; if(t == num) { mint = num; maxt = num; } else { mint = t; maxt = t \u002b lcm; } \/\/ return 1; } \/\/ 检查 void check(int lcm) { int mint, maxt; for(int i = ; i \u0026lt; t; i\u002b\u002b) { findmax(lcm, table[i], mint, maxt); if(ans1[i] == -1 || mint \u0026gt; ans1[i]) ans1[i] = mint; if(ans2[i] == -1 || maxt \u0026lt; ans2[i]) ans2[i] = maxt; } } \/\/ 枚举四个腿 void fs(int c, int num, int lcm) { if(num == 4) { check(lcm); return; } for(int i = c; i \u0026lt; n; i\u002b\u002b) { int temp = lcm; lcm = lcm \/ gcd(lcm, a[i]) * a[i]; \/\/ 可能溢出 fs(i\u002b1, num\u002b1, lcm); lcm = temp; } } int main() { #ifdef DEBUG freopen(\u0022input\u0022, \u0022r\u0022, stdin); \/\/从input文件中读入 \/\/ freopen(\u0022output\u0022, \u0022w\u0022, stdout); \/\/输出到output文件 #endif while(~scanf(\u0022%d%d\u0022, \u0026n, \u0026t) \u0026\u0026 n != ) { for(int i = ; i\u0026lt; n; i\u002b\u002b) scanf(\u0022%d\u0022, \u0026a[i]); for(int i = ; i \u0026lt; t; i\u002b\u002b) { scanf(\u0022%d\u0022, \u0026table[i]); ans1[i] = -1; ans2[i] = -1; } fs(, , 1); output(); } return ; } ",
   "inLanguage" : "zh-cn",
-  "wordCount":  3 ,
+  "wordCount":  364 ,
   "datePublished" : "2015-04-29T01:00:00\u002b08:00",
   "dateModified" : "2015-04-29T01:00:00\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -93,7 +206,120 @@
 <meta property="og:title" content="ACM – Uva10717 – lcm&#43;dfs" />
 <meta property="og:description" content="今天不适合刷题。。。
 题意：一个桌子4条腿，每条腿由一种硬币构成，四条腿必须一样长，请问如何最接近给出的标准桌子高度，输出两个最接近的值。
-更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。">
+更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。
+
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;set&gt;
+#include &lt;vector&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;cmath&gt;
+#include &lt;bitset&gt;
+using namespace std;
+// 大数，内存处理
+#define INF 0x3f3f3f3f
+#define ll long long int
+#define MEM(a) memset(a, 0, sizeof(a))
+#define MEMM(a) memset(a, -1, sizeof(a))
+#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; &#34; &#34; &lt;&lt; (n) &lt;&lt; endl
+#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)&#43;&#43;)
+const double PI = acos(-1.0);
+#define CR printf(&#34;\n&#34;)
+// 调试用
+    template &lt;class Type&gt;
+void debug(Type a[], int len)
+{
+    for(int i = ; i &lt; len ; i&#43;&#43;)
+    {
+        cout &lt;&lt; a[i] &lt;&lt; &#34; &#34;;
+    }
+    cout &lt;&lt; endl;
+}
+int gcd(int a, int b)
+{
+    return b == ? a: gcd(b, a % b);
+}
+const int maxn = 50 &#43; 10;
+int a[maxn];
+int n, t;
+int table[15];
+int ans1[15];
+int ans2[15];
+void output()
+{
+    for(int i = ; i &lt; t; i&#43;&#43;)
+        printf(&#34;%d %d\n&#34;, ans1[i], ans2[i]);
+}
+// 寻找边界
+bool findmax(int lcm, int num, int &mint, int &maxt)
+{
+    // if(lcm &gt; num)
+    // return false;
+    int t = num / lcm * lcm;
+    if(t == num)
+    {
+        mint = num;
+        maxt = num;
+    }
+    else
+    {
+        mint = t;
+        maxt = t &#43; lcm;
+    }
+    // return 1;
+}
+// 检查
+void check(int lcm)
+{
+    int mint, maxt;
+    for(int i = ; i &lt; t; i&#43;&#43;)
+    {
+        findmax(lcm, table[i], mint, maxt);
+        if(ans1[i] == -1 || mint &gt; ans1[i]) ans1[i] = mint;
+        if(ans2[i] == -1 || maxt &lt; ans2[i]) ans2[i] = maxt;
+    }
+}
+// 枚举四个腿
+void fs(int c, int num, int lcm)
+{
+    if(num == 4)
+    {
+        check(lcm);
+        return;
+    }
+    for(int i = c; i &lt; n; i&#43;&#43;)
+    {
+        int temp = lcm;
+        lcm = lcm / gcd(lcm, a[i]) * a[i]; // 可能溢出
+        fs(i&#43;1, num&#43;1, lcm);
+        lcm = temp;
+    }
+}
+int main()
+{
+#ifdef DEBUG
+    freopen(&#34;input&#34;, &#34;r&#34;, stdin);       //从input文件中读入
+    // freopen(&#34;output&#34;, &#34;w&#34;, stdout);     //输出到output文件
+#endif
+    while(~scanf(&#34;%d%d&#34;, &n, &t) && n != )
+    {
+        for(int i = ; i&lt; n; i&#43;&#43;) scanf(&#34;%d&#34;, &a[i]);
+        for(int i = ; i &lt; t; i&#43;&#43;)
+        {
+            scanf(&#34;%d&#34;, &table[i]);
+            ans1[i] = -1;
+            ans2[i] = -1;
+        }
+        fs(, , 1);
+        output();
+    }
+    return ;
+}
+
+">
 <meta property="og:url" content="https://svtter.cn/2015/04/29/acm-uva10717-lcm&#43;dfs/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
@@ -101,11 +327,15 @@
   <meta name="twitter:title" content="ACM – Uva10717 – lcm&#43;dfs" />
   <meta name="twitter:description" content="今天不适合刷题。。。
 题意：一个桌子4条腿，每条腿由一种硬币构成，四条腿必须一样长，请问如何最接近给出的标准桌子高度，输出两个最接近的值。
-更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。">
+更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。
+
+  #include &lt;iostream&gt;
+#include &lt;cstdio&gt;
+#include …">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
-  <meta name="generator" content="Hugo 0.130.0">
+  <meta name="generator" content="Hugo 0.142.0">
   <link rel="alternate" href="https://svtter.cn/index.xml" type="application/rss+xml" title="Svtter&#39;s Blog"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous"><link rel="stylesheet" href="https://svtter.cn/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -113,8 +343,6 @@
   <link rel="stylesheet" href="https://svtter.cn/css/highlight.min.css" /><link rel="stylesheet" href="https://svtter.cn/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script>
       <script>
         var doNotTrack = false;
@@ -129,10 +357,6 @@
           gtag('config', 'G-65DJGXT4VC');
         }
       </script>
-    
-  
-
-
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
@@ -274,10 +498,10 @@
   <i class="fas fa-calendar"></i>&nbsp;发表于 April 29, 2015
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;364&nbsp;个字
   
   
     
@@ -308,8 +532,119 @@
         <p>今天不适合刷题。。。</p>
 <p>题意：一个桌子4条腿，每条腿由一种硬币构成，四条腿必须一样长，请问如何最接近给出的标准桌子高度，输出两个最接近的值。</p>
 <p>更新两个值的时候错误的判断如果lcm大于h就不再更新了，却没有想到高于h的部分依然可以更新，只是不能更新小于h的部分了。</p>
-<!-- raw HTML omitted -->
-
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;set&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;bitset&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="c1">// 大数，内存处理</span>
+<span class="cp">#define INF 0x3f3f3f3f</span>
+<span class="cp">#define ll long long int</span>
+<span class="cp">#define MEM(a) memset(a, 0, sizeof(a))</span>
+<span class="cp">#define MEMM(a) memset(a, -1, sizeof(a))</span>
+<span class="cp">#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
+<span class="cp">#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)++)</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
+<span class="cp">#define CR printf("\n")</span>
+<span class="c1">// 调试用</span>
+    <span class="n">template</span> <span class="o">&lt;</span><span class="n">class</span> <span class="n">Type</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">debug</span><span class="p">(</span><span class="n">Type</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="o">==</span> <span class="mi"></span><span class="o">?</span> <span class="nl">a</span><span class="p">:</span> <span class="n">gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">maxn</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">maxn</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">table</span><span class="p">[</span><span class="mi">15</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">ans1</span><span class="p">[</span><span class="mi">15</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">ans2</span><span class="p">[</span><span class="mi">15</span><span class="p">];</span>
+<span class="kt">void</span> <span class="nf">output</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ans1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ans2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="c1">// 寻找边界</span>
+<span class="kt">bool</span> <span class="nf">findmax</span><span class="p">(</span><span class="kt">int</span> <span class="n">lcm</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">,</span> <span class="kt">int</span> <span class="o">&</span><span class="n">mint</span><span class="p">,</span> <span class="kt">int</span> <span class="o">&</span><span class="n">maxt</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// if(lcm &gt; num)</span>
+    <span class="c1">// return false;</span>
+    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">lcm</span> <span class="o">*</span> <span class="n">lcm</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">num</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">mint</span> <span class="o">=</span> <span class="n">num</span><span class="p">;</span>
+        <span class="n">maxt</span> <span class="o">=</span> <span class="n">num</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">mint</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span>
+        <span class="n">maxt</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">lcm</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// return 1;</span>
+<span class="p">}</span>
+<span class="c1">// 检查</span>
+<span class="kt">void</span> <span class="nf">check</span><span class="p">(</span><span class="kt">int</span> <span class="n">lcm</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">mint</span><span class="p">,</span> <span class="n">maxt</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">findmax</span><span class="p">(</span><span class="n">lcm</span><span class="p">,</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mint</span><span class="p">,</span> <span class="n">maxt</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">ans1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">mint</span> <span class="o">&gt;</span> <span class="n">ans1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">ans1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mint</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">ans2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">maxt</span> <span class="o">&lt;</span> <span class="n">ans2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">ans2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxt</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 枚举四个腿</span>
+<span class="kt">void</span> <span class="nf">fs</span><span class="p">(</span><span class="kt">int</span> <span class="n">c</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">,</span> <span class="kt">int</span> <span class="n">lcm</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">num</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">check</span><span class="p">(</span><span class="n">lcm</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">lcm</span><span class="p">;</span>
+        <span class="n">lcm</span> <span class="o">=</span> <span class="n">lcm</span> <span class="o">/</span> <span class="n">gcd</span><span class="p">(</span><span class="n">lcm</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="c1">// 可能溢出</span>
+        <span class="n">fs</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">lcm</span><span class="p">);</span>
+        <span class="n">lcm</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="cp">#ifdef DEBUG</span>
+    <span class="n">freopen</span><span class="p">(</span><span class="s">"input"</span><span class="p">,</span> <span class="s">"r"</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>       <span class="c1">//从input文件中读入</span>
+    <span class="c1">// freopen("output", "w", stdout);     //输出到output文件</span>
+<span class="cp">#endif</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">,</span> <span class="o">&</span><span class="n">t</span><span class="p">)</span> <span class="o">&&</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi"></span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="n">ans1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">ans2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">fs</span><span class="p">(</span><span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">output</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
 
         
 
@@ -398,6 +733,20 @@
       
       
       
+          
+          <div class="disqus-comments">                  
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/2015/04/29/acm-uva10717-lcm&#43;dfs">则评论</span></button>
+            <div id="disqus_thread"></div>
+
+            <script type="text/javascript">
+              var disqus_config = function () {
+              this.page.url = 'https:\/\/svtter.cn\/2015\/04\/29\/acm-uva10717-lcm\u002bdfs';
+            };
+
+          </script>
+          </div>
+          
+        
         
       
 
@@ -455,7 +804,7 @@
         </p>
         
         <p class="credits theme-by text-muted">
-          由 <a href="https://gohugo.io">Hugo v0.130.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          由 <a href="https://gohugo.io">Hugo v0.142.0</a> 强力驱动 &nbsp;&bull;&nbsp; 主题 <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> 移植自 <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
@@ -477,6 +826,28 @@
 
 
 
+
+
+
+<script type="text/javascript">
+$(function(){
+  $('#show-comments').on('click', function(){
+    var disqus_shortname = 'svtter-cn';
+
+    (function() {
+      var disqus = document.createElement('script');
+      disqus.type = 'text/javascript';
+      disqus.async = true;
+      disqus.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(disqus);
+    })();
+
+    $(this).hide();
+    });
+  });
+
+</script>
+<script id="dsq-count-scr" src="//svtter-cn.disqus.com/count.js" async></script>
 
 
 
