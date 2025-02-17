@@ -68,7 +68,7 @@
   "headline": "Compile Latex Local.md",
   "description" : "我们有时候希望在本地而不是 overleaf 上编译 latex 文件。这篇文章提供了一个方法。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  57 ,
+  "wordCount":  64 ,
   "datePublished" : "2025-02-17T16:39:50\u002b08:00",
   "dateModified" : "2025-02-17T16:39:50\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
@@ -265,7 +265,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;57&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;64&nbsp;个字
   
   
     
@@ -292,6 +292,7 @@
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
         <p>我们有时候希望在本地而不是 overleaf 上编译 latex 文件。这篇文章提供了一个方法。</p>
+<p>我们可以用 Docker 来构建一个编译环境。Dockerfile 如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dockerfile" data-lang="Dockerfile"><span class="line"><span class="cl"><span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="c"># 使用 TeXLive 官方镜像作为基础镜像</span><span class="err">
 </span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">FROM</span><span class="s"> texlive/texlive:latest</span><span class="err">
@@ -314,7 +315,7 @@
 <li>构建镜像：<code>docker build -t paper .</code></li>
 <li>构建PDF: <code>docker run --rm -v $(pwd):/paper paper</code></li>
 </ul>
-<p>构建命令可以自己修改。</p>
+<p>构建命令可以自己修改。比如你的主文件是<code>main.tex</code>，就可以修改成<code>CMD [&quot;latexmk&quot;, &quot;-pdf&quot;, &quot;0_main.tex&quot;]</code>。</p>
 
         
           <div class="blog-tags">
