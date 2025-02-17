@@ -211,7 +211,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 15, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 17, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
@@ -244,6 +244,123 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://svtter.cn/2015/05/01/acm-uva571-%E6%A8%A1%E6%96%B9%E7%A8%8B/">
+        <h2 class="post-title">ACM – UVA571 – 模方程</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 May 1, 2015
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;223&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>一开始在扩展gcd上想了许久没有办法将得出的数字直接转换成为相应的输出，后来发现就是模方程。</p>
+<p>因为不求最佳解，所以直接使用ca*x = n (mod cb)即可。这个方程的解可以覆盖全部的n，因为该方程如果有解，则n是gcd(ca, cb)的倍数。因为ca, cb互质 gcd (ca, cb) = 1，所以明显通过单纯的加满B，向A中倒，然后清空A就可以遍历所有n的解（尽管可能不是最佳解）。</p>
+<p><strong>不能是cb*x = n (mod ca)，因为n可能大于ca.</strong></p>
+<p>如果求最佳解，显然是bfs。当然这到题目也可以dfs来做，不过明显要复杂很多。</p>
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;set&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;bitset&gt;</span><span class="cp"></span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="c1">// 大数，内存处理</span>
+<span class="cp">#define INF 0x3f3f3f3f</span>
+<span class="cp">#define ll long long int</span>
+<span class="cp">#define MEM(a) memset(a, 0, sizeof(a))</span>
+<span class="cp">#define MEMM(a) memset(a, -1, sizeof(a))</span>
+<span class="cp">#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
+<span class="cp">#define FOR(i, s, e) for(int (i) = (s); (i) &lt; (e); (i)++)</span>
+<span class="k">const</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
+<span class="cp">#define CR printf("\n")</span>
+<span class="c1">// 调试用</span>
+    <span class="n">template</span> <span class="o">&lt;</span><span class="n">class</span> <span class="n">Type</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">debug</span><span class="p">(</span><span class="n">Type</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="cp">#ifdef DEBUG</span>
+    <span class="c1">// freopen("input", "r", stdin);       //从input文件中读入</span>
+    <span class="c1">// freopen("output", "w", stdout);     //输出到output文件</span>
+<span class="cp">#endif</span>
+    <span class="kt">int</span> <span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d%d%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">ca</span><span class="p">,</span> <span class="o">&</span><span class="n">cb</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">)</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//解模方程 ax = n(mod b)</span>
+        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi"></span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">b</span> <span class="o">!=</span> <span class="n">n</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi"></span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">puts</span><span class="p">(</span><span class="s">"fill A"</span><span class="p">);</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">ca</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">b</span> <span class="o">==</span> <span class="n">cb</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">puts</span><span class="p">(</span><span class="s">"empty B"</span><span class="p">);</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="n">cb</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="p">(</span><span class="n">cb</span><span class="o">-</span><span class="n">b</span><span class="p">);</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">cb</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">b</span> <span class="o">+=</span> <span class="n">a</span><span class="p">;</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">puts</span><span class="p">(</span><span class="s">"pour A B"</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"success"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+        
+    </div>
+
+    
+
+</article>
           
             <article class="post-preview">
     <a href="https://svtter.cn/2015/04/29/acm-uva10717-lcm&#43;dfs/">
@@ -1300,96 +1417,6 @@
 <span class="p">}</span>
 </pre>
 </div>
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2015/04/24/acm-uva138-%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/">
-        <h2 class="post-title">ACM – UVa138 – 数学基础</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 April 24, 2015
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;116&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>这道题目其实就是推个公式，主要还是考验编程技巧。。</p>
-<p>首先double的精度范围是15-16位，浮点数运算还是最快的，依据最后一个答案（总共10组），平方为16位刚好够用。</p>
-<p>如果想要最精确的结果，当然还是使用long double或者long long来来保证精度问题。不过计算速度就会有所损失，采取二分的方法加速比较好。</p>
-<hr>
-<p>利用double的代码：</p>
-<div class="codehilite">
-  <pre><span></span>    <span class="k">const</span> <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">;</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">double</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">maxn</span><span class="p">;</span><span class="n">i</span> <span class="o">++</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="kt">double</span> <span class="n">res</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-        <span class="n">ll</span> <span class="n">ans</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">res</span> <span class="o">-</span> <span class="n">ans</span><span class="o">*</span><span class="n">ans</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">)</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">"%10lld %10lf</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">ans</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">"done"</span><span class="p">);</span>
-</pre>
-</div>
-<p>利用long long的代码:</p>
-<div class="codehilite">
-  <pre><span></span>    <span class="k">for</span><span class="p">(</span><span class="n">ull</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">maxn</span><span class="p">;</span><span class="n">i</span> <span class="o">++</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">ull</span> <span class="n">res</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-        <span class="n">ull</span> <span class="n">l</span> <span class="o">=</span> <span class="n">i</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
-        <span class="n">ull</span> <span class="n">mid</span><span class="p">,</span> <span class="n">ans</span><span class="p">;</span>
-        <span class="kt">bool</span> <span class="n">find</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="c1">// bsearch</span>
-        <span class="k">while</span><span class="p">(</span><span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">)</span>
-        <span class="p">{</span>
-            <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-            <span class="n">ans</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">*</span> <span class="n">mid</span><span class="p">;</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">ans</span> <span class="o">==</span> <span class="n">res</span><span class="p">)</span>
-            <span class="p">{</span>
-                <span class="n">find</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">ans</span> <span class="o">&gt;</span> <span class="n">res</span><span class="p">)</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">else</span>
-                <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">find</span><span class="p">)</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">"%10lld %10lld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">"done"</span><span class="p">);</span>
-</pre>
-</div>
-<hr>
-<p>不过有一点就是无论怎么个快法，不使用打表肯定是会超时的，所以算出来直接上交即可。= =。这在大赛中应该也是允许的吧。</p>
-
         
     </div>
 
