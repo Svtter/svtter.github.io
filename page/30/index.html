@@ -242,6 +242,101 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2014/12/31/%E7%BD%91%E7%BB%9C-cdma%E6%8E%A5%E5%8F%97%E6%A3%80%E9%AA%8C/">
+        <h2 class="post-title">网络-CDMA接受检验</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 December 31, 2014
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;125&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p _="%" endblockquote="endblockquote">{% blockquote 本文出自 http://svtter.github.io svtter.github.io %}
+<p>本文可以随意转载，但是转载请保留本信息.</p></p>
+<p>做CDMA简单的接收处理。</p>
+<h2 id="文件">文件</h2>
+<p>input:</p>
+<div class="codehilite">
+  <pre><span></span>-1 -1 -1  1  1 -1  1  1
+-1 -1  1 -1  1  1  1 -1
+-1  1 -1  1  1  1 -1 -1
+-1  1 -1 -1 -1 -1 -1  1
+</pre>
+</div>
+<p>new.c:</p>
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
+<span class="cp">#define M 8</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">b</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">};</span>
+<span class="kt">void</span> <span class="nf">show</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%5d"</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">""</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="n">M</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">freopen</span><span class="p">(</span><span class="err">&#39;</span><span class="n">input</span><span class="err">&#39;</span><span class="p">,</span> <span class="sc">&#39;r&#39;</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+        <span class="n">show</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">sum</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">sum</span><span class="o">/</span><span class="n">M</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/network/">network</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/cdma/">CDMA</a>&nbsp;
+         
+    </div>
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2014/12/29/java-ant%E6%96%87%E4%BB%B6%E5%92%8Csynastic-vim%E6%94%AF%E6%8C%81/">
         <h2 class="post-title">Java-Ant文件和Synastic-Vim支持</h2>
         
@@ -860,64 +955,6 @@
 </blockquote>
 <p><strong>gitbook</strong>是在利用nodejs搭建的一个写书的平台，也可以用来做别的事情，比如说作为项目的文档。</p>
 <p>gitbook样式，编辑方式【markdown】都是比较不错的，有一个官方网站 <a href="http://www.gitbook.com">http://www.gitbook.com</a>，但是国内的访问速度不是很理想，所以直接挂上去可能体验不是很好，建议自己download下来然后重新部署。</p>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2014/12/11/python-%E5%BB%BA%E7%AB%8B%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-        <h2 class="post-title">Python-建立最简单的web服务器</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 December 11, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;17&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <blockquote>
-<p>本文出自<a href="http://svtter.github.io">svtter.github.io</a></p>
-</blockquote>
-<p>有三个服务模块可以使用:</p>
-<ul>
-<li>BaseHTTPServer 最基础web服务.</li>
-<li>SimpleHTTPServer 可以处理GET和HEAD.</li>
-<li>CGIHTTPServer 可以处理POST请求和执行CGI.</li>
-</ul>
-<p>只需要一行代码即可:</p>
-<div class="codehilite">
-  <pre><span></span>python -m SimpleHTTPServer 8080
-</pre>
-</div>
-<p>如果8080端口被占用，可以选择别的端口来使用.</p>
-<p>此处的 SimpleHTTPServer 可以使用以上三个服务模块替代</p>
 
         
     </div>

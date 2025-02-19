@@ -15,9 +15,9 @@
  
 
 
-      <title>Extend LVM Disk.md - </title>
+      <title>Certbot Self Signed.md - </title>
 
-  <meta name="description" content="使用 PVE &#43; Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。">
+  <meta name="description" content="我们有时候会有 SSL 需求，但是国内的证书都需要买，价格也有问题，因此这里写一篇博客，教会大家如何使用 certbot 和 let&#39;s encrypt。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -53,8 +53,8 @@
         "@type": "ListItem",
         "position": 3,
         "item": {
-          "@id": "https:\/\/svtter.cn\/post\/2025-02-15-extend-lvm-disk.md\/",
-          "name": "Extend lvm disk.md"
+          "@id": "https:\/\/svtter.cn\/post\/2025-02-19-certbot-self-signed.md\/",
+          "name": "Certbot self signed.md"
         }
     }]
 }
@@ -65,15 +65,15 @@
   "author": {
     "name" : "svtter"
   },
-  "headline": "Extend LVM Disk.md",
-  "description" : "使用 PVE \u002b Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。\n",
+  "headline": "Certbot Self Signed.md",
+  "description" : "我们有时候会有 SSL 需求，但是国内的证书都需要买，价格也有问题，因此这里写一篇博客，教会大家如何使用 certbot 和 let\u0027s encrypt。\n",
   "inLanguage" : "zh-cn",
-  "wordCount":  210 ,
-  "datePublished" : "2025-02-15T14:12:37\u002b08:00",
-  "dateModified" : "2025-02-15T14:12:37\u002b08:00",
+  "wordCount":  73 ,
+  "datePublished" : "2025-02-19T15:58:51\u002b08:00",
+  "dateModified" : "2025-02-19T15:58:51\u002b08:00",
   "image" : "https:\/\/svtter.cn\/",
-  "keywords" : [ "LVM, Linux, Debian, til" ],
-  "mainEntityOfPage" : "https:\/\/svtter.cn\/post\/2025-02-15-extend-lvm-disk.md\/",
+  "keywords" : [ "til, nginx, ssl" ],
+  "mainEntityOfPage" : "https:\/\/svtter.cn\/post\/2025-02-19-certbot-self-signed.md\/",
   "publisher" : {
     "@type": "Organization",
     "name" : "https:\/\/svtter.cn\/",
@@ -88,14 +88,14 @@
 </script>
 
 
-<meta property="og:title" content="Extend LVM Disk.md" />
-<meta property="og:description" content="使用 PVE &#43; Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。">
-<meta property="og:url" content="https://svtter.cn/post/2025-02-15-extend-lvm-disk.md/" />
+<meta property="og:title" content="Certbot Self Signed.md" />
+<meta property="og:description" content="我们有时候会有 SSL 需求，但是国内的证书都需要买，价格也有问题，因此这里写一篇博客，教会大家如何使用 certbot 和 let&#39;s encrypt。">
+<meta property="og:url" content="https://svtter.cn/post/2025-02-19-certbot-self-signed.md/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
-  <meta name="twitter:title" content="Extend LVM Disk.md" />
-  <meta name="twitter:description" content="使用 PVE &#43; Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。">
+  <meta name="twitter:title" content="Certbot Self Signed.md" />
+  <meta name="twitter:description" content="我们有时候会有 SSL 需求，但是国内的证书都需要买，价格也有问题，因此这里写一篇博客，教会大家如何使用 certbot 和 let&#39;s encrypt。">
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
@@ -251,7 +251,7 @@
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="post-heading">
               
-                <h1>Extend LVM Disk.md</h1>
+                <h1>Certbot Self Signed.md</h1>
               
               
               
@@ -259,13 +259,13 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 15, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 19, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;210&nbsp;个字
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;73&nbsp;个字
   
   
     
@@ -291,83 +291,43 @@
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        <p>使用 PVE + Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。</p>
-<!-- 如果之前安装 Debian 没使用 LVM（逻辑卷），基本上就没救了，自己需要重新做一下系统。 -->
-<p>我们讨论的是使用 LVM（逻辑卷管理器）的情况。</p>
-<p>在这种情况下，我们需要首先看看系统。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">root@debian:/home/svtter# lsblk
-</span></span><span class="line"><span class="cl">NAME                  MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
-</span></span><span class="line"><span class="cl">sda                     8:0    <span class="m">0</span>  132G  <span class="m">0</span> disk
-</span></span><span class="line"><span class="cl">├─sda1                  8:1    <span class="m">0</span>  487M  <span class="m">0</span> part /boot
-</span></span><span class="line"><span class="cl">├─sda2                  8:2    <span class="m">0</span>    1K  <span class="m">0</span> part
-</span></span><span class="line"><span class="cl">└─sda5                  8:5    <span class="m">0</span> 31.5G  <span class="m">0</span> part
-</span></span><span class="line"><span class="cl">  ├─debian--vg-root   254:0    <span class="m">0</span> 30.5G  <span class="m">0</span> lvm  /
-</span></span><span class="line"><span class="cl">  └─debian--vg-swap_1 254:1    <span class="m">0</span>  976M  <span class="m">0</span> lvm  <span class="o">[</span>SWAP<span class="o">]</span>
-</span></span><span class="line"><span class="cl">sr0                    11:0    <span class="m">1</span>  1.4G  <span class="m">0</span> rom
-</span></span></code></pre></div><p>此时我们总共有 132G 的可用空间，使用了 31.5 G。</p>
-<p>我们需要调整 <code>/dev/sda5</code> 的大小。</p>
-<p>我们首先需要使用一个 bootable usb。如果你使用的 PVE，你可以直接加载一个 iso 来启动。</p>
-<blockquote>
-<p>注意：以下的操作不一定具有可复现性。请务必备份你的数据，以防不测。</p>
-</blockquote>
-<p>在 live system 中，运行<code>parted /dev/sda</code>。</p>
-<blockquote>
-<p>debian live system 中，用户名密码为：<code>user/live</code>，切换 root 用户，只需要<code>sudo su</code>。</p>
-</blockquote>
-<p>在 parted 中，使用 print 查看磁盘情况。</p>
-<p>下面是一个操作样例：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 启动 parted 并选择磁盘</span>
-</span></span><span class="line"><span class="cl">parted /dev/sda
-</span></span><span class="line"><span class="cl"><span class="c1"># 查看当前分区表</span>
-</span></span><span class="line"><span class="cl">print
-</span></span><span class="line"><span class="cl"><span class="c1"># 调整分区大小（假设要将 /dev/sda5 扩展到最大可用空间）</span>
-</span></span><span class="line"><span class="cl">resizepart <span class="m">5</span>  <span class="c1"># 5 是 /dev/sda5 的分区编号</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># 按照提示输入新的分区大小，按 Enter 选择默认的最大可用空间</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># 退出 parted</span>
-</span></span><span class="line"><span class="cl">quit
-</span></span></code></pre></div><p>此时，需要首先<code>resizepart /dev/sda2</code>，也就是逻辑卷组。然后在扩展<code>resizepart /dev/sda5</code>。</p>
-<p>完成拓展后，运行</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pvresize /dev/sda5
-</span></span><span class="line"><span class="cl">vgextend debian-vg /dev/sda5
-</span></span><span class="line"><span class="cl">lvextend -l +100%FREE /dev/debian-vg/root
-</span></span></code></pre></div><p>此时磁盘空间已经拓展了。但是 ext4 文件系统还未适应。</p>
-<p>运行命令来重新调整 ext4 文件系统。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">e2fsck -f /dev/debian-vg/root
-</span></span><span class="line"><span class="cl">resize2fs /dev/debian-vg/root
-</span></span></code></pre></div><p>再次查看</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">root@debian:/home/user# sudo lvdisplay /dev/debian-vg/root
-</span></span><span class="line"><span class="cl">  --- Logical volume ---
-</span></span><span class="line"><span class="cl">  LV Path                /dev/debian-vg/root
-</span></span><span class="line"><span class="cl">  LV Name                root
-</span></span><span class="line"><span class="cl">  VG Name                debian-vg
-</span></span><span class="line"><span class="cl">  LV UUID                82SmmD-qnAc-KOIO-1B2Y-ynP3-Mo0E-D12Rq0
-</span></span><span class="line"><span class="cl">  LV Write Access        read/write
-</span></span><span class="line"><span class="cl">  LV Creation host, <span class="nb">time</span> debian, 2025-02-15 05:49:23 +0000
-</span></span><span class="line"><span class="cl">  LV Status              available
-</span></span><span class="line"><span class="cl">  <span class="c1"># open                 0</span>
-</span></span><span class="line"><span class="cl">  LV Size                &lt;91.70 GiB
-</span></span><span class="line"><span class="cl">  Current LE             <span class="m">23475</span>
-</span></span><span class="line"><span class="cl">  Segments               <span class="m">2</span>
-</span></span><span class="line"><span class="cl">  Allocation             inherit
-</span></span><span class="line"><span class="cl">  Read ahead sectors     auto
-</span></span><span class="line"><span class="cl">  - currently <span class="nb">set</span> to     <span class="m">256</span>
-</span></span><span class="line"><span class="cl">  Block device           254:0
-</span></span></code></pre></div><p>这样一来，磁盘空间就拓展了。</p>
+        <p>我们有时候会有 SSL 需求，但是国内的证书都需要买，价格也有问题，因此这里写一篇博客，教会大家如何使用 <code>certbot</code> 和 <code>let's encrypt</code>。</p>
+<p><code>Let's Encrypt</code> 是一个免费的 SSL 服务。
+<code>certbot</code>用来自动化 ssl 签名，来提供 https。</p>
+<h2 id="debianubuntu-安装依赖">Debian/Ubuntu 安装依赖</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt update
+</span></span><span class="line"><span class="cl">sudo apt install certbot python3-certbot-nginx
+</span></span></code></pre></div><h2 id="添加配置文件">添加配置文件</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo nano /etc/nginx/sites - available/subdomain.example.com.conf
+</span></span></code></pre></div><p>文件中添加 nginx 的配置信息</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server_name</span> <span class="n">subdomain</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">root</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">subdomain</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">index</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span> <span class="n">index</span><span class="o">.</span><span class="n">htm</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">try_files</span> <span class="o">$</span><span class="n">uri</span> <span class="o">$</span><span class="n">uri</span><span class="o">/</span> <span class="o">=</span><span class="mi">404</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="启用和部署-https">启用和部署 HTTPS</h2>
+<p>启用配置文件： <code>sudo ln -s /etc/nginx/sites - available/subdomain.example.com.conf /etc/nginx/sites - enabled/</code>.</p>
+<p>添加域名即可</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo certbot --nginx -d subdomain.example.com.
+</span></span></code></pre></div>
 
         
           <div class="blog-tags">
             
               
-              <a href="https://svtter.cn/tags/lvm/">LVM</a>&nbsp;
-            
-              
-              <a href="https://svtter.cn/tags/linux/">Linux</a>&nbsp;
-            
-              
-              <a href="https://svtter.cn/tags/debian/">Debian</a>&nbsp;
-            
-              
               <a href="https://svtter.cn/tags/til/">til</a>&nbsp;
+            
+              
+              <a href="https://svtter.cn/tags/nginx/">nginx</a>&nbsp;
+            
+              
+              <a href="https://svtter.cn/tags/ssl/">ssl</a>&nbsp;
             
           </div>
         
@@ -382,42 +342,42 @@
     <ul class="share">
       
       <li>
-        <a href="//twitter.com/share?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-extend-lvm-disk.md%2f&amp;text=Extend%20LVM%20Disk.md&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
+        <a href="//twitter.com/share?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-19-certbot-self-signed.md%2f&amp;text=Certbot%20Self%20Signed.md&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-extend-lvm-disk.md%2f" target="_blank" title="Share on Facebook">
+        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-19-certbot-self-signed.md%2f" target="_blank" title="Share on Facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//reddit.com/submit?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-extend-lvm-disk.md%2f&amp;title=Extend%20LVM%20Disk.md" target="_blank" title="Share on Reddit">
+        <a href="//reddit.com/submit?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-19-certbot-self-signed.md%2f&amp;title=Certbot%20Self%20Signed.md" target="_blank" title="Share on Reddit">
           <i class="fab fa-reddit"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-extend-lvm-disk.md%2f&amp;title=Extend%20LVM%20Disk.md" target="_blank" title="Share on LinkedIn">
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-19-certbot-self-signed.md%2f&amp;title=Certbot%20Self%20Signed.md" target="_blank" title="Share on LinkedIn">
           <i class="fab fa-linkedin"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-extend-lvm-disk.md%2f&amp;title=Extend%20LVM%20Disk.md" target="_blank" title="Share on StumbleUpon">
+        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-19-certbot-self-signed.md%2f&amp;title=Certbot%20Self%20Signed.md" target="_blank" title="Share on StumbleUpon">
           <i class="fab fa-stumbleupon"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-extend-lvm-disk.md%2f&amp;description=Extend%20LVM%20Disk.md" target="_blank" title="Share on Pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-19-certbot-self-signed.md%2f&amp;description=Certbot%20Self%20Signed.md" target="_blank" title="Share on Pinterest">
           <i class="fab fa-pinterest"></i>
         </a>
       </li>
@@ -439,9 +399,9 @@
                   <ul>
                 
                 
-                    <li><a href="/post/2025-02-19-certbot-self-signed.md/">Certbot Self Signed.md</a></li>
-                
                     <li><a href="/post/2025-02-17-compile-latex-local.md/">Compile Latex Local.md</a></li>
+                
+                    <li><a href="/post/2025-02-15-extend-lvm-disk.md/">Extend LVM Disk.md</a></li>
                 
                     <li><a href="/post/2025-02-15-paddle-serving.md/">实际推理模型和实验中推理模型</a></li>
                 
@@ -459,13 +419,9 @@
         <ul class="pager blog-pager">
           
             <li class="previous">
-              <a href="https://svtter.cn/post/2025-02-15-paddle-serving.md/" data-toggle="tooltip" data-placement="top" title="实际推理模型和实验中推理模型">&larr; 前一篇</a>
+              <a href="https://svtter.cn/post/2025-02-17-compile-latex-local.md/" data-toggle="tooltip" data-placement="top" title="Compile Latex Local.md">&larr; 前一篇</a>
             </li>
           
-          
-            <li class="next">
-              <a href="https://svtter.cn/post/2025-02-15-easy-zshrc-config.md/" data-toggle="tooltip" data-placement="top" title="Easy Zshrc Config.md">后一篇 &rarr;</a>
-            </li>
           
         </ul>
       
@@ -478,12 +434,12 @@
       
           
           <div class="disqus-comments">                  
-            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/post/2025-02-15-extend-lvm-disk.md">则评论</span></button>
+            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/post/2025-02-19-certbot-self-signed.md">则评论</span></button>
             <div id="disqus_thread"></div>
 
             <script type="text/javascript">
               var disqus_config = function () {
-              this.page.url = 'https:\/\/svtter.cn\/post\/2025-02-15-extend-lvm-disk.md';
+              this.page.url = 'https:\/\/svtter.cn\/post\/2025-02-19-certbot-self-signed.md';
             };
 
           </script>

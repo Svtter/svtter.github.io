@@ -211,7 +211,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 17, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 19, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
@@ -244,6 +244,81 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://svtter.cn/2018/06/21/%23dockerswarm%E5%AD%A6%E4%B9%A0/">
+        <h2 class="post-title"># Docker swarm 学习</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 June 21, 2018
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;165&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <blockquote>
+<p>本文的学习过程主要是通过 Docker <a href="https://docs.docker.com/get-started/part3/">官方文档</a></p>
+</blockquote>
+<p>花了一段时间学习 Docker swarm，一个docker的容器集群服务，来应对即将到来的高并发项目需求。</p>
+<h2 id="docker-machine">Docker machine</h2>
+<p>Docker machine 是 Docker 官方编排的项目之一，可以理解成一个 Docker 宿主机器的统一管理CLI，自部署不是很好用：目前国内仅仅 aliyun 支持，其他的我在官方文档中没有找到。</p>
+<p>Docker machine 的安装十分简单，通过官网提供的脚本即可，For Linux：</p>
+<div class="codehilite">
+  <pre><span></span>$ <span class="nv">base</span><span class="o">=</span>https://github.com/docker/machine/releases/download/v0.14.0 <span class="o">&&</span>
+  curl -L <span class="nv">$base</span>/docker-machine-<span class="k">$(</span>uname -s<span class="k">)</span>-<span class="k">$(</span>uname -m<span class="k">)</span> &gt;/tmp/docker-machine <span class="o">&&</span>
+  sudo install /tmp/docker-machine /usr/local/bin/docker-machine
+</pre>
+</div>
+<p>安装好以后，即可按照相关的操作进行运行。</p>
+<p>比如，创建两个虚拟机：</p>
+<div class="codehilite">
+  <pre><span></span>$ docker-machine create --driver virtualbox myvm1
+$ docker-machine create --driver virtualbox myvm2
+</pre>
+</div>
+<p>进入虚拟机：</p>
+<div class="codehilite">
+  <pre><span></span>$ docker-machine ssh myvm1
+</pre>
+</div>
+<p>显示虚拟机</p>
+<div class="codehilite">
+  <pre><span></span>NAME    ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS
+myvm1   -        virtualbox   Running   tcp://192.168.99.100:2376           v18.05.0-ce
+myvm2   -        virtualbox   Running   tcp://192.168.99.101:2376           v18.05.0-ce
+</pre>
+</div>
+<p>然后即可在虚拟机的基础上进行相关的操作，十分方便。</p>
+        <a href="https://svtter.cn/2018/06/21/%23dockerswarm%E5%AD%A6%E4%B9%A0/" class="post-read-more">[阅读全文]</a>
+        
+    </div>
+
+    
+
+</article>
           
             <article class="post-preview">
     <a href="https://svtter.cn/2018/06/19/python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/">
@@ -800,63 +875,6 @@
 <ol>
 <li><a href="https://blog.lilydjwg.me/2012/6/6/get-ipv4-and-ipv6-addresses-of-local-host-in-a-programming-way.34055.html">https://blog.lilydjwg.me/2012/6/6/get-ipv4-and-ipv6-addresses-of-local-host-in-a-programming-way.34055.html</a></li>
 </ol>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2018/02/28/%E4%BD%BF%E7%94%A8grubcustomizer%E8%B0%83%E6%95%99grub/">
-        <h2 class="post-title">使用 grub customizer 调教grub</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 28, 2018
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;18&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>调整grub总是需要搜索某个文件，某个配置，相当麻烦，近期找了一个比较不错的图形化配置管理器，<code>grub customizer</code>，可以调整启动的内核，以及启动的画面，非常好用，安利一发。</p>
-<h2 id="安装">安装</h2>
-<div class="codehilite">
-  <pre><span></span>sudo add-apt-repository ppa:danielrichter2007/grub-customizer
-sudo apt-get update
-sudo apt-get install grub-customizer
-</pre>
-</div>
-<h2 id="使用截图">使用截图</h2>
-<p>【日后补上】</p>
-<h2 id="reference">reference</h2>
-<ul>
-<li><a href="http://ubuntuhandbook.org/index.php/2016/04/install-grub-customizer-ubuntu-16-04-lts/">http://ubuntuhandbook.org/index.php/2016/04/install-grub-customizer-ubuntu-16-04-lts/</a></li>
-<li><a href="http://blog.csdn.net/lu_embedded/article/details/44353499">grub讲解</a></li>
-</ul>
 
         
     </div>
