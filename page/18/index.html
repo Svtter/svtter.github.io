@@ -243,6 +243,74 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2017/04/25/%E8%B7%A8%E7%AB%99%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/">
+        <h2 class="post-title">跨站评论系统</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 April 25, 2017
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;43&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>多说马上就关闭了，静态站的评论系统何去何从。</p>
+<p>首先想要分析一下duoshuo的代码，看看自己能否实现。</p>
+<p>不过，在看duoshuo客户端代码的时候没有搞明白到底是如何实现确认目标来源的。</p>
+<div class="codehilite">
+  <pre><span></span><span class="c">&lt;!--</span><span class="nx">多说js加载开始</span><span class="err">，</span><span class="nx">一个页面只需要加载一次</span> <span class="o">--&gt;</span>
+<span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
+<span class="kd">var</span> <span class="nx">duoshuoQuery</span> <span class="o">=</span> <span class="p">{</span><span class="nx">short_name</span><span class="o">:</span><span class="s2">"您的多说二级域名"</span><span class="p">};</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">ds</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+    <span class="nx">ds</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;text/javascript&#39;</span><span class="p">;</span><span class="nx">ds</span><span class="p">.</span><span class="nx">async</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="nx">ds</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;http://static.duoshuo.com/embed.js&#39;</span><span class="p">;</span>
+    <span class="nx">ds</span><span class="p">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">;</span>
+    <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi"></span><span class="p">]</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)[</span><span class="mi"></span><span class="p">]).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">ds</span><span class="p">);</span>
+<span class="p">})();</span>
+<span class="o">&lt;</span><span class="err">/script&gt;</span>
+<span class="c">&lt;!--</span><span class="nx">多说js加载结束</span><span class="err">，</span><span class="nx">一个页面只需要加载一次</span> <span class="o">--&gt;</span>
+</pre>
+</div>
+<p>似乎是自己生成生成一条Javascript代码，然后把head以及body加在上面，进而出一个界面。</p>
+<p><a href="http://static.duoshuo.com/embed.js">embed.js</a>就没有再看，好麻烦。</p>
+<h2 id="isso">isso</h2>
+<p>在网上寻找一个合适的开源评论系统<a href="https://posativ.org/isso">isso</a>，可以自己搭建在主机上，使用Python+SQlite3实现。具体实现在其开源的代码中。</p>
+<p>涉及到的知识有几个，一个是<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>，另一个还是CORS。</p>
+<p>个人认为知识储备基本有了，但是如果要写还是很麻烦，于是就暂且弃坑了。</p>
+<p>可以通过这个docker来部署<a href="https://hub.docker.com/r/wonderfall/isso/">wonderfall/isso</a>，不过感觉docker-compose似乎存在问题，我无法直接挂载<code>./config:/config</code>，因此对于domer-compose中做此修改<code>...../config/isso.conf:/config/isso.conf</code>。</p>
+<p>此外，对于Flask实现这个留言系统，可以考虑通过<a href="https://flask-cors.readthedocs.io/en/latest/">flask-cors</a>来实现。</p>
+
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/post/2017-04-21-%E9%BB%91%E5%AE%A2%E4%B8%8E%E7%94%BB%E5%AE%B6%E8%AF%BB%E5%90%8E/">
         <h2 class="post-title">《黑客与画家》读后</h2>
         
@@ -769,64 +837,6 @@
         
        
        <a href="https://svtter.cn/tags/macbook/">macbook</a>&nbsp;
-         
-    </div>
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2017/02/06/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud%E5%B0%8F%E8%AE%B0/">
-        <h2 class="post-title">树莓派安装owncloud小记</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 6, 2017
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;12&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p><a href="http://www.voidcn.com/blog/u010873775/article/p-5812004.html">http://www.voidcn.com/blog/u010873775/article/p-5812004.html</a></p>
-<p>我是按照以上教程进行安装部署的，但是使用不了，原因是对于目录配置有问题，其中，不应该是进入data目录，而是进入owncloud目录。</p>
-<p>成功配置之后发现owncloud没有启用https，登陆官网查看，配置文档云里雾里，不是很明白，按照其配置方法不见奏效，其中有不少地方我也不是很理解，最后找到了另一篇文章，具体文章我已经找不到了，能够配置的更好一些，但是不知道为什么直接无法访问了。我使用的证书是openssl生成的，因此在chrome访问的时候提示是不安全的。</p>
-        <a href="https://svtter.cn/2017/02/06/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud%E5%B0%8F%E8%AE%B0/" class="post-read-more">[阅读全文]</a>
-        
-    </div>
-
-    
-    <div class="blog-tags">
-        
-       
-       <a href="https://svtter.cn/tags/raspberry/">Raspberry</a>&nbsp;
-        
-       
-       <a href="https://svtter.cn/tags/owncloud/">owncloud</a>&nbsp;
-        
-       
-       <a href="https://svtter.cn/tags/linux/">Linux</a>&nbsp;
          
     </div>
     

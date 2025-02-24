@@ -243,6 +243,68 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2017/12/27/%E4%BD%BF%E7%94%A8docker%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84sitemap%E9%97%AE%E9%A2%98/">
+        <h2 class="post-title">使用Docker时遇到的sitemap问题</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 December 27, 2017
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;138&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>这两天感觉博客访问量已经不能靠用嘴宣传了，于是决定做一下sitemap，但是发现django自带的sitemap生成器存在这样的问题：生成的sitemap是依照container的hostname来显示的。</p>
+<p>为此我查询了一下其他人是怎么搞的，发现他们都把nginx和django放在一个容器下——但是如此构建不仅麻烦，似乎违背了docker的构建思路，在一个container里面放了多个进程。因此，我认为下面的方案是合理的。</p>
+<h2 id="解决方案">解决方案</h2>
+<h3 id="enabling-the-sites-framework">Enabling the sites framework</h3>
+<p>To enable the sites framework, follow these steps:</p>
+<p>Add ‘django.contrib.sites’ to your INSTALLED_APPS setting.</p>
+<h3 id="define-a-site_id-setting">Define a SITE_ID setting:</h3>
+<p><code>SITE_ID = 1</code></p>
+<h3 id="run-migrate">Run migrate.</h3>
+<p>django.contrib.sites registers a post_migrate signal handler which creates a default site named example.com with the domain example.com. This site will also be created after Django creates the test database. To set the correct name and domain for your project, you can use a data migration.</p>
+        <a href="https://svtter.cn/2017/12/27/%E4%BD%BF%E7%94%A8docker%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84sitemap%E9%97%AE%E9%A2%98/" class="post-read-more">[阅读全文]</a>
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/docker/">Docker</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/django/">Django</a>&nbsp;
+         
+    </div>
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2017/12/27/%E4%BD%BF%E7%94%A8fish-%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84shell/">
         <h2 class="post-title">使用fish – 一个新的shell</h2>
         
@@ -761,96 +823,6 @@ Streamline development workflow by loading .env files.
 <ul>
 <li><a href="http://mp.weixin.qq.com/s/aJdTkaOv01EN95tZtMiL_w">ROS可视化</a></li>
 <li><a href="http://www.guyuehome.com/1159">ROS-MoveIT</a></li>
-</ul>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2017/12/06/%E5%BF%AB%E9%80%9Fgit%E6%8C%87%E5%8D%97/">
-        <h2 class="post-title">快速git指南</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 December 6, 2017
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;52&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>git是一个版本控制工具，通过git我们可以解决许多版本冲突，以及协同开发的问题。</p>
-<h2 id="git安装">git安装</h2>
-<p>Windows可以通过安装文件直接安装，Linux可以通过<code>apt-get install git</code>安装，OSX可以通过<code>brew install git</code>来安装git。</p>
-<h2 id="初始化当前目录为git项目">初始化当前目录为git项目</h2>
-<div class="codehilite">
-  <pre><span></span>$ git init .
-</pre>
-</div>
-<p>这个操作的意思是，把当前项目使用git进行管理。此时会创建一个<code>.git</code>文件夹。</p>
-<h2 id="添加当前文件的改动并且提交">添加当前文件的改动，并且提交</h2>
-<div class="codehilite">
-  <pre><span></span>$ git add .
-$ git commit -m <span class="s1">&#39;update message&#39;</span>
-</pre>
-</div>
-<p>如果修改了文件，文件的变动没有被git记录。这个时候运行上述命令，就可以把变动记录下来。</p>
-<h2 id="推送到远程仓库">推送到远程仓库</h2>
-<div class="codehilite">
-  <pre><span></span>$ git push
-</pre>
-</div>
-<h2 id="获取远程仓库的更新">获取远程仓库的更新</h2>
-<div class="codehilite">
-  <pre><span></span>$ git pull
-</pre>
-</div>
-<h2 id="下载git仓库">下载git仓库</h2>
-<div class="codehilite">
-  <pre><span></span>$ git clone <span class="si">${</span><span class="nv">仓库的URL</span><span class="si">}</span>
-</pre>
-</div>
-<p>例如，下载这个项目<code>breastCancer</code>，可以使用如下的命令</p>
-<div class="codehilite">
-  <pre><span></span>$ git clone https://github.com/Svtter/breastCancer
-</pre>
-</div>
-<p>通过这个操作就可以下载这个仓库。</p>
-<h2 id="可视化当前更新">可视化当前更新</h2>
-<p>例如</p>
-<img alt="" src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fm6yf63ax3j21iw024t8v.jpg?w=625" data-recalc-dims="1" />
-<p>点击<code>first commit</code>，即可看到这次提交的相关改动。</p>
-<img alt="" src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fm6ygxxgf1j21xs0iymzv.jpg?w=625" data-recalc-dims="1" />
-<h2 id="其他的问题">其他的问题</h2>
-<p>如果出现conflict以及其他的问题，可以通过google自行搜索解决。</p>
-<h2 id="可参考的资料">可参考的资料</h2>
-<ul>
-<li><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">廖雪峰git教程</a></li>
 </ul>
 
         

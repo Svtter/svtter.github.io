@@ -243,6 +243,74 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2016/05/02/windows%E4%BD%BF%E7%94%A8linux%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%BD%9C%E4%B8%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">
+        <h2 class="post-title">Windows使用Linux虚拟机作为开发环境</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 May 2, 2016
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;32&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>我的环境：ubuntu server 14.04，有2个网卡，eth1是能上外网的地址，配置了ip，网关，mask，</p>
+<p>eth0是为内网提供各种服务，比如pppoe, dhcp，只配置了ip和mask。</p>
+<p>根据之前的文章（http://blog.chinaunix.net/uid-563939-id-4340396.html），pppoe客户端已经能够能获取到地址，掩码，网关和DNS，</p>
+<p>但是此时客户端是不能上网的，还需要对ubuntu server做如下配置：</p>
+<p>1、打开ip_forward</p>
+<p>临时打开：echo “1”&gt;/proc/sys/net/ipv4/ip_forward</p>
+<p>永久打开：修改/etc/sysctl.conf，取消这一行的注释：net.ipv4.ip_forward= 1， 然后运行sysctl -p使之立即生效。</p>
+<p>2、增加nat</p>
+<p>iptables -t nat -A　POSTROUTING -o eth1 -j SNAT –to-source xxx.xxx.xxx.xxx (xxx.xxx.xxx.xxx为能够上外网的网卡ip)</p>
+<blockquote>
+<p>以上内容为转载，转载地址</p>
+</blockquote>
+<p>因为赛尔网不能使用<code>Linux</code>客户端，但是许多开发等均建立在Linux的基础上 — 为此十分痛苦，于是使用虚拟机来使用Linux，但是双网卡配置方面出了一些问题，于是参照了上面的文章。</p>
+
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/windows/">Windows</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/ubuntu/">Ubuntu</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/linux/">Linux</a>&nbsp;
+         
+    </div>
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2016/04/29/friendlinks/">
         <h2 class="post-title">Friend links</h2>
         
@@ -998,64 +1066,6 @@
         
         <p>我本身不是应该前端的Hacker（当然我自己也不知自己属于什么Hacker)，于是决定在<code>themeAPI</code>上参见一下<code>hexo</code>的做法。</p>
 <p>但是再此之前，想要首先将<code>leanote</code>的<code>markdown</code>渲染API加入到<code>themeAPI</code>里面去，所以首先研究一下官方的主题是如何运作的。</p>
-
-        
-    </div>
-
-    
-    <div class="blog-tags">
-        
-       
-       <a href="https://svtter.cn/tags/leanote/">leanote</a>&nbsp;
-         
-    </div>
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2016/03/10/leanote-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
-        <h2 class="post-title">Leanote – 源码阅读</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 March 10, 2016
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;12&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>写一下如何阅读Leanote的源代码。</p>
-<hr>
-<p>上面的go的框架我是没有仔细看，感觉似乎用到了很多开源项目？整体来说，leanote应该是一个伟大的项目。</p>
-<h2 id="熟悉gulpfile">熟悉gulpfile</h2>
-<p>这里有一篇日志 <a href="https://segmentfault.com/a/1190000000372547">https://segmentfault.com/a/1190000000372547</a></p>
-<p>基本读完以后就懂了。<code>cnpm install -g gulp</code>安装一下。</p>
-<p>大体上读一读可以发现，<code>gulpfile</code>用于构造<code>leanote</code>的前端内容。</p>
-<h2 id="后记20171211">后记2017.12.11</h2>
-<p>这篇博文后来我没有写下去，因为后面不再使用leanote——读代码这件事情，其实不需要耗费太多时间，就可以做的不错。</p>
 
         
     </div>
