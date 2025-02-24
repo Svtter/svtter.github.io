@@ -243,6 +243,71 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2014/11/21/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/">
+        <h2 class="post-title">python的自动补全</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 21, 2014
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;41&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <h2 id="新建python_start_up_file文件">新建python_start_up_file文件</h2>
+<div class="codehilite">
+  <pre><span></span><span class="c1"># python startup file</span>
+<span class="kn">import</span> <span class="nn">readline</span>
+<span class="kn">import</span> <span class="nn">rlcompleter</span>
+<span class="kn">import</span> <span class="nn">atexit</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="c1"># tab completion</span>
+<span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s1">&#39;tab: complete&#39;</span><span class="p">)</span>
+<span class="c1"># history file</span>
+<span class="n">histfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;home&#39;</span><span class="p">],</span> <span class="s1">&#39;.pythonhistory&#39;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">readline</span><span class="o">.</span><span class="n">read_history_file</span><span class="p">(</span><span class="n">histfile</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">ioerror</span><span class="p">:</span>
+    <span class="mi"></span>
+<span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">readline</span><span class="o">.</span><span class="n">write_history_file</span><span class="p">,</span> <span class="n">histfile</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">os</span><span class="p">,</span> <span class="n">histfile</span><span class="p">,</span> <span class="n">readline</span><span class="p">,</span> <span class="n">rlcompleter</span>
+</pre>
+</div>
+<p>在<code>$HOME/.profile</code>文件中写入</p>
+<p><code>export PYTHONSTARTUP=$HOME/.python_start_up_file</code></p>
+<h2 id="小注">小注：</h2>
+<p>可以使用py3compile来编译文件，然后使用python3+文件名来运行</p>
+
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/post/2014-11-19-python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/">
         <h2 class="post-title">Python-使用hexo的python脚本</h2>
         
@@ -924,68 +989,6 @@
        <a href="https://svtter.cn/tags/php/">php</a>&nbsp;
          
     </div>
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2014/11/10/linux-selinux-httpd%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE/">
-        <h2 class="post-title">Linux-SELinux-httpd无法访问</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 November 10, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;46&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <h1 id="目录的问题">目录的问题</h1>
-<p>由于SELinux造成的httpd中的目录无法访问，可以使用</p>
-<ul>
-<li><code>chcon -R -t httpd_user_content_t &lt;path to web files&gt;</code></li>
-<li><code>chcon -R -t httpd_sys_content_t &lt;path to web files&gt;</code></li>
-</ul>
-<p>mark一个网站()[http://www.jb51.net/os/RedHat/1303.html]</p>
-<h1 id="文件夹访问权限">文件夹访问权限</h1>
-<p>以上方法解决了SELinux的问题，但是我的目录依然没有访问权限。</p>
-<p>然后看了一下文件的基本属性: <code>-rw-r--r--. 1 root root   21 11月 11 12:27 index.html</code></p>
-<p>应该也是没有问题的。</p>
-<h1 id="再查selinux">再查SElinux</h1>
-<p>随后使用<code>cat /var/log/messages</code>探索一番，依然没有找到问题所在——SELinux没有报错。</p>
-<p>防火墙的问题？不是阿。因为我本身是在内网访问，防火墙应该不会出问题。</p>
-<p>那应该是什么问题呢？</p>
-<h1 id="配置文件">配置文件</h1>
-<p>终于在配置文件中找到了问题。</p>
-<p>apache在进入2.4.*以后，不再使用<code>Allow from all</code>这种形式了，取而代之，使用<code>Require from granted</code>这种格式。晕，就是在此处，<code>&lt;Directory&gt;</code>没有设置好，坑了好久阿。。</p>
-<p>相对的我这几天一直都在deepin下开发——因为<code>apt-get</code>得到的apache之前比较习惯，此外deepin没有se也是省了很多功夫。不过通过这一次，总算是把问题解决了！</p>
-<p>鼓励！</p>
-
-        
-    </div>
-
     
 
 </article>

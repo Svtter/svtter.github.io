@@ -247,6 +247,132 @@
         <div class="posts-list">
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2016/02/23/python-%E5%A4%8D%E5%85%A5%E5%9D%91/">
+        <h2 class="post-title">Python – 复入坑</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 23, 2016
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;245&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>= =亲爱的Python再次拿起来。。</p>
+<h2 id="检测python进入参数的类型">检测Python进入参数的类型</h2>
+<div class="codehilite">
+  <pre><span></span><span class="k">def</span> <span class="nf">my_abs</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;bad operand type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi"></span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">x</span>
+</pre>
+</div>
+<h2 id="默认参数陷阱">默认参数陷阱</h2>
+<p><code>L=[]</code>会一直都是原来的值，因此初始值需要为<code>None</code></p>
+<div class="codehilite">
+  <pre><span></span><span class="k">def</span> <span class="nf">add_end</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">L</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">L</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;END&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">L</span>
+</pre>
+</div>
+<h2 id="利用可变参数">利用可变参数</h2>
+<p>利用可变参数，可以一次传递多个值给函数。此外，还可以利用<code>*</code>把原来的<code>list</code>变成多个参数传入</p>
+<div class="codehilite">
+  <pre><span></span><span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="o">*</span><span class="n">numbers</span><span class="p">):</span>
+    <span class="nb">sum</span> <span class="o">=</span> <span class="mi"></span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
+        <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">n</span>
+    <span class="k">return</span> <span class="nb">sum</span>
+</pre>
+</div>
+<p>结果：</p>
+<div class="codehilite">
+  <pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">calc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="mi">5</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">calc</span><span class="p">()</span>
+<span class="mi"></span>
+</pre>
+</div>
+<p>此外:</p>
+<div class="codehilite">
+  <pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">calc</span><span class="p">(</span><span class="n">nums</span><span class="p">[</span><span class="mi"></span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="mi">14</span>
+<span class="c1"># 这种写法当然是可行的，问题是太繁琐，所以Python允许你在list或tuple前面加一个*号，把list或tuple的元素变成可变参数传进去：</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">calc</span><span class="p">(</span><span class="o">*</span><span class="n">nums</span><span class="p">)</span>
+<span class="mi">14</span>
+</pre>
+</div>
+<h2 id="关键字参数">关键字参数</h2>
+<p>可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。请看示例：</p>
+<div class="codehilite">
+  <pre><span></span><span class="k">def</span> <span class="nf">person</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;name:&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;age:&#39;</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="s1">&#39;other:&#39;</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+<span class="c1"># &gt;&gt;&gt; person(&#39;Michael&#39;, 30)</span>
+<span class="c1"># name: Michael age: 30 other: {}</span>
+</pre>
+</div>
+<p>也可以传入任意个数的关键字参数：</p>
+<div class="codehilite">
+  <pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">person</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="n">city</span><span class="o">=</span><span class="s1">&#39;Beijing&#39;</span><span class="p">)</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">Bob</span> <span class="n">age</span><span class="p">:</span> <span class="mi">35</span> <span class="n">other</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="s1">&#39;Beijing&#39;</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">person</span><span class="p">(</span><span class="s1">&#39;Adam&#39;</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="n">gender</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">job</span><span class="o">=</span><span class="s1">&#39;Engineer&#39;</span><span class="p">)</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">Adam</span> <span class="n">age</span><span class="p">:</span> <span class="mi">45</span> <span class="n">other</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;job&#39;</span><span class="p">:</span> <span class="s1">&#39;Engineer&#39;</span><span class="p">}</span>
+</pre>
+</div>
+<p>关键字参数有什么用？它可以扩展函数的功能。</p>
+<p>和可变参数类似，也可以先组装出一个dict，然后，把该dict转换为关键字参数传进去：</p>
+<div class="codehilite">
+  <pre><span></span>&gt;&gt;&gt; extra = {&#39;city&#39;: &#39;Beijing&#39;, &#39;job&#39;: &#39;Engineer&#39;}
+&gt;&gt;&gt; person(&#39;Jack&#39;, 24, city=extra[&#39;city&#39;], job=extra[&#39;job&#39;])
+name: Jack age: 24 other: {&#39;city&#39;: &#39;Beijing&#39;, &#39;job&#39;: &#39;Engineer&#39;}
+</pre>
+</div>
+<p>简化的写法：</p>
+<div class="codehilite">
+  <pre><span></span>&gt;&gt;&gt; extra = {&#39;city&#39;: &#39;Beijing&#39;, &#39;job&#39;: &#39;Engineer&#39;}
+&gt;&gt;&gt; person(&#39;Jack&#39;, 24, **extra)
+name: Jack age: 24 other: {&#39;city&#39;: &#39;Beijing&#39;, &#39;job&#39;: &#39;Engineer&#39;}
+</pre>
+</div>
+<p><code>**extra</code>表示把extra这个dict的所有key-value用关键字参数传入到函数的<code>**kw</code>参数，kw将获得一个dict，注意kw获得的dict是extra的一份拷贝，对kw的改动不会影响到函数外的extra。</p>
+        <a href="https://svtter.cn/2016/02/23/python-%E5%A4%8D%E5%85%A5%E5%9D%91/" class="post-read-more">[阅读全文]</a>
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2016/02/21/%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%BB%A3%E7%A0%81%E7%9A%84%E5%BF%AB%E6%8D%B7%E9%94%AE/">
         <h2 class="post-title">格式化代码的快捷键</h2>
         
@@ -733,49 +859,6 @@
 </ul>
 <p>使用<code>Ctrl+Alt+s</code>召唤Settings，输入Plugin，Browse，找到ideavim，安装。此时提示重启webstorm，先不必重启，打开<code>C:\User\&quot;当前用户&quot;</code>，建立<code>_ideavim</code>，加上<code>source _vimrc</code>读入自己的vim配置文件即可。根本停不下来。</p>
 <p>早知道有如此工具在下也不至于在web上如此痛苦。个人认为，比起配置原生态Vim，这样开发更加好用，节省博主本来就不多的脑细胞。</p>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2015/08/27/chinaunicom%E7%9A%84%E9%AB%98%E9%80%9F%E8%BF%9E%E6%8E%A5%E6%96%B9%E6%B3%95/">
-        <h2 class="post-title">ChinaUnicom的高速连接方法</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 August 27, 2015
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>找到网关在浏览器中输入即可。</p>
 
         
     </div>
