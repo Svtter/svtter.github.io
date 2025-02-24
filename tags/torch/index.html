@@ -15,9 +15,8 @@
  
 
 
-      <title>实际推理模型和实验中推理模型 - </title>
+      <title>Torch - </title>
 
-  <meta name="description" content="最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。">
   <meta name="author" content="svtter"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -38,64 +37,13 @@
   
 }
 </script>
-<script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "item": {
-          "@id": "https:\/\/svtter.cn\/",
-          "name": "home"
-        }
-    },{
-        "@type": "ListItem",
-        "position": 3,
-        "item": {
-          "@id": "https:\/\/svtter.cn\/post\/2025-02-15-paddle-serving.md\/",
-          "name": "实际推理模型和实验中推理模型"
-        }
-    }]
-}
-</script><script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "Article",
-  "author": {
-    "name" : "svtter"
-  },
-  "headline": "实际推理模型和实验中推理模型",
-  "description" : "最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。\n",
-  "inLanguage" : "zh-cn",
-  "wordCount":  56 ,
-  "datePublished" : "2025-02-15T09:50:49\u002b08:00",
-  "dateModified" : "2025-02-15T09:50:49\u002b08:00",
-  "image" : "https:\/\/svtter.cn\/",
-  "keywords" : [ "paddlepaddle, paddleocr, inference, baidu, til" ],
-  "mainEntityOfPage" : "https:\/\/svtter.cn\/post\/2025-02-15-paddle-serving.md\/",
-  "publisher" : {
-    "@type": "Organization",
-    "name" : "https:\/\/svtter.cn\/",
-    "logo" : {
-        "@type" : "ImageObject",
-        "url" : "https:\/\/svtter.cn\/",
-        "height" :  60 ,
-        "width" :  60
-    }
-  }
-}
-</script>
 
-
-<meta property="og:title" content="实际推理模型和实验中推理模型" />
-<meta property="og:description" content="最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。">
-<meta property="og:url" content="https://svtter.cn/post/2025-02-15-paddle-serving.md/" />
+<meta property="og:title" content="Torch" />
+<meta property="og:url" content="https://svtter.cn/tags/torch/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Svtter&#39;s Blog" />
 
-  <meta name="twitter:title" content="实际推理模型和实验中推理模型" />
-  <meta name="twitter:description" content="最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。">
+  <meta name="twitter:title" content="Torch" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@Crack_svtter" />
   <meta name="twitter:creator" content="@Crack_svtter" />
@@ -250,33 +198,14 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
+            <div class="tags-heading">
               
-                <h1>实际推理模型和实验中推理模型</h1>
-              
-              
+                <h1>Torch</h1>
               
               
-                <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 15, 2025
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;56&nbsp;个字
-  
-  
-    
-      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-    
-  
-  
-</span>
-
-
+                <hr class="small">
+              
+              
               
             </div>
           </div>
@@ -288,174 +217,72 @@
 
 
     
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        <p>最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。</p>
-<p>实验中用于推理的模型，也就是可训练的模型。一般paddle的模型文件是这样的：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root 420M Feb <span class="m">12</span> 15:59 model.pdopt
-</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root 275M Feb <span class="m">12</span> 15:59 model.pdparams
-</span></span></code></pre></div><p>一个是 pdopt 一个是 pdparams。</p>
-<p>这个就是用来在实验过程中进行推理的模型。一般用<code>tools/infer_rec.py</code>。</p>
-<p>如果要实际部署到开发环境，需要将现在的实验中的模型做一个转换。</p>
-<p>需要执行<code>tools/export_model.py</code>来把模型转换成</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">inference/en_PP-OCRv3_rec/
-</span></span><span class="line"><span class="cl">    ├── inference.pdiparams         # 识别inference模型的参数文件
-</span></span><span class="line"><span class="cl">    └── inference.json              # 识别inference模型的program文件
-</span></span></code></pre></div><p>如此一来，就可以使用 paddlex 或者其他的推理服务来推理了。</p>
-<h2 id="总结">总结</h2>
-<ul>
-<li>实际上国内的深度学习框架技术上并不差，只不过做的太大，也没有很好的入门教程，所以开发者本身不用。</li>
-<li>百度对于自己的名声维护的太差。从之前的公关老大翻车就能看出来。</li>
-<li>做个 python web 的类比。如果 torch 是 flask，那么 paddlepaddle 更像是 django。</li>
-</ul>
-
+  <div class="container" role="main">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
-          <div class="blog-tags">
-            
-              
-              <a href="https://svtter.cn/tags/paddlepaddle/">paddlepaddle</a>&nbsp;
-            
-              
-              <a href="https://svtter.cn/tags/paddleocr/">paddleocr</a>&nbsp;
-            
-              
-              <a href="https://svtter.cn/tags/inference/">inference</a>&nbsp;
-            
-              
-              <a href="https://svtter.cn/tags/baidu/">baidu</a>&nbsp;
-            
-              
-              <a href="https://svtter.cn/tags/til/">til</a>&nbsp;
-            
-          </div>
+        <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://svtter.cn/post/2025-02-24-different-between-dataset-and-dataloader.md/">
+        <h2 class="post-title">Dataset 和 DataLoader 的区别是什么</h2>
         
-
         
-            <hr/>
-            <section id="social-share">
-              <div class="list-inline footer-links">
-                
+        
+    </a>
 
-<div class="share-box" aria-hidden="true">
-    <ul class="share">
-      
-      <li>
-        <a href="//twitter.com/share?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-paddle-serving.md%2f&amp;text=%e5%ae%9e%e9%99%85%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b%e5%92%8c%e5%ae%9e%e9%aa%8c%e4%b8%ad%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b&amp;via=Crack_svtter" target="_blank" title="Share on Twitter">
-          <i class="fab fa-twitter"></i>
-        </a>
-      </li>
+    <p class="post-meta">
+        <span class="post-meta">
   
-      
-      <li>
-        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-paddle-serving.md%2f" target="_blank" title="Share on Facebook">
-          <i class="fab fa-facebook"></i>
-        </a>
-      </li>
   
-      
-      <li>
-        <a href="//reddit.com/submit?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-paddle-serving.md%2f&amp;title=%e5%ae%9e%e9%99%85%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b%e5%92%8c%e5%ae%9e%e9%aa%8c%e4%b8%ad%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b" target="_blank" title="Share on Reddit">
-          <i class="fab fa-reddit"></i>
-        </a>
-      </li>
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 24, 2025
   
-      
-      <li>
-        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-paddle-serving.md%2f&amp;title=%e5%ae%9e%e9%99%85%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b%e5%92%8c%e5%ae%9e%e9%aa%8c%e4%b8%ad%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b" target="_blank" title="Share on LinkedIn">
-          <i class="fab fa-linkedin"></i>
-        </a>
-      </li>
   
-      
-      <li>
-        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-paddle-serving.md%2f&amp;title=%e5%ae%9e%e9%99%85%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b%e5%92%8c%e5%ae%9e%e9%aa%8c%e4%b8%ad%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b" target="_blank" title="Share on StumbleUpon">
-          <i class="fab fa-stumbleupon"></i>
-        </a>
-      </li>
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
   
-      
-      <li>
-        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fsvtter.cn%2fpost%2f2025-02-15-paddle-serving.md%2f&amp;description=%e5%ae%9e%e9%99%85%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b%e5%92%8c%e5%ae%9e%e9%aa%8c%e4%b8%ad%e6%8e%a8%e7%90%86%e6%a8%a1%e5%9e%8b" target="_blank" title="Share on Pinterest">
-          <i class="fab fa-pinterest"></i>
-        </a>
-      </li>
-    </ul>
-  </div>
   
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;52&nbsp;个字
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+    
+  
+  
+</span>
 
-              </div>
-            </section>
+
+    </p>
+    <div class="post-entry">
         
-
+        <p>在 <code>torch.utils.data</code> 中，有两个类，一个是<code>Dataset</code>，另一个是<code>DataLoader</code>。</p>
+<p>这两个类的主要区别是什么？</p>
+        <a href="https://svtter.cn/post/2025-02-24-different-between-dataset-and-dataloader.md/" class="post-read-more">[阅读全文]</a>
         
-          
-            
-          
+    </div>
 
-          
-                  <h4 class="see-also">也可以看看</h4>
-                  <ul>
-                
-                
-                    <li><a href="/post/2025-02-24-different-between-dataset-and-dataloader.md/">Dataset 和 DataLoader 的区别是什么</a></li>
-                
-                    <li><a href="/post/2025-02-19-certbot-self-signed.md/">Certbot Self Signed.md</a></li>
-                
-                    <li><a href="/post/2025-02-17-compile-latex-local.md/">Compile Latex Local.md</a></li>
-                
-                    <li><a href="/post/2025-02-15-extend-lvm-disk.md/">Extend LVM Disk.md</a></li>
-                
-                    <li><a href="/post/2025-02-11-cuda-and-paddle.md/">Cuda and Paddle.md</a></li>
-                
-              </ul>
-
-          
+    
+    <div class="blog-tags">
         
-      </article>
-
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://svtter.cn/post/2025-02-11-cuda-and-paddle.md/" data-toggle="tooltip" data-placement="top" title="Cuda and Paddle.md">&larr; 前一篇</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://svtter.cn/post/2025-02-15-extend-lvm-disk.md/" data-toggle="tooltip" data-placement="top" title="Extend LVM Disk.md">后一篇 &rarr;</a>
-            </li>
-          
-        </ul>
-      
-
-
-      
-      
-      
-      
-      
-          
-          <div class="disqus-comments">                  
-            <button id="show-comments" class="btn btn-default" type="button">显示 <span class="disqus-comment-count" data-disqus-url="https://svtter.cn/post/2025-02-15-paddle-serving.md">则评论</span></button>
-            <div id="disqus_thread"></div>
-
-            <script type="text/javascript">
-              var disqus_config = function () {
-              this.page.url = 'https:\/\/svtter.cn\/post\/2025-02-15-paddle-serving.md';
-            };
-
-          </script>
-          </div>
-          
+       
+       <a href="https://svtter.cn/tags/torch/">torch</a>&nbsp;
         
+       
+       <a href="https://svtter.cn/tags/dataset/">dataset</a>&nbsp;
         
-      
+       
+       <a href="https://svtter.cn/tags/til/">til</a>&nbsp;
+         
+    </div>
+    
 
+</article>
+          
+        </div>
+        
+      </div>
     </div>
   </div>
-</div>
 
       <footer>
   <div class="container">
@@ -485,6 +312,15 @@
                 </a>
               </li>
           
+          
+          <li>
+            <a href="/tags/torch/index.xml" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
           
           
         </ul>
