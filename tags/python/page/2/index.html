@@ -228,6 +228,94 @@
         <div class="posts-list">
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2018/11/05/django-%E5%86%99%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8/">
+        <h2 class="post-title">Django 写个过滤器 filter</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 November 5, 2018
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;95&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>用 Django 快速开发一个项目，发现 Django 的模板本身不带有整除功能，因此自己手写一个。</p>
+<pre class="wp-block-code"><code class="">├── templates
+│   ├── app
+│   └── base
+├── templatetags
+│   ├── app_extras.py
+│   ├── __init__.py
+│   └── __pycache__
+├── tests.py
+├── urls.py
+├── utils.py
+└── views.py
+</code></pre>
+<p>这是目录结构。在 urls.py 添加 app 的名称，例如 app_name = ‘app’ ，然后在与models.py 同级的目录下，新建一个 python 包， templatetags 的，新建自己需要的包名即可。</p>
+<p>app_extra.py：</p>
+<pre class="wp-block-code"><code lang="php" class="language-php">from django import template
+
+register = template.Library()
+
+
+def mod(value):
+    return value % 11
+
+
+register.filter('mod', mod)
+</code></pre>
+<p>这里因为需求比较简单，因此直接就赋值了 11.</p>
+<p>应用到模板中：</p>
+<pre class="wp-block-code"><code class="">{% load app_extra %}
+
+{% for image in image_list %}
+	{% if forloop.counter|mod == 0 %}
+		&lt;h3>检查点&lt;/h3>
+	{% endif %}
+{% endfor %}</code></pre>
+<p>随后即可看到结果。</p>
+        <a href="https://svtter.cn/2018/11/05/django-%E5%86%99%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8/" class="post-read-more">[阅读全文]</a>
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/django/">django</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/python/">python</a>&nbsp;
+         
+    </div>
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/post/2018-10-21-python-functools/">
         <h2 class="post-title">Python functools</h2>
         
@@ -742,100 +830,6 @@
 
 </article>
           
-            <article class="post-preview">
-    <a href="https://svtter.cn/post/2014-11-19-python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/">
-        <h2 class="post-title">Python-使用hexo的python脚本</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 November 19, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;104&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>为了简化blog的使用写的python脚本，用来简化自己的操作= =</p>
-<p>更新了一下。</p>
-<p>最新的代码在coding.net上</p>
-<div class="codehilite">
-  <pre><span></span><span class="ch">#!/usr/bin/env python2</span>
-<span class="c1"># coding: UTF-8</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="c1"># 博客目录</span>
-<span class="n">blog_dir</span> <span class="o">=</span> <span class="s1">&#39;/home/svitter/svtter.github.io/source/_posts&#39;</span>
-<span class="k">def</span> <span class="nf">help</span><span class="p">():</span>
-    <span class="sd">&#39;&#39;&#39;output help information&#39;&#39;&#39;</span>
-    <span class="k">print</span> <span class="s1">&#39;-n: new blog&#39;</span>
-    <span class="k">print</span> <span class="s1">&#39;-g: Generate and push&#39;</span>
-    <span class="k">print</span> <span class="s1">&#39;-h: help&#39;</span>
-<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s1">&#39;no option&#39;</span>
-    <span class="n">help</span><span class="p">()</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
-        <span class="c1"># 改变工作目录</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">blog_dir</span><span class="p">)</span>
-        <span class="n">option</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="k">if</span> <span class="n">option</span> <span class="o">==</span> <span class="s1">&#39;n&#39;</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"hexo n "</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">"gvim "</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">".md"</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">option</span> <span class="o">==</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;hexo g&#39;</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;hexo d&#39;</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;/home/svitter/svtter.github.io&#39;</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;. update&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">option</span> <span class="o">==</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span>
-            <span class="n">help</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="n">option</span> <span class="o">==</span> <span class="s1">&#39;dir&#39;</span><span class="p">:</span>
-            <span class="k">print</span> <span class="n">blog_dir</span>
-        <span class="k">elif</span> <span class="n">option</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;gvim &#39;</span> <span class="o">+</span> <span class="n">blog_dir</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s1">&#39;no such command.&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">help</span><span class="p">()</span>
-</pre>
-</div>
-        
-    </div>
-
-    
-    <div class="blog-tags">
-        
-       
-       <a href="https://svtter.cn/tags/hexo/">hexo</a>&nbsp;
-        
-       
-       <a href="https://svtter.cn/tags/python/">python</a>&nbsp;
-         
-    </div>
-    
-
-</article>
-          
         </div>
         
           <ul class="pager main-pager">
@@ -844,6 +838,10 @@
                 <a href="https://svtter.cn/tags/python/page/1/">&larr; 上一页</a>
               </li>
             
+            
+              <li class="next">
+                <a href="https://svtter.cn/tags/python/page/3/">下一页 &rarr;</a>
+              </li>
             
           </ul>
         

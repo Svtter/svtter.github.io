@@ -212,7 +212,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 24, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 26, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
@@ -245,6 +245,95 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://svtter.cn/2018/08/27/difference-between-map-unordered_map/">
+        <h2 class="post-title"># Difference between map &amp; unordered_map</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 August 27, 2018
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;147&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>目前有三个容器我不太了解其内部实现，打算通过 &lt;c++ primer&gt; 进行学习</p>
+<ol>
+<li>map</li>
+<li>multimap</li>
+<li>unordered_map</li>
+</ol>
+<h2 id="map">map</h2>
+<p>map 是目前最简单的结构，实现的方法是 BST（binary search tree）。因此，其时间复杂度等都与 BST 相同，搜索，增加，删除基本时间都是 log(n)。</p>
+<h3 id="use-map-when">use map when</h3>
+<ol>
+<li>数据有序</li>
+<li>需要按照有序的顺序获得元素</li>
+</ol>
+<h2 id="unordered_map">unordered_map</h2>
+<p>unordered_map 则是通常所说的 hash table，哈希表，搜索，增加，删除都是以hash表为主，较好的情况是o(1)，也就是hash函数可以较好的把元素分布到表中，如果 hash 函数比较糟糕，则每一次添加删除查找，都是完整遍历一个表。</p>
+<h3 id="use-unordered_map-when">use unordered_map when</h3>
+<ol>
+<li>对数据计数</li>
+<li>只需要根据 key 访问 value</li>
+</ol>
+<p>简单来讲，就是当你需要使用 vector 来计数的时候，可以用 unordered_map 来代替。</p>
+<pre class="wp-block-preformatted">| map             | unordered_map
+---------------------------------------------------------
+Ordering        | increasing  order   | no ordering
+                | (by default)        |
+
+Implementation  | Self balancing BST  | Hash Table
+                | like<a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/"> Red-Black Tree </a>|
+
+search time     | log(n)              | O(1) -> Average
+                |                     | O(n) -> Worst Case
+
+Insertion time  | log(n) + Rebalance  | Same as search
+
+Deletion time   | log(n) + Rebalance  | Same as search</pre>
+<h2 id="multimap">multimap</h2>
+<p>multimap containers are generally slower than <a href="http://www.cplusplus.com/unordered_multimap">unordered_multimap</a> containers to access individual elements by their <em>key</em>, but they allow the direct iteration on subsets based on their order.</p>
+        <a href="https://svtter.cn/2018/08/27/difference-between-map-unordered_map/" class="post-read-more">[阅读全文]</a>
+        
+    </div>
+
+    
+    <div class="blog-tags">
+        
+       
+       <a href="https://svtter.cn/tags/cpp/">CPP</a>&nbsp;
+        
+       
+       <a href="https://svtter.cn/tags/stl/">STL</a>&nbsp;
+         
+    </div>
+    
+
+</article>
           
             <article class="post-preview">
     <a href="https://svtter.cn/post/2018-08-20-%23leetcode%E7%9B%B8%E4%BA%A4%E9%93%BE%E8%A1%A8/">
@@ -830,72 +919,6 @@ myvm2   -        virtualbox   Running   tcp://192.168.99.101:2376           v18.
         
         <p>感觉博客样式太丑了，不想更新</p>
 
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2018/04/20/%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2ipynb/">
-        <h2 class="post-title">批量转换ipynb</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 April 20, 2018
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;77&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>一段脚本将<code>ipython notebook</code>转化为<code>py</code>文件。</p>
-<p>It’s hard to make <code>notebook</code> file to <code>import</code> so it’s important to make <code>notebook</code> importable.</p>
-<div class="codehilite">
-  <pre><span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># coding: utf-8</span>
-<span class="kn">import</span> <span class="nn">nbformat</span>
-<span class="kn">from</span> <span class="nn">nbconvert</span> <span class="kn">import</span> <span class="n">PythonExporter</span>
-<span class="k">def</span> <span class="nf">convertNotebook</span><span class="p">(</span><span class="n">notebookPath</span><span class="p">,</span> <span class="n">modulePath</span><span class="p">):</span>
-  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">notebookPath</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
-    <span class="n">nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">NO_CONVERT</span><span class="p">)</span>
-  <span class="n">exporter</span> <span class="o">=</span> <span class="n">PythonExporter</span><span class="p">()</span>
-  <span class="n">source</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">from_notebook_node</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
-  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">modulePath</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
-    <span class="n">fh</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">trans_all</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
-    <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ipynb&#39;</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;py&#39;</span><span class="p">)</span>
-            <span class="n">convertNotebook</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;py&#39;</span><span class="p">)</span>
-<span class="n">trans_all</span><span class="p">()</span>
-</pre>
-</div>
         
     </div>
 

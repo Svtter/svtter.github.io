@@ -212,7 +212,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 24, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 26, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
@@ -245,6 +245,72 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://svtter.cn/2018/04/20/%E6%89%B9%E9%87%8F%E8%BD%AC%E6%8D%A2ipynb/">
+        <h2 class="post-title">批量转换ipynb</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 April 20, 2018
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;77&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>一段脚本将<code>ipython notebook</code>转化为<code>py</code>文件。</p>
+<p>It’s hard to make <code>notebook</code> file to <code>import</code> so it’s important to make <code>notebook</code> importable.</p>
+<div class="codehilite">
+  <pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">nbformat</span>
+<span class="kn">from</span> <span class="nn">nbconvert</span> <span class="kn">import</span> <span class="n">PythonExporter</span>
+<span class="k">def</span> <span class="nf">convertNotebook</span><span class="p">(</span><span class="n">notebookPath</span><span class="p">,</span> <span class="n">modulePath</span><span class="p">):</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">notebookPath</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">NO_CONVERT</span><span class="p">)</span>
+  <span class="n">exporter</span> <span class="o">=</span> <span class="n">PythonExporter</span><span class="p">()</span>
+  <span class="n">source</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">from_notebook_node</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">modulePath</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">trans_all</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+    <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ipynb&#39;</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;py&#39;</span><span class="p">)</span>
+            <span class="n">convertNotebook</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;py&#39;</span><span class="p">)</span>
+<span class="n">trans_all</span><span class="p">()</span>
+</pre>
+</div>
+        
+    </div>
+
+    
+
+</article>
           
             <article class="post-preview">
     <a href="https://svtter.cn/2018/04/05/%E4%B8%8E%E6%89%80%E6%9C%89%E5%8D%95%E8%AF%8D%E7%9B%B8%E5%85%B3%E8%81%94%E7%9A%84%E5%AD%97%E4%B8%B2/">
@@ -792,60 +858,6 @@ $ catkin_make --pkg package_name
 <ul>
 <li><a href="https://www.amazon.cn/dp/B01CXMPF0C/ref=sr_1_3?ie=UTF8&amp;qid=1517118613&amp;sr=8-3&amp;keywords=ros">ros入门实践</a></li>
 </ul>
-
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2018/01/28/ros%E6%B6%88%E6%81%AF%E5%BC%80%E5%8F%91/">
-        <h2 class="post-title">ROS消息开发</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 January 28, 2018
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;8&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <ul>
-<li>ROS常用的消息：http://wiki.ros.org/common_msgs</li>
-<li>ROS消息wiki：http://wiki.ros.org/msg</li>
-</ul>
-<h2 id="ros消息开发参照">ROS消息开发参照：</h2>
-<ul>
-<li><a href="http://blog.csdn.net/u013453604/article/details/72903398">csdn</a></li>
-<li><a href="http://wiki.ros.org/cn/ROS/Tutorials">http://wiki.ros.org/cn/ROS/Tutorials</a></li>
-<li>定制自己的消息类型：[csdn</li>
-</ul>
-<p>]<a href="http://blog.csdn.net/heyijia0327/article/details/41654963">2</a></p>
-<p>开发自己的消息类型的时候要依据原本的消息类型来定义，定义消息的作用是，定义过的消息可以被python，以及cpp引入。进行开发的时候，可以参考给出的例子进行msg的开发。</p>
 
         
     </div>

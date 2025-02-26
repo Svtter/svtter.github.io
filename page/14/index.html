@@ -243,6 +243,90 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2/">
+        <h2 class="post-title">Django导出博客为hexo博客</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 January 5, 2018
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;106&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>Django导出主要使用<code>render_to_string</code>方法来进行；</p>
+<p>可以参考的源码如下：</p>
+<div class="codehilite">
+  <pre><span></span><span class="kn">from</span> <span class="nn">article.models</span> <span class="kn">import</span> <span class="n">Article</span>
+<span class="kn">from</span> <span class="nn">django.template.loader</span> <span class="kn">import</span> <span class="n">render_to_string</span>
+<span class="n">posts</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">post</span> <span class="ow">in</span> <span class="n">posts</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">title</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+        <span class="s1">&#39;cre_date&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">cre_date</span><span class="p">,</span>
+        <span class="s1">&#39;updated&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">up_date</span><span class="p">,</span>
+        <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+        <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="n">post</span><span class="o">.</span><span class="n">tag</span>
+    <span class="p">}</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">render_to_string</span><span class="p">(</span><span class="s1">&#39;article.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;export/&#39;</span> <span class="o">+</span> <span class="n">post</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s1">&#39;.md&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+</pre>
+</div>
+<p>对应的渲染<code>article.html</code></p>
+<div class="codehilite">
+  <pre><span></span>title: {{ title }}
+date: 2018-01-05T01:00:00+08:00
+updated: {{ updated | date:"Y/m/d H:i:s" }}
+tags: [
+{% for tag in tags %}
+    &#39;{{ tag.name }}&#39;,
+{% endfor %}
+]
+categories: [
+    &#39;{{ category }}&#39;,
+]
+---
+{{ content | safe }}
+</pre>
+</div>
+<p>运行的时候，<code>python manage.py shell</code>，然后导入<code>export</code> 包即可。</p>
+
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2017/12/30/ubuntu16-04installiai-kinect2/">
         <h2 class="post-title">Ubuntu 16.04 install iai-kinect2</h2>
         
@@ -762,72 +846,6 @@ Streamline development workflow by loading .env files.
        <a href="https://svtter.cn/tags/vim/">vim</a>&nbsp;
          
     </div>
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2017/12/15/%E7%BB%99%E5%B0%8F%E7%99%BD%E7%9A%84ipythonnotebook%E6%8C%87%E5%8D%97/">
-        <h2 class="post-title">给小白的IPython Notebook指南</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 December 15, 2017
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;20&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>这是给“小白”的notebook指南。<code>notebook</code>是算法开发经常使用的工具。</p>
-<h2 id="安装notebook">安装notebook</h2>
-<div class="codehilite">
-  <pre><span></span>$ pip install notebook
-</pre>
-</div>
-<h2 id="运行notebook">运行notebook</h2>
-<div class="codehilite">
-  <pre><span></span>$ jupyter-notebook .
-</pre>
-</div>
-<p>在终端下运行这个命令可以启动<code>notebook</code>。</p>
-<h2 id="使用ipython-notebook">使用IPython-Notebook</h2>
-<p>点击右方的New按钮，选择Python3，以此来启动一个新的NoteBook。</p>
-<img alt="" src="https://i0.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmhb5rtz02j20i00g4t9f.jpg?w=625&#038;ssl=1" data-recalc-dims="1" />
-<p>这时会新创建一个文件。</p>
-<img alt="" src="https://i1.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmheq426xbj20wy0fodh6.jpg?w=625&#038;ssl=1" data-recalc-dims="1" />
-<p>在<code>In [ ]:</code>后输入要运行的代码，然后点击<code>Run</code>即可运行。例如：</p>
-<img alt="" src="https://i0.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmhes784qnj20ui0c6q3f.jpg?w=625&#038;ssl=1" data-recalc-dims="1" />
-<h2 id="使用terminal">使用Terminal</h2>
-<img alt="" src="https://i0.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmhb5rtz02j20i00g4t9f.jpg?w=625&#038;ssl=1" data-recalc-dims="1" />
-<p>Terminal就是之前在Windows下的<code>cmd</code>，MacOS下的<code>terminal</code>，点击之后见到这个界面：</p>
-<img alt="" src="https://i1.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmheunkr2hj20lm0aeq3o.jpg?w=625&#038;ssl=1" data-recalc-dims="1" />
-<p>尝试输入python，就可以像之前那样进行命令行编程了。</p>
-
-        
-    </div>
-
     
 
 </article>
