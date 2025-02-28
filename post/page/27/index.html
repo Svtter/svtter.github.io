@@ -212,7 +212,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;发表于 February 26, 2025
+  <i class="fas fa-calendar"></i>&nbsp;发表于 February 28, 2025
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;0&nbsp;分钟
@@ -245,6 +245,85 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://svtter.cn/2015/05/02/acm-uva10023-%E5%BC%80%E5%B9%B3%E6%96%B9/">
+        <h2 class="post-title">ACM – UVa10023 – 开平方</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 May 2, 2015
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;92&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <p>本题目计算开根号数字，给出Y求X。X = sqrt(Y)，主要问题在Y的超大数据。</p>
+<p>时间限制是3s。我使用的大数模板中没有一个大数除大数的算法，因此直接借用Java来搞一搞。</p>
+<p>利用公式$$(5/x+x)/2 = x$$递归逼近求解。这个公式比较好推，移项即可。</p>
+<div class="codehilite">
+  <pre><span></span><span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.math.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashSet</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">static</span> <span class="n">Set</span> <span class="n">set</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">BigInteger</span> <span class="nf">cal</span><span class="o">(</span><span class="n">BigInteger</span> <span class="n">a</span><span class="o">,</span> <span class="n">BigInteger</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">BigInteger</span> <span class="n">ans</span> <span class="o">=</span> <span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="na">divide</span><span class="o">(</span><span class="n">b</span><span class="o">)</span> <span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">b</span><span class="o">)).</span><span class="na">divide</span><span class="o">(</span><span class="k">new</span> <span class="n">BigInteger</span><span class="o">(</span><span class="s">"2"</span><span class="o">));</span>
+        <span class="k">if</span><span class="o">(</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">ans</span><span class="o">))</span>
+            <span class="k">return</span> <span class="n">ans</span><span class="o">;</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">ans</span><span class="o">);</span>
+            <span class="k">return</span> <span class="n">cal</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">ans</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Scanner</span> <span class="n">cin</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+        <span class="n">BigInteger</span> <span class="n">a</span><span class="o">;</span>
+        <span class="n">String</span> <span class="n">s</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">T</span> <span class="o">=</span> <span class="n">cin</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span>
+        <span class="k">while</span><span class="o">(</span><span class="n">T</span><span class="o">--</span> <span class="o">!=</span> <span class="mi"></span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">();</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">cin</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BigInteger</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">cal</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">a</span><span class="o">));</span>
+            <span class="k">if</span><span class="o">(</span><span class="n">T</span> <span class="o">!=</span> <span class="mi"></span><span class="o">)</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre>
+</div>
+<p>参考他人代码，不需要用set，直接判断是否和前一个相等即可= =。</p>
+<p>再一个就是模拟手算。手算法有些麻烦。。注意第二个除数开始余数*20即可。</p>
+
+        
+    </div>
+
+    
+
+</article>
           
             <article class="post-preview">
     <a href="https://svtter.cn/2015/05/02/acm-uva10105-%E7%BB%84%E5%90%88%E6%95%B0/">
@@ -1227,145 +1306,6 @@
 </ol>
 <p>想想去年这个时间在刷一份简单的模板，感觉用处实在是不大，问题都没有好好的理解。</p>
 
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2015/04/28/acm-uva106-%E5%8B%BE%E8%82%A1%E5%AE%9A%E7%90%86/">
-        <h2 class="post-title">ACM – Uva106 – 勾股定理</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 April 28, 2015
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;305&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <p>從維基百科的勾股數條目參考來的通解：</p>
-<p>給一個任意數對(X,Y)，用以下公式代替</p>
-<blockquote>
-<p>$A = X^2 – Y^2$</p>
-</blockquote>
-<blockquote>
-<p>$B = 2XY$</p>
-</blockquote>
-<blockquote>
-<p>$C = X^2 + Y^2$</p>
-</blockquote>
-<blockquote>
-<p>得出的A,B,C就是一組勾股數。</p>
-</blockquote>
-<p>若 (X,Y) 恰好互質而且一奇一偶，那麼會得到一組(A,B,C)互質的勾股數。</p>
-<p>知道通解後，雙層迴圈跑 (X,Y) 就能找出所有互質勾股數。</p>
-<p>按照台湾同胞的题解。 — 勾股数公式也是很神奇的啊。。。</p>
-<p>此外还学习了bitset，因为是按位存储，所以比一般的bool来的更加迅速，也更加节省时间。</p>
-<div class="codehilite">
-  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;set&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;bitset&gt;</span><span class="cp"></span>
-<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="c1">// 大数，内存处理</span>
-<span class="cp">#define INF 0x3f3f3f3f</span>
-<span class="cp">#define ll long long int</span>
-<span class="cp">#define MEM(a) memset(a, 0, sizeof(a))</span>
-<span class="cp">#define MEMM(a) memset(b, -1, sizeof(b))</span>
-<span class="cp">#define DEB(x, n) cout &lt;&lt; (x) &lt;&lt; " " &lt;&lt; (n) &lt;&lt; endl</span>
-<span class="k">const</span> <span class="kt">double</span> <span class="n">PI</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
-<span class="cp">#define CR printf("\n")</span>
-<span class="c1">// 调试用</span>
-    <span class="n">template</span> <span class="o">&lt;</span><span class="n">class</span> <span class="n">Type</span><span class="o">&gt;</span>
-<span class="kt">void</span> <span class="n">debug</span><span class="p">(</span><span class="n">Type</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span> <span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="kt">int</span> <span class="n">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span> <span class="o">==</span> <span class="mi"></span> <span class="o">?</span> <span class="nl">b</span> <span class="p">:</span> <span class="n">gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">%</span><span class="n">b</span><span class="p">);</span> <span class="p">}</span>
-<span class="kt">int</span> <span class="n">odd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="o">%</span><span class="mi">2</span> <span class="o">&&</span> <span class="o">!</span><span class="p">(</span><span class="n">b</span><span class="o">%</span><span class="mi">2</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="n">b</span><span class="o">%</span><span class="mi">2</span> <span class="o">&&!</span><span class="p">(</span><span class="n">a</span><span class="o">%</span><span class="mi">2</span><span class="p">));</span>
-<span class="p">}</span>
-<span class="kt">int</span> <span class="n">judge</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&&</span> <span class="n">odd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">));</span>
-<span class="p">}</span>
-<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
-<span class="k">const</span> <span class="kt">double</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-15</span><span class="p">;</span>
-<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mf">1e6</span><span class="o">+</span><span class="mi">10</span><span class="p">;</span>
-<span class="n">bitset</span> <span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">;</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-<span class="cp">#ifdef DEBUG</span>
-    <span class="c1">// freopen("input", "r", stdin);       //从input文件中读入</span>
-    <span class="c1">// freopen("output", "w", stdout);     //输出到output文件</span>
-<span class="cp">#endif</span>
-    <span class="k">while</span><span class="p">(</span><span class="o">~</span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span> <span class="o">&</span><span class="n">n</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="n">p</span><span class="p">.</span><span class="n">set</span><span class="p">();</span>
-        <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="n">x</span> <span class="o">++</span><span class="p">)</span>
-            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="p">;</span> <span class="n">y</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="p">{</span>
-                <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span>
-                <span class="k">if</span><span class="p">(</span><span class="n">judge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
-                <span class="p">{</span>
-                    <span class="n">a</span> <span class="o">=</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
-                    <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">;</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">y</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
-                    <span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-                    <span class="n">cnt</span> <span class="o">++</span><span class="p">;</span>
-                    <span class="kt">int</span> <span class="n">ta</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="n">tb</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">tc</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
-                    <span class="k">while</span><span class="p">(</span><span class="n">tc</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">)</span>
-                    <span class="p">{</span>
-                        <span class="n">p</span><span class="p">[</span><span class="n">ta</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">tb</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">tc</span><span class="p">]</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-                        <span class="n">ta</span> <span class="o">+=</span> <span class="n">a</span><span class="p">,</span> <span class="n">tb</span> <span class="o">+=</span> <span class="n">b</span><span class="p">,</span> <span class="n">tc</span> <span class="o">+=</span> <span class="n">c</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="kt">int</span> <span class="n">c2</span>  <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">c2</span><span class="o">++</span><span class="p">;</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">"%d %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">c2</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-</div>
         
     </div>
 
