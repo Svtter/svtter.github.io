@@ -243,6 +243,123 @@
           
           
             <article class="post-preview">
+    <a href="https://svtter.cn/2014/12/23/linux-%E8%BD%AF%E4%B8%AD%E6%96%AD%E9%80%9A%E4%BF%A1/">
+        <h2 class="post-title">Linux-软中断通信</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;发表于 December 23, 2014
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;126&nbsp;个字
+  
+  
+    
+      
+        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
+      
+    
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <blockquote>
+<p>本文出自<a href="http://svtter.github.io">svtter.github.io</a></p>
+</blockquote>
+<blockquote>
+<p>本文可以随意转载，但是转载请保留本信息.</p>
+</blockquote>
+<div class="codehilite">
+  <pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;wait.h&gt;</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">waiting</span><span class="p">(),</span> <span class="n">stop</span><span class="p">(),</span> <span class="n">alarming</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">wait_mark</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p1</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p2</span> <span class="o">=</span> <span class="n">fork</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+            <span class="n">signal</span><span class="p">(</span><span class="n">SIGALRM</span><span class="p">,</span> <span class="n">alarming</span><span class="p">);</span>
+            <span class="n">waiting</span><span class="p">();</span>
+            <span class="n">kill</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+            <span class="n">kill</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="mi">17</span><span class="p">);</span>
+            <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">wait</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"parent process is killed!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">signal</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+            <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">SIG_IGN</span><span class="p">);</span>
+            <span class="k">while</span><span class="p">(</span><span class="n">wait_mark</span><span class="o">!=</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"child process2 is killed by parent!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+            <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi"></span><span class="p">,</span><span class="mi"></span><span class="p">);</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">signal</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+        <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">SIG_IGN</span><span class="p">);</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">wait_mark</span><span class="o">!=</span><span class="mi"></span><span class="p">);</span>
+        <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"child process1 is killed by parent!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+        <span class="n">lockf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi"></span><span class="p">,</span> <span class="mi"></span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi"></span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">waiting</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">wait_mark</span> <span class="o">!=</span> <span class="mi"></span><span class="p">)</span>
+        <span class="n">kill</span><span class="p">(</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">SIGALRM</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">alarming</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">stop</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">wait_mark</span> <span class="o">=</span> <span class="mi"></span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+</div>
+<h2 id="执行结果">执行结果</h2>
+<p><a href="">e3.png</a></p>
+
+        
+    </div>
+
+    
+
+</article>
+          
+            <article class="post-preview">
     <a href="https://svtter.cn/2014/12/22/%E7%94%9F%E6%B4%BB-%E5%90%90%E6%A7%BD/">
         <h2 class="post-title">生活-吐槽</h2>
         
@@ -1598,59 +1715,6 @@
         
        
        <a href="https://svtter.cn/tags/database/">Database</a>&nbsp;
-         
-    </div>
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://svtter.cn/2014/12/08/js-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
-        <h2 class="post-title">JS-常见问题</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;发表于 December 8, 2014
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;分钟
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;118&nbsp;个字
-  
-  
-    
-      
-        &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;svtter
-      
-    
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <blockquote>
-<p>本文出自<a href="http://svtter.github.io">svtter.github.io</a></p>
-</blockquote>
-<p><strong>JavaScript</strong>首先应该看w3cschool来涨涨见识, 但是因为之前沉溺游戏荒废了。。</p>
-        <a href="https://svtter.cn/2014/12/08/js-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="post-read-more">[阅读全文]</a>
-        
-    </div>
-
-    
-    <div class="blog-tags">
-        
-       
-       <a href="https://svtter.cn/tags/javascript/">Javascript</a>&nbsp;
          
     </div>
     
