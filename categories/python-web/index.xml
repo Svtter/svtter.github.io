@@ -1,54 +1,295 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Python Web on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/categories/python-web/</link>
-    <description>Recent content in Python Web on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Fri, 12 Jul 2024 16:20:32 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/categories/python-web/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>New Usage of typing module in python</title>
-      <link>https://svtter.cn/post/2024-07-25-new-usage-of-typing/</link>
-      <pubDate>Fri, 12 Jul 2024 16:20:32 +0800</pubDate>
-      <guid>https://svtter.cn/post/2024-07-25-new-usage-of-typing/</guid>
-      <description>&lt;p&gt;我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Django and Webpack</title>
-      <link>https://svtter.cn/post/2024-07-06-django-and-webpack/</link>
-      <pubDate>Sat, 06 Jul 2024 15:21:55 +0800</pubDate>
-      <guid>https://svtter.cn/post/2024-07-06-django-and-webpack/</guid>
-      <description>&lt;p&gt;Webpack is a modern development method for frontend projects. Django is a common backend development framework for Python developers.&lt;/p&gt;&#xA;&lt;p&gt;I believe that developing with Webpack can make Django development faster.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>迁移 Django Model id 为 uuid</title>
-      <link>https://svtter.cn/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/</link>
-      <pubDate>Thu, 06 Dec 2018 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/</guid>
-      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://www.klette.us/migrate-django-models-to-uuid-primary-key/&#34;&gt;https://www.klette.us/migrate-django-models-to-uuid-primary-key/&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;又是一篇渣翻&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;老设计决策有时候会让你很难受，下面就是一个例子。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Django 写个过滤器 filter</title>
-      <link>https://svtter.cn/2018/11/05/django-%E5%86%99%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8/</link>
-      <pubDate>Mon, 05 Nov 2018 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2018/11/05/django-%E5%86%99%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8/</guid>
-      <description>&lt;p&gt;用 Django 快速开发一个项目，发现 Django 的模板本身不带有整除功能，因此自己手写一个。&lt;/p&gt;&#xA;&lt;pre class=&#34;wp-block-code&#34;&gt;&lt;code class=&#34;&#34;&gt;├── templates&#xA;│   ├── app&#xA;│   └── base&#xA;├── templatetags&#xA;│   ├── app_extras.py&#xA;│   ├── __init__.py&#xA;│   └── __pycache__&#xA;├── tests.py&#xA;├── urls.py&#xA;├── utils.py&#xA;└── views.py&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;这是目录结构。在 urls.py 添加 app 的名称，例如 app_name = ‘app’ ，然后在与models.py 同级的目录下，新建一个 python 包， templatetags 的，新建自己需要的包名即可。&lt;/p&gt;&#xA;&lt;p&gt;app_extra.py：&lt;/p&gt;&#xA;&lt;pre class=&#34;wp-block-code&#34;&gt;&lt;code lang=&#34;php&#34; class=&#34;language-php&#34;&gt;from django import template&#xA;&#xA;register = template.Library()&#xA;&#xA;&#xA;def mod(value):&#xA;    return value % 11&#xA;&#xA;&#xA;register.filter(&#39;mod&#39;, mod)&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;这里因为需求比较简单，因此直接就赋值了 11.&lt;/p&gt;&#xA;&lt;p&gt;应用到模板中：&lt;/p&gt;&#xA;&lt;pre class=&#34;wp-block-code&#34;&gt;&lt;code class=&#34;&#34;&gt;{% load app_extra %}&#xA;&#xA;{% for image in image_list %}&#xA;&#x9;{% if forloop.counter|mod == 0 %}&#xA;&#x9;&#x9;&amp;lt;h3&gt;检查点&amp;lt;/h3&gt;&#xA;&#x9;{% endif %}&#xA;{% endfor %}&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;随后即可看到结果。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Python functools</title>
-      <link>https://svtter.cn/post/2018-10-21-python-functools/</link>
-      <pubDate>Sun, 21 Oct 2018 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/post/2018-10-21-python-functools/</guid>
-      <description>&lt;p&gt;Python &lt;a href=&#34;https://docs.python.org/3/library/functools.html&#34;&gt;functools&lt;/a&gt;包中，有个很好的函数叫做&lt;code&gt;partial&lt;/code&gt; ，中文直接翻译为&lt;code&gt;片函数&lt;/code&gt;，此前一直都没有使用过。最近通过阅读别人的代码，学会了这一技能，着实好用。&lt;/p&gt;&#xA;&lt;p&gt;使用&lt;code&gt;partial&lt;/code&gt;，可以把一些固有功能代码做一个整合；&lt;/p&gt;&#xA;&lt;p&gt;比如我希望一个函数专门做 int2 转换&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;int2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;partial&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;base&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;甚至还可以再过分一点，把 base 变成一个字典量传入。&lt;/p&gt;&#xA;&lt;p&gt;多使用内建函数 locals，可以极大的减少自己的代码量；&lt;/p&gt;&#xA;&lt;p&gt;这不得不让我感概：真正的 Pythonista，永无止境。&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;in_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;():&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#x9;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#x9;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#x9;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;args&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#x9;&#x9;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&#x9;&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;test&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;locals&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()))&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;changelog&#34;&gt;CHANGELOG&lt;/h3&gt;&#xA;&lt;table&gt;&#xA;  &lt;thead&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;th style=&#34;text-align: left&#34;&gt;date&lt;/th&gt;&#xA;          &lt;th style=&#34;text-align: left&#34;&gt;content&lt;/th&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/thead&gt;&#xA;  &lt;tbody&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td style=&#34;text-align: left&#34;&gt;20230829&lt;/td&gt;&#xA;          &lt;td style=&#34;text-align: left&#34;&gt;调整了一些语病&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/tbody&gt;&#xA;&lt;/table&gt;</description>
-    </item>
-    <item>
-      <title>Django导出博客为hexo博客</title>
-      <link>https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2/</link>
-      <pubDate>Fri, 05 Jan 2018 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2/</guid>
-      <description>&lt;p&gt;Django导出主要使用&lt;code&gt;render_to_string&lt;/code&gt;方法来进行；&lt;/p&gt;&#xA;&lt;p&gt;可以参考的源码如下：&lt;/p&gt;&#xA;&lt;div class=&#34;codehilite&#34;&gt;&#xA;  &lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;article.models&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Article&lt;/span&gt;&#xA;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;django.template.loader&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;render_to_string&lt;/span&gt;&#xA;&lt;span class=&#34;n&#34;&gt;posts&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Article&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;objects&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;all&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&#xA;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;posts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&#xA;    &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&#xA;    &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;replace&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&#xA;    &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;replace&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&#xA;    &lt;span class=&#34;n&#34;&gt;context&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&#xA;        &lt;span class=&#34;s1&#34;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&#xA;        &lt;span class=&#34;s1&#34;&gt;&amp;#39;cre_date&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cre_date&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&#xA;        &lt;span class=&#34;s1&#34;&gt;&amp;#39;updated&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;up_date&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&#xA;        &lt;span class=&#34;s1&#34;&gt;&amp;#39;content&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&#xA;        &lt;span class=&#34;s1&#34;&gt;&amp;#39;category&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;category&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&#xA;        &lt;span class=&#34;s1&#34;&gt;&amp;#39;tag&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tag&lt;/span&gt;&#xA;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&#xA;    &lt;span class=&#34;n&#34;&gt;content&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;render_to_string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;article.html&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;context&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&#xA;    &lt;span class=&#34;n&#34;&gt;filename&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;export/&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;title&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;.md&amp;#39;&lt;/span&gt;&#xA;    &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;open&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&#xA;        &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;write&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&#xA;&lt;/pre&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;对应的渲染&lt;code&gt;article.html&lt;/code&gt;&lt;/p&gt;&#xA;&lt;div class=&#34;codehilite&#34;&gt;&#xA;  &lt;pre&gt;&lt;span&gt;&lt;/span&gt;title: {{ title }}&#xA;date: 2018-01-05T01:00:00+08:00&#xA;updated: {{ updated | date:&#34;Y/m/d H:i:s&#34; }}&#xA;tags: [&#xA;{% for tag in tags %}&#xA;    &amp;#39;{{ tag.name }}&amp;#39;,&#xA;{% endfor %}&#xA;]&#xA;categories: [&#xA;    &amp;#39;{{ category }}&amp;#39;,&#xA;]&#xA;---&#xA;{{ content | safe }}&#xA;&lt;/pre&gt;&#xA;&lt;/div&gt;&#xA;&lt;p&gt;运行的时候，&lt;code&gt;python manage.py shell&lt;/code&gt;，然后导入&lt;code&gt;export&lt;/code&gt; 包即可。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python Web on Svtter's Blog</title><link>https://svtter.cn/categories/python-web/</link><description>Recent content in Python Web on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 12 Jul 2024 16:20:32 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/python-web/index.xml" rel="self" type="application/rss+xml"/><item><title>New Usage of typing module in python</title><link>https://svtter.cn/p/new-usage-of-typing-module-in-python/</link><pubDate>Fri, 12 Jul 2024 16:20:32 +0800</pubDate><guid>https://svtter.cn/p/new-usage-of-typing-module-in-python/</guid><description>&lt;p>我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！&lt;/p>
+&lt;p>最近在阅读 django components 代码的时候，我在 &lt;a class="link" href="https://github.com/EmilStenstrom/django-components/blob/master/src/django_components/component_registry.py" target="_blank" rel="noopener"
+>component_registry.py&lt;/a> 看到了这样一段代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">from&lt;/span> &lt;span class="nn">typing&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">TYPE_CHECKING&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Callable&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Dict&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Type&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">TypeVar&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">TYPE_CHECKING&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">from&lt;/span> &lt;span class="nn">django_components&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">component&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">_TC&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">TypeVar&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;_TC&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">bound&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">Type&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;component.Component&amp;#34;&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>从中能学到几个知识点：&lt;/p>
+&lt;ol>
+&lt;li>TYPE_CHECKING 变量是用于程序员处理类型相关代码的 TAG，在实际运行的时候，内部代码不被执行；我们可以从 typing 的&lt;a class="link" href="https://docs.python.org/3/library/typing.html#typing.TYPE_CHECKING" target="_blank" rel="noopener"
+>官方文档&lt;/a>中找到。&lt;/li>
+&lt;li>TypeVar 可以这样来用：&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">S&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">TypeVar&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;S&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">bound&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">str&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Can be any subtype of str&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在这段代码处，意味着 &lt;code>_TC&lt;/code> 可以是任何一个 &lt;code>component.Component&lt;/code> 的 &lt;code>subtype&lt;/code>。&lt;/p>
+&lt;h2 id="conclusion">Conclusion
+&lt;/h2>&lt;p>python 也在慢慢丰富自己的类型系统，许多新的用法也会慢慢地开发出来。不过相比之下，typescript 的类型系统要更先进一些。大家好好学！&lt;/p>
+&lt;blockquote>
+&lt;p>附加一点吐槽：Component 居然是一个 django view，感觉很奇怪啊。&lt;/p>&lt;/blockquote></description></item><item><title>Django and Webpack</title><link>https://svtter.cn/p/django-and-webpack/</link><pubDate>Sat, 06 Jul 2024 15:21:55 +0800</pubDate><guid>https://svtter.cn/p/django-and-webpack/</guid><description>&lt;p>Webpack is a modern development method for frontend projects. Django is a common backend development framework for Python developers.&lt;/p>
+&lt;p>I believe that developing with Webpack can make Django development faster.&lt;/p>
+&lt;h2 id="why">Why
+&lt;/h2>&lt;p>&lt;code>webpack&lt;/code> can enable Django developers to use the React ecosystem, and it makes auto-complete and linting available in Django frontend development, especially with VSCode.&lt;/p>
+&lt;p>Django developers should integrate Webpack, similar to what &lt;a class="link" href="https://github.com/rails/webpacker?tab=readme-ov-file#webpacker-has-been-retired-" target="_blank" rel="noopener"
+>Rails developers did&lt;/a>. At 2024-07-05, Webpack has retired in Rails. They are using &lt;a class="link" href="https://hotwired.dev/" target="_blank" rel="noopener"
+>Hotwire&lt;/a> now. For more details, you should read the &lt;a class="link" href="https://rubyonrails.org/2021/12/15/Rails-7-fulfilling-a-vision" target="_blank" rel="noopener"
+>Rails 7 blog&lt;/a>.&lt;/p>
+&lt;h2 id="what-to-choose">What to Choose?
+&lt;/h2>&lt;p>I tested two popular projects on GitHub.&lt;/p>
+&lt;p>The first one is &lt;a class="link" href="https://github.com/vintasoftware/django-react-boilerplate" target="_blank" rel="noopener"
+>django-react-boilerplate&lt;/a>. It has high stars and ranks second.&lt;/p>
+&lt;p>However, as of 2024-07-05, it&amp;rsquo;s not ready. I will continue to track its progress. It is hard and complex to configure the &lt;code>{{ project_name }}&lt;/code>.&lt;/p>
+&lt;p>The second one is &lt;a class="link" href="https://python-webpack-boilerplate.readthedocs.io/en/stable/setup_with_django/" target="_blank" rel="noopener"
+>python-webpack-boilerplate&lt;/a>.&lt;/p>
+&lt;p>It has a gradual process and a good learning curve. I spent just 5 minutes adding Webpack to my &lt;a class="link" href="https://github.com/Svtter/django-webpack-example" target="_blank" rel="noopener"
+>example project&lt;/a>.&lt;/p>
+&lt;h2 id="discussion">Discussion
+&lt;/h2>&lt;p>There is still a long way to go.&lt;/p>
+&lt;ol>
+&lt;li>React has not been added to the &lt;a class="link" href="https://github.com/Svtter/django-webpack-example" target="_blank" rel="noopener"
+>example project&lt;/a>.&lt;/li>
+&lt;li>A production environment is needed to validate its availability.&lt;/li>
+&lt;/ol>
+&lt;hr></description></item><item><title>迁移 Django Model id 为 uuid</title><link>https://svtter.cn/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/</link><pubDate>Thu, 06 Dec 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/2018/12/06/%E8%BF%81%E7%A7%BB-django-model-id-%E4%B8%BA-uuid/</guid><description>&lt;blockquote>
+&lt;p>&lt;a class="link" href="https://www.klette.us/migrate-django-models-to-uuid-primary-key/" target="_blank" rel="noopener"
+>https://www.klette.us/migrate-django-models-to-uuid-primary-key/&lt;/a>&lt;/p>
+&lt;p>又是一篇渣翻&lt;/p>&lt;/blockquote>
+&lt;p>老设计决策有时候会让你很难受，下面就是一个例子。&lt;/p>
+&lt;p>我手上的一个 Django Model 是这样的：&lt;/p>
+&lt;pre>&lt;code class=" language-python">&amp;lt;span class="token keyword">class&amp;lt;/span> &amp;lt;span class="token class-name">Municipality&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>Model&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+code &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>CharField&amp;lt;span class="token punctuation">(&amp;lt;/span>max_length&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> primary_key&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token boolean">True&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+name &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>CharField&amp;lt;span class="token punctuation">(&amp;lt;/span>max_length&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token number">100&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;p>此外，还有一个外键指向它&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">class&amp;lt;/span> &amp;lt;span class="token class-name">ZipCode&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>Model&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+code &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>CharField&amp;lt;span class="token punctuation">(&amp;lt;/span>max_length&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> primary_key&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token boolean">True&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+municipality &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>ForeignKey&amp;lt;span class="token punctuation">(&amp;lt;/span>Municipality&amp;lt;span class="token punctuation">)&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;p>现在，我们需要让 municipality 支持多个国家，显然一个唯一 field 将会引起冲突，不够用。（译者：这个理由有点牵强）&lt;/p>
+&lt;p>对于所有代码的现代部分，我们使用&lt;code>UUID&lt;/code>作为主键。所以我们想要 migrate &lt;code>municaipality&lt;/code>的主键到&lt;code>UUID&lt;/code>，并且维持了原有的关系。（译者：外键和自增主键都是数据库性能的杀手。）&lt;/p>
+&lt;p>2017年9月份，Django 依然不支持优雅的迁移主键，所以我们自己做了（译者：我也不知道现在行不行。）&lt;/p>
+&lt;p>我们尝试了许多 magic 解决方案，但是我们在 migrations 系统这个被难住了，并且不能检测以及很好的处理改变。&lt;/p>
+&lt;p>在经过一小段研究和错误，我们找到了以下的解决方案。尽管这还有一些小问题，但是的确有效。&lt;/p>
+&lt;p>再一次提醒，从数据库的角度，当你定义了一个&lt;code>ForeignKey&lt;/code> field 在 Django 中，Django将会创建一个数据库列，是同样的类型，作为 referenced model 的主键，并且增加外键约束。所以在上面的例子中，我们有两个表：&lt;/p>
+&lt;pre class=" language-sql">&lt;code class=" language-sql">&amp;lt;span class="token keyword">CREATE&amp;lt;/span> &amp;lt;span class="token keyword">TABLE&amp;lt;/span> municipality &amp;lt;span class="token punctuation">(&amp;lt;/span>
+code &amp;lt;span class="token keyword">varchar&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span> &amp;lt;span class="token keyword">PRIMARY&amp;lt;/span> &amp;lt;span class="token keyword">KEY&amp;lt;/span> &amp;lt;span class="token operator">NOT&amp;lt;/span> &amp;lt;span class="token boolean">NULL&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+name &amp;lt;span class="token keyword">varchar&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token number">100&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">;&amp;lt;/span>
+&amp;lt;span class="token keyword">CREATE&amp;lt;/span> &amp;lt;span class="token keyword">TABLE&amp;lt;/span> zipcode &amp;lt;span class="token punctuation">(&amp;lt;/span>
+code &amp;lt;span class="token keyword">varchar&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span> &amp;lt;span class="token keyword">PRIMARY&amp;lt;/span> &amp;lt;span class="token keyword">KEY&amp;lt;/span> &amp;lt;span class="token operator">NOT&amp;lt;/span> &amp;lt;span class="token boolean">NULL&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+municipality_id &amp;lt;span class="token keyword">VARCHAR&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span> &amp;lt;span class="token keyword">REFERENCES&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>municipality&amp;lt;span class="token punctuation">.&amp;lt;/span>id&amp;lt;span class="token punctuation">)&amp;lt;/span> &amp;lt;span class="token operator">NOT&amp;lt;/span> &amp;lt;span class="token boolean">NULL&amp;lt;/span>
+&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">;&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;p>所以我们需要解除外键约束，更换 root model，然后映射新的主键到旧的上，并且重新应用外键到上面去。&lt;/p>
+&lt;p>我们首先打破外键&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">class&amp;lt;/span> &amp;lt;span class="token class-name">ZipCode&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>Model&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+code &amp;lt;span class="token operator">=&amp;lt;/span> &amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span> &amp;lt;span class="token comment" spellcheck="true"># Same as before&amp;lt;/span>
+municipality &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>CharField&amp;lt;span class="token punctuation">(&amp;lt;/span>max_length&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&lt;/code>&lt;/pre>
+&lt;pre class=" language-sh">&lt;code>python manage.py makemigrations -n break_zipcode_muni_foreignkey&lt;/code>&lt;/pre>
+&lt;p>现在，·Municipality·modle 没有被任何外键所 refer，我们可以在上面进行工作了。&lt;/p>
+&lt;p>增加一个新的 id field：&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">class&amp;lt;/span> &amp;lt;span class="token class-name">Municipality&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>Model&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+id &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>UUIDField&amp;lt;span class="token punctuation">(&amp;lt;/span>default&amp;lt;span class="token operator">=&amp;lt;/span>uuid&amp;lt;span class="token punctuation">.&amp;lt;/span>uuid4&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&lt;/code>&lt;/pre>
+&lt;pre class=" language-sh">&lt;code>python manage.py makemigrations -n add_id_field_to_muni&lt;/code>&lt;/pre>
+&lt;p>处于某些原因，默认值在我的案例中不 work，所以我增加了一个过程到创建的 migration，来创建新的唯一 id。&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">def&amp;lt;/span> &amp;lt;span class="token function">create_ids&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>apps&amp;lt;span class="token punctuation">,&amp;lt;/span> schema_editor&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+Municipality &amp;lt;span class="token operator">=&amp;lt;/span> apps&amp;lt;span class="token punctuation">.&amp;lt;/span>get_model&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token string">'loc'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> &amp;lt;span class="token string">'Municipality'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token keyword">for&amp;lt;/span> m &amp;lt;span class="token keyword">in&amp;lt;/span> municipality&amp;lt;span class="token punctuation">:&amp;lt;/span>
+m&amp;lt;span class="token punctuation">.&amp;lt;/span>id &amp;lt;span class="token operator">=&amp;lt;/span> uuid&amp;lt;span class="token punctuation">.&amp;lt;/span>uuid4&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+m&amp;lt;span class="token punctuation">.&amp;lt;/span>save&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token comment" spellcheck="true"># ...&amp;lt;/span>
+operations &amp;lt;span class="token operator">=&amp;lt;/span> &amp;lt;span class="token punctuation">[&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>AddField&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>RunPython&amp;lt;span class="token punctuation">(&amp;lt;/span>code&amp;lt;span class="token operator">=&amp;lt;/span>create_ids&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+&amp;lt;span class="token punctuation">]&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;p>现在我们有一个&lt;code>UUID&lt;/code> ·id·field 在·Municipality 中，然后我们应该可以更换主键了。&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">class&amp;lt;/span> &amp;lt;span class="token class-name">Municipality&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>Model&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+id &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>UUIDField&amp;lt;span class="token punctuation">(&amp;lt;/span>default&amp;lt;span class="token operator">=&amp;lt;/span>uuid&amp;lt;span class="token punctuation">.&amp;lt;/span>uuid4&amp;lt;span class="token punctuation">,&amp;lt;/span> primary_key&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token boolean">True&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+code &amp;lt;span class="token operator">=&amp;lt;/span> models&amp;lt;span class="token punctuation">.&amp;lt;/span>CharField&amp;lt;span class="token punctuation">(&amp;lt;/span>max_length&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token number">2&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> unique&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token boolean">True&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;p>创建 migration，并且确保在&lt;code>code&lt;/code>上的&lt;code>AlterField&lt;/code>操作在&lt;code>id&lt;/code>之前。我们已经在&lt;code>id&lt;/code>上增加了&lt;code>primary_key&lt;/code>并且增加了 unique=True 到&lt;code>code&lt;/code> field。constraint 没了，在我们删除 primary_key 的时候就没了。&lt;/p>
+&lt;p>让我们开始一个空的迁移&lt;/p>
+&lt;pre class=" language-sh">&lt;code>python manage.py makemigrations --empty -n fix_zipcode_fk_to_muni_uuid loc&lt;/code>&lt;/pre>
+&lt;p>打开文件，输入&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">def&amp;lt;/span> &amp;lt;span class="token function">match&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>apps&amp;lt;span class="token punctuation">,&amp;lt;/span> schema_editor&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+ZipCode &amp;lt;span class="token operator">=&amp;lt;/span> apps&amp;lt;span class="token punctuation">.&amp;lt;/span>get_model&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token string">'loc'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> &amp;lt;span class="token string">'ZipCode'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+Muni &amp;lt;span class="token operator">=&amp;lt;/span> apps&amp;lt;span class="token punctuation">.&amp;lt;/span>get_model&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token string">'loc'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> &amp;lt;span class="token string">'Municipality'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token keyword">for&amp;lt;/span> zip_code &amp;lt;span class="token keyword">in&amp;lt;/span> ZipCode&amp;lt;span class="token punctuation">.&amp;lt;/span>object&amp;lt;span class="token punctuation">.&amp;lt;/span>all&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+zip_code&amp;lt;span class="token punctuation">.&amp;lt;/span>temp_muni &amp;lt;span class="token operator">=&amp;lt;/span> Muni&amp;lt;span class="token punctuation">.&amp;lt;/span>get&amp;lt;span class="token punctuation">(&amp;lt;/span>code&amp;lt;span class="token operator">=&amp;lt;/span>z&amp;lt;span class="token punctuation">.&amp;lt;/span>municipality&amp;lt;span class="token punctuation">)&amp;lt;/span>
+zip_code&amp;lt;span class="token punctuation">.&amp;lt;/span>save&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token comment" spellcheck="true"># ...&amp;lt;/span>
+operations &amp;lt;span class="token operator">=&amp;lt;/span> &amp;lt;span class="token punctuation">[&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>AddField&amp;lt;span class="token punctuation">(&amp;lt;/span>
+model_name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'zipcode'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'temp_muni'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+field&amp;lt;span class="token operator">=&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>UUIDField&amp;lt;span class="token punctuation">(&amp;lt;/span>null&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token boolean">True&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>RunPython&amp;lt;span class="token punctuation">(&amp;lt;/span>code&amp;lt;span class="token operator">=&amp;lt;/span>match&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>RemoveField&amp;lt;span class="token punctuation">(&amp;lt;/span>model_name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'zipcode'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'municipality'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>RenameField&amp;lt;span class="token punctuation">(&amp;lt;/span>
+model_name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'zipcode'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> old_name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'temp_muni'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span> new_name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'municipality'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migrations&amp;lt;span class="token punctuation">.&amp;lt;/span>AlterField&amp;lt;span class="token punctuation">(&amp;lt;/span>
+model_name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'zipcode'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+name&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'municipality'&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+field&amp;lt;span class="token operator">=&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>ForeignKey&amp;lt;span class="token punctuation">(&amp;lt;/span>
+on_delete&amp;lt;span class="token operator">=&amp;lt;/span>django&amp;lt;span class="token punctuation">.&amp;lt;/span>db&amp;lt;span class="token punctuation">.&amp;lt;/span>models&amp;lt;span class="token punctuation">.&amp;lt;/span>deletion&amp;lt;span class="token punctuation">.&amp;lt;/span>PROTECT&amp;lt;span class="token punctuation">,&amp;lt;/span>
+to&amp;lt;span class="token operator">=&amp;lt;/span>&amp;lt;span class="token string">'municipality'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token punctuation">]&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;ol>
+&lt;li>增加一个临时的field来保存 Municipality 的UUID，我们不让他是一个&lt;code>ForeignKey&lt;/code>field，否则 Django confuse。&lt;/li>
+&lt;li>我们运行 match 函数来寻找新的 id，通过寻找旧的 key，并且存储到临时的 field。&lt;/li>
+&lt;li>删除旧的 municipality field&lt;/li>
+&lt;li>重命名临时 field 到 municipality&lt;/li>
+&lt;li>最后迁移到一个外键，然后创建我们需要 constraint&lt;/li>
+&lt;/ol>
+&lt;pre>译者：这样改最大的好处就是改了 UUID，但是没有破坏之前的逻辑，可以说是谨慎的迁移吧。不过线上的数据既然在跑着，就这么迁移了，会不会出问题呢。&lt;/pre>
+&lt;p>下面还有一些内容。自从我们将 migrations 分离成多个文件，我们让代码变得很脆弱（如果后面的某些 migrations 失败了）。这将会让我们的应用进入一个 unworkable 的状态。所以确保测试一下migrations。你可通过手工把这所有的步骤整合到一个migration里，但是如果你有来自多个不同app的 reference，你可能需要把这些步骤再分开。&lt;/p>
+&lt;h2 id="logging">logging
+&lt;/h2>&lt;p>迁移的过程中，你可能遇到很多问题，所以一个比较不错的方式，是创建一个简单的迁移 logging。&lt;/p>
+&lt;pre class=" language-python">&lt;code class=" language-python">&amp;lt;span class="token keyword">def&amp;lt;/span> &amp;lt;span class="token function">log&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>message&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+&amp;lt;span class="token keyword">def&amp;lt;/span> &amp;lt;span class="token function">fake_op&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>apps&amp;lt;span class="token punctuation">,&amp;lt;/span> schema_editor&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">:&amp;lt;/span>
+&amp;lt;span class="token keyword">print&amp;lt;/span>&amp;lt;span class="token punctuation">(&amp;lt;/span>message&amp;lt;span class="token punctuation">)&amp;lt;/span>
+&amp;lt;span class="token keyword">return&amp;lt;/span> fake_op
+&amp;lt;span class="token comment" spellcheck="true"># ...&amp;lt;/span>
+operations &amp;lt;span class="token operator">=&amp;lt;/span> &amp;lt;span class="token punctuation">[&amp;lt;/span>
+migration&amp;lt;span class="token punctuation">.&amp;lt;/span>RunPython&amp;lt;span class="token punctuation">(&amp;lt;/span>log&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token string">'Step 1'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migration&amp;lt;span class="token punctuation">.&amp;lt;/span>AlterField&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">.&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+migration&amp;lt;span class="token punctuation">.&amp;lt;/span>RunPython&amp;lt;span class="token punctuation">(&amp;lt;/span>log&amp;lt;span class="token punctuation">(&amp;lt;/span>&amp;lt;span class="token string">'Step 2'&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">)&amp;lt;/span>&amp;lt;span class="token punctuation">,&amp;lt;/span>
+&amp;lt;span class="token comment" spellcheck="true"># ...&amp;lt;/span>
+&amp;lt;span class="token punctuation">]&amp;lt;/span>&lt;/code>&lt;/pre>
+&lt;p>想要观察 Django 运行了那些 SQL 语句，运行&lt;code>python manage.py sqlmigrate &amp;lt;appname&amp;gt;&amp;lt;migration_number&amp;gt;&lt;/code>，这是一个超级有用的方法。&lt;/p>
+&lt;p> &lt;/p></description></item><item><title>Django 写个过滤器 filter</title><link>https://svtter.cn/2018/11/05/django-%E5%86%99%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8/</link><pubDate>Mon, 05 Nov 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/2018/11/05/django-%E5%86%99%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8/</guid><description>&lt;p>用 Django 快速开发一个项目，发现 Django 的模板本身不带有整除功能，因此自己手写一个。&lt;/p>
+&lt;pre class="wp-block-code">&lt;code class="">├── templates
+│   ├── app
+│   └── base
+├── templatetags
+│   ├── app_extras.py
+│   ├── __init__.py
+│   └── __pycache__
+├── tests.py
+├── urls.py
+├── utils.py
+└── views.py
+&lt;/code>&lt;/pre>
+&lt;p>这是目录结构。在 urls.py 添加 app 的名称，例如 app_name = ‘app’ ，然后在与models.py 同级的目录下，新建一个 python 包， templatetags 的，新建自己需要的包名即可。&lt;/p>
+&lt;p>app_extra.py：&lt;/p>
+&lt;pre class="wp-block-code">&lt;code lang="php" class="language-php">from django import template
+register = template.Library()
+def mod(value):
+return value % 11
+register.filter('mod', mod)
+&lt;/code>&lt;/pre>
+&lt;p>这里因为需求比较简单，因此直接就赋值了 11.&lt;/p>
+&lt;p>应用到模板中：&lt;/p>
+&lt;pre class="wp-block-code">&lt;code class="">{% load app_extra %}
+{% for image in image_list %}
+{% if forloop.counter|mod == 0 %}
+&amp;lt;h3>检查点&amp;lt;/h3>
+{% endif %}
+{% endfor %}&lt;/code>&lt;/pre>
+&lt;p>随后即可看到结果。&lt;/p>
+&lt;p>此外，寻得两个比较好用 template 插件&lt;figure class="wp-block-embed">&lt;/p>
+&lt;div class="wp-block-embed__wrapper">
+https://pypi.org/project/django-bootstrap4/
+&lt;/div>&lt;/figure> &lt;figure class="wp-block-embed">
+&lt;div class="wp-block-embed__wrapper">
+https://github.com/timonweb/django-bulma
+&lt;/div>&lt;/figure>
+&lt;p>实现的东西虽然不多，但是起码把我不想关心的逻辑封装起来了。。&lt;/p></description></item><item><title>Python functools</title><link>https://svtter.cn/p/python-functools/</link><pubDate>Sun, 21 Oct 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-functools/</guid><description>&lt;p>Python &lt;a class="link" href="https://docs.python.org/3/library/functools.html" target="_blank" rel="noopener"
+>functools&lt;/a>包中，有个很好的函数叫做&lt;code>partial&lt;/code> ，中文直接翻译为&lt;code>片函数&lt;/code>，此前一直都没有使用过。最近通过阅读别人的代码，学会了这一技能，着实好用。&lt;/p>
+&lt;p>使用&lt;code>partial&lt;/code>，可以把一些固有功能代码做一个整合；&lt;/p>
+&lt;p>比如我希望一个函数专门做 int2 转换&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">int2&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">partial&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">int&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">base&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>甚至还可以再过分一点，把 base 变成一个字典量传入。&lt;/p>
+&lt;p>多使用内建函数 locals，可以极大的减少自己的代码量；&lt;/p>
+&lt;p>这不得不让我感概：真正的 Pythonista，永无止境。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">in_func&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">a&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">b&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">b&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">args&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">b&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">test&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="nb">locals&lt;/span>&lt;span class="p">()))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="changelog">CHANGELOG
+&lt;/h3>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: left">date&lt;/th>
+&lt;th style="text-align: left">content&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: left">20230829&lt;/td>
+&lt;td style="text-align: left">调整了一些语病&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Django导出博客为hexo博客</title><link>https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2/</link><pubDate>Fri, 05 Jan 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/2018/01/05/django%E5%AF%BC%E5%87%BA%E5%8D%9A%E5%AE%A2%E4%B8%BAhexo%E5%8D%9A%E5%AE%A2/</guid><description>&lt;p>Django导出主要使用&lt;code>render_to_string&lt;/code>方法来进行；&lt;/p>
+&lt;p>可以参考的源码如下：&lt;/p>
+&lt;div class="codehilite">
+&lt;pre>&lt;span>&lt;/span>&lt;span class="kn">from&lt;/span> &lt;span class="nn">article.models&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">Article&lt;/span>
+&lt;span class="kn">from&lt;/span> &lt;span class="nn">django.template.loader&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">render_to_string&lt;/span>
+&lt;span class="n">posts&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Article&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">objects&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">all&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;span class="k">for&lt;/span> &lt;span class="n">post&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">posts&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">title&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">title&lt;/span>
+&lt;span class="n">title&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">title&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;[&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">title&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">title&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;]&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">context&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="s1">&amp;#39;title&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">title&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s1">&amp;#39;cre_date&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">cre_date&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s1">&amp;#39;updated&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">up_date&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s1">&amp;#39;content&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s1">&amp;#39;category&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">category&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="s1">&amp;#39;tag&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">tag&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;span class="n">content&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">render_to_string&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;article.html&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">context&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="n">filename&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;export/&amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">post&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">title&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;.md&amp;#39;&lt;/span>
+&lt;span class="k">with&lt;/span> &lt;span class="nb">open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">filename&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;w&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="n">f&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/pre>
+&lt;/div>
+&lt;p>对应的渲染&lt;code>article.html&lt;/code>&lt;/p>
+&lt;div class="codehilite">
+&lt;pre>&lt;span>&lt;/span>title: {{ title }}
+date: 2018-01-05T01:00:00+08:00
+updated: {{ updated | date:"Y/m/d H:i:s" }}
+tags: [
+{% for tag in tags %}
+&amp;#39;{{ tag.name }}&amp;#39;,
+{% endfor %}
+]
+categories: [
+&amp;#39;{{ category }}&amp;#39;,
+]
+---
+{{ content | safe }}
+&lt;/pre>
+&lt;/div>
+&lt;p>运行的时候，&lt;code>python manage.py shell&lt;/code>，然后导入&lt;code>export&lt;/code> 包即可。&lt;/p></description></item></channel></rss>

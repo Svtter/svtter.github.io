@@ -1,26 +1,82 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Image on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/image/</link>
-    <description>Recent content in Image on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Sun, 12 Jan 2025 18:31:12 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/image/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>图片数据集的浏览</title>
-      <link>https://svtter.cn/post/2025-02-05-better-dataset-viewer.md/</link>
-      <pubDate>Sun, 12 Jan 2025 18:31:12 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-02-05-better-dataset-viewer.md/</guid>
-      <description>&lt;p&gt;数据集浏览是个比较麻烦的事情。尤其是数据集比较大的时候。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>批量修改图片大小</title>
-      <link>https://svtter.cn/2017/07/07/%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F/</link>
-      <pubDate>Fri, 07 Jul 2017 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2017/07/07/%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F/</guid>
-      <description>&lt;p&gt;这两天做数据采集的时候，发现直接获取的数据文件太大了，保存起来占用内存太多，&lt;/p&gt;&#xA;&lt;p&gt;手机端又不需要这么大的内存。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Image on Svtter's Blog</title><link>https://svtter.cn/tags/image/</link><description>Recent content in Image on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 12 Jan 2025 18:31:12 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/image/index.xml" rel="self" type="application/rss+xml"/><item><title>图片数据集的浏览</title><link>https://svtter.cn/p/%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B5%8F%E8%A7%88/</link><pubDate>Sun, 12 Jan 2025 18:31:12 +0800</pubDate><guid>https://svtter.cn/p/%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B5%8F%E8%A7%88/</guid><description>&lt;p>数据集浏览是个比较麻烦的事情。尤其是数据集比较大的时候。&lt;/p>
+&lt;p>npy (numpy array) ，h5 文件是两种常见的数据存储方式。
+h5 文件的缺点是很容易产生数据损坏。笔者使用的时候多次遇见 h5 文件打不开的问题。
+npy 文件在读取速度，文件传输方面具有很明显的优势。缺点是一次性加载到内存中，如果服务器不行，很容易爆掉。&lt;/p>
+&lt;p>常见的图像数据集一般是将 label 和 image 分开放。例如 COCO 等。这样一来，也可以用文件浏览器去查看图片，可以快速的观察图片的特点。但一般情况下，我们不会在本地的电脑上查看图片，而是更多的在服务上操作数据集。&lt;/p>
+&lt;p>2024，结合 torch，我感觉还是 matplotlib 直接绘图会方便一些。matplotlib 直接绘图一般是展示单张图片。但是如果利用 subplot，可以同时展示更多图片。如果用了 opencv，可以将部分标签值打印上去。不过也有缺点：如果使用的是远程服务器，生成图片的传输过程需要占用较多的带宽。
+具体采用什么方式，还得自己做判断呐！&lt;/p></description></item><item><title>批量修改图片大小</title><link>https://svtter.cn/2017/07/07/%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F/</link><pubDate>Fri, 07 Jul 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/2017/07/07/%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E5%9B%BE%E7%89%87%E5%A4%A7%E5%B0%8F/</guid><description>&lt;p>这两天做数据采集的时候，发现直接获取的数据文件太大了，保存起来占用内存太多，&lt;/p>
+&lt;p>手机端又不需要这么大的内存。&lt;/p>
+&lt;p>于是在网上简单搜搜，经过修改制作了一个简单的脚本。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="ch">#!/usr/bin/env python&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># -*- coding: utf-8 -*-&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># vim:fenc=utf-8&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">#&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Copyright © 2017 xiuhao &amp;lt;xiuhao@xiuhaodeMacBook-Pro.local&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">#&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">glob&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">PIL&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">Image&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">os.path&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 测试代码&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">rootdir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;./canteen&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">saveDir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;./canteen-new&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">convertjpg&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">jpgfile&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">savedir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">width&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">5000&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">height&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">4000&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s1">&amp;#39;&amp;#39;&amp;#39;修改图片文件大小jpgfile：图片文件；savedir：修改后要保存的路径&amp;#39;&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">img&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Image&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">jpgfile&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">new_img&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">img&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">resize&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">width&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">height&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="n">Image&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">BILINEAR&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">new_img&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">save&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">savedir&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">basename&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">jpgfile&lt;/span>&lt;span class="p">)))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">modifyjpgSize&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">saveDir&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s1">&amp;#39;&amp;#39;&amp;#39;查找给定路径下图片文件，并修改其大小&amp;#39;&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">jpgfile&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">glob&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">glob&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">convertjpg&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">jpgfile&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">saveDir&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">parent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">dirnames&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">filenames&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">walk&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rootdir&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span> &lt;span class="n">filename&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">filenames&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">fullname&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">filename&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">modifyjpgSize&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fullname&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">saveDir&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

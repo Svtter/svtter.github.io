@@ -1,19 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Typing on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/typing/</link>
-    <description>Recent content in Typing on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Fri, 12 Jul 2024 16:20:32 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/typing/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>New Usage of typing module in python</title>
-      <link>https://svtter.cn/post/2024-07-25-new-usage-of-typing/</link>
-      <pubDate>Fri, 12 Jul 2024 16:20:32 +0800</pubDate>
-      <guid>https://svtter.cn/post/2024-07-25-new-usage-of-typing/</guid>
-      <description>&lt;p&gt;我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Typing on Svtter's Blog</title><link>https://svtter.cn/tags/typing/</link><description>Recent content in Typing on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 12 Jul 2024 16:20:32 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/typing/index.xml" rel="self" type="application/rss+xml"/><item><title>New Usage of typing module in python</title><link>https://svtter.cn/p/new-usage-of-typing-module-in-python/</link><pubDate>Fri, 12 Jul 2024 16:20:32 +0800</pubDate><guid>https://svtter.cn/p/new-usage-of-typing-module-in-python/</guid><description>&lt;p>我原本想要分析一下 django webpack；但是写了一半，为了资料论述严谨，又不得不学习了 django component；在 django component 中，又发现了自己之前不知道的一些机制。无奈，先聊聊遇到的 typing 问题吧！&lt;/p>
+&lt;p>最近在阅读 django components 代码的时候，我在 &lt;a class="link" href="https://github.com/EmilStenstrom/django-components/blob/master/src/django_components/component_registry.py" target="_blank" rel="noopener"
+>component_registry.py&lt;/a> 看到了这样一段代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">from&lt;/span> &lt;span class="nn">typing&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">TYPE_CHECKING&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Callable&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Dict&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Type&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">TypeVar&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="n">TYPE_CHECKING&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">from&lt;/span> &lt;span class="nn">django_components&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">component&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">_TC&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">TypeVar&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;_TC&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">bound&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">Type&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;component.Component&amp;#34;&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>从中能学到几个知识点：&lt;/p>
+&lt;ol>
+&lt;li>TYPE_CHECKING 变量是用于程序员处理类型相关代码的 TAG，在实际运行的时候，内部代码不被执行；我们可以从 typing 的&lt;a class="link" href="https://docs.python.org/3/library/typing.html#typing.TYPE_CHECKING" target="_blank" rel="noopener"
+>官方文档&lt;/a>中找到。&lt;/li>
+&lt;li>TypeVar 可以这样来用：&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">S&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">TypeVar&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;S&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">bound&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">str&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Can be any subtype of str&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在这段代码处，意味着 &lt;code>_TC&lt;/code> 可以是任何一个 &lt;code>component.Component&lt;/code> 的 &lt;code>subtype&lt;/code>。&lt;/p>
+&lt;h2 id="conclusion">Conclusion
+&lt;/h2>&lt;p>python 也在慢慢丰富自己的类型系统，许多新的用法也会慢慢地开发出来。不过相比之下，typescript 的类型系统要更先进一些。大家好好学！&lt;/p>
+&lt;blockquote>
+&lt;p>附加一点吐槽：Component 居然是一个 django view，感觉很奇怪啊。&lt;/p>&lt;/blockquote></description></item></channel></rss>

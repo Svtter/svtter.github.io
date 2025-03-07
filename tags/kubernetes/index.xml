@@ -1,19 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Kubernetes on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/kubernetes/</link>
-    <description>Recent content in Kubernetes on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Wed, 12 Jun 2024 11:09:49 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Using Kind to Play with K8s</title>
-      <link>https://svtter.cn/post/2024-06-15-use-kind-to-play-k8s/</link>
-      <pubDate>Wed, 12 Jun 2024 11:09:49 +0800</pubDate>
-      <guid>https://svtter.cn/post/2024-06-15-use-kind-to-play-k8s/</guid>
-      <description>&lt;p&gt;如果直接使用 kubernetes 的线上版本进行调试，需要资源太多了。使用 minikube 有时候又无法启动集群。&#xA;因此，开发者可以考虑使用 &lt;a href=&#34;https://kind.sigs.k8s.io/docs/user/quick-start/&#34;&gt;Kind&lt;/a&gt; 来部署测试 Kubernetes。&lt;/p&gt;&#xA;&lt;p&gt;This article is about using Kind to create a Kubernetes (K8s) cluster and debug it.&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kubernetes on Svtter's Blog</title><link>https://svtter.cn/tags/kubernetes/</link><description>Recent content in Kubernetes on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 12 Jun 2024 11:09:49 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>Using Kind to Play with K8s</title><link>https://svtter.cn/p/using-kind-to-play-with-k8s/</link><pubDate>Wed, 12 Jun 2024 11:09:49 +0800</pubDate><guid>https://svtter.cn/p/using-kind-to-play-with-k8s/</guid><description>&lt;p>如果直接使用 kubernetes 的线上版本进行调试，需要资源太多了。使用 minikube 有时候又无法启动集群。
+因此，开发者可以考虑使用 &lt;a class="link" href="https://kind.sigs.k8s.io/docs/user/quick-start/" target="_blank" rel="noopener"
+>Kind&lt;/a> 来部署测试 Kubernetes。&lt;/p>
+&lt;p>This article is about using Kind to create a Kubernetes (K8s) cluster and debug it.&lt;/p>
+&lt;p>By default, Kind does not support load balancers. If you want to test your apps, use &lt;code>NodePort&lt;/code> or &lt;code>ClusterIP&lt;/code> instead.&lt;/p>
+&lt;p>Source code: &lt;a class="link" href="https://github.com/Svtter/example-code-for-kind" target="_blank" rel="noopener"
+>svtter/example-code-for-kind&lt;/a>.&lt;/p>
+&lt;h2 id="using-nodeport-to-view-service">Using NodePort to View Service
+&lt;/h2>&lt;p>Get the node&amp;rsquo;s IP to visit:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="o">(&lt;/span>base&lt;span class="o">)&lt;/span> ➜ cathodic kubectl get nodes -o wide
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">NAME STATUS ROLES AGE VERSION INTERNAL-IP EXTERNAL-IP OS-IMAGE KERNEL-VERSION CONTAINER-RUNTIME
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kind-control-plane Ready control-plane 22h v1.30.0 172.18.0.2 &amp;lt;none&amp;gt; Debian GNU/Linux &lt;span class="m">12&lt;/span> &lt;span class="o">(&lt;/span>bookworm&lt;span class="o">)&lt;/span> 6.1.0-18-amd64 containerd://1.7.15
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>View the service IP:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="o">(&lt;/span>base&lt;span class="o">)&lt;/span> ➜ cathodic kubectl get service nginx-service
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">NAME TYPE CLUSTER-IP EXTERNAL-IP PORT&lt;span class="o">(&lt;/span>S&lt;span class="o">)&lt;/span> AGE
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">nginx-service NodePort 10.96.65.77 &amp;lt;none&amp;gt; 80:30160/TCP 26m
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Now, use &lt;code>curl -L http://172.18.0.2:30160&lt;/code> to visit the Nginx service.&lt;/p>
+&lt;h2 id="using-loadbalancer">Using LoadBalancer
+&lt;/h2>&lt;ul>
+&lt;li>Install cloud-provider-kind via this &lt;a class="link" href="https://kind.sigs.k8s.io/docs/user/loadbalancer/" target="_blank" rel="noopener"
+>loadbalancer&lt;/a>.&lt;/li>
+&lt;li>Start Kind, unlabel the node, and start &lt;code>cloud-provider-kind&lt;/code> according to this &lt;a class="link" href="https://github.com/kubernetes-sigs/cloud-provider-kind?tab=readme-ov-file#install" target="_blank" rel="noopener"
+>link&lt;/a>.&lt;/li>
+&lt;/ul></description></item></channel></rss>

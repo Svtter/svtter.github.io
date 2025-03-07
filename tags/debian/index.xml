@@ -1,26 +1,189 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Debian on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/debian/</link>
-    <description>Recent content in Debian on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Sat, 15 Feb 2025 14:12:37 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/debian/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Extend LVM Disk.md</title>
-      <link>https://svtter.cn/post/2025-02-15-extend-lvm-disk.md/</link>
-      <pubDate>Sat, 15 Feb 2025 14:12:37 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-02-15-extend-lvm-disk.md/</guid>
-      <description>&lt;p&gt;使用 PVE + Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Change Network of Debian.md</title>
-      <link>https://svtter.cn/post/2025-02-10-change-network-of-debian.md/</link>
-      <pubDate>Mon, 10 Feb 2025 20:49:27 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-02-10-change-network-of-debian.md/</guid>
-      <description>&lt;p&gt;有时候我们希望修改默认的 ip 地址以及 DNS 服务器，来获得更好的网络。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Debian on Svtter's Blog</title><link>https://svtter.cn/tags/debian/</link><description>Recent content in Debian on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 15 Feb 2025 14:12:37 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/debian/index.xml" rel="self" type="application/rss+xml"/><item><title>Extend LVM Disk.md</title><link>https://svtter.cn/p/extend-lvm-disk.md/</link><pubDate>Sat, 15 Feb 2025 14:12:37 +0800</pubDate><guid>https://svtter.cn/p/extend-lvm-disk.md/</guid><description>&lt;p>使用 PVE + Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。&lt;/p>
+&lt;!-- 如果之前安装 Debian 没使用 LVM（逻辑卷），基本上就没救了，自己需要重新做一下系统。 -->
+&lt;p>我们讨论的是使用 LVM（逻辑卷管理器）的情况。&lt;/p>
+&lt;p>在这种情况下，我们需要首先看看系统。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">root@debian:/home/svtter# lsblk
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sda 8:0 &lt;span class="m">0&lt;/span> 132G &lt;span class="m">0&lt;/span> disk
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">├─sda1 8:1 &lt;span class="m">0&lt;/span> 487M &lt;span class="m">0&lt;/span> part /boot
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">├─sda2 8:2 &lt;span class="m">0&lt;/span> 1K &lt;span class="m">0&lt;/span> part
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">└─sda5 8:5 &lt;span class="m">0&lt;/span> 31.5G &lt;span class="m">0&lt;/span> part
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ├─debian--vg-root 254:0 &lt;span class="m">0&lt;/span> 30.5G &lt;span class="m">0&lt;/span> lvm /
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └─debian--vg-swap_1 254:1 &lt;span class="m">0&lt;/span> 976M &lt;span class="m">0&lt;/span> lvm &lt;span class="o">[&lt;/span>SWAP&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sr0 11:0 &lt;span class="m">1&lt;/span> 1.4G &lt;span class="m">0&lt;/span> rom
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>此时我们总共有 132G 的可用空间，使用了 31.5 G。&lt;/p>
+&lt;p>我们需要调整 &lt;code>/dev/sda5&lt;/code> 的大小。&lt;/p>
+&lt;p>我们首先需要使用一个 bootable usb。如果你使用的 PVE，你可以直接加载一个 iso 来启动。&lt;/p>
+&lt;blockquote>
+&lt;p>注意：以下的操作不一定具有可复现性。请务必备份你的数据，以防不测。&lt;/p>&lt;/blockquote>
+&lt;p>在 live system 中，运行&lt;code>parted /dev/sda&lt;/code>。&lt;/p>
+&lt;blockquote>
+&lt;p>debian live system 中，用户名密码为：&lt;code>user/live&lt;/code>，切换 root 用户，只需要&lt;code>sudo su&lt;/code>。&lt;/p>&lt;/blockquote>
+&lt;p>在 parted 中，使用 print 查看磁盘情况。&lt;/p>
+&lt;p>下面是一个操作样例：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 启动 parted 并选择磁盘&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">parted /dev/sda
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 查看当前分区表&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">print
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 调整分区大小（假设要将 /dev/sda5 扩展到最大可用空间）&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">resizepart &lt;span class="m">5&lt;/span> &lt;span class="c1"># 5 是 /dev/sda5 的分区编号&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 按照提示输入新的分区大小，按 Enter 选择默认的最大可用空间&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 退出 parted&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">quit
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>此时，需要首先&lt;code>resizepart /dev/sda2&lt;/code>，也就是逻辑卷组。然后在扩展&lt;code>resizepart /dev/sda5&lt;/code>。&lt;/p>
+&lt;p>完成拓展后，运行&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">pvresize /dev/sda5
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vgextend debian-vg /dev/sda5
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lvextend -l +100%FREE /dev/debian-vg/root
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>此时磁盘空间已经拓展了。但是 ext4 文件系统还未适应。&lt;/p>
+&lt;p>运行命令来重新调整 ext4 文件系统。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">e2fsck -f /dev/debian-vg/root
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">resize2fs /dev/debian-vg/root
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>再次查看&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">root@debian:/home/user# sudo lvdisplay /dev/debian-vg/root
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> --- Logical volume ---
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV Path /dev/debian-vg/root
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV Name root
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> VG Name debian-vg
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV UUID 82SmmD-qnAc-KOIO-1B2Y-ynP3-Mo0E-D12Rq0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV Write Access read/write
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV Creation host, &lt;span class="nb">time&lt;/span> debian, 2025-02-15 05:49:23 +0000
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV Status available
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># open 0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LV Size &amp;lt;91.70 GiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Current LE &lt;span class="m">23475&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Segments &lt;span class="m">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Allocation inherit
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Read ahead sectors auto
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - currently &lt;span class="nb">set&lt;/span> to &lt;span class="m">256&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Block device 254:0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样一来，磁盘空间就拓展了。&lt;/p></description></item><item><title>Change Network of Debian.md</title><link>https://svtter.cn/p/change-network-of-debian.md/</link><pubDate>Mon, 10 Feb 2025 20:49:27 +0800</pubDate><guid>https://svtter.cn/p/change-network-of-debian.md/</guid><description>&lt;p>有时候我们希望修改默认的 ip 地址以及 DNS 服务器，来获得更好的网络。&lt;/p>
+&lt;p>对 Debian 来说，修改两个文件，一个是&lt;code>/etc/network/interfaces&lt;/code>，另一个是&lt;code>/etc/resolv.conf&lt;/code>&lt;/p>
+&lt;p>对于&lt;code>interfaces&lt;/code>来说&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl"># This file describes the network interfaces available on your system
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># and how to activate them. For more information, see interfaces(5).
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">source /etc/network/interfaces.d/*
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># The loopback network interface
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">auto lo
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">iface lo inet loopback
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># The primary network interface
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">allow-hotplug ens18
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">iface ens18 inet static
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">address 192.168.2.35
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">netmask 255.255.255.0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">gateway 192.168.2.60
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在网关是&lt;code>192.168.2.60&lt;/code>的时候；&lt;/p>
+&lt;p>如果还需要配置 DNS，修改 &lt;code>/etc/resolv.conf&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">nameserver 192.168.2.60
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>禁止ipv6&lt;/p>
+&lt;p>&lt;code>/etc/sysctl.conf&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">net.ipv6.conf.all.disable_ipv6 = 1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>别忘了重启网络：&lt;code>systemctl restart networking&lt;/code>.&lt;/p></description></item></channel></rss>

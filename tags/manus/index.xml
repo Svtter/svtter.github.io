@@ -1,19 +1,58 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Manus on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/manus/</link>
-    <description>Recent content in Manus on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Thu, 06 Mar 2025 22:46:09 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/manus/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Usable Mcp Server for Pdf.md</title>
-      <link>https://svtter.cn/post/2025-03-06-usable-mcp-server-for-pdf.md/</link>
-      <pubDate>Thu, 06 Mar 2025 22:46:09 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-03-06-usable-mcp-server-for-pdf.md/</guid>
-      <description>&lt;p&gt;我在使用 cursor 的时候，发现 cursor 无法读取 pdf 文件。&#xA;大家可能也会遇到了类似的问题，就是 cursor 无法读取一些特殊格式的文件。&#xA;这个时候就需要 MCP 来搞事情。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Manus on Svtter's Blog</title><link>https://svtter.cn/tags/manus/</link><description>Recent content in Manus on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 06 Mar 2025 22:46:09 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/manus/index.xml" rel="self" type="application/rss+xml"/><item><title>Usable Mcp Server for Pdf.md</title><link>https://svtter.cn/p/usable-mcp-server-for-pdf.md/</link><pubDate>Thu, 06 Mar 2025 22:46:09 +0800</pubDate><guid>https://svtter.cn/p/usable-mcp-server-for-pdf.md/</guid><description>&lt;p>我在使用 cursor 的时候，发现 cursor 无法读取 pdf 文件。
+大家可能也会遇到了类似的问题，就是 cursor 无法读取一些特殊格式的文件。
+这个时候就需要 MCP 来搞事情。&lt;/p>
+&lt;p>MCP 协议最近很火；MCP 是将大模型和工具链接在一起的协议。这样一来，大模型可以很好的使用工具来获得它想要的信息。&lt;/p>
+&lt;p>明确支持 MCP 协议的典型公司有几个（来自 poe）:&lt;/p>
+&lt;ol>
+&lt;li>Claude: 由Anthropic开发的Claude系列模型是MCP协议的主要支持者之一。Claude通过MCP协议可以直接连接到各种数据源，实现更高效的数据交互和处理。&lt;/li>
+&lt;li>Zed: 这是一个开发工具，正在与Anthropic合作，准备接入MCP协议。&lt;/li>
+&lt;li>Replit: 作为一个在线编程环境，Replit也在与Anthropic合作，计划支持MCP协议。&lt;/li>
+&lt;li>Codium: 这个开发工具同样在与Anthropic合作，准备接入MCP协议。&lt;/li>
+&lt;li>Sourcegraph: 作为代码搜索和导航工具，Sourcegraph也在考虑支持MCP协议。&lt;/li>
+&lt;/ol>
+&lt;p>除此之外，根据 MCP 协议，也有工程师实现了 Bridge： &lt;a class="link" href="https://github.com/bartolli/mcp-llm-bridge" target="_blank" rel="noopener"
+>https://github.com/bartolli/mcp-llm-bridge&lt;/a>&lt;/p>
+&lt;p>废话少说，我们看看如何使用 MCP，让大模型读取 PDF&lt;/p>
+&lt;h2 id="example">Example
+&lt;/h2>&lt;p>首先，下载一个支持 MCP 协议的工具&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git clone git@github.com:vivekVells/mcp-pandoc.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>配置一下本地的 cursor，如 &lt;code>.cursor/mcp.json&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;mcpServers&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;mcp-pandoc&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;command&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;uvx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;args&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;mcp-pandoc&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>然后就可以在 agent 模式直接调用读取 pdf 了。agent 就可以愉快的自己做事情了。&lt;/p>
+&lt;!-- 是不是比之前 embeding 方便很多。 -->
+&lt;p>今天 manus 很火爆。manus 基于的技术应该差不多。&lt;/p>
+&lt;h2 id="相关资料">相关资料
+&lt;/h2>&lt;ol>
+&lt;li>&lt;a class="link" href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener"
+>anthropic blog&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://mcpcn.com/docs/tutorials/building-a-client/#%e7%b3%bb%e7%bb%9f%e8%a6%81%e6%b1%82" target="_blank" rel="noopener"
+>mcpcn&lt;/a>&lt;/li>
+&lt;/ol></description></item></channel></rss>

@@ -1,26 +1,83 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Keras on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/keras/</link>
-    <description>Recent content in Keras on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Mon, 07 Jan 2019 01:00:00 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/keras/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>My Keras tricks</title>
-      <link>https://svtter.cn/2019/01/07/my-keras-tricks/</link>
-      <pubDate>Mon, 07 Jan 2019 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2019/01/07/my-keras-tricks/</guid>
-      <description>&lt;p&gt;记录了一些使用 keras 的技巧。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Keras坑</title>
-      <link>https://svtter.cn/2018/02/01/keras%E5%9D%91/</link>
-      <pubDate>Thu, 01 Feb 2018 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2018/02/01/keras%E5%9D%91/</guid>
-      <description>&lt;p&gt;使用Keras做分类的时候踩了一个坑，也是拿来主义的锅，估计也有不少同志遇到。&lt;/p&gt;&#xA;&lt;p&gt;在进行分类的时候，往往使用&lt;code&gt;categorical_crossentropy&lt;/code&gt;，有时候萌新（像我）会用&lt;code&gt;binary_crossentropy&lt;/code&gt;，虽然结果可能上浮30%，但是这个结果是不对的。&lt;code&gt;model.fit&lt;/code&gt;以及&lt;code&gt;model.evaluate&lt;/code&gt;给出的&lt;code&gt;acc&lt;/code&gt;的值都是有问题的，正确的计算方法应该是：&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Keras on Svtter's Blog</title><link>https://svtter.cn/tags/keras/</link><description>Recent content in Keras on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 07 Jan 2019 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/keras/index.xml" rel="self" type="application/rss+xml"/><item><title>My Keras tricks</title><link>https://svtter.cn/2019/01/07/my-keras-tricks/</link><pubDate>Mon, 07 Jan 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/2019/01/07/my-keras-tricks/</guid><description>&lt;p>记录了一些使用 keras 的技巧。&lt;/p>
+&lt;h2 id="categorical_crossentropy-vs-sparse_categorical_crossentropy">categorical_crossentropy vs sparse_categorical_crossentropy.
+&lt;/h2>&lt;h4 id="3-the-answerin-a-nutshell">3. The Answer, In a Nutshell
+&lt;/h4>&lt;ul>
+&lt;li>
+&lt;p>If your targets are one-hot encoded, use categorical_crossentropy.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Examples of &lt;a href="https://jovianlin.io/keras-one-hot-encode-decode-sequence-data/" target="_blank" rel="noreferrer noopener">one-hot encodings&lt;/a>:&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>[1,0,0]&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>[0,1,0]&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>[0,0,1]&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>But if your targets are integers, use sparse_categorical_crossentropy.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Examples of integer encodings (&lt;em>for the sake of completion&lt;/em>):&lt;/p>
+&lt;ul>
+&lt;li>1, 2, 3&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="clip-norm">&lt;strong>clip norm&lt;/strong>
+&lt;/h2>&lt;p style="text-align:center">
+&lt;br />&lt;a rel="noreferrer noopener" href="https://wulc.me/2018/05/01/%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/" target="_blank">https://wulc.me/2018/05/01/%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/&lt;/a>&lt;br />可以加速 RNN 训练
+&lt;/p>
+&lt;h2 id="multiple-gpu">&lt;strong>Multiple GPU&lt;/strong>
+&lt;/h2>&lt;p># &lt;a class="link" href="https://keras.io/utils/#multi" target="_blank" rel="noopener"
+>https://keras.io/utils/#multi&lt;/a>_gpu_model#&lt;/p>
+&lt;p>使用多GPU，注意使用 save 的时候，传参传 model (multi_gpu_model的model参数)&lt;/p>
+&lt;h2 id="encode-labels">&lt;strong>Encode Labels&lt;/strong>
+&lt;/h2>&lt;p>可以把不同的字符[‘aa’, ‘bb’, ‘cc’, ‘aa’] 编码成 [0, 1, 2, 0]&lt;/p>
+&lt;table class="wp-block-table">
+&lt;tr>
+&lt;td>
+1&lt;br />2&lt;br />3&lt;br />4&lt;br />5&lt;br />6
+&lt;/td>
+&lt;pre>&lt;code>&amp;lt;td&amp;gt;
+# encode class values as integers&amp;lt;br /&amp;gt;encoder&amp;amp;nbsp;=&amp;amp;nbsp;LabelEncoder()&amp;lt;br /&amp;gt;encoder.fit(Y)&amp;lt;br /&amp;gt;encoded_Y&amp;amp;nbsp;=&amp;amp;nbsp;encoder.transform(Y)&amp;lt;br /&amp;gt;# convert integers to dummy variables (i.e. one hot encoded)&amp;lt;br /&amp;gt;dummy_y&amp;amp;nbsp;=&amp;amp;nbsp;np_utils.to_categorical(encoded_Y)
+&amp;lt;/td&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;/tr>
+&lt;/table>
+&lt;h2 id="训练中存在的问题">训练中存在的问题
+&lt;/h2>&lt;p>训练性能低了别急着调参，首先看看数据预处理有没有问题，评价指标是不是写错了。再一个，batch norm 要勤快点加上。&lt;/p>
+&lt;p>相似的文章还有：&lt;a class="link" href="https://svtter.github.io/2018/02/01/keras%e5%9d%91/" target="_blank" rel="noopener"
+>https://svtter.github.io/2018/02/01/keras%e5%9d%91/&lt;/a>&lt;/p></description></item><item><title>Keras坑</title><link>https://svtter.cn/2018/02/01/keras%E5%9D%91/</link><pubDate>Thu, 01 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/2018/02/01/keras%E5%9D%91/</guid><description>&lt;p>使用Keras做分类的时候踩了一个坑，也是拿来主义的锅，估计也有不少同志遇到。&lt;/p>
+&lt;p>在进行分类的时候，往往使用&lt;code>categorical_crossentropy&lt;/code>，有时候萌新（像我）会用&lt;code>binary_crossentropy&lt;/code>，虽然结果可能上浮30%，但是这个结果是不对的。&lt;code>model.fit&lt;/code>以及&lt;code>model.evaluate&lt;/code>给出的&lt;code>acc&lt;/code>的值都是有问题的，正确的计算方法应该是：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Actual accuracy calculated manually:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">y_pred&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">predict&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x_test&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">acc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">sum&lt;/span>&lt;span class="p">([&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argmax&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">y_test&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">])&lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argmax&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">y_pred&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">])&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="nb">range&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10000&lt;/span>&lt;span class="p">)])&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>其中&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">numpy&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argmax&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">axis&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">None&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">out&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="kc">None&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 返回沿轴axis最大值的索引。&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>使用测试样本的数量代替&lt;code>10000&lt;/code>，输出的acc才是正确的结果。&lt;/p>
+&lt;p>这个方法是使用二分类的时候才能使用的，label的个数多于2就不能使用。&lt;/p>
+&lt;h2 id="参考">参考
+&lt;/h2>&lt;p>&lt;a class="link" href="https://stackoverflow.com/questions/42081257/keras-binary-crossentropy-vs-categorical-crossentropy-performance" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/42081257/keras-binary-crossentropy-vs-categorical-crossentropy-performance&lt;/a>&lt;/p></description></item></channel></rss>

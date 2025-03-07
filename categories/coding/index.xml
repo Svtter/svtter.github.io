@@ -1,40 +1,276 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Coding on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/categories/coding/</link>
-    <description>Recent content in Coding on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Thu, 06 Mar 2025 22:46:09 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/categories/coding/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Usable Mcp Server for Pdf.md</title>
-      <link>https://svtter.cn/post/2025-03-06-usable-mcp-server-for-pdf.md/</link>
-      <pubDate>Thu, 06 Mar 2025 22:46:09 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-03-06-usable-mcp-server-for-pdf.md/</guid>
-      <description>&lt;p&gt;我在使用 cursor 的时候，发现 cursor 无法读取 pdf 文件。&#xA;大家可能也会遇到了类似的问题，就是 cursor 无法读取一些特殊格式的文件。&#xA;这个时候就需要 MCP 来搞事情。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>FP Problem.md</title>
-      <link>https://svtter.cn/post/2025-02-26-fp-problem.md/</link>
-      <pubDate>Wed, 26 Feb 2025 11:02:33 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-02-26-fp-problem.md/</guid>
-      <description>&lt;p&gt;Functional programming (FP) 使用了接近一年的时间，又有了很多新的想法。这里主要说说问题。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>PDM 使用过程中的问题</title>
-      <link>https://svtter.cn/post/2025-02-09-pdm-usage.md/</link>
-      <pubDate>Sun, 09 Feb 2025 12:15:25 +0800</pubDate>
-      <guid>https://svtter.cn/post/2025-02-09-pdm-usage.md/</guid>
-      <description>&lt;p&gt;在使用 pdm 的时候，如果更新包很快，有时候会无法更新 lockfile，也就是&lt;code&gt;pdm lock&lt;/code&gt;无法根据最新的包生成内容。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Python Inline Source Syntax Highlighting Plugin</title>
-      <link>https://svtter.cn/post/2024-09-11-python-inline-source-syntax-highlighting-plugin/</link>
-      <pubDate>Wed, 11 Sep 2024 20:11:20 +0800</pubDate>
-      <guid>https://svtter.cn/post/2024-09-11-python-inline-source-syntax-highlighting-plugin/</guid>
-      <description>&lt;p&gt;在 python 代码的编写过程中，有时候我们会希望将部分文本高亮。这个时候，&lt;a href=&#34;https://marketplace.visualstudio.com/items?itemName=samwillis.python-inline-source&#34;&gt;Python Inline Source Syntax Highlighting&lt;/a&gt; 就派上用场了。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding on Svtter's Blog</title><link>https://svtter.cn/categories/coding/</link><description>Recent content in Coding on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 06 Mar 2025 22:46:09 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/coding/index.xml" rel="self" type="application/rss+xml"/><item><title>Usable Mcp Server for Pdf.md</title><link>https://svtter.cn/p/usable-mcp-server-for-pdf.md/</link><pubDate>Thu, 06 Mar 2025 22:46:09 +0800</pubDate><guid>https://svtter.cn/p/usable-mcp-server-for-pdf.md/</guid><description>&lt;p>我在使用 cursor 的时候，发现 cursor 无法读取 pdf 文件。
+大家可能也会遇到了类似的问题，就是 cursor 无法读取一些特殊格式的文件。
+这个时候就需要 MCP 来搞事情。&lt;/p>
+&lt;p>MCP 协议最近很火；MCP 是将大模型和工具链接在一起的协议。这样一来，大模型可以很好的使用工具来获得它想要的信息。&lt;/p>
+&lt;p>明确支持 MCP 协议的典型公司有几个（来自 poe）:&lt;/p>
+&lt;ol>
+&lt;li>Claude: 由Anthropic开发的Claude系列模型是MCP协议的主要支持者之一。Claude通过MCP协议可以直接连接到各种数据源，实现更高效的数据交互和处理。&lt;/li>
+&lt;li>Zed: 这是一个开发工具，正在与Anthropic合作，准备接入MCP协议。&lt;/li>
+&lt;li>Replit: 作为一个在线编程环境，Replit也在与Anthropic合作，计划支持MCP协议。&lt;/li>
+&lt;li>Codium: 这个开发工具同样在与Anthropic合作，准备接入MCP协议。&lt;/li>
+&lt;li>Sourcegraph: 作为代码搜索和导航工具，Sourcegraph也在考虑支持MCP协议。&lt;/li>
+&lt;/ol>
+&lt;p>除此之外，根据 MCP 协议，也有工程师实现了 Bridge： &lt;a class="link" href="https://github.com/bartolli/mcp-llm-bridge" target="_blank" rel="noopener"
+>https://github.com/bartolli/mcp-llm-bridge&lt;/a>&lt;/p>
+&lt;p>废话少说，我们看看如何使用 MCP，让大模型读取 PDF&lt;/p>
+&lt;h2 id="example">Example
+&lt;/h2>&lt;p>首先，下载一个支持 MCP 协议的工具&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git clone git@github.com:vivekVells/mcp-pandoc.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>配置一下本地的 cursor，如 &lt;code>.cursor/mcp.json&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;mcpServers&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;mcp-pandoc&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;command&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;uvx&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;args&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;mcp-pandoc&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>然后就可以在 agent 模式直接调用读取 pdf 了。agent 就可以愉快的自己做事情了。&lt;/p>
+&lt;!-- 是不是比之前 embeding 方便很多。 -->
+&lt;p>今天 manus 很火爆。manus 基于的技术应该差不多。&lt;/p>
+&lt;h2 id="相关资料">相关资料
+&lt;/h2>&lt;ol>
+&lt;li>&lt;a class="link" href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener"
+>anthropic blog&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://mcpcn.com/docs/tutorials/building-a-client/#%e7%b3%bb%e7%bb%9f%e8%a6%81%e6%b1%82" target="_blank" rel="noopener"
+>mcpcn&lt;/a>&lt;/li>
+&lt;/ol></description></item><item><title>FP Problem.md</title><link>https://svtter.cn/p/fp-problem.md/</link><pubDate>Wed, 26 Feb 2025 11:02:33 +0800</pubDate><guid>https://svtter.cn/p/fp-problem.md/</guid><description>&lt;p>Functional programming (FP) 使用了接近一年的时间，又有了很多新的想法。这里主要说说问题。&lt;/p>
+&lt;p>最大的问题就是效率问题。&lt;/p>
+&lt;p>如果使用基于类的方法，通过继承，我们可以很快的修改一些功能，产品可以快速上线。&lt;/p>
+&lt;p>但是使用函数式编程则很难解决这个问题。&lt;/p>
+&lt;p>例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">Cat&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">object&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close_eye&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">close_eye&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;slow eye closed&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>如果想要调整 &lt;code>close_eye&lt;/code> 的逻辑，那么直接修改 &lt;code>close_eye&lt;/code> 即可。&lt;/p>
+&lt;p>例如&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">SmartCat&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">object&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">close_eye&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">close_eye&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;fast close&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>相比之下，函数式编程可能是这样&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">sleep&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">close_eye&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">close_eye&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;eye closed&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>如果要修改&lt;code>close_eye&lt;/code>，则需要首先修改&lt;code>sleep&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">close_eye&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">close_eye&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">close_eye&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># ...&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样 sleep 接受 &lt;code>close_eye&lt;/code> 作为参数，原本的函数作为默认值。&lt;/p>
+&lt;p>调用改为&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">fast_close_eye&lt;/span>&lt;span class="p">():&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;fast close&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">close_eye&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">fast_close_eye&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这里比较麻烦的是，违反了开闭原则。我们不得不修改之前的代码，还要考虑之前代码的可维护性。&lt;/p>
+&lt;p>因此，我认为在这个场景，FP 不太合适。&lt;/p></description></item><item><title>Dynamic Version in PDM.md</title><link>https://svtter.cn/p/dynamic-version-in-pdm.md/</link><pubDate>Wed, 19 Feb 2025 16:46:24 +0800</pubDate><guid>https://svtter.cn/p/dynamic-version-in-pdm.md/</guid><description>&lt;p>How to set dynamic version in PDM.&lt;/p>
+&lt;p>Change the &lt;code>pyproject.toml&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">project&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">-&lt;/span> &lt;span class="nx">version&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;0.1.0&amp;#34;&lt;/span> &lt;span class="nx">remove&lt;/span> &lt;span class="nx">this&lt;/span> &lt;span class="nx">line&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">+&lt;/span> &lt;span class="nx">dynamic&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;version&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Add new configuration:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">tool&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">pdm&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">version&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">source&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;file&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">path&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;mypackage/__init__.py&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>PDM 使用过程中的问题</title><link>https://svtter.cn/p/pdm-%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 09 Feb 2025 12:15:25 +0800</pubDate><guid>https://svtter.cn/p/pdm-%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</guid><description>&lt;p>在使用 pdm 的时候，如果更新包很快，有时候会无法更新 lockfile，也就是&lt;code>pdm lock&lt;/code>无法根据最新的包生成内容。&lt;/p>
+&lt;p>这个时候，可以使用&lt;code>pdm cache info&lt;/code>来查看 cache 情况。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">➜ high-energy git:&lt;span class="o">(&lt;/span>main&lt;span class="o">)&lt;/span> ✗ pdm cache info
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Cache Root: /home/svtter/.cache/pdm, Total size: 17.9 MB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> File Hash Cache: /home/svtter/.cache/pdm/hashes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 793, Size: &lt;span class="m">56&lt;/span> kB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> HTTP Cache: /home/svtter/.cache/pdm/http
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 317, Size: 12.1 MB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Wheels Cache: /home/svtter/.cache/pdm/wheels
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 6, Size: 5.6 MB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Metadata Cache: /home/svtter/.cache/pdm/metadata
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 6, Size: &lt;span class="m">147&lt;/span> kB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Package Cache: /home/svtter/.cache/pdm/packages
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Packages: 0, Size: &lt;span class="m">0&lt;/span> bytes
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>一般删除 &lt;code>HTTP Cache&lt;/code> 可以解决问题。默认路径是&lt;code>$HOME/.cache/pdm/http&lt;/code>。&lt;/p></description></item><item><title>Python Inline Source Syntax Highlighting Plugin</title><link>https://svtter.cn/p/python-inline-source-syntax-highlighting-plugin/</link><pubDate>Wed, 11 Sep 2024 20:11:20 +0800</pubDate><guid>https://svtter.cn/p/python-inline-source-syntax-highlighting-plugin/</guid><description>&lt;p>在 python 代码的编写过程中，有时候我们会希望将部分文本高亮。这个时候，&lt;a class="link" href="https://marketplace.visualstudio.com/items?itemName=samwillis.python-inline-source" target="_blank" rel="noopener"
+>Python Inline Source Syntax Highlighting&lt;/a> 就派上用场了。&lt;/p>
+&lt;p>&lt;a class="link" href="https://marketplace.visualstudio.com/items?itemName=samwillis.python-inline-source" target="_blank" rel="noopener"
+>Python Inline Source Syntax Highlighting&lt;/a> 安装比较简单，只需要打开 vscode 插件页面进行搜索安装即可，如图所示：
+&lt;img src="https://svtter.cn/pics/plugin-install.png"
+loading="lazy"
+alt="plugin"
+>.&lt;/p>
+&lt;p>安装好之后，还需要在代码中做一些简单的配置，例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">html&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">str&lt;/span> &lt;span class="c1"># Create an alias of the str type named for the language you are using&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">my_html_string&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">html&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2"> &amp;lt;h1&amp;gt;Some HTML&amp;lt;/h1&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>或者使用 &lt;code>sourcetypes&lt;/code> 包。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">sourcetypes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">my_html_string&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">sourcetypes&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">html&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2"> &amp;lt;h1&amp;gt;Some HTML&amp;lt;/h1&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样就可以让 python 代码中的其他的代码高亮了。&lt;/p>
+&lt;p>例如，在 django-components 中是这样操作的：&lt;/p>
+&lt;p>&lt;img src="https://svtter.cn/pics/highlighted-code.png"
+loading="lazy"
+alt="highlighted-code"
+>&lt;/p></description></item></channel></rss>

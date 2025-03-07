@@ -1,19 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Big_data on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/big_data/</link>
-    <description>Recent content in Big_data on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Tue, 26 Dec 2017 01:00:00 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/big_data/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>使用Docker安装Spark</title>
-      <link>https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/</link>
-      <pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/</guid>
-      <description>&lt;p&gt;在国内加载Dockerhub上的镜像速度会比较慢，对此我们可以通过设置mirror镜像的方式来加速images的下载。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Big_data on Svtter's Blog</title><link>https://svtter.cn/tags/big_data/</link><description>Recent content in Big_data on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 26 Dec 2017 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/big_data/index.xml" rel="self" type="application/rss+xml"/><item><title>使用Docker安装Spark</title><link>https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/</link><pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/2017/12/26/%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85spark/</guid><description>&lt;p>在国内加载Dockerhub上的镜像速度会比较慢，对此我们可以通过设置mirror镜像的方式来加速images的下载。&lt;/p>
+&lt;p>此外，如果是ipv6的网络，在一些mirror可以直接走ipv6通路，速度非常客观。这里以USTC的mirror为例。&lt;/p>
+&lt;p>我这里的环境是Ubuntu 14.04，对于不同的Linux环境，修改的方式都差不多；修改文件&lt;code>/etc/docker/daemon.json&lt;/code>，如果没有这个文件，创建一个，注意，此处可能需要&lt;code>root&lt;/code>权限。修改完成后，运行命令&lt;code>sudo service docker restart&lt;/code>重启docker服务。&lt;/p>
+&lt;div class="codehilite">
+&lt;pre>&lt;span>&lt;/span>&lt;span class="p">{&lt;/span>
+&lt;span class="nt">"registry-mirrors"&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">"https://docker.mirrors.ustc.edu.cn"&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;span class="p">}&lt;/span>
+&lt;/pre>
+&lt;/div>
+&lt;p>配置好以后，选择&lt;code>2.1.0&lt;/code>版本的spark进行docker下载。&lt;/p>
+&lt;p>&lt;code>docker pull p7hb/docker-spark:2.1.0&lt;/code>&lt;/p>
+&lt;p>或者直接运行&lt;/p>
+&lt;p>&lt;code>docker run -it -p 4040:4040 -p 8080:8080 -p 8081:8081 -h spark --name=spark p7hb/docker-spark:2.1.0&lt;/code>&lt;/p>
+&lt;h2 id="参考">参考
+&lt;/h2>&lt;ol>
+&lt;li>&lt;a class="link" href="https://lug.ustc.edu.cn/wiki/mirrors/help/docker" target="_blank" rel="noopener"
+>https://lug.ustc.edu.cn/wiki/mirrors/help/docker&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/P7h/docker-spark" target="_blank" rel="noopener"
+>https://github.com/P7h/docker-spark&lt;/a>&lt;/li>
+&lt;/ol></description></item></channel></rss>

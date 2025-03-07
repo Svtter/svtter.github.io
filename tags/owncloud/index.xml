@@ -1,19 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Owncloud on Svtter&#39;s Blog</title>
-    <link>https://svtter.cn/tags/owncloud/</link>
-    <description>Recent content in Owncloud on Svtter&#39;s Blog</description>
-    <generator>Hugo</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Mon, 06 Feb 2017 01:00:00 +0800</lastBuildDate>
-    <atom:link href="https://svtter.cn/tags/owncloud/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>树莓派安装owncloud小记</title>
-      <link>https://svtter.cn/2017/02/06/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud%E5%B0%8F%E8%AE%B0/</link>
-      <pubDate>Mon, 06 Feb 2017 01:00:00 +0800</pubDate>
-      <guid>https://svtter.cn/2017/02/06/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud%E5%B0%8F%E8%AE%B0/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;http://www.voidcn.com/blog/u010873775/article/p-5812004.html&#34;&gt;http://www.voidcn.com/blog/u010873775/article/p-5812004.html&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;我是按照以上教程进行安装部署的，但是使用不了，原因是对于目录配置有问题，其中，不应该是进入data目录，而是进入owncloud目录。&lt;/p&gt;&#xA;&lt;p&gt;成功配置之后发现owncloud没有启用https，登陆官网查看，配置文档云里雾里，不是很明白，按照其配置方法不见奏效，其中有不少地方我也不是很理解，最后找到了另一篇文章，具体文章我已经找不到了，能够配置的更好一些，但是不知道为什么直接无法访问了。我使用的证书是openssl生成的，因此在chrome访问的时候提示是不安全的。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Owncloud on Svtter's Blog</title><link>https://svtter.cn/tags/owncloud/</link><description>Recent content in Owncloud on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 06 Feb 2017 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/owncloud/index.xml" rel="self" type="application/rss+xml"/><item><title>树莓派安装owncloud小记</title><link>https://svtter.cn/2017/02/06/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud%E5%B0%8F%E8%AE%B0/</link><pubDate>Mon, 06 Feb 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/2017/02/06/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud%E5%B0%8F%E8%AE%B0/</guid><description>&lt;p>&lt;a class="link" href="http://www.voidcn.com/blog/u010873775/article/p-5812004.html" target="_blank" rel="noopener"
+>http://www.voidcn.com/blog/u010873775/article/p-5812004.html&lt;/a>&lt;/p>
+&lt;p>我是按照以上教程进行安装部署的，但是使用不了，原因是对于目录配置有问题，其中，不应该是进入data目录，而是进入owncloud目录。&lt;/p>
+&lt;p>成功配置之后发现owncloud没有启用https，登陆官网查看，配置文档云里雾里，不是很明白，按照其配置方法不见奏效，其中有不少地方我也不是很理解，最后找到了另一篇文章，具体文章我已经找不到了，能够配置的更好一些，但是不知道为什么直接无法访问了。我使用的证书是openssl生成的，因此在chrome访问的时候提示是不安全的。&lt;/p>
+&lt;p>后来考虑一下官方文档，owncloud本身建议是在/var/www直接部署，可是我走捷径，图中文看的方便，就没有按照其意见部署，结果耗费了不少时间，服务还是没有架设起来，甚是烦躁。其中，简单配置一下，总是起不来apache，&lt;code>systemctl&lt;/code>看log的时候没有加上&lt;code>sudo&lt;/code>，又是一个大坑。&lt;/p>
+&lt;p>后来想了，干脆不再配置https，直接使用好了。居然连原来可以使用的admin界面也不能使用了。于是直接删除apache2，打算重装，发现apache环境配置方面又出问题了。&lt;/p>
+&lt;p>得了，我怕了还不行，先搁置一边吧。&lt;/p>
+&lt;p>由上所述，得出几个结论：&lt;/p>
+&lt;ol>
+&lt;li>Docker是个好东西，如果不想污染系统环境，果断上Docker。&lt;/li>
+&lt;li>尽量从官方文档做事，尽管看起来麻烦，起码知道每一步是干啥。&lt;/li>
+&lt;li>国人写的文档，有不少数图简单图快，省略步骤，仅仅是建立起来一个服务，对于服务的配置存在大量的问题，这个时候一步步找问题，更加浪费时间，不如直接从英文文档，博客入手，相对负责任一点。&lt;/li>
+&lt;li>做事情一步一步，不要想回退的时候发现无路可走。&lt;/li>
+&lt;/ol>
+&lt;p>尾声：owncloud相当于一个本地的dropbox，架设使用过后，感觉用处不大，还是玩玩别的东西。&lt;/p></description></item></channel></rss>
