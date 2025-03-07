@@ -55,7 +55,38 @@
 >anthropic blog&lt;/a>&lt;/li>
 &lt;li>&lt;a class="link" href="https://mcpcn.com/docs/tutorials/building-a-client/#%e7%b3%bb%e7%bb%9f%e8%a6%81%e6%b1%82" target="_blank" rel="noopener"
 >mcpcn&lt;/a>&lt;/li>
-&lt;/ol></description></item><item><title>FP Problem.md</title><link>https://svtter.cn/p/fp-problem.md/</link><pubDate>Wed, 26 Feb 2025 11:02:33 +0800</pubDate><guid>https://svtter.cn/p/fp-problem.md/</guid><description>&lt;p>Functional programming (FP) 使用了接近一年的时间，又有了很多新的想法。这里主要说说问题。&lt;/p>
+&lt;/ol></description></item><item><title>Python Timezone.md</title><link>https://svtter.cn/p/python-timezone.md/</link><pubDate>Fri, 28 Feb 2025 17:46:29 +0800</pubDate><guid>https://svtter.cn/p/python-timezone.md/</guid><description>&lt;p>无论当前服务器设置如何，输出&lt;code>Asia/Shanghai&lt;/code>的时间。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">datetime&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">pytz&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">utc_now&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">datetime&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">datetime&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">utcnow&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># Get current time in UTC&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">utc_timezone&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">pytz&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">utc&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">utc_now&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">utc_timezone&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">localize&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">utc_now&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1"># Localize the time as UTC&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Convert to another timezone, e.g., &amp;#39;America/New_York&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">new_timezone&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">pytz&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">timezone&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;Asia/Shanghai&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">new_timezone_time&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">utc_now&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">astimezone&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">new_timezone&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">new_timezone_time&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">strftime&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%Y-%m-&lt;/span>&lt;span class="si">%d&lt;/span>&lt;span class="s1"> %H:%M:%S %Z%z&amp;#39;&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="c1"># Display time in the new timezone&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>FP Problem.md</title><link>https://svtter.cn/p/fp-problem.md/</link><pubDate>Wed, 26 Feb 2025 11:02:33 +0800</pubDate><guid>https://svtter.cn/p/fp-problem.md/</guid><description>&lt;p>Functional programming (FP) 使用了接近一年的时间，又有了很多新的想法。这里主要说说问题。&lt;/p>
 &lt;p>最大的问题就是效率问题。&lt;/p>
 &lt;p>如果使用基于类的方法，通过继承，我们可以很快的修改一些功能，产品可以快速上线。&lt;/p>
 &lt;p>但是使用函数式编程则很难解决这个问题。&lt;/p>
