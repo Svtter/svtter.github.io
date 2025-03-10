@@ -1,4 +1,194 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent on Svtter's Blog</title><link>https://svtter.cn/tags/agent/</link><description>Recent content in Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 08 Mar 2025 12:04:25 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Llamaindex Tutorial.md</title><link>https://svtter.cn/p/llamaindex-tutorial.md/</link><pubDate>Sat, 08 Mar 2025 12:04:25 +0800</pubDate><guid>https://svtter.cn/p/llamaindex-tutorial.md/</guid><description>&lt;p>上周为了开发一个新的应用，测试了 langchain，发现全是坑，官方示例很难用。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent on Svtter's Blog</title><link>https://svtter.cn/tags/agent/</link><description>Recent content in Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 10 Mar 2025 20:21:44 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Play With Openmanus.md</title><link>https://svtter.cn/p/play-with-openmanus.md/</link><pubDate>Mon, 10 Mar 2025 20:21:44 +0800</pubDate><guid>https://svtter.cn/p/play-with-openmanus.md/</guid><description>&lt;img src="https://svtter.cn/pics/chat.png" alt="Featured image of post Play With Openmanus.md" />&lt;p>Manus 最近很火爆，我部署了 [OpenManus][1]，来体验一下 Manus 这种通用的 Agent。&lt;/p>
+&lt;h2 id="教程">教程
+&lt;/h2>&lt;ol>
+&lt;li>编写 &lt;code>docker-compose.yml&lt;/code>:&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">services&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">openmanus&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">images&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">svtter/openmanus&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">volumes&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># - .:/app&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="l">./config:/app/config&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="3">
+&lt;li>填写 &lt;code>config/config.yml&lt;/code> 文件:&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="c"># A config file for OpenManus&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># Global LLM configuration&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="l">llm]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">model = &amp;#34;anthropic/claude-3.7-sonnet&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">base_url = &amp;#34;https://openrouter.ai/api/v1&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># 使用 openrouter&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">api_key = &amp;#34;sk-**&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># api key&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">max_tokens = 4096&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">temperature = 0.0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># [llm] #AZURE OPENAI:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># api_type= &amp;#39;azure&amp;#39;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># model = &amp;#34;YOUR_MODEL_NAME&amp;#34; #&amp;#34;gpt-4o-mini&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># base_url = &amp;#34;{YOUR_AZURE_ENDPOINT.rstrip(&amp;#39;/&amp;#39;)}/openai/deployments/{AZURE_DEPOLYMENT_ID}&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># api_key = &amp;#34;AZURE API KEY&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># max_tokens = 8096&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># temperature = 0.0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># api_version=&amp;#34;AZURE API VERSION&amp;#34; #&amp;#34;2024-08-01-preview&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># Optional configuration for specific LLM models&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="l">llm.vision]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">model = &amp;#34;anthropic/claude-3.7-sonnet&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">base_url = &amp;#34;https://openrouter.ai/api/v1&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># 使用 openrouter&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="l">api_key = &amp;#34;sk-**&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># 使用 api-key&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="4">
+&lt;li>最后的目录结构应该这样的：&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">├── config
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">│ └── config.yml
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">└── docker-compose.yml
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1 directory, 2 files
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="5">
+&lt;li>运行命令：&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker compose run openmanus python main.py
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>即可看到交互命令行。&lt;/p>
+&lt;h2 id="测试">测试
+&lt;/h2>&lt;p>让我们测试一下。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">INFO [browser_use] BrowserUse logging setup complete with level info
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">INFO [root] Anonymized telemetry enabled. See https://docs.browser-use.com/development/telemetry for more information.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Enter your prompt (or &amp;#39;exit&amp;#39;/&amp;#39;quit&amp;#39; to quit): who is the best NBA player now?
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>执行完成：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">03&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">10&lt;/span> &lt;span class="mi">12&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">31&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">20.198&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">INFO&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">app&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">agent&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">137&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">Executing&lt;/span> &lt;span class="n">step&lt;/span> &lt;span class="mi">13&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">30&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">03&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">10&lt;/span> &lt;span class="mi">12&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">31&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">26.653&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">INFO&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">app&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">agent&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">toolcall&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">think&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">53&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="err">✨&lt;/span> &lt;span class="n">Manus&lt;/span>&lt;span class="s1">&amp;#39;s thoughts: Thank you for your question about the best NBA player currently. Based on my research, I can provide you with a definitive answer:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">**&lt;/span>&lt;span class="n">Nikola&lt;/span> &lt;span class="n">Jokic&lt;/span>&lt;span class="o">**&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">Denver&lt;/span> &lt;span class="n">Nuggets&lt;/span> &lt;span class="n">is&lt;/span> &lt;span class="n">widely&lt;/span> &lt;span class="n">considered&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">best&lt;/span> &lt;span class="n">NBA&lt;/span> &lt;span class="n">player&lt;/span> &lt;span class="n">right&lt;/span> &lt;span class="n">now&lt;/span>&lt;span class="o">.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">This&lt;/span> &lt;span class="n">conclusion&lt;/span> &lt;span class="n">is&lt;/span> &lt;span class="n">supported&lt;/span> &lt;span class="n">by&lt;/span> &lt;span class="n">multiple&lt;/span> &lt;span class="n">authoritative&lt;/span> &lt;span class="n">sources&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">-&lt;/span> &lt;span class="n">ESPN&lt;/span>&lt;span class="s1">&amp;#39;s NBA Rank 2024-2025 places Jokic at #1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">-&lt;/span> &lt;span class="n">CBS&lt;/span> &lt;span class="n">Sports&lt;/span> &lt;span class="n">rankings&lt;/span> &lt;span class="n">specifically&lt;/span> &lt;span class="n">mention&lt;/span> &lt;span class="s2">&amp;#34;Nikola Jokic over SGA at No. 1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">-&lt;/span> &lt;span class="n">Jokic&lt;/span> &lt;span class="n">has&lt;/span> &lt;span class="n">won&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">NBA&lt;/span> &lt;span class="n">MVP&lt;/span> &lt;span class="n">award&lt;/span> &lt;span class="n">three&lt;/span> &lt;span class="n">times&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">recent&lt;/span> &lt;span class="n">years&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">2021&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2022&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="mi">2024&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">-&lt;/span> &lt;span class="n">He&lt;/span> &lt;span class="n">led&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">Denver&lt;/span> &lt;span class="n">Nuggets&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">their&lt;/span> &lt;span class="n">first&lt;/span> &lt;span class="n">NBA&lt;/span> &lt;span class="n">Championship&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="mi">2023&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">The&lt;/span> &lt;span class="n">current&lt;/span> &lt;span class="n">consensus&lt;/span> &lt;span class="n">top&lt;/span> &lt;span class="mi">5&lt;/span> &lt;span class="n">NBA&lt;/span> &lt;span class="n">players&lt;/span> &lt;span class="n">are&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">1.&lt;/span> &lt;span class="n">Nikola&lt;/span> &lt;span class="n">Jokic&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">Denver&lt;/span> &lt;span class="n">Nuggets&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">2.&lt;/span> &lt;span class="n">Luka&lt;/span> &lt;span class="n">Doncic&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">Dallas&lt;/span> &lt;span class="n">Mavericks&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">3.&lt;/span> &lt;span class="n">Giannis&lt;/span> &lt;span class="n">Antetokounmpo&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">Milwaukee&lt;/span> &lt;span class="n">Bucks&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">4.&lt;/span> &lt;span class="n">Shai&lt;/span> &lt;span class="n">Gilgeous&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">Alexander&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">Oklahoma&lt;/span> &lt;span class="n">City&lt;/span> &lt;span class="n">Thunder&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mf">5.&lt;/span> &lt;span class="n">Jayson&lt;/span> &lt;span class="n">Tatum&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">Boston&lt;/span> &lt;span class="n">Celtics&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">Jokic&lt;/span> &lt;span class="n">stands&lt;/span> &lt;span class="n">out&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">his&lt;/span> &lt;span class="n">exceptional&lt;/span> &lt;span class="n">versatility&lt;/span> &lt;span class="n">as&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">center&lt;/span> &lt;span class="n">with&lt;/span> &lt;span class="n">elite&lt;/span> &lt;span class="n">passing&lt;/span> &lt;span class="n">skills&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">scoring&lt;/span> &lt;span class="n">efficiency&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rebounding&lt;/span> &lt;span class="n">prowess&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">basketball&lt;/span> &lt;span class="n">IQ&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">His&lt;/span> &lt;span class="n">unique&lt;/span> &lt;span class="n">ability&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">function&lt;/span> &lt;span class="n">as&lt;/span> &lt;span class="n">both&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">dominant&lt;/span> &lt;span class="n">scorer&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">primary&lt;/span> &lt;span class="n">playmaker&lt;/span> &lt;span class="n">at&lt;/span> &lt;span class="mi">7&lt;/span> &lt;span class="n">feet&lt;/span> &lt;span class="n">tall&lt;/span> &lt;span class="n">makes&lt;/span> &lt;span class="n">him&lt;/span> &lt;span class="n">one&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">most&lt;/span> &lt;span class="n">impactful&lt;/span> &lt;span class="n">players&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">league&lt;/span>&lt;span class="o">.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">03&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">10&lt;/span> &lt;span class="mi">12&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">31&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">26.653&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">INFO&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">app&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">agent&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">toolcall&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">think&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">54&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="err">🛠️&lt;/span> &lt;span class="n">Manus&lt;/span> &lt;span class="n">selected&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="n">tools&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">use&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="mi">2025&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">03&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="mi">10&lt;/span> &lt;span class="mi">12&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">31&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mf">26.654&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">INFO&lt;/span> &lt;span class="o">|&lt;/span> &lt;span class="n">app&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">agent&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">toolcall&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">think&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">58&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="err">🧰&lt;/span> &lt;span class="n">Tools&lt;/span> &lt;span class="n">being&lt;/span> &lt;span class="n">prepared&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;terminate&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="费用">费用
+&lt;/h2>&lt;p>一次性花了我一块钱，恐怖如斯。&lt;/p>
+&lt;p>&lt;img src="https://svtter.cn/pics/price.png"
+loading="lazy"
+alt="price"
+>&lt;/p>
+&lt;h2 id="结论和想法">结论和想法
+&lt;/h2>&lt;ol>
+&lt;li>用了 google search，browser，以及 python 作为 agent tools。很有想法，实现也很快。&lt;/li>
+&lt;li>机会永远留给有准备的人&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img src="https://svtter.cn/pics/chat.png"
+loading="lazy"
+alt="chat"
+>&lt;/p></description></item><item><title>Llamaindex Tutorial.md</title><link>https://svtter.cn/p/llamaindex-tutorial.md/</link><pubDate>Sat, 08 Mar 2025 12:04:25 +0800</pubDate><guid>https://svtter.cn/p/llamaindex-tutorial.md/</guid><description>&lt;p>上周为了开发一个新的应用，测试了 langchain，发现全是坑，官方示例很难用。&lt;/p>
 &lt;p>主要问题在于 langchain 0.1, 0.2, 0.3 版本变化很大。&lt;/p>
 &lt;p>这周尝试了一下 llamaindex，调试了一上午，搞定，发个链接出来。&lt;/p>
 &lt;h2 id="源代码">源代码
