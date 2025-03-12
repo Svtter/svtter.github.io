@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pytorch Lightning on Svtter's Blog</title><link>https://svtter.cn/tags/pytorch-lightning/</link><description>Recent content in Pytorch Lightning on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 12 Mar 2025 11:12:03 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/pytorch-lightning/index.xml" rel="self" type="application/rss+xml"/><item><title>Reimplment MAE Work Path.md</title><link>https://svtter.cn/p/reimplment-mae-work-path.md/</link><pubDate>Wed, 12 Mar 2025 11:12:03 +0800</pubDate><guid>https://svtter.cn/p/reimplment-mae-work-path.md/</guid><description>&lt;img src="https://svtter.cn/p/reimplment-mae-work-path.md/arch.png" alt="Featured image of post Reimplment MAE Work Path.md" />&lt;p>这两天我一直在尝试复现 MAE，与我的数据进行结合，来做出一点新的东西。&lt;/p>
+&lt;h2 id="offical-mae">Offical MAE
+&lt;/h2>&lt;p>我首先从 meta 的&lt;a class="link" href="https://github.com/facebookresearch/mae" target="_blank" rel="noopener"
+>官方仓库&lt;/a>开始。我成功跑通了 demo，但是发现仍然有些问题。&lt;a class="link" href="https://ai.meta.com/blog/open-sourcing-submitit-a-lightweight-tool-for-slurm-cluster-computation/" target="_blank" rel="noopener"
+>submitit&lt;/a> 是 meta 开源的集群任务提交工具。这个代码使用的应该是 meta 内部使用的训练集群，基于 &lt;a class="link" href="https://slurm.schedmd.com/quickstart.html" target="_blank" rel="noopener"
+>slurm&lt;/a>。我无法访问这个集群。而且&lt;a class="link" href="https://slurm.schedmd.com/quickstart_admin.html" target="_blank" rel="noopener"
+>部署slurm&lt;/a> 集群可能很麻烦。因此作罢。&lt;/p>
+&lt;h3 id="tips">Tips
+&lt;/h3>&lt;p>使用开源工具是对的。内部的私有工具无法迁移到下一个团队，重新学习的成本比较高。开源工具一般没有这个限制，可以打通切换团队后的协作。&lt;/p>
+&lt;h3 id="dockerfile">Dockerfile
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span class="line">&lt;span class="cl">&lt;span class="k">FROM&lt;/span>&lt;span class="s"> pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> pip install jupyterlab &lt;span class="s2">&amp;#34;numpy&amp;lt;1.20&amp;#34;&lt;/span> &lt;span class="s2">&amp;#34;timm==0.4.5&amp;#34;&lt;/span> matplotlib -i https://mirrors.sustech.edu.cn/pypi/simple&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> rm /etc/apt/sources.list.d/cuda.list &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> rm /etc/apt/sources.list.d/nvidia-ml.list &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> apt-get update &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> apt-get install -y wget&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">CMD&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;jupyter&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;lab&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--port=8888&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--no-browser&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--allow-root&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--NotebookApp.token=&amp;#39;abcd&amp;#39;&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>使用上面这个 Dockerfile 可以跑通环境。&lt;/p>
+&lt;h2 id="mae-pytorch">MAE-pytorch
+&lt;/h2>&lt;p>之后我想使用 pytorch lightning 来跑一下 MAE。现在训练的显卡够用，但是 pytorch 直接写 DDP 比较麻烦。于是我参考了 &lt;a class="link" href="https://github.com/mtrazzak/mae-pytorch" target="_blank" rel="noopener"
+>mae-pytorch&lt;/a>。&lt;/p>
+&lt;p>但是训练之后发现，似乎对 lightning 的适配不是很好。我调整了 &lt;code>num_gpus&lt;/code> 参数，训练仍然不顺。&lt;/p>
+&lt;p>&lt;a class="link" href="https://gist.github.com/Svtter/f4416107d99d69d3a3c48a6eae918411" target="_blank" rel="noopener"
+>https://gist.github.com/Svtter/f4416107d99d69d3a3c48a6eae918411&lt;/a>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">File&lt;/span> &lt;span class="o">/&lt;/span>&lt;span class="n">workspace&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">mae&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">py&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">145&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">MaskedAutoencoderLIT&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">generate_grid_of_samples&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">true_images&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred_patch&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">mask&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">144&lt;/span> &lt;span class="n">pred_images&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">res&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">sample_indices&lt;/span>&lt;span class="p">][:,&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">--&amp;gt;&lt;/span> &lt;span class="mi">145&lt;/span> &lt;span class="n">true_image_grid&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">true_images&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">sample_indices&lt;/span>&lt;span class="p">][:,&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">]]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="mi">147&lt;/span> &lt;span class="n">grid_images&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">torch&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">cat&lt;/span>&lt;span class="p">([&lt;/span>&lt;span class="n">true_image_grid&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">pred_images&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="n">dim&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="ne">RuntimeError&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">CUDA&lt;/span> &lt;span class="n">error&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">device&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">side&lt;/span> &lt;span class="k">assert&lt;/span> &lt;span class="n">triggered&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">CUDA&lt;/span> &lt;span class="n">kernel&lt;/span> &lt;span class="n">errors&lt;/span> &lt;span class="n">might&lt;/span> &lt;span class="n">be&lt;/span> &lt;span class="n">asynchronously&lt;/span> &lt;span class="n">reported&lt;/span> &lt;span class="n">at&lt;/span> &lt;span class="n">some&lt;/span> &lt;span class="n">other&lt;/span> &lt;span class="n">API&lt;/span> &lt;span class="n">call&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">so&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">stacktrace&lt;/span> &lt;span class="n">below&lt;/span> &lt;span class="n">might&lt;/span> &lt;span class="n">be&lt;/span> &lt;span class="n">incorrect&lt;/span>&lt;span class="o">.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">For&lt;/span> &lt;span class="n">debugging&lt;/span> &lt;span class="n">consider&lt;/span> &lt;span class="n">passing&lt;/span> &lt;span class="n">CUDA_LAUNCH_BLOCKING&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">Compile&lt;/span> &lt;span class="k">with&lt;/span> &lt;span class="err">`&lt;/span>&lt;span class="n">TORCH_USE_CUDA_DSA&lt;/span>&lt;span class="err">`&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">enable&lt;/span> &lt;span class="n">device&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">side&lt;/span> &lt;span class="n">assertions&lt;/span>&lt;span class="o">.&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="imagenet-的问题">ImageNet 的问题
+&lt;/h3>&lt;p>而且 &lt;strong>ImageNet 我本地没有相关的数据&lt;/strong>，重新下载也是比较麻烦。（虽然可以用 pretrain weights）。&lt;/p>
+&lt;p>我下载了 &lt;a class="link" href="https://www.kaggle.com/c/tiny-imagenet" target="_blank" rel="noopener"
+>tiny-imagenet&lt;/a>，但是没能起到作用。&lt;/p>
+&lt;p>我尝试了一下，能跑通 MNIST + resize，也就是 &lt;code>Tutorial.ipynb&lt;/code> 的内容。因为并行训练的重新调优比较麻烦，我暂时放下，再去看看其他的库。&lt;/p>
+&lt;p>ImageNet 体积比较大，大家一般会使用小型 imagenet 来做一些测试。例如 &lt;a class="link" href="https://github.com/ultralytics/yolov5/issues/11028" target="_blank" rel="noopener"
+>yolo-v5 issue&lt;/a> 中所表述的。&lt;/p>
+&lt;h4 id="imagenet-100">imagenet-100
+&lt;/h4>&lt;p>imagenet 往往太大了，我们可用一些小型的数据集去验证模型；但是 shape 和文件结构需要与 imagenet 一致。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">kagglehub&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Download latest version&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">kagglehub&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">dataset_download&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;ambityga/imagenet100&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Path to dataset files:&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">path&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="dockerfile-1">Dockerfile
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span class="line">&lt;span class="cl">&lt;span class="k">FROM&lt;/span>&lt;span class="s"> pytorch/pytorch:2.4.1-cuda11.8-cudnn9-devel&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">WORKDIR&lt;/span>&lt;span class="s"> /workspace&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">COPY&lt;/span> requirements.txt .&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> pip install -r requirements.txt -i https://mirrors.sustech.edu.cn/pypi/web/simple &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> pip install jupyterlab matplotlib&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">CMD&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;jupyter&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;lab&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--port=8888&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--no-browser&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--allow-root&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--NotebookApp.token=&amp;#39;abcd&amp;#39;&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="solo-learn">solo learn
+&lt;/h2>&lt;p>&lt;a class="link" href="https://github.com/vturrisi/solo-learn?tab=readme-ov-file" target="_blank" rel="noopener"
+>solo-learn&lt;/a> 是发表在 IJML 的一个工作。主要实现了 self-regression 的相关方法。他们使用了一个我之前没有使用过的库&lt;a class="link" href="https://github.com/NVIDIA/DALI" target="_blank" rel="noopener"
+>NVIDIA/DALI&lt;/a>&lt;/p>
+&lt;p>我使用了 MAE_pytorch 的 Dockerfile，做了一些调整。&lt;/p>
+&lt;h3 id="start">Start
+&lt;/h3>&lt;p>做分类任务，参考文档 &lt;a class="link" href="https://solo-learn.readthedocs.io/en/latest/tutorials/offline_linear_eval.html" target="_blank" rel="noopener"
+>offline-linear-eval&lt;/a>.&lt;/p>
+&lt;h3 id="dockerfile-2">Dockerfile
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span class="line">&lt;span class="cl">&lt;span class="k">FROM&lt;/span>&lt;span class="s"> pytorch/pytorch:2.4.1-cuda11.8-cudnn9-devel&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">WORKDIR&lt;/span>&lt;span class="s"> /workspace&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">COPY&lt;/span> requirements.txt .&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> pip install -r requirements.txt -i https://mirrors.sustech.edu.cn/pypi/web/simple &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> pip install jupyterlab matplotlib&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> pip3 install .&lt;span class="o">[&lt;/span>dali,umap,h5&lt;span class="o">]&lt;/span> --extra-index-url https://developer.download.nvidia.com/compute/redist&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">CMD&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;jupyter&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;lab&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--port=8888&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--no-browser&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--allow-root&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--NotebookApp.token=&amp;#39;abcd&amp;#39;&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="tips-1">Tips
+&lt;/h3>&lt;p>直接使用 checkpoints 可以节省大量的训练时间。手里的卡更多的应该去用来 fine tune，或者训练自己的数据集。从头开始训练（我之前的做法）往往是不经济且速度慢的。&lt;/p>
+&lt;h2 id="huggingface-transformers">huggingface &lt;a class="link" href="https://huggingface.co/docs/transformers/en/index" target="_blank" rel="noopener"
+>transformers&lt;/a>
+&lt;/h2>&lt;p>很出名的一个库。很多朋友都使用这个库来尝试了构建了自己的大型模型。&lt;/p>
+&lt;p>我想 MAE 应该是组成部分之一，我想借着这个机会使用一下看。&lt;/p></description></item></channel></rss>
