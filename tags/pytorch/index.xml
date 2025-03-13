@@ -123,6 +123,17 @@
 &lt;h3 id="start">Start
 &lt;/h3>&lt;p>做分类任务，参考文档 &lt;a class="link" href="https://solo-learn.readthedocs.io/en/latest/tutorials/offline_linear_eval.html" target="_blank" rel="noopener"
 >offline-linear-eval&lt;/a>.&lt;/p>
+&lt;p>首先是文档有点问题，&lt;code>from solo.utils ...&lt;/code> 应该改为 &lt;code>from solo.data...&lt;/code>。&lt;/p>
+&lt;p>这个库使用了 &lt;a class="link" href="https://hydra.cc/docs/intro/" target="_blank" rel="noopener"
+>hydra&lt;/a> 以及 &lt;a class="link" href="https://omegaconf.readthedocs.io/en/2.3_branch/" target="_blank" rel="noopener"
+>omegaconf&lt;/a>。&lt;/p>
+&lt;p>&lt;a class="link" href="https://hydra.cc/docs/intro/" target="_blank" rel="noopener"
+>hydra&lt;/a> 可以比较有效的去处理配置重叠的情况。我之前写类似的东西，都是一个一个类，然后不停的嵌套嵌套。这样看，hydra 确实方便很多。&lt;/p>
+&lt;p>&lt;a class="link" href="https://omegaconf.readthedocs.io/en/2.3_branch/" target="_blank" rel="noopener"
+>omegaconf&lt;/a> 是一个使用 hydra 配置文件的工具；由于 hydra 配置返回的是 DictConfig，因此读取配置的时候需要使用 dict 数据结构进行访问。&lt;/p>
+&lt;p>不过我觉得实际上用处不是很大。除非项目很庞大，否则增加了上手的成本。&lt;/p>
+&lt;p>&lt;a class="link" href="https://github.com/vturrisi/solo-learn?tab=readme-ov-file" target="_blank" rel="noopener"
+>solo-learn&lt;/a> 基本上已经不太维护了。我尝试下载了 imagenet-100，正在测试中。&lt;/p>
 &lt;h3 id="dockerfile-2">Dockerfile
 &lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
@@ -136,7 +147,6 @@
 &lt;/span>&lt;span class="lnt"> 8
 &lt;/span>&lt;span class="lnt"> 9
 &lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span class="line">&lt;span class="cl">&lt;span class="k">FROM&lt;/span>&lt;span class="s"> pytorch/pytorch:2.4.1-cuda11.8-cudnn9-devel&lt;/span>&lt;span class="err">
@@ -146,8 +156,7 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> pip install -r requirements.txt -i https://mirrors.sustech.edu.cn/pypi/web/simple &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> pip install jupyterlab matplotlib&lt;span class="err">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">RUN&lt;/span> pip3 install .&lt;span class="o">[&lt;/span>dali,umap,h5&lt;span class="o">]&lt;/span> --extra-index-url https://developer.download.nvidia.com/compute/redist&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="c"># RUN pip3 install .[dali,umap,h5] --extra-index-url https://developer.download.nvidia.com/compute/redist&lt;/span>&lt;span class="err">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">&lt;/span>&lt;span class="k">CMD&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;jupyter&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;lab&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--port=8888&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--no-browser&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--allow-root&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;--NotebookApp.token=&amp;#39;abcd&amp;#39;&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="err">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
