@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Qwen on Svtter's Blog</title><link>https://svtter.cn/categories/qwen/</link><description>Recent content in Qwen on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 17 Apr 2025 17:43:16 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/qwen/index.xml" rel="self" type="application/rss+xml"/><item><title>Confused OpenAI SDK Compatibility.md</title><link>https://svtter.cn/p/confused-openai-sdk-compatibility.md/</link><pubDate>Thu, 17 Apr 2025 17:43:16 +0800</pubDate><guid>https://svtter.cn/p/confused-openai-sdk-compatibility.md/</guid><description>&lt;img src="https://svtter.cn/p/confused-openai-sdk-compatibility.md/background.png" alt="Featured image of post Confused OpenAI SDK Compatibility.md" />&lt;p>为了分析一个 pdf 文件，我尝试使用 openai sdk 来调用 qwen 的接口。因为 qwen 声称了 openai 接口的兼容性，因此我尝试了一下。&lt;/p>
-&lt;p>我在调用&lt;code>client.files.create&lt;/code>接口时，是这样的：&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Qwen on Svtter's Blog</title><link>https://svtter.cn/categories/qwen/</link><description>Recent content in Qwen on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 17 Apr 2025 17:43:16 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/qwen/index.xml" rel="self" type="application/rss+xml"/><item><title>Confused OpenAI SDK Compatibility.md</title><link>https://svtter.cn/p/confused-openai-sdk-compatibility.md/</link><pubDate>Thu, 17 Apr 2025 17:43:16 +0800</pubDate><guid>https://svtter.cn/p/confused-openai-sdk-compatibility.md/</guid><description>&lt;img src="https://svtter.cn/p/confused-openai-sdk-compatibility.md/background.png" alt="Featured image of post Confused OpenAI SDK Compatibility.md" />&lt;h2 id="需求">需求
+&lt;/h2>&lt;p>为了分析一个 pdf 文件，我尝试使用 openai sdk 来调用 qwen 的接口。因为 qwen 声称了 openai 接口的兼容性，因此我尝试了一下。&lt;/p>
+&lt;h2 id="方案">方案
+&lt;/h2>&lt;p>我在调用&lt;code>client.files.create&lt;/code>接口时，是这样的：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
@@ -72,4 +74,31 @@ class="gallery-image"
 data-flex-grow="100"
 data-flex-basis="240px"
 >&lt;/p>
-&lt;p>暂时没有解决方案。给大家看个乐子。&lt;/p></description></item></channel></rss>
+&lt;p>暂时没有解决方案。给大家看个乐子。&lt;/p>
+&lt;h2 id="后续">后续
+&lt;/h2>&lt;p>我将 API 地址切换成了 zhipu。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">Zhipu&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Chat&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="fm">__init__&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">super&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="fm">__init__&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">client&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">OpenAI&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">api_key&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">getenv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;ZHIPU_API_KEY&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">base_url&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;https://open.bigmodel.cn/api/paas/v4&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">support_file_id&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">True&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">file_purpose&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">&amp;#34;file-extract&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>一次就跑通了。&lt;/p></description></item></channel></rss>
