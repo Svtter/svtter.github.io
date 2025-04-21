@@ -1,4 +1,61 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 18 Apr 2025 10:16:02 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>String Template in Prompt.md</title><link>https://svtter.cn/p/string-template-in-prompt.md/</link><pubDate>Fri, 18 Apr 2025 10:16:02 +0800</pubDate><guid>https://svtter.cn/p/string-template-in-prompt.md/</guid><description>&lt;img src="https://svtter.cn/p/string-template-in-prompt.md/image.png" alt="Featured image of post String Template in Prompt.md" />&lt;p>我在尝试编写 prompt 的时候，遇到了一个问题：&lt;code>KeyError: '\n &amp;quot;filename&amp;quot;'&lt;/code>.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 21 Apr 2025 14:51:38 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Work With Langfuse.md</title><link>https://svtter.cn/p/work-with-langfuse.md/</link><pubDate>Mon, 21 Apr 2025 14:51:38 +0800</pubDate><guid>https://svtter.cn/p/work-with-langfuse.md/</guid><description>&lt;img src="https://svtter.cn/p/work-with-langfuse.md/image.png" alt="Featured image of post Work With Langfuse.md" />&lt;p>我们在开发 LLMs 应用时，会考虑 LLMs 调用过程中的性能问题，以及监视过程中的输出。&lt;/p>
+&lt;p>这个时候 langsmith 以及 langfuse 用处就很大了。&lt;/p>
+&lt;p>但是，有时候我们本地有计算资源，不想使用云端的资源进行 LLM 调用资源监控，因此就不会考虑 langsmith。&lt;/p>
+&lt;p>此时，我们可以使用 langfuse 来做这个事情。&lt;/p>
+&lt;h2 id="部署">部署
+&lt;/h2>&lt;p>部署 langfuse 非常简单，只需要做：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git clone https://github.com/langfuse/langfuse.git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> langfuse
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">docker compose up -d
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样一来就部署成功了。&lt;/p>
+&lt;h2 id="替换">替换
+&lt;/h2>&lt;p>如果之前使用 openai 的 sdk，我们可以这样来继续使用。&lt;/p>
+&lt;p>项目中安装 langfuse&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">pip install langfuse
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>配置 API key，你需要在部署好的 langfuse 中使用。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">LANGFUSE_SECRET_KEY&lt;/span>&lt;span class="o">=&lt;/span>&amp;lt;secret key&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">LANGFUSE_PUBLIC_KEY&lt;/span>&lt;span class="o">=&lt;/span>&amp;lt;public key&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">LANGFUSE_HOST&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;http://localhost:3001&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>我这里设置 langfuse 的端口是 &lt;code>3001&lt;/code>；你应该根据你自己的配置来做。&lt;/p>
+&lt;p>替换原本的 openai 即可。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># remove: import openai&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">from&lt;/span> &lt;span class="nn">langfuse.openai&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="n">openai&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>除此之外，langfuse 也支持 &lt;code>langchain&lt;/code> 和 &lt;code>llamaindex&lt;/code>，这里就不再赘述了。&lt;/p></description></item><item><title>String Template in Prompt.md</title><link>https://svtter.cn/p/string-template-in-prompt.md/</link><pubDate>Fri, 18 Apr 2025 10:16:02 +0800</pubDate><guid>https://svtter.cn/p/string-template-in-prompt.md/</guid><description>&lt;img src="https://svtter.cn/p/string-template-in-prompt.md/image.png" alt="Featured image of post String Template in Prompt.md" />&lt;p>我在尝试编写 prompt 的时候，遇到了一个问题：&lt;code>KeyError: '\n &amp;quot;filename&amp;quot;'&lt;/code>.&lt;/p>
 &lt;p>原因是我在 prompt 中是这样编写的：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
