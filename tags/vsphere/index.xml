@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vsphere on Svtter's Blog</title><link>https://svtter.cn/tags/vsphere/</link><description>Recent content in Vsphere on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 24 Apr 2025 17:00:29 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/vsphere/index.xml" rel="self" type="application/rss+xml"/><item><title>vsphere 6.5 Problem.md</title><link>https://svtter.cn/p/vsphere-6.5-problem.md/</link><pubDate>Thu, 24 Apr 2025 17:00:29 +0800</pubDate><guid>https://svtter.cn/p/vsphere-6.5-problem.md/</guid><description>&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/bg.png" alt="Featured image of post vsphere 6.5 Problem.md" />&lt;blockquote>
+&lt;p>系统版本: vmware esxi 6.5&lt;/p>&lt;/blockquote>
+&lt;p>这两天在配置 k8s 内网，发现一个奇怪的问题，ovf 镜像导出之后，再导入启动不了了。&lt;/p>
+&lt;p>&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/p1.png"
+width="972"
+height="234"
+srcset="https://svtter.cn/p/vsphere-6.5-problem.md/p1_hu_43f6d3c0924e5069.png 480w, https://svtter.cn/p/vsphere-6.5-problem.md/p1_hu_f4c9c7438c027b78.png 1024w"
+loading="lazy"
+alt="p1"
+class="gallery-image"
+data-flex-grow="415"
+data-flex-basis="996px"
+>&lt;/p>
+&lt;p>试着跟 kimi 沟通了一下，不太行，这是个笨蛋。&lt;/p>
+&lt;p>起初我也认为是 BIOS 和 EFI 切换的问题。但是我检查了一下导出的虚拟机，发现并非如此。&lt;/p>
+&lt;blockquote>
+&lt;p>补充知识
+EFI（Extensible Firmware Interface，可扩展固件接口）是一种由英特尔（Intel）开发的接口标准，用于计算机硬件和操作系统之间的通信。它主要用于替代传统的BIOS（Basic Input/Output System，基本输入输出系统）。&lt;/p>&lt;/blockquote>
+&lt;img src="https://svtter.cn/memos/si.jpg" />
+&lt;p>这就很奇怪了。（用 esxi 6.5 这种上古版本的我可能也奇怪）&lt;/p>
+&lt;p>实际上我的操作是没有问题的，问题在于 esxi 在导出的时候会丢失了引导信息。&lt;/p>
+&lt;h2 id="修复方法">修复方法
+&lt;/h2>&lt;p>首先改一下 SCSI 控制器。&lt;/p>
+&lt;p>&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/p2.png"
+width="1552"
+height="1104"
+srcset="https://svtter.cn/p/vsphere-6.5-problem.md/p2_hu_8423605af33ed61.png 480w, https://svtter.cn/p/vsphere-6.5-problem.md/p2_hu_b2ca61ee95296e97.png 1024w"
+loading="lazy"
+alt="p2"
+class="gallery-image"
+data-flex-grow="140"
+data-flex-basis="337px"
+>&lt;/p>
+&lt;ul>
+&lt;li>找到 SCSI 控制器 0
+&lt;ul>
+&lt;li>类型从 &lt;code>VMware Paravirtual&lt;/code> 改成 → &lt;code>LSI Logic SAS&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>然后再次启动，从 boot option 里面找到 debian 选项。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">Boot Maintenance Manager → Boot Options → Add Boot Option
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>路径是：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">/EFI/Debian/grubx64.efi
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>选择并且添加后，即可启动。&lt;/p>
+&lt;h2 id="资源声明">资源声明
+&lt;/h2>&lt;ul>
+&lt;li>背景图来自 &lt;a class="link" href="https://www.iperiusbackup.net/en/benefits-virtualization-administrator-would-get-from-using-vmware-esxi/" target="_blank" rel="noopener"
+>link&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>
