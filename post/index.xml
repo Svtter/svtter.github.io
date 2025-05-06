@@ -66,7 +66,8 @@ id:: 68020c3f-8471-4f22-987a-95823263678c&lt;/li>
 &lt;li>凝练毕业论文的大纲，编写细节&lt;/li>
 &lt;li>编写一篇新的论文&lt;/li>
 &lt;/ul></description></item><item><title>Visual Studio Code Tips - 2</title><link>https://svtter.cn/p/visual-studio-code-tips-2/</link><pubDate>Wed, 30 Apr 2025 10:54:07 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-2/</guid><description>&lt;img src="https://svtter.cn/p/visual-studio-code-tips-2/bg.png" alt="Featured image of post Visual Studio Code Tips - 2" />&lt;p>当我们使用 vscode （cursor）进行 python 编码的时候，难免会引入大文件到工作目录里。此时，如果不对分析器加以限制，容易导致整个系统非常卡顿。&lt;/p>
-&lt;p>我们可以编辑设置来避免这个问题。&lt;/p>
+&lt;h2 id="避免大文件引入">避免大文件引入
+&lt;/h2>&lt;p>我们可以编辑设置来避免这个问题。&lt;/p>
 &lt;p>例如，我们希望忽略的路径是&lt;code>/app/data&lt;/code>，相对目录是&lt;code>./data&lt;/code>。通过打开&lt;code>&amp;lt;project_root&amp;gt;/.vscode/settings.json&lt;/code>，加入如下内容：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
@@ -90,7 +91,31 @@ id:: 68020c3f-8471-4f22-987a-95823263678c&lt;/li>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
-&lt;/div>&lt;p>这样一来，就可以避免分析器，例如 pylancer，分析你的数据目录了。&lt;/p></description></item><item><title>Build a Kubernetes Cluster.md</title><link>https://svtter.cn/p/build-a-kubernetes-cluster.md/</link><pubDate>Sat, 26 Apr 2025 09:55:38 +0800</pubDate><guid>https://svtter.cn/p/build-a-kubernetes-cluster.md/</guid><description>&lt;img src="https://svtter.cn/p/build-a-kubernetes-cluster.md/bg.png" alt="Featured image of post Build a Kubernetes Cluster.md" />&lt;p>Kubernetes 是现行容器云的事实标准。这两天我构建了一个私有化的 kubernetes 集群，将过程整理成了脚本，可以使用这些脚本进行二次部署。&lt;/p>
+&lt;/div>&lt;p>这样一来，就可以避免分析器，例如 pylancer，分析你的数据目录了。&lt;/p>
+&lt;h2 id="增加默认-pythonpath">增加默认 PYTHONPATH
+&lt;/h2>&lt;p>有时候我们希望在某个文件夹下的 python 包可以被直接引入。我们可以设置 &lt;code>PYHONPATH&lt;/code> 到 &lt;code>.vscode/settings.json&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;python.envFile&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;${workspaceFolder}/.env&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>然后配置 env 文件（例如将 /app 加入到 PYTHONPATH）&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-env" data-lang="env">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">PYTHONPATH&lt;/span>&lt;span class="o">=&lt;/span>/app
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>Build a Kubernetes Cluster.md</title><link>https://svtter.cn/p/build-a-kubernetes-cluster.md/</link><pubDate>Sat, 26 Apr 2025 09:55:38 +0800</pubDate><guid>https://svtter.cn/p/build-a-kubernetes-cluster.md/</guid><description>&lt;img src="https://svtter.cn/p/build-a-kubernetes-cluster.md/bg.png" alt="Featured image of post Build a Kubernetes Cluster.md" />&lt;p>Kubernetes 是现行容器云的事实标准。这两天我构建了一个私有化的 kubernetes 集群，将过程整理成了脚本，可以使用这些脚本进行二次部署。&lt;/p>
 &lt;p>部署集群的代码：&lt;/p>
 &lt;script src="https://tarptaeya.github.io/repo-card/repo-card.js">&lt;/script>
 &lt;!-- inside body, where you want to create the card -->
@@ -8337,18 +8362,24 @@ sudo apt-get install grub-customizer
 >http://ubuntuhandbook.org/index.php/2016/04/install-grub-customizer-ubuntu-16-04-lts/&lt;/a>&lt;/li>
 &lt;li>&lt;a class="link" href="http://blog.csdn.net/lu_embedded/article/details/44353499" target="_blank" rel="noopener"
 >grub讲解&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>vscode为django添加合适的pylint</title><link>https://svtter.cn/p/vscode%E4%B8%BAdjango%E6%B7%BB%E5%8A%A0%E5%90%88%E9%80%82%E7%9A%84pylint/</link><pubDate>Sat, 24 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/vscode%E4%B8%BAdjango%E6%B7%BB%E5%8A%A0%E5%90%88%E9%80%82%E7%9A%84pylint/</guid><description>&lt;p>使用vscode进行django开发的时候，总会出现一些错误，比如说对Django的一些结构进行错误的报错；&lt;/p>
+&lt;/ul></description></item><item><title>Visual Studio Code Tips - 0</title><link>https://svtter.cn/p/visual-studio-code-tips-0/</link><pubDate>Sat, 24 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-0/</guid><description>&lt;p>使用vscode进行&lt;code>django&lt;/code>开发的时候，总会出现一些错误，比如说对&lt;code>Django&lt;/code>的一些结构进行错误的报错；&lt;/p>
 &lt;p>这个时候可以安装&lt;code>pylint-django&lt;/code>这个插件。&lt;/p>
 &lt;p>安装方法：&lt;code>pip install pylint-django&lt;/code>&lt;/p>
 &lt;p>使用：&lt;/p>
 &lt;p>在&lt;code>.vscode/&lt;/code>配置文件中增加：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span> &lt;span class="s2">"python.linting.pylintArgs"&lt;/span>&lt;span class="err">:&lt;/span> &lt;span class="p">[&lt;/span>
-&lt;span class="s2">"--load-plugins=pylint_django"&lt;/span>
-&lt;span class="p">]&lt;/span>&lt;span class="err">,&lt;/span>
-&lt;/pre>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;pylint.args&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;load-plugins=pylint_django&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
-&lt;p>即可。&lt;/p>
+&lt;/div>&lt;p>即可。&lt;/p>
 &lt;h2 id="参考">参考
 &lt;/h2>&lt;p>&lt;a class="link" href="https://stackoverflow.com/questions/45135263/class-has-no-objects-member" target="_blank" rel="noopener"
 >https://stackoverflow.com/questions/45135263/class-has-no-objects-member&lt;/a>&lt;/p></description></item><item><title>python如何使用不可变量const</title><link>https://svtter.cn/p/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/</link><pubDate>Tue, 06 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/</guid><description>&lt;div class="codehilite">
