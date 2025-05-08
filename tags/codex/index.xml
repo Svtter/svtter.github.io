@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Codex on Svtter's Blog</title><link>https://svtter.cn/tags/codex/</link><description>Recent content in Codex on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 08 May 2025 11:25:53 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/codex/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 openhands 操作代码仓库</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-openhands-%E6%93%8D%E4%BD%9C%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93/</link><pubDate>Thu, 08 May 2025 11:25:53 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-openhands-%E6%93%8D%E4%BD%9C%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-openhands-%E6%93%8D%E4%BD%9C%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93/image.png" alt="Featured image of post 使用 openhands 操作代码仓库" />&lt;p>codex 是 openai 出品的 headless code editor (我起的名字)。 相对的，openhands 是一个优秀的开源作品，可以自主操作和编辑 repo。openhands 有基于 web 的 UI 界面。&lt;/p>
+&lt;h2 id="安装">安装
+&lt;/h2>&lt;p>通过私有化部署可以直接使用 openhands&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker pull docker.all-hands.dev/all-hands-ai/runtime:0.37-nikolaik
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">docker run -it --rm --pull&lt;span class="o">=&lt;/span>always &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> -e &lt;span class="nv">SANDBOX_RUNTIME_CONTAINER_IMAGE&lt;/span>&lt;span class="o">=&lt;/span>docker.all-hands.dev/all-hands-ai/runtime:0.37-nikolaik &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> -e &lt;span class="nv">LOG_ALL_EVENTS&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span> &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> -v /var/run/docker.sock:/var/run/docker.sock &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> -v ~/.openhands-state:/.openhands-state &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> -p 3000:3000 &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> --add-host host.docker.internal:host-gateway &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> --name openhands-app &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> docker.all-hands.dev/all-hands-ai/openhands:0.37
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;h2 id="使用自定的-provider">使用自定的 provider
+&lt;/h2>&lt;ul>
+&lt;li>openhands 使用 litellm
+&lt;ul>
+&lt;li>配置 litellm 的相关：https://docs.litellm.ai/docs/proxy/configs&lt;/li>
+&lt;li>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">model_name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">vllm-models&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">litellm_params&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">model&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">openai/facebook/opt-125m&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># the `openai/` prefix tells litellm it&amp;#39;s openai compatible&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">api_base&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">http://0.0.0.0:4000/v1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">api_key&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">none&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">rpm&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">1440&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">model_info&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">version&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-openhands-%E6%93%8D%E4%BD%9C%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93/image.png"
+width="1628"
+height="1386"
+srcset="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-openhands-%E6%93%8D%E4%BD%9C%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93/image_hu_9a632fc87bb7442b.png 480w, https://svtter.cn/p/%E4%BD%BF%E7%94%A8-openhands-%E6%93%8D%E4%BD%9C%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93/image_hu_f99d31c2de0c77b1.png 1024w"
+loading="lazy"
+alt="image.png"
+class="gallery-image"
+data-flex-grow="117"
+data-flex-basis="281px"
+>&lt;/li>
+&lt;li>需要在 model 前面加上 openai 来让 litellm 知道模型是 openai 兼容的。&lt;/li>
+&lt;/ul></description></item></channel></rss>
