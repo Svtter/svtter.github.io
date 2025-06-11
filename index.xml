@@ -130,8 +130,9 @@
 &lt;blockquote>
 &lt;p>至于怎么算简单&amp;hellip;&lt;/p>&lt;/blockquote>
 &lt;p>本文的 tag 就是通过 aider 生成的。在示例中，我编辑了&lt;code>README.md&lt;/code>文件。但是你完全可以打开一个 git repository，来编辑其他的代码。&lt;/p>
-&lt;p>Have fun。&lt;/p></description></item><item><title>Using uv to publish python package</title><link>https://svtter.cn/p/using-uv-to-publish-python-package/</link><pubDate>Tue, 03 Jun 2025 15:54:28 +0800</pubDate><guid>https://svtter.cn/p/using-uv-to-publish-python-package/</guid><description>&lt;p>除了依赖管理之外，我希望使用 uv 来发布包。&lt;/p>
-&lt;p>LLMs 给了答复，在 pyproject.toml 中添加内容：&lt;/p>
+&lt;p>Have fun。&lt;/p></description></item><item><title>Using uv to publish python package</title><link>https://svtter.cn/p/using-uv-to-publish-python-package/</link><pubDate>Tue, 03 Jun 2025 15:54:28 +0800</pubDate><guid>https://svtter.cn/p/using-uv-to-publish-python-package/</guid><description>&lt;p>自我从 pdm 迁移到 uv 后，除了依赖管理之外，我希望使用 uv 来发布包。&lt;/p>
+&lt;h2 id="方法一">方法一
+&lt;/h2>&lt;p>LLMs 给了答复，在 pyproject.toml 中添加内容：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
@@ -163,7 +164,42 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
 &lt;/div>&lt;p>即可完成包的发布。&lt;/p>
-&lt;h2 id="一些想法">一些想法
+&lt;h2 id="方法二">方法二
+&lt;/h2>&lt;p>由于有大量的使用 pdm 的项目，因此直接修改 pdm 也会造成很多不方便的地方。&lt;/p>
+&lt;p>仍然可以使用 pdm 作为 &lt;code>build-system&lt;/code>，但是使用 uv 作为包管理工具。&lt;/p>
+&lt;p>也就是说:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">build-system&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">requires&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;pdm-backend&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">build-backend&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;pdm.backend&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>甚至&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">tool&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">pdm&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">distribution&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="kc">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">tool&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">pdm&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">version&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">source&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;file&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">path&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;src/spback/__init__.py&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="一些想法">一些想法
 &lt;/h2>&lt;p>LLMs 已经很强大了。但是，LLMs 无法保证生成内容的准确性，需要人来验证。因此，验证产物的人类是必须的。&lt;/p>
 &lt;p>这段代码必须有人来验证才能工作。当然，如果仅仅是修改内容，可以让 LLMs 与我们协作，通过 cursor 的形式。&lt;/p></description></item><item><title>Kill Ghost Process</title><link>https://svtter.cn/p/kill-ghost-process/</link><pubDate>Fri, 30 May 2025 11:25:39 +0800</pubDate><guid>https://svtter.cn/p/kill-ghost-process/</guid><description>&lt;p>有时候我们会遇到一些幽灵进程，这些进程占用了显卡资源，但实际上并未发挥作用。&lt;/p>
 &lt;p>例如这样：&lt;/p>
@@ -1340,7 +1376,8 @@ data-flex-basis="1074px"
 &lt;p>这种微调，某种程度上就是使用一些已有的 prompt 和回答，对模型进行训练。&lt;/p>
 &lt;p>因此，prompt engineering 的意义就是，使得 prompt 能够和微调的数据集进行匹配，从而使得模型能够获得更好的性能。&lt;/p></description></item><item><title>Using uv.md</title><link>https://svtter.cn/p/using-uv.md/</link><pubDate>Sun, 30 Mar 2025 14:33:34 +0800</pubDate><guid>https://svtter.cn/p/using-uv.md/</guid><description>&lt;img src="https://svtter.cn/p/using-uv.md/image.png" alt="Featured image of post Using uv.md" />&lt;p>近期我开始大量的使用 uv 而不是 pdm 了。&lt;/p>
 &lt;h2 id="knowledge-piece">knowledge piece
-&lt;/h2>&lt;p>The uvx command invokes a tool without installing it.&lt;/p>
+&lt;/h2>&lt;p>&lt;code>uvx&lt;/code> could replace &lt;code>pipx&lt;/code>.&lt;/p>
+&lt;p>The uvx command invokes a tool without installing it.&lt;/p>
 &lt;p>For example, to run &lt;code>ruff&lt;/code>&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
