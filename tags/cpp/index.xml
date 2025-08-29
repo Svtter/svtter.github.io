@@ -1,446 +1,446 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CPP on Svtter's Blog</title><link>https://svtter.cn/tags/cpp/</link><description>Recent content in CPP on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 27 Aug 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/cpp/index.xml" rel="self" type="application/rss+xml"/><item><title># Difference between map &amp; unordered_map</title><link>https://svtter.cn/p/%23-difference-between-map-unordered_map/</link><pubDate>Mon, 27 Aug 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%23-difference-between-map-unordered_map/</guid><description>&lt;p>目前有三个容器我不太了解其内部实现，打算通过 &amp;lt;c++ primer&amp;gt; 进行学习&lt;/p>
-&lt;ol>
-&lt;li>map&lt;/li>
-&lt;li>multimap&lt;/li>
-&lt;li>unordered_map&lt;/li>
-&lt;/ol>
-&lt;h2 id="map">map
-&lt;/h2>&lt;p>map 是目前最简单的结构，实现的方法是 BST（binary search tree）。因此，其时间复杂度等都与 BST 相同，搜索，增加，删除基本时间都是 log(n)。&lt;/p>
-&lt;h3 id="use-map-when">use map when
-&lt;/h3>&lt;ol>
-&lt;li>数据有序&lt;/li>
-&lt;li>需要按照有序的顺序获得元素&lt;/li>
-&lt;/ol>
-&lt;h2 id="unordered_map">unordered_map
-&lt;/h2>&lt;p>unordered_map 则是通常所说的 hash table，哈希表，搜索，增加，删除都是以hash表为主，较好的情况是o(1)，也就是hash函数可以较好的把元素分布到表中，如果 hash 函数比较糟糕，则每一次添加删除查找，都是完整遍历一个表。&lt;/p>
-&lt;h3 id="use-unordered_map-when">use unordered_map when
-&lt;/h3>&lt;ol>
-&lt;li>对数据计数&lt;/li>
-&lt;li>只需要根据 key 访问 value&lt;/li>
-&lt;/ol>
-&lt;p>简单来讲，就是当你需要使用 vector 来计数的时候，可以用 unordered_map 来代替。&lt;/p>
-&lt;pre class="wp-block-preformatted">| map | unordered_map
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CPP on Svtter's Blog</title><link>https://svtter.cn/tags/cpp/</link><description>Recent content in CPP on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 27 Aug 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/cpp/index.xml" rel="self" type="application/rss+xml"/><item><title># Difference between map &amp; unordered_map</title><link>https://svtter.cn/p/%23-difference-between-map-unordered_map/</link><pubDate>Mon, 27 Aug 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%23-difference-between-map-unordered_map/</guid><description>&lt;p&gt;目前有三个容器我不太了解其内部实现，打算通过 &amp;lt;c++ primer&amp;gt; 进行学习&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;map&lt;/li&gt;
+&lt;li&gt;multimap&lt;/li&gt;
+&lt;li&gt;unordered_map&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="map"&gt;map
+&lt;/h2&gt;&lt;p&gt;map 是目前最简单的结构，实现的方法是 BST（binary search tree）。因此，其时间复杂度等都与 BST 相同，搜索，增加，删除基本时间都是 log(n)。&lt;/p&gt;
+&lt;h3 id="use-map-when"&gt;use map when
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;数据有序&lt;/li&gt;
+&lt;li&gt;需要按照有序的顺序获得元素&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="unordered_map"&gt;unordered_map
+&lt;/h2&gt;&lt;p&gt;unordered_map 则是通常所说的 hash table，哈希表，搜索，增加，删除都是以hash表为主，较好的情况是o(1)，也就是hash函数可以较好的把元素分布到表中，如果 hash 函数比较糟糕，则每一次添加删除查找，都是完整遍历一个表。&lt;/p&gt;
+&lt;h3 id="use-unordered_map-when"&gt;use unordered_map when
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;对数据计数&lt;/li&gt;
+&lt;li&gt;只需要根据 key 访问 value&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;简单来讲，就是当你需要使用 vector 来计数的时候，可以用 unordered_map 来代替。&lt;/p&gt;
+&lt;pre class="wp-block-preformatted"&gt;| map | unordered_map
 ---------------------------------------------------------
 Ordering | increasing order | no ordering
 | (by default) |
 Implementation | Self balancing BST | Hash Table
-| like&lt;a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/"> Red-Black Tree &lt;/a>|
-search time | log(n) | O(1) -> Average
-| | O(n) -> Worst Case
+| like&lt;a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/"&gt; Red-Black Tree &lt;/a&gt;|
+search time | log(n) | O(1) -&gt; Average
+| | O(n) -&gt; Worst Case
 Insertion time | log(n) + Rebalance | Same as search
-Deletion time | log(n) + Rebalance | Same as search&lt;/pre>
-&lt;h2 id="multimap">multimap
-&lt;/h2>&lt;p>multimap containers are generally slower than &lt;a class="link" href="http://www.cplusplus.com/unordered_multimap" target="_blank" rel="noopener"
->unordered_multimap&lt;/a> containers to access individual elements by their &lt;em>key&lt;/em>, but they allow the direct iteration on subsets based on their order.&lt;/p>
-&lt;p>Multimaps are typically implemented as &lt;em>binary search trees&lt;/em>.&lt;/p>
-&lt;p>multiple 也是用 bst 实现的，相比 map，允许按照顺序遍历元素。&lt;/p>
-&lt;h2 id="reference">Reference&lt;figure class="wp-block-embed"> &lt;a class="link" href="https://www.geeksforgeeks.org/map-vs-unordered_map-c/" target="_blank" rel="noopener"
->https://www.geeksforgeeks.org/map-vs-unordered_map-c/&lt;/a> &lt;/figure>
-&lt;/h2></description></item><item><title>Ros Kinect Configure Note</title><link>https://svtter.cn/p/ros-kinect-configure-note/</link><pubDate>Mon, 18 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ros-kinect-configure-note/</guid><description>&lt;p>This blog for my kinect-v2 ros configure.&lt;/p>
-&lt;h2 id="environment">Environment
-&lt;/h2>&lt;ul>
-&lt;li>Thinkpad P70&lt;/li>
-&lt;li>Ubuntu 14.04&lt;/li>
-&lt;li>indigo&lt;/li>
-&lt;/ul>
-&lt;p>Reference to &lt;a class="link" href="https://github.com/code-iai/iai_kinect2" target="_blank" rel="noopener"
->https://github.com/code-iai/iai_kinect2&lt;/a>&lt;/p>
-&lt;h2 id="install">Install
-&lt;/h2>&lt;p>Before start, make sure the &lt;code>cuda&lt;/code>, &lt;code>cudnn&lt;/code> has been configured correctly.&lt;/p>
-&lt;p>First, you need to install &lt;a class="link" href="https://github.com/OpenKinect/libfreenect2" target="_blank" rel="noopener"
->libfreenect2&lt;/a>.&lt;/p>
-&lt;p>I recommend to use &lt;code>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64&lt;/code> in your &lt;code>.zshrc&lt;/code> or &lt;code>.bashrc&lt;/code> (more professional, in &lt;code>bash_profile&lt;/code> or &lt;code>.zshenv&lt;/code>). You will avoid some problems about library error.&lt;/p>
-&lt;p>When installing libfreenect2, Use &lt;code>cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2 -DENABLE_CXX11=ON&lt;/code> to generate Makeifle at &lt;code>build/&lt;/code>&lt;/p>
-&lt;p>Then Install &lt;strong>&lt;a class="link" href="https://github.com/code-iai/iai_kinect2" target="_blank" rel="noopener"
->iai-Kinect&lt;/a>&lt;/strong>&lt;/p>
-&lt;p>I use &lt;code>catkin_make -DCMAKE_BUILD_TYPE=&amp;quot;Release&amp;quot; -Dfreenect2_DIR=$HOME/freenect2/lib/cmake/freenect2&lt;/code> to Compile &lt;code>iai-Kinect&lt;/code> because installing to &lt;code>$HOME/freenect2&lt;/code> before.&lt;/p>
-&lt;p>&lt;strong>NOTE:&lt;/strong>&lt;/p>
-&lt;ol>
-&lt;li>enable C++11 by using &lt;code>cmake .. -DENABLE_CXX11=ON&lt;/code> instead of &lt;code>cmake ..&lt;/code>&lt;/li>
-&lt;li>If something is not working, check out the latest stable release, for example &lt;code>git checkout v0.2.0&lt;/code>.&lt;/li>
-&lt;li>check your opencv version: &lt;code>pkg-config --modversion opencv&lt;/code>.&lt;/li>
-&lt;li>NEVER EVER use &lt;code>sudo prime-select intel&lt;/code>.&lt;/li>
-&lt;/ol>
-&lt;h2 id="error">Error
-&lt;/h2>&lt;p>I missed &lt;code>sudo apt-get install beignet-dev;&lt;/code> so I got this error:&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>Building CXX object iai_kinect2/kinect2_bridge/CMakeFiles/kinect2_bridge.dir/src/kinect2_bridge.cpp.o
+Deletion time | log(n) + Rebalance | Same as search&lt;/pre&gt;
+&lt;h2 id="multimap"&gt;multimap
+&lt;/h2&gt;&lt;p&gt;multimap containers are generally slower than &lt;a class="link" href="http://www.cplusplus.com/unordered_multimap" target="_blank" rel="noopener"
+&gt;unordered_multimap&lt;/a&gt; containers to access individual elements by their &lt;em&gt;key&lt;/em&gt;, but they allow the direct iteration on subsets based on their order.&lt;/p&gt;
+&lt;p&gt;Multimaps are typically implemented as &lt;em&gt;binary search trees&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;multiple 也是用 bst 实现的，相比 map，允许按照顺序遍历元素。&lt;/p&gt;
+&lt;h2 id="reference"&gt;Reference&lt;figure class="wp-block-embed"&gt; &lt;a class="link" href="https://www.geeksforgeeks.org/map-vs-unordered_map-c/" target="_blank" rel="noopener"
+&gt;https://www.geeksforgeeks.org/map-vs-unordered_map-c/&lt;/a&gt; &lt;/figure&gt;
+&lt;/h2&gt;</description></item><item><title>Ros Kinect Configure Note</title><link>https://svtter.cn/p/ros-kinect-configure-note/</link><pubDate>Mon, 18 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ros-kinect-configure-note/</guid><description>&lt;p&gt;This blog for my kinect-v2 ros configure.&lt;/p&gt;
+&lt;h2 id="environment"&gt;Environment
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Thinkpad P70&lt;/li&gt;
+&lt;li&gt;Ubuntu 14.04&lt;/li&gt;
+&lt;li&gt;indigo&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Reference to &lt;a class="link" href="https://github.com/code-iai/iai_kinect2" target="_blank" rel="noopener"
+&gt;https://github.com/code-iai/iai_kinect2&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="install"&gt;Install
+&lt;/h2&gt;&lt;p&gt;Before start, make sure the &lt;code&gt;cuda&lt;/code&gt;, &lt;code&gt;cudnn&lt;/code&gt; has been configured correctly.&lt;/p&gt;
+&lt;p&gt;First, you need to install &lt;a class="link" href="https://github.com/OpenKinect/libfreenect2" target="_blank" rel="noopener"
+&gt;libfreenect2&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I recommend to use &lt;code&gt;export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64&lt;/code&gt; in your &lt;code&gt;.zshrc&lt;/code&gt; or &lt;code&gt;.bashrc&lt;/code&gt; (more professional, in &lt;code&gt;bash_profile&lt;/code&gt; or &lt;code&gt;.zshenv&lt;/code&gt;). You will avoid some problems about library error.&lt;/p&gt;
+&lt;p&gt;When installing libfreenect2, Use &lt;code&gt;cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2 -DENABLE_CXX11=ON&lt;/code&gt; to generate Makeifle at &lt;code&gt;build/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then Install &lt;strong&gt;&lt;a class="link" href="https://github.com/code-iai/iai_kinect2" target="_blank" rel="noopener"
+&gt;iai-Kinect&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I use &lt;code&gt;catkin_make -DCMAKE_BUILD_TYPE=&amp;quot;Release&amp;quot; -Dfreenect2_DIR=$HOME/freenect2/lib/cmake/freenect2&lt;/code&gt; to Compile &lt;code&gt;iai-Kinect&lt;/code&gt; because installing to &lt;code&gt;$HOME/freenect2&lt;/code&gt; before.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;enable C++11 by using &lt;code&gt;cmake .. -DENABLE_CXX11=ON&lt;/code&gt; instead of &lt;code&gt;cmake ..&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;If something is not working, check out the latest stable release, for example &lt;code&gt;git checkout v0.2.0&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;check your opencv version: &lt;code&gt;pkg-config --modversion opencv&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;NEVER EVER use &lt;code&gt;sudo prime-select intel&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="error"&gt;Error
+&lt;/h2&gt;&lt;p&gt;I missed &lt;code&gt;sudo apt-get install beignet-dev;&lt;/code&gt; so I got this error:&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Building CXX object iai_kinect2/kinect2_bridge/CMakeFiles/kinect2_bridge.dir/src/kinect2_bridge.cpp.o
 Building CXX object iai_kinect2/kinect2_bridge/CMakeFiles/kinect2_bridge_nodelet.dir/src/kinect2_bridge.cpp.o
-&lt;span class="o">[&lt;/span>&lt;span class="m">100&lt;/span>%&lt;span class="o">]&lt;/span> Built target kinect2_viewer
-/home/svtter/catkin_ws/src/iai_kinect2/kinect2_bridge/src/kinect2_bridge.cpp: In member &lt;span class="k">function&lt;/span> ‘bool Kinect2Bridge::initPipeline&lt;span class="o">(&lt;/span>const string&lt;span class="p">&amp;&lt;/span>, int32_t&lt;span class="o">)&lt;/span>’:
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;100&lt;/span&gt;%&lt;span class="o"&gt;]&lt;/span&gt; Built target kinect2_viewer
+/home/svtter/catkin_ws/src/iai_kinect2/kinect2_bridge/src/kinect2_bridge.cpp: In member &lt;span class="k"&gt;function&lt;/span&gt; ‘bool Kinect2Bridge::initPipeline&lt;span class="o"&gt;(&lt;/span&gt;const string&lt;span class="p"&gt;&amp;&lt;/span&gt;, int32_t&lt;span class="o"&gt;)&lt;/span&gt;’:
 /home/svtter/catkin_ws/src/iai_kinect2/kinect2_bridge/src/kinect2_bridge.cpp:427:28: error: expected type-specifier
-&lt;span class="nv">packetPipeline&lt;/span> &lt;span class="o">=&lt;/span> new libfreenect2::OpenCLKdePacketPipeline&lt;span class="o">(&lt;/span>device&lt;span class="o">)&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/pre>
-&lt;/div></description></item><item><title>数值分析计算，C++实现</title><link>https://svtter.cn/p/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90%E8%AE%A1%E7%AE%97c-%E5%AE%9E%E7%8E%B0/</link><pubDate>Sun, 31 May 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90%E8%AE%A1%E7%AE%97c-%E5%AE%9E%E7%8E%B0/</guid><description>&lt;p>&lt;a class="link" href="https://github.com/Svtter/numerical_analysis" target="_blank" rel="noopener"
->https://github.com/Svtter/numerical_analysis&lt;/a>&lt;/p></description></item><item><title>C++学习必备</title><link>https://svtter.cn/p/c-%E5%AD%A6%E4%B9%A0%E5%BF%85%E5%A4%87/</link><pubDate>Thu, 27 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/c-%E5%AD%A6%E4%B9%A0%E5%BF%85%E5%A4%87/</guid><description>&lt;hr>
-&lt;ul>
-&lt;li>
-&lt;p>本文出自&amp;lt;svtter.github.io&amp;gt;&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>(cplusplus)[http://www.cplusplus.com]&lt;/p>
-&lt;/li>
-&lt;/ul>
-&lt;h2 id="介绍三个头文件">介绍三个头文件
-&lt;/h2>&lt;p>在/usr/include/stdint.h中包含着各种关于C数据类型的定义，大小等。&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>unistd.h&lt;/code> unix standard library header 这个函数库中包含read, write, gitpid等函数&lt;/li>
-&lt;li>&lt;code>stdlib.h&lt;/code> standard library header&lt;/li>
-&lt;/ul></description></item><item><title>Linux-同步互斥</title><link>https://svtter.cn/p/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/</link><pubDate>Fri, 21 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/</guid><description>&lt;ul>
-&lt;li>本文出自&amp;lt;svtter.github.io&amp;gt;&lt;/li>
-&lt;/ul>
-&lt;h2 id="使用pthread实现经典问题生产者消费者">使用pthread实现经典问题：生产者消费者
-&lt;/h2>&lt;p>关于semaphore的相关信息就不再贴出来了。&lt;/p>
-&lt;p>编译的时候记得&lt;code>-pthread&lt;/code>选项。&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="cm">/*=============================================================================&lt;/span>
-&lt;span class="cm">#&lt;/span>
-&lt;span class="cm"># Author: svtter - svtter@qq.com&lt;/span>
-&lt;span class="cm">#&lt;/span>
-&lt;span class="cm"># QQ : 57180160&lt;/span>
-&lt;span class="cm">#&lt;/span>
-&lt;span class="cm"># Last modified: 2014-10-03 20:35&lt;/span>
-&lt;span class="cm">#&lt;/span>
-&lt;span class="cm"># Filename: producer_consumer.cc&lt;/span>
-&lt;span class="cm">#&lt;/span>
-&lt;span class="cm"># Description: &lt;/span>
-&lt;span class="cm">#&lt;/span>
-&lt;span class="cm">=============================================================================*/&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;cstdio&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;unistd.h&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;semaphore.h&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;pthread.h&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;sys/types.h&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;stdlib.h&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;iostream&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="k">using&lt;/span> &lt;span class="k">namespace&lt;/span> &lt;span class="n">std&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="cp">#define N 5&lt;/span>
-&lt;span class="cp">#define item int&lt;/span>
-&lt;span class="c1">// P/V操作&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_t&lt;/span>&lt;span class="o">*&lt;/span> &lt;span class="n">sem&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_wait&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem&lt;/span>&lt;span class="p">))&lt;/span>
-&lt;span class="n">perror&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"P error!"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_t&lt;/span>&lt;span class="o">*&lt;/span> &lt;span class="n">sem&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_post&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem&lt;/span>&lt;span class="p">))&lt;/span>
-&lt;span class="n">perror&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"V error!"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="n">sem_t&lt;/span> &lt;span class="n">mutex&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">sem_t&lt;/span> &lt;span class="n">full&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">sem_t&lt;/span> &lt;span class="n">empty&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">item&lt;/span> &lt;span class="n">buffer&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">N&lt;/span>&lt;span class="p">];&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">j&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">init_sem&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">sem_init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">mutex&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">sem_init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">full&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">sem_init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">empty&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">N&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span>&lt;span class="o">*&lt;/span> &lt;span class="nf">producer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">void&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">product&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="c1">//生成随机数字&lt;/span>
-&lt;span class="n">product&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">rand&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">%&lt;/span>&lt;span class="mi">100&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="c1">// cout &amp;lt;&amp;lt; "producer running..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">empty&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">mutex&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">buffer&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">product&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"producer produced %d @ %d pos&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">"&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="n">product&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">i&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">%&lt;/span>&lt;span class="n">N&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">mutex&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">full&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span>&lt;span class="o">*&lt;/span> &lt;span class="nf">consumer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">void&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">product&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">temp&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="c1">// cout &amp;lt;&amp;lt; "consumer running..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">full&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">mutex&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">j&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">j&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">%&lt;/span>&lt;span class="n">N&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">product&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">buffer&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">j&lt;/span>&lt;span class="p">];&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">mutex&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">empty&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"Consumer consumed %d @ %d pos&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">"&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="n">product&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">j&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="c1">//random num&lt;/span>
-&lt;span class="n">srand&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">time&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">NULL&lt;/span>&lt;span class="p">));&lt;/span>
-&lt;span class="n">init_sem&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">error&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">pthread_t&lt;/span> &lt;span class="n">producer_t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">consumer_t&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">error&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">pthread_create&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">producer_t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">producer&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">error&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"error in create producer.&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">else&lt;/span>
-&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"create producer success!&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">pthread_create&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">consumer_t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">consumer&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">error&lt;/span> &lt;span class="o">!=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"error in create consumer.&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">else&lt;/span>
-&lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"create consumer success!&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">pthread_join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">producer_t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">pthread_join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">consumer_t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">return&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h3 id="运行结果">运行结果
-&lt;/h3>&lt;img alt="生产者消费者" src="https://i1.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emiuwm4ev0j20es07cwfi.jpg?w=625" data-recalc-dims="1" />
-&lt;h2 id="操作系统经典问题哲学家就餐问题">操作系统经典问题：哲学家就餐问题
-&lt;/h2>&lt;p>mutex是c++11的新功能。记得添加C++11支持。(在运行结果中包含编译选项。)&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;iostream&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;mutex&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;cstdio&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;thread&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;semaphore.h&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="n">using&lt;/span> &lt;span class="n">namespace&lt;/span> &lt;span class="n">std&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="cp">#define THINK(i) printf("ph[%d] is thinking...\n", i)&lt;/span>
-&lt;span class="cp">#define EAT(i) printf("ph[%d] eats.\n", i)&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mutex&lt;/span> &lt;span class="o">&amp;&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">mt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">lock&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mutex&lt;/span> &lt;span class="o">&amp;&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">mt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">unlock&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_t&lt;/span>&lt;span class="o">*&lt;/span> &lt;span class="n">sem&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_wait&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem&lt;/span>&lt;span class="p">))&lt;/span>
-&lt;span class="n">perror&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"P error!"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_t&lt;/span>&lt;span class="o">*&lt;/span> &lt;span class="n">sem&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem_post&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sem&lt;/span>&lt;span class="p">))&lt;/span>
-&lt;span class="n">perror&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">"V error!"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="c1">// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">delay&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kr">int&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kr">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">10000000&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="n">mutex&lt;/span> &lt;span class="n">fork&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">];&lt;/span>
-&lt;span class="n">sem_t&lt;/span> &lt;span class="n">room&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">init&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">sem_init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">room&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kr">void&lt;/span> &lt;span class="nf">philosopher&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="kr">int&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kr">int&lt;/span> &lt;span class="n">j&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">j&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">j&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">THINK&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">room&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fork&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">]);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fork&lt;/span>&lt;span class="p">[(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">%&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">]);&lt;/span>
-&lt;span class="n">EAT&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;&lt;/span>&lt;span class="n">room&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fork&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">]);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fork&lt;/span>&lt;span class="p">[(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">%&lt;/span>&lt;span class="mi">5&lt;/span>&lt;span class="p">]);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kr">int&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">init&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="p">[]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="kr">thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">philosopher&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">),&lt;/span>
-&lt;span class="kr">thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">philosopher&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">),&lt;/span>
-&lt;span class="kr">thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">philosopher&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">),&lt;/span>
-&lt;span class="kr">thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">philosopher&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">),&lt;/span>
-&lt;span class="kr">thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">philosopher&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">),&lt;/span>
-&lt;span class="p">};&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kr">int&lt;/span> &lt;span class="n">k&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">k&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">k&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">k&lt;/span>&lt;span class="p">].&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="k">return&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h3 id="运行结果-1">运行结果
-&lt;/h3>&lt;img alt="哲学家就餐" src="https://i1.wp.com/ww3.sinaimg.cn/mw690/c53b1907jw1emiwe5eqnyj20hq0b1q3w.jpg?w=625" data-recalc-dims="1" />
-&lt;h2 id="操作系统经典问题读者写者问题">操作系统经典问题：读者写者问题
-&lt;/h2>&lt;h3 id="读者优先">读者优先
-&lt;/h3>&lt;ul>
-&lt;li>使用了c++11的新特性thread&lt;/li>
-&lt;/ul>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;iostream&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;mutex&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;thread&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="k">using&lt;/span> &lt;span class="k">namespace&lt;/span> &lt;span class="n">std&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">mutex&lt;/span> &lt;span class="n">mt&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">wsem&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">readcount&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="cp">#define READ(a) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; " is reading..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="cp">#define FINISH(a) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; " finished reading." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="cp">#define WRITE cout &amp;lt;&amp;lt; "writing..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mutex&lt;/span> &lt;span class="o">&amp;&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">mt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">lock&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mutex&lt;/span> &lt;span class="o">&amp;&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">mt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">unlock&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="c1">// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">delay&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">10000000&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">i&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">string&lt;/span> &lt;span class="n">a&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">readcount&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">readcount&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">READ&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">delay&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">readcount&lt;/span>&lt;span class="o">--&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">FINISH&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">readcount&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">write&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">WRITE&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="n">delay&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">reader1&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"svtter"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">reader2&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"sr"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">reader3&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"yym"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">reader4&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"xiaoniu"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">writer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">reader1&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">reader2&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">reader3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">reader4&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">writer&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="k">return&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h4 id="运行结果-2">运行结果
-&lt;/h4>&lt;p>由于可以同时阅读，所以读者reading输出可能出现少许问题。&lt;/p>
-&lt;img alt="运行结果" src="https://i2.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emiwlff732j20hl08t3z6.jpg?w=625" data-recalc-dims="1" />
-&lt;h3 id="写者优先">写者优先
-&lt;/h3>&lt;hr>
-&lt;ul>
-&lt;li>使rsem中只有一个读者在等待，保证了如果有写者，写者优先写&lt;/li>
-&lt;/ul>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;iostream&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;mutex&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="cp">#include&lt;/span> &lt;span class="cpf">&amp;lt;thread&amp;gt;&lt;/span>&lt;span class="cp">&lt;/span>
-&lt;span class="k">using&lt;/span> &lt;span class="k">namespace&lt;/span> &lt;span class="n">std&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="cp">#define READ(a,i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; i&amp;lt;&amp;lt;" is reading..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="cp">#define FINR(a,i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; i&amp;lt;&amp;lt;" finished reading." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="cp">#define WRITE(a,i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt;i&amp;lt;&amp;lt;" is writing..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="cp">#define FINW(a, i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt;i&amp;lt;&amp;lt;" finished writing..." &amp;lt;&amp;lt; endl;&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mutex&lt;/span> &lt;span class="o">&amp;&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">mt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">lock&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mutex&lt;/span> &lt;span class="o">&amp;&lt;/span>&lt;span class="n">mt&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">mt&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">unlock&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="c1">// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">delay&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">sum&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">10000000&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">sum&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="n">mutex&lt;/span> &lt;span class="n">mr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">wsem&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rsem&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">mrc&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">mwc&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">readcount&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="n">writecount&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">string&lt;/span> &lt;span class="n">a&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">5&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mr&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mrc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">readcount&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">readcount&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mrc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mr&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">READ&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mrc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">FINR&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">readcount&lt;/span>&lt;span class="o">--&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">readcount&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mrc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">void&lt;/span> &lt;span class="nf">write&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">string&lt;/span> &lt;span class="n">a&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">3&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mwc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">writecount&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">writecount&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mwc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">WRITE&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">FINW&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">i&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">wsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">P&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mwc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">writecount&lt;/span>&lt;span class="o">--&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="k">if&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">writecount&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rsem&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">V&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">mwc&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;span class="kt">int&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="p">{&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">reader1&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"svtter"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">writer1&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"sr"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">writer2&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"zs"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kr">thread&lt;/span> &lt;span class="n">writer3&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s">"yym"&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="n">reader1&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">writer1&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">writer2&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="n">writer3&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="k">return&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h4 id="运行结果-3">运行结果
-&lt;/h4>&lt;ul>
-&lt;li>基本上结果就是写者写完，才会有读者阅读&lt;/li>
-&lt;/ul>
-&lt;img alt="写者优先" src="https://i0.wp.com/ww4.sinaimg.cn/mw690/c53b1907jw1emiwotocqij20hp0d7q4e.jpg?w=625" data-recalc-dims="1" /></description></item></channel></rss>
+&lt;span class="nv"&gt;packetPipeline&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; new libfreenect2::OpenCLKdePacketPipeline&lt;span class="o"&gt;(&lt;/span&gt;device&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;</description></item><item><title>数值分析计算，C++实现</title><link>https://svtter.cn/p/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90%E8%AE%A1%E7%AE%97c-%E5%AE%9E%E7%8E%B0/</link><pubDate>Sun, 31 May 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90%E8%AE%A1%E7%AE%97c-%E5%AE%9E%E7%8E%B0/</guid><description>&lt;p&gt;&lt;a class="link" href="https://github.com/Svtter/numerical_analysis" target="_blank" rel="noopener"
+&gt;https://github.com/Svtter/numerical_analysis&lt;/a&gt;&lt;/p&gt;</description></item><item><title>C++学习必备</title><link>https://svtter.cn/p/c-%E5%AD%A6%E4%B9%A0%E5%BF%85%E5%A4%87/</link><pubDate>Thu, 27 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/c-%E5%AD%A6%E4%B9%A0%E5%BF%85%E5%A4%87/</guid><description>&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;本文出自&amp;lt;svtter.github.io&amp;gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;(cplusplus)[http://www.cplusplus.com]&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="介绍三个头文件"&gt;介绍三个头文件
+&lt;/h2&gt;&lt;p&gt;在/usr/include/stdint.h中包含着各种关于C数据类型的定义，大小等。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;unistd.h&lt;/code&gt; unix standard library header 这个函数库中包含read, write, gitpid等函数&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;stdlib.h&lt;/code&gt; standard library header&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Linux-同步互斥</title><link>https://svtter.cn/p/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/</link><pubDate>Fri, 21 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/linux-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/</guid><description>&lt;ul&gt;
+&lt;li&gt;本文出自&amp;lt;svtter.github.io&amp;gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="使用pthread实现经典问题生产者消费者"&gt;使用pthread实现经典问题：生产者消费者
+&lt;/h2&gt;&lt;p&gt;关于semaphore的相关信息就不再贴出来了。&lt;/p&gt;
+&lt;p&gt;编译的时候记得&lt;code&gt;-pthread&lt;/code&gt;选项。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cm"&gt;/*=============================================================================&lt;/span&gt;
+&lt;span class="cm"&gt;#&lt;/span&gt;
+&lt;span class="cm"&gt;# Author: svtter - svtter@qq.com&lt;/span&gt;
+&lt;span class="cm"&gt;#&lt;/span&gt;
+&lt;span class="cm"&gt;# QQ : 57180160&lt;/span&gt;
+&lt;span class="cm"&gt;#&lt;/span&gt;
+&lt;span class="cm"&gt;# Last modified: 2014-10-03 20:35&lt;/span&gt;
+&lt;span class="cm"&gt;#&lt;/span&gt;
+&lt;span class="cm"&gt;# Filename: producer_consumer.cc&lt;/span&gt;
+&lt;span class="cm"&gt;#&lt;/span&gt;
+&lt;span class="cm"&gt;# Description: &lt;/span&gt;
+&lt;span class="cm"&gt;#&lt;/span&gt;
+&lt;span class="cm"&gt;=============================================================================*/&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;cstdio&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;semaphore.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;pthread.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;sys/types.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;stdlib.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="cp"&gt;#define N 5&lt;/span&gt;
+&lt;span class="cp"&gt;#define item int&lt;/span&gt;
+&lt;span class="c1"&gt;// P/V操作&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_t&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_wait&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"P error!"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_t&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_post&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"V error!"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;sem_t&lt;/span&gt; &lt;span class="n"&gt;mutex&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;sem_t&lt;/span&gt; &lt;span class="n"&gt;full&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;sem_t&lt;/span&gt; &lt;span class="n"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;item&lt;/span&gt; &lt;span class="n"&gt;buffer&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;init_sem&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;sem_init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;sem_init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;full&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;sem_init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nf"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;//生成随机数字&lt;/span&gt;
+&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;rand&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="c1"&gt;// cout &amp;lt;&amp;lt; "producer running..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;buffer&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"producer produced %d @ %d pos&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;full&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nf"&gt;consumer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;temp&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;// cout &amp;lt;&amp;lt; "consumer running..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;full&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;buffer&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Consumer consumed %d @ %d pos&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;//random num&lt;/span&gt;
+&lt;span class="n"&gt;srand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="n"&gt;init_sem&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;pthread_t&lt;/span&gt; &lt;span class="n"&gt;producer_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;consumer_t&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pthread_create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;producer_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"error in create producer.&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"create producer success!&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;pthread_create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;consumer_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"error in create consumer.&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"create consumer success!&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;pthread_join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;producer_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;pthread_join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;consumer_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="运行结果"&gt;运行结果
+&lt;/h3&gt;&lt;img alt="生产者消费者" src="https://i1.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emiuwm4ev0j20es07cwfi.jpg?w=625" data-recalc-dims="1" /&gt;
+&lt;h2 id="操作系统经典问题哲学家就餐问题"&gt;操作系统经典问题：哲学家就餐问题
+&lt;/h2&gt;&lt;p&gt;mutex是c++11的新功能。记得添加C++11支持。(在运行结果中包含编译选项。)&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;mutex&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;cstdio&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;thread&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;semaphore.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;using&lt;/span&gt; &lt;span class="n"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="cp"&gt;#define THINK(i) printf("ph[%d] is thinking...\n", i)&lt;/span&gt;
+&lt;span class="cp"&gt;#define EAT(i) printf("ph[%d] eats.\n", i)&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unlock&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_t&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_wait&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"P error!"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_t&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem_post&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sem&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"V error!"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;delay&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kr"&gt;int&lt;/span&gt; &lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kr"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10000000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="n"&gt;fork&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="n"&gt;sem_t&lt;/span&gt; &lt;span class="n"&gt;room&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;init&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;sem_init&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;room&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kr"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;philosopher&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kr"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kr"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;THINK&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;room&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fork&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fork&lt;/span&gt;&lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="n"&gt;EAT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;room&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fork&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fork&lt;/span&gt;&lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kr"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;init&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;philosopher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;philosopher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;philosopher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;philosopher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;philosopher&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kr"&gt;int&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id="运行结果-1"&gt;运行结果
+&lt;/h3&gt;&lt;img alt="哲学家就餐" src="https://i1.wp.com/ww3.sinaimg.cn/mw690/c53b1907jw1emiwe5eqnyj20hq0b1q3w.jpg?w=625" data-recalc-dims="1" /&gt;
+&lt;h2 id="操作系统经典问题读者写者问题"&gt;操作系统经典问题：读者写者问题
+&lt;/h2&gt;&lt;h3 id="读者优先"&gt;读者优先
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;使用了c++11的新特性thread&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;mutex&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;thread&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;readcount&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="cp"&gt;#define READ(a) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; " is reading..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="cp"&gt;#define FINISH(a) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; " finished reading." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="cp"&gt;#define WRITE cout &amp;lt;&amp;lt; "writing..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unlock&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;delay&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10000000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;readcount&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;readcount&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;READ&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;delay&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;readcount&lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;FINISH&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;readcount&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;WRITE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;delay&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;reader1&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"svtter"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;reader2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"sr"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;reader3&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"yym"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;reader4&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"xiaoniu"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;writer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;reader1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;reader2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;reader3&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;reader4&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;writer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h4 id="运行结果-2"&gt;运行结果
+&lt;/h4&gt;&lt;p&gt;由于可以同时阅读，所以读者reading输出可能出现少许问题。&lt;/p&gt;
+&lt;img alt="运行结果" src="https://i2.wp.com/ww2.sinaimg.cn/mw690/c53b1907jw1emiwlff732j20hl08t3z6.jpg?w=625" data-recalc-dims="1" /&gt;
+&lt;h3 id="写者优先"&gt;写者优先
+&lt;/h3&gt;&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;使rsem中只有一个读者在等待，保证了如果有写者，写者优先写&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;mutex&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;thread&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="cp"&gt;#define READ(a,i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; i&amp;lt;&amp;lt;" is reading..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="cp"&gt;#define FINR(a,i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt; i&amp;lt;&amp;lt;" finished reading." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="cp"&gt;#define WRITE(a,i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt;i&amp;lt;&amp;lt;" is writing..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="cp"&gt;#define FINW(a, i) cout &amp;lt;&amp;lt; a &amp;lt;&amp;lt;i&amp;lt;&amp;lt;" finished writing..." &amp;lt;&amp;lt; endl;&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="o"&gt;&amp;&lt;/span&gt;&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;mt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unlock&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// 加入unistd.h出现问题，似乎与thread的兼容性比较差，于是重写&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;delay&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10000000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;mutex&lt;/span&gt; &lt;span class="n"&gt;mr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rsem&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mrc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mwc&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;readcount&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;writecount&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mr&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mrc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;readcount&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;readcount&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mrc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mr&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;READ&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mrc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;FINR&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;readcount&lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;readcount&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mrc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mwc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;writecount&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;writecount&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mwc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;WRITE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;FINW&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mwc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;writecount&lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;writecount&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rsem&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;V&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mwc&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;reader1&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"svtter"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;writer1&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"sr"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;writer2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"zs"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kr"&gt;thread&lt;/span&gt; &lt;span class="n"&gt;writer3&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;"yym"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;reader1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;writer1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;writer2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;writer3&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h4 id="运行结果-3"&gt;运行结果
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;基本上结果就是写者写完，才会有读者阅读&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img alt="写者优先" src="https://i0.wp.com/ww4.sinaimg.cn/mw690/c53b1907jw1emiwotocqij20hp0d7q4e.jpg?w=625" data-recalc-dims="1" /&gt;</description></item></channel></rss>

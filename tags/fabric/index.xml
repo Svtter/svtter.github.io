@@ -1,61 +1,61 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Fabric on Svtter's Blog</title><link>https://svtter.cn/tags/fabric/</link><description>Recent content in Fabric on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 27 Jan 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/fabric/index.xml" rel="self" type="application/rss+xml"/><item><title>使用Fabric进行部署</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8fabric%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2/</link><pubDate>Sat, 27 Jan 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8fabric%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2/</guid><description>&lt;blockquote>
-&lt;p>Fabric是一个可以在远程机器上运行命令的库&lt;/p>&lt;/blockquote>
-&lt;p>Fabric官方目前只支持Python2版本，但是有勤劳的人开发出了适配Python3的版本。具体可以查看这个&lt;a class="link" href="https://github.com/mathiasertl/fabric/" target="_blank" rel="noopener"
->fork&lt;/a>。&lt;/p>
-&lt;h2 id="fabric的使用">Fabric的使用
-&lt;/h2>&lt;p>我在使用Fabric的时候主要是用于部署我的网站。使用时候，首先需要引入所有的API：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># 导入Fabric API:&lt;/span>
-&lt;span class="kn">from&lt;/span> &lt;span class="nn">fabric.api&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="o">*&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>这样就可以导入Fabric的API进行远程控制啦。&lt;/p>
-&lt;h2 id="具体问题">具体问题
-&lt;/h2>&lt;ul>
-&lt;li>git需要输入密码&lt;/li>
-&lt;/ul>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="n">env&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">forward_agent&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="bp">True&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;ul>
-&lt;li>ssh通过秘钥链接&lt;/li>
-&lt;/ul>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># 使用秘钥&lt;/span>
-&lt;span class="n">env&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">key_filename&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;/Users/xiuhao/.ssh/key&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;ul>
-&lt;li>使用root&lt;/li>
-&lt;/ul>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># 服务器登录用户名:&lt;/span>
-&lt;span class="n">env&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">user&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;ubuntu&amp;#39;&lt;/span>
-&lt;span class="c1"># sudo用户为root:&lt;/span>
-&lt;span class="n">env&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">sudo_user&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h2 id="一个简单的部署例子">一个简单的部署例子
-&lt;/h2>&lt;p>这个部署例子结合了更新代码，进入指定目录，运行命令等。&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="n">BASE_DIR&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;/home/ubuntu/django_blog&amp;#39;&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="nf">deploy&lt;/span>&lt;span class="p">():&lt;/span>
-&lt;span class="sd">"""&lt;/span>
-&lt;span class="sd"> deploy new changes&lt;/span>
-&lt;span class="sd"> """&lt;/span>
-&lt;span class="k">with&lt;/span> &lt;span class="n">cd&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">BASE_DIR&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="n">run&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;git pull&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">run&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;make down&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">run&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;make up&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>写好文件以后，保存为&lt;code>fabfile.py&lt;/code>，运行&lt;code>fab deploy&lt;/code>即可部署。&lt;code>deploy&lt;/code>对应着&lt;code>deploy()&lt;/code>函数。&lt;/p>
-&lt;p>NOTE：不在远程服务器上使用ssh的git仓库，是因为担心服务器被&lt;code>hack&lt;/code>连累我的&lt;code>git repo&lt;/code>。&lt;/p>
-&lt;h2 id="参考资料">参考资料
-&lt;/h2>&lt;ul>
-&lt;li>&lt;a class="link" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/0014323392805925d5b69ddad514511bf0391fe2a0df2b0000" target="_blank" rel="noopener"
->廖雪峰 15days&lt;/a>&lt;/li>
-&lt;li>&lt;a class="link" href="https://github.com/mathiasertl/fabric/" target="_blank" rel="noopener"
->python3-fabric&lt;/a>&lt;/li>
-&lt;/ul></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Fabric on Svtter's Blog</title><link>https://svtter.cn/tags/fabric/</link><description>Recent content in Fabric on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 27 Jan 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/fabric/index.xml" rel="self" type="application/rss+xml"/><item><title>使用Fabric进行部署</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8fabric%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2/</link><pubDate>Sat, 27 Jan 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8fabric%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;Fabric是一个可以在远程机器上运行命令的库&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Fabric官方目前只支持Python2版本，但是有勤劳的人开发出了适配Python3的版本。具体可以查看这个&lt;a class="link" href="https://github.com/mathiasertl/fabric/" target="_blank" rel="noopener"
+&gt;fork&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="fabric的使用"&gt;Fabric的使用
+&lt;/h2&gt;&lt;p&gt;我在使用Fabric的时候主要是用于部署我的网站。使用时候，首先需要引入所有的API：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# 导入Fabric API:&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;fabric.api&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这样就可以导入Fabric的API进行远程控制啦。&lt;/p&gt;
+&lt;h2 id="具体问题"&gt;具体问题
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;git需要输入密码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;forward_agent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;ssh通过秘钥链接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# 使用秘钥&lt;/span&gt;
+&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key_filename&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/Users/xiuhao/.ssh/key&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;使用root&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# 服务器登录用户名:&lt;/span&gt;
+&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ubuntu&amp;#39;&lt;/span&gt;
+&lt;span class="c1"&gt;# sudo用户为root:&lt;/span&gt;
+&lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sudo_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;root&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h2 id="一个简单的部署例子"&gt;一个简单的部署例子
+&lt;/h2&gt;&lt;p&gt;这个部署例子结合了更新代码，进入指定目录，运行命令等。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;BASE_DIR&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/home/ubuntu/django_blog&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;span class="sd"&gt;"""&lt;/span&gt;
+&lt;span class="sd"&gt; deploy new changes&lt;/span&gt;
+&lt;span class="sd"&gt; """&lt;/span&gt;
+&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;cd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;BASE_DIR&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;git pull&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;make down&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;make up&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;写好文件以后，保存为&lt;code&gt;fabfile.py&lt;/code&gt;，运行&lt;code&gt;fab deploy&lt;/code&gt;即可部署。&lt;code&gt;deploy&lt;/code&gt;对应着&lt;code&gt;deploy()&lt;/code&gt;函数。&lt;/p&gt;
+&lt;p&gt;NOTE：不在远程服务器上使用ssh的git仓库，是因为担心服务器被&lt;code&gt;hack&lt;/code&gt;连累我的&lt;code&gt;git repo&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id="参考资料"&gt;参考资料
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/0014323392805925d5b69ddad514511bf0391fe2a0df2b0000" target="_blank" rel="noopener"
+&gt;廖雪峰 15days&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/mathiasertl/fabric/" target="_blank" rel="noopener"
+&gt;python3-fabric&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

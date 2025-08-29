@@ -35,9 +35,9 @@
 </span><span class=lnt>23
 </span><span class=lnt>24
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=line><span class=cl><span class=c># Stage 0, &#34;build-stage&#34;, based on Node.js, to build and compile the frontend</span><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> node:14 as build-stage</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=w> </span><span class=s>node:14</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=s>build-stage</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>WORKDIR</span><span class=s> /app</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>WORKDIR</span><span class=w> </span><span class=s>/app</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=c># 配置淘宝镜像</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> yarn config <span class=nb>set</span> registry https://registry.npm.taobao.org/<span class=err>
@@ -52,7 +52,7 @@
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>COPY</span> default.conf default.conf<span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=c># Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx</span><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> nginx:1.18</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=w> </span><span class=s>nginx:1.18</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>COPY</span> --from<span class=o>=</span>build-stage /app/dist/ /usr/share/nginx/html<span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=c># Copy the default default.conf provided by tiangolo/node-frontend</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>COPY</span> --from<span class=o>=</span>build-stage /app/default.conf /etc/nginx/conf.d/default.conf<span class=err>

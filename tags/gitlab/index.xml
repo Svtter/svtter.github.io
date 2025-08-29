@@ -1,41 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitLab on Svtter's Blog</title><link>https://svtter.cn/tags/gitlab/</link><description>Recent content in GitLab on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 17 Aug 2020 08:44:46 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/gitlab/index.xml" rel="self" type="application/rss+xml"/><item><title>⚙ 记录一次 gitlab runner 的配置</title><link>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-gitlab-runner-%E7%9A%84%E9%85%8D%E7%BD%AE/</link><pubDate>Mon, 17 Aug 2020 08:44:46 +0800</pubDate><guid>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-gitlab-runner-%E7%9A%84%E9%85%8D%E7%BD%AE/</guid><description>&lt;p>首先介绍一下整体的情况，和我们的需求。&lt;/p>
-&lt;ol>
-&lt;li>
-&lt;p>在我们组里，不同的项目和服务，被分到不同的 repo 中，托管在 gitlab 上面。&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>最近一段时间，由于构建的时间变长，用掉了 gitlab 免费的 2000 minutes。&lt;/p>
-&lt;/li>
-&lt;/ol>
-&lt;p>因此，打算采用自己的 runner，来进行服务的构建和使用。&lt;/p>
-&lt;p>Gitlab runner 配置有些神奇。&lt;/p>
-&lt;h2 id="-技术背景">🔙 技术背景
-&lt;/h2>&lt;p>在这之前，我们已经单给 &lt;code>data_service&lt;/code> 部署了一个 &lt;code>gitlab-runner&lt;/code>。这是由于&lt;code>data-service&lt;/code> 跑 CI 的时间格外长，因此单独进行了配置。&lt;/p>
-&lt;p>但是没有想到的是，backend-service 耗尽了所有的 gitlab 分钟数。&lt;/p>
-&lt;p>​ 本文花费了作者 &lt;code>$8&lt;/code> 。如果可以的话，请支持一下作者。&lt;/p>
-&lt;h2 id="-gitlab-runner-概念">🏃‍♂️ Gitlab Runner 概念
-&lt;/h2>&lt;p>CI 是由 jobs 组成的；&lt;/p>
-&lt;p>pipeline 是由多个 jobs 组成。&lt;/p>
-&lt;p>官方文档声称，在 gitlab 中，没有&lt;code>shared runner&lt;/code>，就不能启动 jobs 了。&lt;/p>
-&lt;p>但其实，只要有 &lt;code>group runner&lt;/code> 或者 &lt;code>specific runner&lt;/code> （也就是我们自己配置的 runner），job 也可以正常运行。&lt;/p>
-&lt;p>要注意一下 &lt;code>tag&lt;/code> 选项。&lt;code>tag&lt;/code> 选项，并非单纯的对 &lt;code>runner&lt;/code> 进行区分。项目也会依据&lt;code>tag&lt;/code>，被分配给不同的&lt;code>runner&lt;/code>。&lt;/p>
-&lt;p>不过，我们在最初配置&lt;code>runner&lt;/code>时不清楚这一点。我们还以为，就是官方所声称的：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">Shared Runners on GitLab.com run in autoscale mode and are powered by Google Cloud Platform. Autoscaling means reduced wait times to spin up builds, and isolated VMs for each project, thus maximizing security.
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">They&amp;#39;re free to use for public open source projects and limited to 2000 CI minutes per month per group for private projects. Read about all GitLab.com plans.
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>因此给&lt;code>gitlab&lt;/code>进行了一下信仰充值。后来发觉似乎充值之后，我们配置的&lt;code>group runner&lt;/code>也没有开始运行。&lt;/p>
-&lt;p>最后我们定位到&lt;code>runner&lt;/code>的&lt;code>tag&lt;/code>问题，最终暂时移除了&lt;code>tag&lt;/code>，解决了问题。&lt;/p>
-&lt;p>希望 &lt;code>gitlab&lt;/code> 能够发展的越来越好。希望&lt;code>Mozilla&lt;/code>支撑下去。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitLab on Svtter's Blog</title><link>https://svtter.cn/tags/gitlab/</link><description>Recent content in GitLab on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 17 Aug 2020 08:44:46 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/gitlab/index.xml" rel="self" type="application/rss+xml"/><item><title>⚙ 记录一次 gitlab runner 的配置</title><link>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-gitlab-runner-%E7%9A%84%E9%85%8D%E7%BD%AE/</link><pubDate>Mon, 17 Aug 2020 08:44:46 +0800</pubDate><guid>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-gitlab-runner-%E7%9A%84%E9%85%8D%E7%BD%AE/</guid><description>&lt;p&gt;首先介绍一下整体的情况，和我们的需求。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在我们组里，不同的项目和服务，被分到不同的 repo 中，托管在 gitlab 上面。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最近一段时间，由于构建的时间变长，用掉了 gitlab 免费的 2000 minutes。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;因此，打算采用自己的 runner，来进行服务的构建和使用。&lt;/p&gt;
+&lt;p&gt;Gitlab runner 配置有些神奇。&lt;/p&gt;
+&lt;h2 id="-技术背景"&gt;🔙 技术背景
+&lt;/h2&gt;&lt;p&gt;在这之前，我们已经单给 &lt;code&gt;data_service&lt;/code&gt; 部署了一个 &lt;code&gt;gitlab-runner&lt;/code&gt;。这是由于&lt;code&gt;data-service&lt;/code&gt; 跑 CI 的时间格外长，因此单独进行了配置。&lt;/p&gt;
+&lt;p&gt;但是没有想到的是，backend-service 耗尽了所有的 gitlab 分钟数。&lt;/p&gt;
+&lt;p&gt;​ 本文花费了作者 &lt;code&gt;$8&lt;/code&gt; 。如果可以的话，请支持一下作者。&lt;/p&gt;
+&lt;h2 id="-gitlab-runner-概念"&gt;🏃‍♂️ Gitlab Runner 概念
+&lt;/h2&gt;&lt;p&gt;CI 是由 jobs 组成的；&lt;/p&gt;
+&lt;p&gt;pipeline 是由多个 jobs 组成。&lt;/p&gt;
+&lt;p&gt;官方文档声称，在 gitlab 中，没有&lt;code&gt;shared runner&lt;/code&gt;，就不能启动 jobs 了。&lt;/p&gt;
+&lt;p&gt;但其实，只要有 &lt;code&gt;group runner&lt;/code&gt; 或者 &lt;code&gt;specific runner&lt;/code&gt; （也就是我们自己配置的 runner），job 也可以正常运行。&lt;/p&gt;
+&lt;p&gt;要注意一下 &lt;code&gt;tag&lt;/code&gt; 选项。&lt;code&gt;tag&lt;/code&gt; 选项，并非单纯的对 &lt;code&gt;runner&lt;/code&gt; 进行区分。项目也会依据&lt;code&gt;tag&lt;/code&gt;，被分配给不同的&lt;code&gt;runner&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;不过，我们在最初配置&lt;code&gt;runner&lt;/code&gt;时不清楚这一点。我们还以为，就是官方所声称的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;Shared Runners on GitLab.com run in autoscale mode and are powered by Google Cloud Platform. Autoscaling means reduced wait times to spin up builds, and isolated VMs for each project, thus maximizing security.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;They&amp;#39;re free to use for public open source projects and limited to 2000 CI minutes per month per group for private projects. Read about all GitLab.com plans.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;因此给&lt;code&gt;gitlab&lt;/code&gt;进行了一下信仰充值。后来发觉似乎充值之后，我们配置的&lt;code&gt;group runner&lt;/code&gt;也没有开始运行。&lt;/p&gt;
+&lt;p&gt;最后我们定位到&lt;code&gt;runner&lt;/code&gt;的&lt;code&gt;tag&lt;/code&gt;问题，最终暂时移除了&lt;code&gt;tag&lt;/code&gt;，解决了问题。&lt;/p&gt;
+&lt;p&gt;希望 &lt;code&gt;gitlab&lt;/code&gt; 能够发展的越来越好。希望&lt;code&gt;Mozilla&lt;/code&gt;支撑下去。&lt;/p&gt;</description></item></channel></rss>

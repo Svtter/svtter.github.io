@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sealos on Svtter's Blog</title><link>https://svtter.cn/tags/sealos/</link><description>Recent content in Sealos on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 26 Apr 2025 09:55:38 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/sealos/index.xml" rel="self" type="application/rss+xml"/><item><title>Build a Kubernetes Cluster.md</title><link>https://svtter.cn/p/build-a-kubernetes-cluster.md/</link><pubDate>Sat, 26 Apr 2025 09:55:38 +0800</pubDate><guid>https://svtter.cn/p/build-a-kubernetes-cluster.md/</guid><description>&lt;img src="https://svtter.cn/p/build-a-kubernetes-cluster.md/bg.png" alt="Featured image of post Build a Kubernetes Cluster.md" />&lt;p>Kubernetes 是现行容器云的事实标准。这两天我构建了一个私有化的 kubernetes 集群，将过程整理成了脚本，可以使用这些脚本进行二次部署。&lt;/p>
-&lt;p>部署集群的代码：&lt;/p>
-&lt;script src="https://tarptaeya.github.io/repo-card/repo-card.js">&lt;/script>
-&lt;!-- inside body, where you want to create the card -->
-&lt;div class="repo-card" data-repo="svtter/k8s-deployment">&lt;/div>
-&lt;h2 id="架设前提">架设前提
-&lt;/h2>&lt;p>实际上，大多数 kubernetes 部署失败的案例，都在网络环境建设上翻了跟头。&lt;/p>
-&lt;p>架设 kubernetes 集群的前提条件（包括对人和对环境的）：&lt;/p>
-&lt;ol>
-&lt;li>自由的访问网络&lt;/li>
-&lt;li>能够对内网中的 DNS 服务器进行管理，能够对 IP 地址进行管理。&lt;/li>
-&lt;li>服务器方面：&lt;/li>
-&lt;/ol>
-&lt;ul>
-&lt;li>作为 master 的服务器 &amp;gt;= 1&lt;/li>
-&lt;li>作为 node 节点的服务器 &amp;gt;= 2&lt;/li>
-&lt;li>使用 supported 操作系统。例如 Ubuntu，CentOS 等。&lt;/li>
-&lt;/ul>
-&lt;p>此外，服务器防火墙，swap 等需要提前关闭。这些前提条件在&lt;a class="link" href="https://sealos.run/docs/k8s/quick-start/deploy-kubernetes" target="_blank" rel="noopener"
->这里&lt;/a>会更加详细的描述，我这里就不啰嗦了。在我的代码库中，我提供了对应的代码，可以快速进行操作。&lt;/p>
-&lt;p>部署 kubernetes 是一个中高级运维人员的必备技能。这个过程中涉及了大量的网络以及操作系统知识。&lt;/p>
-&lt;h2 id="架构简述">架构简述
-&lt;/h2>&lt;p>Kubernetes 结构图如下：&lt;/p>
-&lt;p>&lt;img src="https://svtter.cn/p/build-a-kubernetes-cluster.md/arch.png"
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sealos on Svtter's Blog</title><link>https://svtter.cn/tags/sealos/</link><description>Recent content in Sealos on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 26 Apr 2025 09:55:38 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/sealos/index.xml" rel="self" type="application/rss+xml"/><item><title>Build a Kubernetes Cluster.md</title><link>https://svtter.cn/p/build-a-kubernetes-cluster.md/</link><pubDate>Sat, 26 Apr 2025 09:55:38 +0800</pubDate><guid>https://svtter.cn/p/build-a-kubernetes-cluster.md/</guid><description>&lt;img src="https://svtter.cn/p/build-a-kubernetes-cluster.md/bg.png" alt="Featured image of post Build a Kubernetes Cluster.md" /&gt;&lt;p&gt;Kubernetes 是现行容器云的事实标准。这两天我构建了一个私有化的 kubernetes 集群，将过程整理成了脚本，可以使用这些脚本进行二次部署。&lt;/p&gt;
+&lt;p&gt;部署集群的代码：&lt;/p&gt;
+&lt;script src="https://tarptaeya.github.io/repo-card/repo-card.js"&gt;&lt;/script&gt;
+&lt;!-- inside body, where you want to create the card --&gt;
+&lt;div class="repo-card" data-repo="svtter/k8s-deployment"&gt;&lt;/div&gt;
+&lt;h2 id="架设前提"&gt;架设前提
+&lt;/h2&gt;&lt;p&gt;实际上，大多数 kubernetes 部署失败的案例，都在网络环境建设上翻了跟头。&lt;/p&gt;
+&lt;p&gt;架设 kubernetes 集群的前提条件（包括对人和对环境的）：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;自由的访问网络&lt;/li&gt;
+&lt;li&gt;能够对内网中的 DNS 服务器进行管理，能够对 IP 地址进行管理。&lt;/li&gt;
+&lt;li&gt;服务器方面：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;作为 master 的服务器 &amp;gt;= 1&lt;/li&gt;
+&lt;li&gt;作为 node 节点的服务器 &amp;gt;= 2&lt;/li&gt;
+&lt;li&gt;使用 supported 操作系统。例如 Ubuntu，CentOS 等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此外，服务器防火墙，swap 等需要提前关闭。这些前提条件在&lt;a class="link" href="https://sealos.run/docs/k8s/quick-start/deploy-kubernetes" target="_blank" rel="noopener"
+&gt;这里&lt;/a&gt;会更加详细的描述，我这里就不啰嗦了。在我的代码库中，我提供了对应的代码，可以快速进行操作。&lt;/p&gt;
+&lt;p&gt;部署 kubernetes 是一个中高级运维人员的必备技能。这个过程中涉及了大量的网络以及操作系统知识。&lt;/p&gt;
+&lt;h2 id="架构简述"&gt;架构简述
+&lt;/h2&gt;&lt;p&gt;Kubernetes 结构图如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/build-a-kubernetes-cluster.md/arch.png"
 width="1024"
 height="698"
 srcset="https://svtter.cn/p/build-a-kubernetes-cluster.md/arch_hu_8f61cc3c186fb5ed.png 480w, https://svtter.cn/p/build-a-kubernetes-cluster.md/arch_hu_2a09611c6ee56014.png 1024w"
@@ -30,43 +30,43 @@ alt="Kubernetes architecture"
 class="gallery-image"
 data-flex-grow="146"
 data-flex-basis="352px"
->&lt;/p>
-&lt;p>其中，master 节点再 Control Plan 中，用于接收外部请求和转发。&lt;/p>
-&lt;h2 id="安装过程">安装过程
-&lt;/h2>&lt;p>安装脚本：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 安装 uv&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">bash install-uv.sh
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 根据自己的实际情况配置网络中的主机&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 配置 master node，worker node&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vim conf.py
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 安装 sealos&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">bash download_sealos.sh
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 运行安装脚本&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">uv run install-k8s.py
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="使用">使用
-&lt;/h2>&lt;p>安装完成后，可以直接使用 helm 进行集群容器的安装和卸载。&lt;/p></description></item></channel></rss>
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，master 节点再 Control Plan 中，用于接收外部请求和转发。&lt;/p&gt;
+&lt;h2 id="安装过程"&gt;安装过程
+&lt;/h2&gt;&lt;p&gt;安装脚本：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 安装 uv&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;bash install-uv.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 根据自己的实际情况配置网络中的主机&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 配置 master node，worker node&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vim conf.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 安装 sealos&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;bash download_sealos.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 运行安装脚本&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;uv run install-k8s.py
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="使用"&gt;使用
+&lt;/h2&gt;&lt;p&gt;安装完成后，可以直接使用 helm 进行集群容器的安装和卸载。&lt;/p&gt;</description></item></channel></rss>

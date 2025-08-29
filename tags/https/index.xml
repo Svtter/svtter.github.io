@@ -1,50 +1,50 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTPS on Svtter's Blog</title><link>https://svtter.cn/tags/https/</link><description>Recent content in HTTPS on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 30 Nov 2017 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/https/index.xml" rel="self" type="application/rss+xml"/><item><title>全站上https</title><link>https://svtter.cn/p/%E5%85%A8%E7%AB%99%E4%B8%8Ahttps/</link><pubDate>Thu, 30 Nov 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%85%A8%E7%AB%99%E4%B8%8Ahttps/</guid><description>&lt;p>本来觉得这个https不是什么大不了的事情，但是输入密码的时候突然意识到，这个post的过程中是有危险的。危险在哪里呢？我们可以参考mozilla的&lt;a class="link" href="https://support.mozilla.org/zh-CN/kb/%E9%98%BB%E6%AD%A2%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9?redirectlocale=en-US&amp;amp;as=u&amp;amp;redirectslug=how-does-content-isnt-secure-affect-my-safety&amp;amp;utm_source=inproduct" target="_blank" rel="noopener"
->相关描述&lt;/a>。&lt;/p>
-&lt;p>在参考了 Mozilla 的描述后，我决定给我的站上一下https。上https的过程比较容易，因为之前一直都是在腾讯云捣鼓，所以直接从腾讯云走的域名以及https，因此可以直接从腾讯云一键申请【当然，还是需要填写一部分步骤】，这里就不再赘述了。另外，补充一下，申请ssl证书，即https必需品，首先需要网站进行审核，审核通过以后，才能直接申请。&lt;/p>
-&lt;p>因为我直接使用的是nginx作为前端，因此直接添加了一条server记录：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-nginx" data-lang="nginx">&lt;span class="line">&lt;span class="cl">&lt;span class="k">server&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">listen&lt;/span> &lt;span class="mi">443&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">server_name&lt;/span> &lt;span class="s">svtter.cn&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl&lt;/span> &lt;span class="no">on&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl_certificate&lt;/span> &lt;span class="s">1_svtter.cn_bundle.crt&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl_certificate_key&lt;/span> &lt;span class="s">2_svtter.cn.key&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl_session_timeout&lt;/span> &lt;span class="mi">5m&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl_protocols&lt;/span> &lt;span class="s">TLSv1&lt;/span> &lt;span class="s">TLSv1.1&lt;/span> &lt;span class="s">TLSv1.2&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl_ciphers&lt;/span> &lt;span class="s">ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">ssl_prefer_server_ciphers&lt;/span> &lt;span class="no">on&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">location&lt;/span> &lt;span class="s">/&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">proxy_pass&lt;/span> &lt;span class="s">http://web/&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这个地方的域名需要换成自己申请的。其中有一个小坑是，如果你已经配置好http，希望全站都走https，那么要记得在原本的server处，添加一条语句&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-nginx" data-lang="nginx">&lt;span class="line">&lt;span class="cl"> &lt;span class="k">rewrite&lt;/span> &lt;span class="s">^(.*)&lt;/span> &lt;span class="s">https://&lt;/span>&lt;span class="nv">$host$1&lt;/span> &lt;span class="s">permanent&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>如此一来，所有访问你网站的流量就都走https啦~看见小绿锁真开心呀；&lt;/p>
-&lt;h2 id="后记">后记
-&lt;/h2>&lt;p>使用https以后，我发现我使用的许多图片并不是https，因此我的网站依然有被篡改的可能性。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTPS on Svtter's Blog</title><link>https://svtter.cn/tags/https/</link><description>Recent content in HTTPS on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 30 Nov 2017 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/https/index.xml" rel="self" type="application/rss+xml"/><item><title>全站上https</title><link>https://svtter.cn/p/%E5%85%A8%E7%AB%99%E4%B8%8Ahttps/</link><pubDate>Thu, 30 Nov 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%85%A8%E7%AB%99%E4%B8%8Ahttps/</guid><description>&lt;p&gt;本来觉得这个https不是什么大不了的事情，但是输入密码的时候突然意识到，这个post的过程中是有危险的。危险在哪里呢？我们可以参考mozilla的&lt;a class="link" href="https://support.mozilla.org/zh-CN/kb/%E9%98%BB%E6%AD%A2%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9?redirectlocale=en-US&amp;amp;as=u&amp;amp;redirectslug=how-does-content-isnt-secure-affect-my-safety&amp;amp;utm_source=inproduct" target="_blank" rel="noopener"
+&gt;相关描述&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;在参考了 Mozilla 的描述后，我决定给我的站上一下https。上https的过程比较容易，因为之前一直都是在腾讯云捣鼓，所以直接从腾讯云走的域名以及https，因此可以直接从腾讯云一键申请【当然，还是需要填写一部分步骤】，这里就不再赘述了。另外，补充一下，申请ssl证书，即https必需品，首先需要网站进行审核，审核通过以后，才能直接申请。&lt;/p&gt;
+&lt;p&gt;因为我直接使用的是nginx作为前端，因此直接添加了一条server记录：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;listen&lt;/span&gt; &lt;span class="mi"&gt;443&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;server_name&lt;/span&gt; &lt;span class="s"&gt;svtter.cn&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl&lt;/span&gt; &lt;span class="no"&gt;on&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_certificate&lt;/span&gt; &lt;span class="s"&gt;1_svtter.cn_bundle.crt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_certificate_key&lt;/span&gt; &lt;span class="s"&gt;2_svtter.cn.key&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_session_timeout&lt;/span&gt; &lt;span class="mi"&gt;5m&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_protocols&lt;/span&gt; &lt;span class="s"&gt;TLSv1&lt;/span&gt; &lt;span class="s"&gt;TLSv1.1&lt;/span&gt; &lt;span class="s"&gt;TLSv1.2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_ciphers&lt;/span&gt; &lt;span class="s"&gt;ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;ssl_prefer_server_ciphers&lt;/span&gt; &lt;span class="no"&gt;on&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://web/&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个地方的域名需要换成自己申请的。其中有一个小坑是，如果你已经配置好http，希望全站都走https，那么要记得在原本的server处，添加一条语句&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;rewrite&lt;/span&gt; &lt;span class="s"&gt;^(.*)&lt;/span&gt; &lt;span class="s"&gt;https://&lt;/span&gt;&lt;span class="nv"&gt;$host$1&lt;/span&gt; &lt;span class="s"&gt;permanent&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如此一来，所有访问你网站的流量就都走https啦~看见小绿锁真开心呀；&lt;/p&gt;
+&lt;h2 id="后记"&gt;后记
+&lt;/h2&gt;&lt;p&gt;使用https以后，我发现我使用的许多图片并不是https，因此我的网站依然有被篡改的可能性。&lt;/p&gt;</description></item></channel></rss>

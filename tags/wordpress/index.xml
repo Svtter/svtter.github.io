@@ -1,44 +1,44 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wordpress on Svtter's Blog</title><link>https://svtter.cn/tags/wordpress/</link><description>Recent content in Wordpress on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 15 Nov 2024 17:16:45 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/wordpress/index.xml" rel="self" type="application/rss+xml"/><item><title>记录一次 Wordpress 迁移</title><link>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-wordpress-%E8%BF%81%E7%A7%BB/</link><pubDate>Fri, 15 Nov 2024 17:16:45 +0800</pubDate><guid>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-wordpress-%E8%BF%81%E7%A7%BB/</guid><description>&lt;p>之前 wordpress 运行在 CentOS 7 上；这台机器的性能经常跑不满，因此需要做一些迁移，来让性能提升起来。为了不丢失相关的数据，开展了 wordpress 的迁移工作。这篇文章，记录一下 wordpress 迁移过程。&lt;/p>
-&lt;p>为了能够尽可能减少备份所花费的时间，首先我使用了 wordpress 插件，All-in-one WP migration。这个插件可以备份插件，文章，主题，以及其他的插件。&lt;/p>
-&lt;p>在备份旧的网站的时候，我下载了生成的备份文件。&lt;/p>
-&lt;p>在创建新的网站的时候（通过 coolify），上传文件怎么也上传不上去。不知道发生了什么事情。&lt;/p>
-&lt;p>随后，我修改了几个限制上传的文件。&lt;/p>
-&lt;p>一个是 .htaccess&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl"> &lt;span class="n">php_value&lt;/span> &lt;span class="n">upload_max_filesize&lt;/span> &lt;span class="mi">200&lt;/span>&lt;span class="n">M&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">php_value&lt;/span> &lt;span class="n">post_max_size&lt;/span> &lt;span class="mi">200&lt;/span>&lt;span class="n">M&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">php_value&lt;/span> &lt;span class="n">memory_limit&lt;/span> &lt;span class="mi">256&lt;/span>&lt;span class="n">M&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">php_value&lt;/span> &lt;span class="n">max_execution_time&lt;/span> &lt;span class="mi">300&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">php_value&lt;/span> &lt;span class="n">max_input_time&lt;/span> &lt;span class="mi">300&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>另一个是 wp-config.php&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl"> &lt;span class="o">@&lt;/span>&lt;span class="nx">ini_set&lt;/span>&lt;span class="p">(&lt;/span> &lt;span class="s1">&amp;#39;upload_max_filesize&amp;#39;&lt;/span> &lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;200M&amp;#39;&lt;/span> &lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">@&lt;/span>&lt;span class="nx">ini_set&lt;/span>&lt;span class="p">(&lt;/span> &lt;span class="s1">&amp;#39;post_max_size&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;200M&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">@&lt;/span>&lt;span class="nx">ini_set&lt;/span>&lt;span class="p">(&lt;/span> &lt;span class="s1">&amp;#39;memory_limit&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;256M&amp;#39;&lt;/span> &lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">@&lt;/span>&lt;span class="nx">ini_set&lt;/span>&lt;span class="p">(&lt;/span> &lt;span class="s1">&amp;#39;max_execution_time&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;300&amp;#39;&lt;/span> &lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">@&lt;/span>&lt;span class="nx">ini_set&lt;/span>&lt;span class="p">(&lt;/span> &lt;span class="s1">&amp;#39;max_input_time&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;300&amp;#39;&lt;/span> &lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>我的备份文件大小为199MB。然而，尽管调整了上述两个文件，我发现仍然无法恢复备份。这让我感到疑惑。通过控制台调试，我发现在上传完成后，服务器会有 HTTP 413 反馈。后来找到了&lt;a class="link" href="https://www.namehero.com/blog/how-to-fix-a-stuck-all-in-one-wp-migration-import/" target="_blank" rel="noopener"
->这篇文章&lt;/a>，找到了问题。&lt;/p>
-&lt;p>通过排查，我发现原来是 cloudflare 的锅。免费的 cloudflare 套餐不支持超过 100M 以上的文件上传。会提示 HTTP CODE 413。&lt;/p>
-&lt;p>随后我设置了本机的 hosts 文件，让域名直连服务器的真实 ip 地址。&lt;/p>
-&lt;p>终于成功了。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wordpress on Svtter's Blog</title><link>https://svtter.cn/tags/wordpress/</link><description>Recent content in Wordpress on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 15 Nov 2024 17:16:45 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/wordpress/index.xml" rel="self" type="application/rss+xml"/><item><title>记录一次 Wordpress 迁移</title><link>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-wordpress-%E8%BF%81%E7%A7%BB/</link><pubDate>Fri, 15 Nov 2024 17:16:45 +0800</pubDate><guid>https://svtter.cn/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1-wordpress-%E8%BF%81%E7%A7%BB/</guid><description>&lt;p&gt;之前 wordpress 运行在 CentOS 7 上；这台机器的性能经常跑不满，因此需要做一些迁移，来让性能提升起来。为了不丢失相关的数据，开展了 wordpress 的迁移工作。这篇文章，记录一下 wordpress 迁移过程。&lt;/p&gt;
+&lt;p&gt;为了能够尽可能减少备份所花费的时间，首先我使用了 wordpress 插件，All-in-one WP migration。这个插件可以备份插件，文章，主题，以及其他的插件。&lt;/p&gt;
+&lt;p&gt;在备份旧的网站的时候，我下载了生成的备份文件。&lt;/p&gt;
+&lt;p&gt;在创建新的网站的时候（通过 coolify），上传文件怎么也上传不上去。不知道发生了什么事情。&lt;/p&gt;
+&lt;p&gt;随后，我修改了几个限制上传的文件。&lt;/p&gt;
+&lt;p&gt;一个是 .htaccess&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;php_value&lt;/span&gt; &lt;span class="n"&gt;upload_max_filesize&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;php_value&lt;/span&gt; &lt;span class="n"&gt;post_max_size&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;php_value&lt;/span&gt; &lt;span class="n"&gt;memory_limit&lt;/span&gt; &lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;php_value&lt;/span&gt; &lt;span class="n"&gt;max_execution_time&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;php_value&lt;/span&gt; &lt;span class="n"&gt;max_input_time&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;另一个是 wp-config.php&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;upload_max_filesize&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;200M&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;post_max_size&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;200M&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;memory_limit&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;256M&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;max_execution_time&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;300&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;max_input_time&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;300&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;我的备份文件大小为199MB。然而，尽管调整了上述两个文件，我发现仍然无法恢复备份。这让我感到疑惑。通过控制台调试，我发现在上传完成后，服务器会有 HTTP 413 反馈。后来找到了&lt;a class="link" href="https://www.namehero.com/blog/how-to-fix-a-stuck-all-in-one-wp-migration-import/" target="_blank" rel="noopener"
+&gt;这篇文章&lt;/a&gt;，找到了问题。&lt;/p&gt;
+&lt;p&gt;通过排查，我发现原来是 cloudflare 的锅。免费的 cloudflare 套餐不支持超过 100M 以上的文件上传。会提示 HTTP CODE 413。&lt;/p&gt;
+&lt;p&gt;随后我设置了本机的 hosts 文件，让域名直连服务器的真实 ip 地址。&lt;/p&gt;
+&lt;p&gt;终于成功了。&lt;/p&gt;</description></item></channel></rss>

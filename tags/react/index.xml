@@ -1,132 +1,132 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>React on Svtter's Blog</title><link>https://svtter.cn/tags/react/</link><description>Recent content in React on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 10 Mar 2025 19:34:19 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/react/index.xml" rel="self" type="application/rss+xml"/><item><title>Django Bridge and Telepath Make Decode Easier.md</title><link>https://svtter.cn/p/django-bridge-and-telepath-make-decode-easier.md/</link><pubDate>Mon, 10 Mar 2025 19:34:19 +0800</pubDate><guid>https://svtter.cn/p/django-bridge-and-telepath-make-decode-easier.md/</guid><description>&lt;p>&lt;a class="link" href="https://wagtail.github.io/telepath/" target="_blank" rel="noopener"
->telepath&lt;/a>是 wagtail 开发的一个库，可以用于对 python 对象进行转换。&lt;/p>
-&lt;p>其最大的好处是，将原本复杂的 python class -&amp;gt; JSON -&amp;gt; Javascript class，转换成 python class -&amp;gt; Javascript class。&lt;/p>
-&lt;p>更具体的内容可以参考&lt;a class="link" href="https://wagtail.github.io/telepath/tutorial/" target="_blank" rel="noopener"
->tutorial&lt;/a>。&lt;/p>
-&lt;p>那么有没有可能在这个基础上，让 React 和 Django 直通呢？ &lt;a class="link" href="https://django-bridge.org/docs/introduction/" target="_blank" rel="noopener"
->Django Bridge&lt;/a> 就是做这个工作的。&lt;/p>
-&lt;p>&lt;a class="link" href="https://django-bridge.org/docs/introduction/" target="_blank" rel="noopener"
->Django Bridge&lt;/a> 允许用户直接返回 JSON 结构，然后 React 根据 JSON 结构进行解析，对应渲染 React Component。&lt;/p>
-&lt;h2 id="问题是什么">问题是什么
-&lt;/h2>&lt;ol>
-&lt;li>学习成本。如果 django bridge 是一个团队中大家都熟悉的东西，那么上手不慢。但是如果大家都不太熟悉，那么引入 django bridge，需要花时间学习。&lt;/li>
-&lt;li>调试成本。相比于 http JSON，这种方式依赖于 Django Bridge 对 JSON 的解析。调试起来可能会有一定的困难。&lt;/li>
-&lt;li>对于已有的项目，代码中可能存在基本通信框架，那么这个库可能会导致旧代码的改造。&lt;/li>
-&lt;/ol>
-&lt;p>其他的内容，在&lt;a class="link" href="https://django-bridge.org/docs/introduction/#should-i-use-it" target="_blank" rel="noopener"
->Should I use it?&lt;/a>中有所提及，可供参考。&lt;/p>
-&lt;h2 id="有什么优势">有什么优势
-&lt;/h2>&lt;ol>
-&lt;li>虽然是前后端分离，但不需要考虑 session 和 cookie 的管理了。也不需要考虑 JWT 的问题。(是不是分离了也不需要管理呢？)&lt;/li>
-&lt;li>官网原文：If you&amp;rsquo;re about to build a web app or SaaS product with Django and React, this library could save you a lot of time. It provides all the necessary tools to integrate a React frontend with Django and includes a project template with simple Vite-based frontend tooling to get you started.&lt;/li>
-&lt;/ol>
-&lt;p>更多的内容，请移步官网阅读。&lt;/p></description></item><item><title>给老 Django 工程师的初学者 react 教程</title><link>https://svtter.cn/p/%E7%BB%99%E8%80%81-django-%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%88%9D%E5%AD%A6%E8%80%85-react-%E6%95%99%E7%A8%8B/</link><pubDate>Tue, 12 Mar 2024 09:38:36 +0800</pubDate><guid>https://svtter.cn/p/%E7%BB%99%E8%80%81-django-%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%88%9D%E5%AD%A6%E8%80%85-react-%E6%95%99%E7%A8%8B/</guid><description>&lt;blockquote>
-&lt;p>这篇文章的文字水平一般。之所以要写这篇文章，一方面是为了记录自己的开发历程，另一方面是为了少部分同频的伙伴给予引导。也是为了完成每个月博客文章的 KPI。&lt;/p>&lt;/blockquote>
-&lt;p>前提：&lt;/p>
-&lt;ul>
-&lt;li>走完 &lt;a class="link" href="https://react.dev/learn/tutorial-tic-tac-toe" target="_blank" rel="noopener"
->react toturial&lt;/a>，最好能够掌握 useState。&lt;/li>
-&lt;li>了解 Javascript 语法，懂得 CSS / HTML&lt;/li>
-&lt;/ul>
-&lt;p>近期我用了 nextjs 开发了一个项目。nextjs 是一个可以全栈开发，也可以只开发前端的框架。我的开发内容只包括前端。nextjs 非常好用，简化了大量的复杂配置，可以上手即用。可以直接打开&lt;a class="link" href="https://nextjs.org/docs/getting-started/installation" target="_blank" rel="noopener"
->nextjs官网&lt;/a>来安装使用。
-&lt;code>npx create-next-app@latest&lt;/code>&lt;/p>
-&lt;p>安装的时候不建议使用 typescript。这是因为 typescript 相对复杂，容易提高学习成本。tailwind 非常好用。要选上。&lt;code>src/&lt;/code> folder 可以不用。&lt;code>eslint&lt;/code> 选上，能解决不少问题。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;span class="lnt">8
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl"> What is your project named? my-app
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Would you like to use TypeScript? No / Yes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Would you like to use ESLint? No / Yes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Would you like to use Tailwind CSS? No / Yes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Would you like to use `src/` directory? No / Yes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Would you like to use App Router? (recommended) No / Yes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Would you like to customize the default import alias (@/*)? No / Yes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> What import alias would you like configured? @/*
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="开干">开干
-&lt;/h2>&lt;p>&lt;img src="https://svtter.cn/images/image_1712885644494_0.png"
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>React on Svtter's Blog</title><link>https://svtter.cn/tags/react/</link><description>Recent content in React on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 10 Mar 2025 19:34:19 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/react/index.xml" rel="self" type="application/rss+xml"/><item><title>Django Bridge and Telepath Make Decode Easier.md</title><link>https://svtter.cn/p/django-bridge-and-telepath-make-decode-easier.md/</link><pubDate>Mon, 10 Mar 2025 19:34:19 +0800</pubDate><guid>https://svtter.cn/p/django-bridge-and-telepath-make-decode-easier.md/</guid><description>&lt;p&gt;&lt;a class="link" href="https://wagtail.github.io/telepath/" target="_blank" rel="noopener"
+&gt;telepath&lt;/a&gt;是 wagtail 开发的一个库，可以用于对 python 对象进行转换。&lt;/p&gt;
+&lt;p&gt;其最大的好处是，将原本复杂的 python class -&amp;gt; JSON -&amp;gt; Javascript class，转换成 python class -&amp;gt; Javascript class。&lt;/p&gt;
+&lt;p&gt;更具体的内容可以参考&lt;a class="link" href="https://wagtail.github.io/telepath/tutorial/" target="_blank" rel="noopener"
+&gt;tutorial&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;那么有没有可能在这个基础上，让 React 和 Django 直通呢？ &lt;a class="link" href="https://django-bridge.org/docs/introduction/" target="_blank" rel="noopener"
+&gt;Django Bridge&lt;/a&gt; 就是做这个工作的。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://django-bridge.org/docs/introduction/" target="_blank" rel="noopener"
+&gt;Django Bridge&lt;/a&gt; 允许用户直接返回 JSON 结构，然后 React 根据 JSON 结构进行解析，对应渲染 React Component。&lt;/p&gt;
+&lt;h2 id="问题是什么"&gt;问题是什么
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;学习成本。如果 django bridge 是一个团队中大家都熟悉的东西，那么上手不慢。但是如果大家都不太熟悉，那么引入 django bridge，需要花时间学习。&lt;/li&gt;
+&lt;li&gt;调试成本。相比于 http JSON，这种方式依赖于 Django Bridge 对 JSON 的解析。调试起来可能会有一定的困难。&lt;/li&gt;
+&lt;li&gt;对于已有的项目，代码中可能存在基本通信框架，那么这个库可能会导致旧代码的改造。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;其他的内容，在&lt;a class="link" href="https://django-bridge.org/docs/introduction/#should-i-use-it" target="_blank" rel="noopener"
+&gt;Should I use it?&lt;/a&gt;中有所提及，可供参考。&lt;/p&gt;
+&lt;h2 id="有什么优势"&gt;有什么优势
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;虽然是前后端分离，但不需要考虑 session 和 cookie 的管理了。也不需要考虑 JWT 的问题。(是不是分离了也不需要管理呢？)&lt;/li&gt;
+&lt;li&gt;官网原文：If you&amp;rsquo;re about to build a web app or SaaS product with Django and React, this library could save you a lot of time. It provides all the necessary tools to integrate a React frontend with Django and includes a project template with simple Vite-based frontend tooling to get you started.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;更多的内容，请移步官网阅读。&lt;/p&gt;</description></item><item><title>给老 Django 工程师的初学者 react 教程</title><link>https://svtter.cn/p/%E7%BB%99%E8%80%81-django-%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%88%9D%E5%AD%A6%E8%80%85-react-%E6%95%99%E7%A8%8B/</link><pubDate>Tue, 12 Mar 2024 09:38:36 +0800</pubDate><guid>https://svtter.cn/p/%E7%BB%99%E8%80%81-django-%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9A%84%E5%88%9D%E5%AD%A6%E8%80%85-react-%E6%95%99%E7%A8%8B/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;这篇文章的文字水平一般。之所以要写这篇文章，一方面是为了记录自己的开发历程，另一方面是为了少部分同频的伙伴给予引导。也是为了完成每个月博客文章的 KPI。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;前提：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;走完 &lt;a class="link" href="https://react.dev/learn/tutorial-tic-tac-toe" target="_blank" rel="noopener"
+&gt;react toturial&lt;/a&gt;，最好能够掌握 useState。&lt;/li&gt;
+&lt;li&gt;了解 Javascript 语法，懂得 CSS / HTML&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;近期我用了 nextjs 开发了一个项目。nextjs 是一个可以全栈开发，也可以只开发前端的框架。我的开发内容只包括前端。nextjs 非常好用，简化了大量的复杂配置，可以上手即用。可以直接打开&lt;a class="link" href="https://nextjs.org/docs/getting-started/installation" target="_blank" rel="noopener"
+&gt;nextjs官网&lt;/a&gt;来安装使用。
+&lt;code&gt;npx create-next-app@latest&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;安装的时候不建议使用 typescript。这是因为 typescript 相对复杂，容易提高学习成本。tailwind 非常好用。要选上。&lt;code&gt;src/&lt;/code&gt; folder 可以不用。&lt;code&gt;eslint&lt;/code&gt; 选上，能解决不少问题。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; What is your project named? my-app
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Would you like to use TypeScript? No / Yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Would you like to use ESLint? No / Yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Would you like to use Tailwind CSS? No / Yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Would you like to use `src/` directory? No / Yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Would you like to use App Router? (recommended) No / Yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Would you like to customize the default import alias (@/*)? No / Yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; What import alias would you like configured? @/*
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="开干"&gt;开干
+&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/images/image_1712885644494_0.png"
 loading="lazy"
 alt="image.png"
->&lt;/p>
-&lt;p>我们能看到 app 下面有一个 layout.js，可以理解成 django 全栈开发中的 &lt;code>base.html&lt;/code>。这个在 django 中比较常见。
+&gt;&lt;/p&gt;
+&lt;p&gt;我们能看到 app 下面有一个 layout.js，可以理解成 django 全栈开发中的 &lt;code&gt;base.html&lt;/code&gt;。这个在 django 中比较常见。
 在 nextjs 中，为了开发样式，一般使用 tailwind css。&lt;a class="link" href="https://tailwindcss.com/docs/installation" target="_blank" rel="noopener"
->tailwind css&lt;/a> 是一个通过 class 编写 style 的框架。学习 tailwind，直接从&lt;a class="link" href="https://tailwindcss.com/docs/utility-first" target="_blank" rel="noopener"
->core concept&lt;/a>开始看就行了。
+&gt;tailwind css&lt;/a&gt; 是一个通过 class 编写 style 的框架。学习 tailwind，直接从&lt;a class="link" href="https://tailwindcss.com/docs/utility-first" target="_blank" rel="noopener"
+&gt;core concept&lt;/a&gt;开始看就行了。
 那么 react 怎么用呢？
 在搭建 UI 框架阶段，实际上用到 react 的功能不多。这个时候，想要充分借助 react 的便利性，最重要的是掌握 component 这个概念。简单来说，就是能够自己创建 html tag，并且将 function 和 tag 映射起来。
-创建一个 html tag&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-jsx" data-lang="jsx">&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">function&lt;/span> &lt;span class="nx">Hello&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">(&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">hello&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">world&lt;/span>&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这样就创建好了一个 &lt;code>&amp;lt;Hello&amp;gt;&lt;/code> tag。在后续中可以使用这个 tag 了。
-例如，我们在 &lt;code>page.js&lt;/code> 下面使用&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">function&lt;/span> &lt;span class="nx">Home&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="nx">div&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="nx">Hello&lt;/span>&lt;span class="o">/&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">/div&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这样 Hello 就被渲染出来了。
-除此之外，还有一个难点就是，组件之间怎么传递参数。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-jsx" data-lang="jsx">&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">function&lt;/span> &lt;span class="nx">Hello&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">props&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">const&lt;/span> &lt;span class="nx">name&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">props&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">name&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">hello&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">name&lt;/span>&lt;span class="p">}&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>通过 props 就可以传递参数了。&lt;/p>
-&lt;h2 id="延申阅读">延申阅读
-&lt;/h2>&lt;ul>
-&lt;li>&lt;a class="link" href="https://github.com/Hsins-Learn/Learn-Full-Stack-Development-with-Django-and-React" target="_blank" rel="noopener"
->https://github.com/Hsins-Learn/Learn-Full-Stack-Development-with-Django-and-React&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;h2 id="结语">结语
-&lt;/h2>&lt;p>基本上，掌握以上两个技能就可以开始基于 react 开发前端应用了。
-其他的内容直接从 react、nextjs、tailwind 文档中学习即可，遇到不清楚的内容直接查询。&lt;/p>
-&lt;p>欢迎将不清楚的问题留言，我会根据留言的内容改进本文。&lt;/p></description></item></channel></rss>
+创建一个 html tag&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;Hello&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;(&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;world&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样就创建好了一个 &lt;code&gt;&amp;lt;Hello&amp;gt;&lt;/code&gt; tag。在后续中可以使用这个 tag 了。
+例如，我们在 &lt;code&gt;page.js&lt;/code&gt; 下面使用&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-js" data-lang="js"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;Home&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;div&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Hello&lt;/span&gt;&lt;span class="o"&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/div&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样 Hello 就被渲染出来了。
+除此之外，还有一个难点就是，组件之间怎么传递参数。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-jsx" data-lang="jsx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;Hello&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;props&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;props&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;hello&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;}&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;通过 props 就可以传递参数了。&lt;/p&gt;
+&lt;h2 id="延申阅读"&gt;延申阅读
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/Hsins-Learn/Learn-Full-Stack-Development-with-Django-and-React" target="_blank" rel="noopener"
+&gt;https://github.com/Hsins-Learn/Learn-Full-Stack-Development-with-Django-and-React&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="结语"&gt;结语
+&lt;/h2&gt;&lt;p&gt;基本上，掌握以上两个技能就可以开始基于 react 开发前端应用了。
+其他的内容直接从 react、nextjs、tailwind 文档中学习即可，遇到不清楚的内容直接查询。&lt;/p&gt;
+&lt;p&gt;欢迎将不清楚的问题留言，我会根据留言的内容改进本文。&lt;/p&gt;</description></item></channel></rss>

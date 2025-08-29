@@ -1,44 +1,44 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>微信 on Svtter's Blog</title><link>https://svtter.cn/tags/%E5%BE%AE%E4%BF%A1/</link><description>Recent content in 微信 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 02 Dec 2017 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/%E5%BE%AE%E4%BF%A1/index.xml" rel="self" type="application/rss+xml"/><item><title>小程序开发Tips</title><link>https://svtter.cn/p/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91tips/</link><pubDate>Sat, 02 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91tips/</guid><description>&lt;p>这篇文章主要聊聊小程序开发。&lt;/p>
-&lt;p>小程序开发有几个点在文档里面没有写的很明确，在这里我更明确的提一下。&lt;/p>
-&lt;h2 id="带着参数跳转">带着参数跳转
-&lt;/h2>&lt;p>小程序之间的页面跳转携带参数的小例子：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">navigator&lt;/span> &lt;span class="na">url&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">""&lt;/span> &lt;span class="na">bindtap&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">"bindViewTap"&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>这个&lt;code>navigator&lt;/code>是一个跳转，绑定了&lt;code>bindViewTap&lt;/code>方法。&lt;code>bindViewTap&lt;/code>方法实现如下：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span> &lt;span class="kd">var&lt;/span> &lt;span class="nx">bindViewTap&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;run search.&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="kd">let&lt;/span> &lt;span class="nx">location&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="nx">x&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="nx">y&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="mi">1&lt;/span>
-&lt;span class="p">};&lt;/span>
-&lt;span class="kd">let&lt;/span> &lt;span class="nx">keyword&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;test&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="nx">wx&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">navigateTo&lt;/span>&lt;span class="p">({&lt;/span>
-&lt;span class="nx">url&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="sb">`../map/map?latitude=&lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">location&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">x&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">&amp;longitude=&lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">location&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">y&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">&amp;keyword=&lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nx">keyword&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="sb">`&lt;/span>
-&lt;span class="p">})&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>如此一来，便携带着三个参数，就像是网页GET请求一样，跳转到&lt;code>../map/map&lt;/code>页面。此时，map页面需要接收这几个参数。示例代码：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span> &lt;span class="kd">var&lt;/span> &lt;span class="nx">onLoad&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kd">function&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">options&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="kd">let&lt;/span> &lt;span class="nx">that&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;span class="nx">console&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">log&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;Map load.&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">setData&lt;/span>&lt;span class="p">({&lt;/span>
-&lt;span class="nx">markers&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="nx">latitude&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">options&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">latitude&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="nx">longitude&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">options&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">longitude&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="p">},&lt;/span>
-&lt;span class="nx">inputVal&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nx">options&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">keyword&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="nx">init&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>
-&lt;span class="p">},&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="c1">// 完成函数后回调&lt;/span>
-&lt;span class="nx">that&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">showInput&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;span class="p">});&lt;/span>
-&lt;span class="p">}&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>在Page的&lt;code>OnLoad&lt;/code>方法中，可以从options参数里面把传递的值拿出来，在&lt;code>map&lt;/code>页面中使用。&lt;/p>
-&lt;p>本文后续持久更新。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>微信 on Svtter's Blog</title><link>https://svtter.cn/tags/%E5%BE%AE%E4%BF%A1/</link><description>Recent content in 微信 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 02 Dec 2017 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/%E5%BE%AE%E4%BF%A1/index.xml" rel="self" type="application/rss+xml"/><item><title>小程序开发Tips</title><link>https://svtter.cn/p/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91tips/</link><pubDate>Sat, 02 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91tips/</guid><description>&lt;p&gt;这篇文章主要聊聊小程序开发。&lt;/p&gt;
+&lt;p&gt;小程序开发有几个点在文档里面没有写的很明确，在这里我更明确的提一下。&lt;/p&gt;
+&lt;h2 id="带着参数跳转"&gt;带着参数跳转
+&lt;/h2&gt;&lt;p&gt;小程序之间的页面跳转携带参数的小例子：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;navigator&lt;/span&gt; &lt;span class="na"&gt;url&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;""&lt;/span&gt; &lt;span class="na"&gt;bindtap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;"bindViewTap"&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这个&lt;code&gt;navigator&lt;/code&gt;是一个跳转，绑定了&lt;code&gt;bindViewTap&lt;/code&gt;方法。&lt;code&gt;bindViewTap&lt;/code&gt;方法实现如下：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;bindViewTap&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;run search.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;location&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;keyword&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;test&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;wx&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;navigateTo&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="sb"&gt;`../map/map?latitude=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;location&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;&amp;longitude=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;location&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;&amp;keyword=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;keyword&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;如此一来，便携带着三个参数，就像是网页GET请求一样，跳转到&lt;code&gt;../map/map&lt;/code&gt;页面。此时，map页面需要接收这几个参数。示例代码：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;onLoad&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;options&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;that&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Map load.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setData&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;span class="nx"&gt;markers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="nx"&gt;latitude&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;options&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;latitude&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="nx"&gt;longitude&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;options&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;longitude&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt;
+&lt;span class="nx"&gt;inputVal&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;options&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;keyword&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="nx"&gt;init&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;// 完成函数后回调&lt;/span&gt;
+&lt;span class="nx"&gt;that&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;showInput&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在Page的&lt;code&gt;OnLoad&lt;/code&gt;方法中，可以从options参数里面把传递的值拿出来，在&lt;code&gt;map&lt;/code&gt;页面中使用。&lt;/p&gt;
+&lt;p&gt;本文后续持久更新。&lt;/p&gt;</description></item></channel></rss>

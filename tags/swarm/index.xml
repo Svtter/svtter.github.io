@@ -1,129 +1,129 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Swarm on Svtter's Blog</title><link>https://svtter.cn/tags/swarm/</link><description>Recent content in Swarm on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 01 Dec 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/swarm/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Docker swarm 构建 PostgreSQL 集群</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/</link><pubDate>Sat, 01 Dec 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/</guid><description>&lt;blockquote>
-&lt;p>又是一个渣翻，Copyright belongs to the original text。&lt;/p>
-&lt;p>&lt;a class="link" href="https://info.crunchydata.com/blog/an-easy-recipe-for-creating-a-postgresql-cluster-with-docker-swarm" target="_blank" rel="noopener"
->原文地址&lt;/a>&lt;/p>&lt;/blockquote>
-&lt;h2 id="背景">背景
-&lt;/h2>&lt;p>PostgreSQL 在 9.0 版本已经开始持续接收大量的增强，包括：&lt;/p>
-&lt;ol>
-&lt;li>异步拓展&lt;/li>
-&lt;li>同步拓展&lt;/li>
-&lt;li>仲裁提交&lt;/li>
-&lt;li>级联拓展&lt;/li>
-&lt;li>逻辑拓展&lt;/li>
-&lt;/ol>
-&lt;p>PostgreSQL 文档也提供了一个 overview 以及 不同拓展方法的比较。详见&lt;a href="https://www.postgresql.org/docs/current/different-replication-solutions.html" target="_blank" rel="noopener">PostgreSQL 集群策略比较&lt;/a>&lt;/p>
-&lt;p>用于部署 PostgreSQL 的拓展的主拓展的方法论，是一个重要的工具来为你的数据库集群创建高可用的环境。需要一个合适的部署策略来确保你的数据被保存到不同磁盘，以及不同的数据中心。&lt;/p>
-&lt;p>拓展不是一个“安装然后忘记”的操作。在生产系统中，你想要确定你对实例有合适的监控，来了解你所有的在线的拓展，或者了解一个拓展有多少数据需要与主节点进行同步。&lt;/p>
-&lt;p>当主节点配置好以后，安装就很容易了。但幸运的是，使用 Docker 可以使得这个过程更加轻松。&lt;/p>
-&lt;h2 id="环境安装">环境安装
-&lt;/h2>&lt;p>想要部署这个环境，你至少需要 Docker 1.12版本。&lt;/p>
-&lt;p>要想开始，提供一个 Docker 集群。例如，一个开发集群，你可以在每一个机器上加载 Dokcer，来使用 Swarm。这个方法将使用如下的架构：&lt;/p>
-&lt;img src="https://i2.wp.com/info.crunchydata.com/hs-fs/hubfs/diagram.png?w=625&amp;#038;ssl=1" alt="PostgreSQL Docker Swarm Architecture" data-recalc-dims="1" />
-&lt;p>每一个系统都需要安装 Docker 以及启动。&lt;/p>
-&lt;h2 id="swarm-安装">Swarm 安装
-&lt;/h2>&lt;p>从1.12版本开始，Docker就已经集成了Swarm。&lt;/p>
-&lt;h2 id="容器编排">容器编排
-&lt;/h2>&lt;p>高可用 PostgresSQL 集群配置需要两个以上的主机。主节点和从节点需要运行在不同的 worker 节点上，来使得可用性最高。&lt;/p>
-&lt;p>为了部署 &lt;a href="https://github.com/CrunchyData/crunchy-containers/" target="_blank" rel="noopener">Crunchy PostgreSQL containers&lt;/a> 到多个集群，你需要使用 node labels。&lt;/p>
-&lt;p>标注主机对于使用 PostgreSQL 容器有几个好处：&lt;/p>
-&lt;ul>
-&lt;li>将服务散步到许多 worker 上，来提高可用性&lt;/li>
-&lt;li>主机可以针对读（从）写（主）操作进行优化（例如使用高性能磁盘）&lt;/li>
-&lt;/ul>
-&lt;p>**记住：**对于PostgreSQL 10，主节点可以同时被允许读写，但是从节点仅仅允许被读。&lt;/p>
-&lt;p>为了允许容器被放在指定的 worker 节点上，增加一个元数据标签到 Swarm 节点上。&lt;/p>
-&lt;pre>node1_id=&lt;span class="pl-s">&lt;span class="pl-pds">$(&lt;/span>docker node list &lt;span class="pl-k">|&lt;/span> grep worker1 &lt;span class="pl-k">|&lt;/span> awk &lt;span class="pl-pds">'&lt;/span>{print $1}&lt;span class="pl-pds">'&lt;/span>&lt;span class="pl-pds">)&lt;/span>&lt;/span>
-docker node update --label-add type=primary &lt;span class="pl-smi">${node1_id?}
-&lt;/span>&lt;/pre>
-&lt;p>在上述例子中，一个被称为 primary 的标签，加入了 worker1。通过使用这个标签，我们可以应用一些约束到 Docker swarm 的 PostgreSQL Stack 部署上。&lt;/p>
-&lt;p>&lt;strong>注意：我们没有对从节点增加约束，我们可以简单的使用一条 inverse 约束：&lt;/strong>&lt;/p>
-&lt;p>&lt;code>node.labels.type != primary&lt;/code>&lt;/p>
-&lt;h2 id="postgresql-stack-定义">PostgreSQL stack 定义
-&lt;/h2>&lt;p>通过 Swarm 部署以及 worker 节点正确的标记，我们可以部署 PostgreSQL stack了。&lt;/p>
-&lt;p>PostgreSQL stack 是通过一个主节点以及从节点组成的。下面是服务定义：&lt;/p>
-&lt;p>&lt;em>docker-compose.yml&lt;/em>&lt;/p>
-&lt;pre>---
-&lt;span class="pl-ent">version&lt;/span>: &lt;span class="pl-s">&lt;span class="pl-pds">"&lt;/span>3.3&lt;span class="pl-pds">"&lt;/span>&lt;/span>
-&lt;span class="pl-ent">services&lt;/span>:
-&lt;span class="pl-ent">primary&lt;/span>:
-&lt;span class="pl-ent">hostname&lt;/span>: &lt;span class="pl-s">&lt;span class="pl-pds">'&lt;/span>primary&lt;span class="pl-pds">'&lt;/span>&lt;/span>
-&lt;span class="pl-ent">image&lt;/span>: &lt;span class="pl-s">crunchydata/crunchy-postgres:centos7-10.3-1.8.2&lt;/span>
-&lt;span class="pl-ent">environment&lt;/span>:
-- &lt;span class="pl-s">PGHOST=/tmp&lt;/span>
-- &lt;span class="pl-s">MAX_CONNECTIONS=10&lt;/span>
-- &lt;span class="pl-s">MAX_WAL_SENDERS=5&lt;/span>
-- &lt;span class="pl-s">PG_MODE=primary&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_USER=primaryuser&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_PASSWORD=password&lt;/span>
-- &lt;span class="pl-s">PG_DATABASE=testdb&lt;/span>
-- &lt;span class="pl-s">PG_USER=testuser&lt;/span>
-- &lt;span class="pl-s">PG_PASSWORD=password&lt;/span>
-- &lt;span class="pl-s">PG_ROOT_PASSWORD=password&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_PORT=5432&lt;/span>
-&lt;span class="pl-ent">volumes&lt;/span>:
-- &lt;span class="pl-s">pg-primary-vol:/pgdata&lt;/span>
-&lt;span class="pl-ent">ports&lt;/span>:
-- &lt;span class="pl-s">&lt;span class="pl-pds">"&lt;/span>5432&lt;span class="pl-pds">"&lt;/span>&lt;/span>
-&lt;span class="pl-ent">networks&lt;/span>:
-- &lt;span class="pl-s">crunchynet&lt;/span>
-&lt;span class="pl-ent">deploy&lt;/span>:
-&lt;span class="pl-ent">placement&lt;/span>:
-&lt;span class="pl-ent">constraints&lt;/span>:
-- &lt;span class="pl-s">node.labels.type == primary&lt;/span>
-- &lt;span class="pl-s">node.role == worker&lt;/span>
-&lt;span class="pl-ent">replica&lt;/span>:
-&lt;span class="pl-ent">image&lt;/span>: &lt;span class="pl-s">crunchydata/crunchy-postgres:centos7-10.3-1.8.2&lt;/span>
-&lt;span class="pl-ent">environment&lt;/span>:
-- &lt;span class="pl-s">PGHOST=/tmp&lt;/span>
-- &lt;span class="pl-s">MAX_CONNECTIONS=10&lt;/span>
-- &lt;span class="pl-s">MAX_WAL_SENDERS=5&lt;/span>
-- &lt;span class="pl-s">PG_MODE=replica&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_HOST=primary&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_PORT=5432&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_USER=primaryuser&lt;/span>
-- &lt;span class="pl-s">PG_PRIMARY_PASSWORD=password&lt;/span>
-- &lt;span class="pl-s">PG_DATABASE=testdb&lt;/span>
-- &lt;span class="pl-s">PG_USER=testuser&lt;/span>
-- &lt;span class="pl-s">PG_PASSWORD=password&lt;/span>
-- &lt;span class="pl-s">PG_ROOT_PASSWORD=password&lt;/span>
-&lt;span class="pl-ent">volumes&lt;/span>:
-- &lt;span class="pl-s">pg-replica-vol:/pgdata&lt;/span>
-&lt;span class="pl-ent">ports&lt;/span>:
-- &lt;span class="pl-s">&lt;span class="pl-pds">"&lt;/span>5432&lt;span class="pl-pds">"&lt;/span>&lt;/span>
-&lt;span class="pl-ent">networks&lt;/span>:
-- &lt;span class="pl-s">crunchynet&lt;/span>
-&lt;span class="pl-ent">deploy&lt;/span>:
-&lt;span class="pl-ent">placement&lt;/span>:
-&lt;span class="pl-ent">constraints&lt;/span>:
-- &lt;span class="pl-s">node.labels.type != primary&lt;/span>
-- &lt;span class="pl-s">node.role == worker&lt;/span>
-&lt;span class="pl-ent">networks&lt;/span>:
-&lt;span class="pl-ent">crunchynet&lt;/span>:
-&lt;span class="pl-ent">volumes&lt;/span>:
-&lt;span class="pl-ent">pg-primary-vol&lt;/span>:
-&lt;span class="pl-ent">pg-replica-vol&lt;/span>:&lt;/pre>
-&lt;p>注意，主服务定义了一个 hostname，但是 replica 服务没有。Replica 需要一个 hostname 来启动 replication。通过提供一个静态的 hostname 给主节点，replica就可以连接主节点，而不需要发现主容器。&lt;/p>
-&lt;p>replica，没有一个 hostname，这允许 replica 服务拓展到多个节点。（待会儿展示一下）。&lt;/p>
-&lt;p>primary 和 replica 服务的主要区别，是 PG_MODE 环境变量。这个变量配置容器是主节点，还是从节点。&lt;/p>
-&lt;h2 id="部署-stack">部署 STACK
-&lt;/h2>&lt;p>保存这个文件到 _docker-compose.yml _之后，我们可以通过 Docker 进行部署了。&lt;/p>
-&lt;pre>docker stack deploy --compose-file=./docker-compose.yml pg-stack&lt;/pre>
-&lt;p>这个 stack 部署，将会创建一个 PostgreSQL 集群，就像是下图一样：&lt;/p>
-&lt;p>&lt;strong>&lt;img src="https://i0.wp.com/info.crunchydata.com/hs-fs/hubfs/Diagram4.png?w=625&amp;#038;ssl=1" alt="PostgreSQL Docker Swarm Primary Replica Cluster" data-recalc-dims="1" />&lt;/strong>&lt;/p>
-&lt;h2 id="测试集群">测试集群
-&lt;/h2>&lt;p>检查服务是否运行，运行下面的命令：&lt;/p>
-&lt;pre>docker service ls
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Swarm on Svtter's Blog</title><link>https://svtter.cn/tags/swarm/</link><description>Recent content in Swarm on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 01 Dec 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/swarm/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Docker swarm 构建 PostgreSQL 集群</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/</link><pubDate>Sat, 01 Dec 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-docker-swarm-%E6%9E%84%E5%BB%BA-postgresql-%E9%9B%86%E7%BE%A4/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;又是一个渣翻，Copyright belongs to the original text。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://info.crunchydata.com/blog/an-easy-recipe-for-creating-a-postgresql-cluster-with-docker-swarm" target="_blank" rel="noopener"
+&gt;原文地址&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id="背景"&gt;背景
+&lt;/h2&gt;&lt;p&gt;PostgreSQL 在 9.0 版本已经开始持续接收大量的增强，包括：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;异步拓展&lt;/li&gt;
+&lt;li&gt;同步拓展&lt;/li&gt;
+&lt;li&gt;仲裁提交&lt;/li&gt;
+&lt;li&gt;级联拓展&lt;/li&gt;
+&lt;li&gt;逻辑拓展&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;PostgreSQL 文档也提供了一个 overview 以及 不同拓展方法的比较。详见&lt;a href="https://www.postgresql.org/docs/current/different-replication-solutions.html" target="_blank" rel="noopener"&gt;PostgreSQL 集群策略比较&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;用于部署 PostgreSQL 的拓展的主拓展的方法论，是一个重要的工具来为你的数据库集群创建高可用的环境。需要一个合适的部署策略来确保你的数据被保存到不同磁盘，以及不同的数据中心。&lt;/p&gt;
+&lt;p&gt;拓展不是一个“安装然后忘记”的操作。在生产系统中，你想要确定你对实例有合适的监控，来了解你所有的在线的拓展，或者了解一个拓展有多少数据需要与主节点进行同步。&lt;/p&gt;
+&lt;p&gt;当主节点配置好以后，安装就很容易了。但幸运的是，使用 Docker 可以使得这个过程更加轻松。&lt;/p&gt;
+&lt;h2 id="环境安装"&gt;环境安装
+&lt;/h2&gt;&lt;p&gt;想要部署这个环境，你至少需要 Docker 1.12版本。&lt;/p&gt;
+&lt;p&gt;要想开始，提供一个 Docker 集群。例如，一个开发集群，你可以在每一个机器上加载 Dokcer，来使用 Swarm。这个方法将使用如下的架构：&lt;/p&gt;
+&lt;img src="https://i2.wp.com/info.crunchydata.com/hs-fs/hubfs/diagram.png?w=625&amp;#038;ssl=1" alt="PostgreSQL Docker Swarm Architecture" data-recalc-dims="1" /&gt;
+&lt;p&gt;每一个系统都需要安装 Docker 以及启动。&lt;/p&gt;
+&lt;h2 id="swarm-安装"&gt;Swarm 安装
+&lt;/h2&gt;&lt;p&gt;从1.12版本开始，Docker就已经集成了Swarm。&lt;/p&gt;
+&lt;h2 id="容器编排"&gt;容器编排
+&lt;/h2&gt;&lt;p&gt;高可用 PostgresSQL 集群配置需要两个以上的主机。主节点和从节点需要运行在不同的 worker 节点上，来使得可用性最高。&lt;/p&gt;
+&lt;p&gt;为了部署 &lt;a href="https://github.com/CrunchyData/crunchy-containers/" target="_blank" rel="noopener"&gt;Crunchy PostgreSQL containers&lt;/a&gt; 到多个集群，你需要使用 node labels。&lt;/p&gt;
+&lt;p&gt;标注主机对于使用 PostgreSQL 容器有几个好处：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将服务散步到许多 worker 上，来提高可用性&lt;/li&gt;
+&lt;li&gt;主机可以针对读（从）写（主）操作进行优化（例如使用高性能磁盘）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;**记住：**对于PostgreSQL 10，主节点可以同时被允许读写，但是从节点仅仅允许被读。&lt;/p&gt;
+&lt;p&gt;为了允许容器被放在指定的 worker 节点上，增加一个元数据标签到 Swarm 节点上。&lt;/p&gt;
+&lt;pre&gt;node1_id=&lt;span class="pl-s"&gt;&lt;span class="pl-pds"&gt;$(&lt;/span&gt;docker node list &lt;span class="pl-k"&gt;|&lt;/span&gt; grep worker1 &lt;span class="pl-k"&gt;|&lt;/span&gt; awk &lt;span class="pl-pds"&gt;'&lt;/span&gt;{print $1}&lt;span class="pl-pds"&gt;'&lt;/span&gt;&lt;span class="pl-pds"&gt;)&lt;/span&gt;&lt;/span&gt;
+docker node update --label-add type=primary &lt;span class="pl-smi"&gt;${node1_id?}
+&lt;/span&gt;&lt;/pre&gt;
+&lt;p&gt;在上述例子中，一个被称为 primary 的标签，加入了 worker1。通过使用这个标签，我们可以应用一些约束到 Docker swarm 的 PostgreSQL Stack 部署上。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意：我们没有对从节点增加约束，我们可以简单的使用一条 inverse 约束：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;node.labels.type != primary&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="postgresql-stack-定义"&gt;PostgreSQL stack 定义
+&lt;/h2&gt;&lt;p&gt;通过 Swarm 部署以及 worker 节点正确的标记，我们可以部署 PostgreSQL stack了。&lt;/p&gt;
+&lt;p&gt;PostgreSQL stack 是通过一个主节点以及从节点组成的。下面是服务定义：&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;docker-compose.yml&lt;/em&gt;&lt;/p&gt;
+&lt;pre&gt;---
+&lt;span class="pl-ent"&gt;version&lt;/span&gt;: &lt;span class="pl-s"&gt;&lt;span class="pl-pds"&gt;"&lt;/span&gt;3.3&lt;span class="pl-pds"&gt;"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="pl-ent"&gt;services&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;primary&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;hostname&lt;/span&gt;: &lt;span class="pl-s"&gt;&lt;span class="pl-pds"&gt;'&lt;/span&gt;primary&lt;span class="pl-pds"&gt;'&lt;/span&gt;&lt;/span&gt;
+&lt;span class="pl-ent"&gt;image&lt;/span&gt;: &lt;span class="pl-s"&gt;crunchydata/crunchy-postgres:centos7-10.3-1.8.2&lt;/span&gt;
+&lt;span class="pl-ent"&gt;environment&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;PGHOST=/tmp&lt;/span&gt;
+- &lt;span class="pl-s"&gt;MAX_CONNECTIONS=10&lt;/span&gt;
+- &lt;span class="pl-s"&gt;MAX_WAL_SENDERS=5&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_MODE=primary&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_USER=primaryuser&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_PASSWORD=password&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_DATABASE=testdb&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_USER=testuser&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PASSWORD=password&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_ROOT_PASSWORD=password&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_PORT=5432&lt;/span&gt;
+&lt;span class="pl-ent"&gt;volumes&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;pg-primary-vol:/pgdata&lt;/span&gt;
+&lt;span class="pl-ent"&gt;ports&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;&lt;span class="pl-pds"&gt;"&lt;/span&gt;5432&lt;span class="pl-pds"&gt;"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="pl-ent"&gt;networks&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;crunchynet&lt;/span&gt;
+&lt;span class="pl-ent"&gt;deploy&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;placement&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;constraints&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;node.labels.type == primary&lt;/span&gt;
+- &lt;span class="pl-s"&gt;node.role == worker&lt;/span&gt;
+&lt;span class="pl-ent"&gt;replica&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;image&lt;/span&gt;: &lt;span class="pl-s"&gt;crunchydata/crunchy-postgres:centos7-10.3-1.8.2&lt;/span&gt;
+&lt;span class="pl-ent"&gt;environment&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;PGHOST=/tmp&lt;/span&gt;
+- &lt;span class="pl-s"&gt;MAX_CONNECTIONS=10&lt;/span&gt;
+- &lt;span class="pl-s"&gt;MAX_WAL_SENDERS=5&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_MODE=replica&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_HOST=primary&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_PORT=5432&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_USER=primaryuser&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PRIMARY_PASSWORD=password&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_DATABASE=testdb&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_USER=testuser&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_PASSWORD=password&lt;/span&gt;
+- &lt;span class="pl-s"&gt;PG_ROOT_PASSWORD=password&lt;/span&gt;
+&lt;span class="pl-ent"&gt;volumes&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;pg-replica-vol:/pgdata&lt;/span&gt;
+&lt;span class="pl-ent"&gt;ports&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;&lt;span class="pl-pds"&gt;"&lt;/span&gt;5432&lt;span class="pl-pds"&gt;"&lt;/span&gt;&lt;/span&gt;
+&lt;span class="pl-ent"&gt;networks&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;crunchynet&lt;/span&gt;
+&lt;span class="pl-ent"&gt;deploy&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;placement&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;constraints&lt;/span&gt;:
+- &lt;span class="pl-s"&gt;node.labels.type != primary&lt;/span&gt;
+- &lt;span class="pl-s"&gt;node.role == worker&lt;/span&gt;
+&lt;span class="pl-ent"&gt;networks&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;crunchynet&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;volumes&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;pg-primary-vol&lt;/span&gt;:
+&lt;span class="pl-ent"&gt;pg-replica-vol&lt;/span&gt;:&lt;/pre&gt;
+&lt;p&gt;注意，主服务定义了一个 hostname，但是 replica 服务没有。Replica 需要一个 hostname 来启动 replication。通过提供一个静态的 hostname 给主节点，replica就可以连接主节点，而不需要发现主容器。&lt;/p&gt;
+&lt;p&gt;replica，没有一个 hostname，这允许 replica 服务拓展到多个节点。（待会儿展示一下）。&lt;/p&gt;
+&lt;p&gt;primary 和 replica 服务的主要区别，是 PG_MODE 环境变量。这个变量配置容器是主节点，还是从节点。&lt;/p&gt;
+&lt;h2 id="部署-stack"&gt;部署 STACK
+&lt;/h2&gt;&lt;p&gt;保存这个文件到 _docker-compose.yml _之后，我们可以通过 Docker 进行部署了。&lt;/p&gt;
+&lt;pre&gt;docker stack deploy --compose-file=./docker-compose.yml pg-stack&lt;/pre&gt;
+&lt;p&gt;这个 stack 部署，将会创建一个 PostgreSQL 集群，就像是下图一样：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;img src="https://i0.wp.com/info.crunchydata.com/hs-fs/hubfs/Diagram4.png?w=625&amp;#038;ssl=1" alt="PostgreSQL Docker Swarm Primary Replica Cluster" data-recalc-dims="1" /&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="测试集群"&gt;测试集群
+&lt;/h2&gt;&lt;p&gt;检查服务是否运行，运行下面的命令：&lt;/p&gt;
+&lt;pre&gt;docker service ls
 docker service ps pg-stack_primary
-docker service ps pg-stack_replica&lt;/pre>
-&lt;p>如果想要提升 replicas 的数量，运行下列命令：&lt;/p>
-&lt;pre>docker service scale pg-stack_replica=2
-docker service ps pg-stack_replica&lt;/pre>
-&lt;p>为了确保 replicas 是流式的，在 worker1 节点上查询 PostgreSQL 主节点，使用下列命令：&lt;/p>
-&lt;pre>&lt;code>docker exec -it $(docker ps -q) psql -U postgres -x -c 'table pg_stat_replication' postgres
-&lt;/code>&lt;/pre>
-&lt;h2 id="示例代码">示例代码
-&lt;/h2>&lt;p>下面是实例代码：&lt;/p>
-&lt;p>&lt;a class="link" href="https://github.com/CrunchyData/crunchy-containers/tree/master/examples/docker/swarm-service" target="_blank" rel="noopener"
->https://github.com/CrunchyData/crunchy-containers/tree/master/examples/docker/swarm-service&lt;/a>&lt;/p>
-&lt;h2 id="结论">结论
-&lt;/h2>&lt;p>Docker 以及 Docker swarm 提供了工具，来使得容器部署进入了更高的层次。我们希望这个提议证明了 PostgreSQL 集群是如何的容易部署。&lt;/p></description></item></channel></rss>
+docker service ps pg-stack_replica&lt;/pre&gt;
+&lt;p&gt;如果想要提升 replicas 的数量，运行下列命令：&lt;/p&gt;
+&lt;pre&gt;docker service scale pg-stack_replica=2
+docker service ps pg-stack_replica&lt;/pre&gt;
+&lt;p&gt;为了确保 replicas 是流式的，在 worker1 节点上查询 PostgreSQL 主节点，使用下列命令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker exec -it $(docker ps -q) psql -U postgres -x -c 'table pg_stat_replication' postgres
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="示例代码"&gt;示例代码
+&lt;/h2&gt;&lt;p&gt;下面是实例代码：&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/CrunchyData/crunchy-containers/tree/master/examples/docker/swarm-service" target="_blank" rel="noopener"
+&gt;https://github.com/CrunchyData/crunchy-containers/tree/master/examples/docker/swarm-service&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="结论"&gt;结论
+&lt;/h2&gt;&lt;p&gt;Docker 以及 Docker swarm 提供了工具，来使得容器部署进入了更高的层次。我们希望这个提议证明了 PostgreSQL 集群是如何的容易部署。&lt;/p&gt;</description></item></channel></rss>

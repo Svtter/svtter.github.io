@@ -1,383 +1,383 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>动态语言 on Svtter's Blog</title><link>https://svtter.cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/</link><description>Recent content in 动态语言 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 08 Jan 2019 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml"/><item><title>Django tricks</title><link>https://svtter.cn/p/django-tricks/</link><pubDate>Tue, 08 Jan 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/django-tricks/</guid><description>&lt;h2 id="关于-session">关于 session
-&lt;/h2>&lt;p>&lt;a class="link" href="https://docs.djangoproject.com/en/2.1/_modules/django/contrib/sessions/middleware/#SessionMiddleware" target="_blank" rel="noopener"
->django.contrib.sessions.middleware | Django documentation | Django&lt;/a>&lt;/p>
-&lt;p>session 是使用 cookie 来进行判断的，通过 session_cookie_name 来提取，然后通过 SessionStore() 来保存。&lt;/p>
-&lt;p>因此，Django 也是通过 sessionid 来区分用户；（或者其他什么名称）。&lt;/p>
-&lt;h2 id="使用-cache-作为全局变量">使用 cache 作为全局变量
-&lt;/h2>&lt;p>cache.set(‘foo’, ‘bar’) # another function cache.get(‘foo’) # get ‘bar’&lt;/p>
-&lt;p>使用 cache , &lt;code>django-redis&lt;/code> 是一个好方法。可以在使用 &lt;code>cache.lock&lt;/code>变量，在应用层面加锁，来完成异步操作，还可以支持分布式应用，十分方便。&lt;/p></description></item><item><title># Python文件操作</title><link>https://svtter.cn/p/%23-python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/</link><pubDate>Tue, 19 Jun 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%23-python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/</guid><description>&lt;p>Python的文件操作很多，为了方便以后查询使用，在此做下记录。&lt;/p>
-&lt;p>注：这些函数都可以在官网查询，这里做个cache。&lt;/p>
-&lt;h2 id="遍历文件">遍历文件
-&lt;/h2>&lt;p>遍历当前文件夹，并且&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="nb">file&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">listdir&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="n">file_path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">file&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">file_path&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h2 id="判断文件是否存在">判断文件是否存在
-&lt;/h2>&lt;p>判断文件是否存在，如果不存在，创建新文件夹&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="k">if&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">mkdir&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;h2 id="删除文件">删除文件
-&lt;/h2>&lt;p>递归的删除文件&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="kn">import&lt;/span> &lt;span class="nn">shutil&lt;/span>
-&lt;span class="n">shutil&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">rmtree&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">file&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>&lt;a class="link" href="https://docs.python.org/2/library/shutil.html#" target="_blank" rel="noopener"
->shutil&lt;/a>是一个&lt;code>high-level file operations&lt;/code>，因此相对于其他的&lt;code>python&lt;/code>接口，更加偏向于人们的习惯性思维。&lt;/p></description></item><item><title>Python拆包的好处</title><link>https://svtter.cn/p/python%E6%8B%86%E5%8C%85%E7%9A%84%E5%A5%BD%E5%A4%84/</link><pubDate>Tue, 12 Jun 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E6%8B%86%E5%8C%85%E7%9A%84%E5%A5%BD%E5%A4%84/</guid><description>&lt;h2 id="内容">内容
-&lt;/h2>&lt;p>在最近的一期 realpython 中，我阅读到了这样一段代码：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># Why Python Is Great:&lt;/span>
-&lt;span class="c1"># Function argument unpacking&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="nf">myfunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">z&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="k">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">y&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">z&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">tuple_vec&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">dict_vec&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="s1">&amp;#39;x&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;y&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;z&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">}&lt;/span>
-&lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="n">myfunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">tuple_vec&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>
-&lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="n">myfunc&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">**&lt;/span>&lt;span class="n">dict_vec&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>之前因为：&lt;/p>
-&lt;ol>
-&lt;li>这个东西不是很直观&lt;/li>
-&lt;li>这个可能造成参数混乱&lt;/li>
-&lt;/ol>
-&lt;p>而不是很在意这段代码。现在想来，真是很方便的一个东西：我们可以通过这个特性，轻松的拆解&lt;code>response.json&lt;/code>这个&lt;code>dict&lt;/code>，从而直接使用参数。&lt;/p>
-&lt;p>注意一点，如果一个函数的参数超过三个，说明你需要拆解这个函数，而不是被参数的数量搞得焦头烂额。&lt;/p>
-&lt;h2 id="具体例子">具体例子
-&lt;/h2>&lt;p>这个方法可以方便很多事情，比如说，我可以这样来重新构建输出的变量，而不是一个个&lt;code>print&lt;/code>&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="k">def&lt;/span> &lt;span class="nf">add_parameters&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">params&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">kwargs&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="sd">"""add kwargs to dict&lt;/span>
-&lt;span class="sd"> Args:&lt;/span>
-&lt;span class="sd"> params: the dict need to add&lt;/span>
-&lt;span class="sd"> kwargs: variable&lt;/span>
-&lt;span class="sd"> """&lt;/span>
-&lt;span class="n">params&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">update&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">kwargs&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">params&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">{}&lt;/span>
-&lt;span class="n">add_parameters&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">params&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="n">x_train&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">x_train&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">shape&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="n">y_train&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">y_train&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">shape&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="n">x_test&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">x_test&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">shape&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;span class="n">y_test&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">y_test&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">shape&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">pretty&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">params&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/pre>
-&lt;/div></description></item><item><title>Visual Studio Code Tips - 0</title><link>https://svtter.cn/p/visual-studio-code-tips-0/</link><pubDate>Sat, 24 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-0/</guid><description>&lt;p>使用vscode进行&lt;code>django&lt;/code>开发的时候，总会出现一些错误，比如说对&lt;code>Django&lt;/code>的一些结构进行错误的报错；&lt;/p>
-&lt;p>这个时候可以安装&lt;code>pylint-django&lt;/code>这个插件。&lt;/p>
-&lt;p>安装方法：&lt;code>pip install pylint-django&lt;/code>&lt;/p>
-&lt;p>使用：&lt;/p>
-&lt;p>在&lt;code>.vscode/&lt;/code>配置文件中增加：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;pylint.args&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;load-plugins=pylint_django&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>即可。&lt;/p>
-&lt;h2 id="参考">参考
-&lt;/h2>&lt;p>&lt;a class="link" href="https://stackoverflow.com/questions/45135263/class-has-no-objects-member" target="_blank" rel="noopener"
->https://stackoverflow.com/questions/45135263/class-has-no-objects-member&lt;/a>&lt;/p></description></item><item><title>python如何使用不可变量const</title><link>https://svtter.cn/p/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/</link><pubDate>Tue, 06 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/</guid><description>&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># python2&lt;/span>
-&lt;span class="c1"># Put in const.py...:&lt;/span>
-&lt;span class="k">class&lt;/span> &lt;span class="nc">_const&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">class&lt;/span> &lt;span class="nc">ConstError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="ne">TypeError&lt;/span>&lt;span class="p">):&lt;/span> &lt;span class="k">pass&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="fm">__setattr__&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">value&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="k">if&lt;/span> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="vm">__dict__&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">has_key&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="k">raise&lt;/span> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ConstError&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">"Can&amp;#39;t rebind const(&lt;/span>&lt;span class="si">%s&lt;/span>&lt;span class="s2">)"&lt;/span>&lt;span class="o">%&lt;/span>&lt;span class="n">name&lt;/span>
-&lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="vm">__dict__&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">value&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">sys&lt;/span>
-&lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">modules&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="vm">__name__&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_const&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="c1"># that&amp;#39;s all -- now any client-code can&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">const&lt;/span>
-&lt;span class="c1"># and bind an attribute ONCE:&lt;/span>
-&lt;span class="n">const&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">magic&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">23&lt;/span>
-&lt;span class="c1"># but NOT re-bind it:&lt;/span>
-&lt;span class="n">const&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">magic&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">88&lt;/span> &lt;span class="c1"># raises const.ConstError&lt;/span>
-&lt;span class="c1"># you may also want to add the obvious __delattr__&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;hr>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># python3 version&lt;/span>
-&lt;span class="k">class&lt;/span> &lt;span class="nc">_const&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">class&lt;/span> &lt;span class="nc">ConstError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="ne">TypeError&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="k">pass&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="fm">__setattr__&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">value&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="k">if&lt;/span> &lt;span class="n">name&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="vm">__dict__&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">raise&lt;/span> &lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ConstError&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">"Can&amp;#39;t rebind const(&lt;/span>&lt;span class="si">%s&lt;/span>&lt;span class="s2">)"&lt;/span> &lt;span class="o">%&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="vm">__dict__&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">value&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">sys&lt;/span>
-&lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">modules&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="vm">__name__&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">_const&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>这样一来，就可以在python中使用不可变量了。其中，利用魔术方法&lt;code>__setattr__&lt;/code>，把一个变量当作是&lt;code>const&lt;/code>类的属性，然后使用&lt;code>__dict__&lt;/code>来判断当前变量是否已经存在。&lt;/p>
-&lt;p>通过这个技巧我们还能构造出一系列有意思的东西——&lt;/p>
-&lt;h2 id="运行截图">运行截图
-&lt;/h2>&lt;img alt="" src="https://i2.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fo6qa3mr0mj20ve0kg0vx.jpg?w=625&amp;#038;ssl=1" data-recalc-dims="1" />
-&lt;h2 id="refer">refer
-&lt;/h2>&lt;ul>
-&lt;li>&lt;a class="link" href="https://gist.github.com/Svtter/c96e3259e264621e8bc1ab45b4c2675a" target="_blank" rel="noopener"
->https://gist.github.com/Svtter/c96e3259e264621e8bc1ab45b4c2675a&lt;/a>&lt;/li>
-&lt;li>&lt;a class="link" href="http://code.activestate.com/recipes/65207-constants-in-python/?in=user-97991" target="_blank" rel="noopener"
->http://code.activestate.com/recipes/65207-constants-in-python/?in=user-97991&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>pipenv入门指南</title><link>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</link><pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</guid><description>&lt;h2 id="前言">前言
-&lt;/h2>&lt;p>pipenv是书写flask的大神kennethreitz的新作；pipenv集成了virtualenv和pip等工具，让你从&lt;code>requirements.pip&lt;/code>以及&lt;code>virtualenv&lt;/code>的环境中解放出来。并且他还集成了&lt;code>pyenv&lt;/code>的选择&lt;code>python&lt;/code>版本，可以说是所向披靡了。&lt;/p>
-&lt;p>这是他的原话：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>You no longer need to use pip and virtualenv separately. They work together.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>动态语言 on Svtter's Blog</title><link>https://svtter.cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/</link><description>Recent content in 动态语言 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 08 Jan 2019 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/%E5%8A%A8%E6%80%81%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml"/><item><title>Django tricks</title><link>https://svtter.cn/p/django-tricks/</link><pubDate>Tue, 08 Jan 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/django-tricks/</guid><description>&lt;h2 id="关于-session"&gt;关于 session
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://docs.djangoproject.com/en/2.1/_modules/django/contrib/sessions/middleware/#SessionMiddleware" target="_blank" rel="noopener"
+&gt;django.contrib.sessions.middleware | Django documentation | Django&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;session 是使用 cookie 来进行判断的，通过 session_cookie_name 来提取，然后通过 SessionStore() 来保存。&lt;/p&gt;
+&lt;p&gt;因此，Django 也是通过 sessionid 来区分用户；（或者其他什么名称）。&lt;/p&gt;
+&lt;h2 id="使用-cache-作为全局变量"&gt;使用 cache 作为全局变量
+&lt;/h2&gt;&lt;p&gt;cache.set(‘foo’, ‘bar’) # another function cache.get(‘foo’) # get ‘bar’&lt;/p&gt;
+&lt;p&gt;使用 cache , &lt;code&gt;django-redis&lt;/code&gt; 是一个好方法。可以在使用 &lt;code&gt;cache.lock&lt;/code&gt;变量，在应用层面加锁，来完成异步操作，还可以支持分布式应用，十分方便。&lt;/p&gt;</description></item><item><title># Python文件操作</title><link>https://svtter.cn/p/%23-python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/</link><pubDate>Tue, 19 Jun 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%23-python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/</guid><description>&lt;p&gt;Python的文件操作很多，为了方便以后查询使用，在此做下记录。&lt;/p&gt;
+&lt;p&gt;注：这些函数都可以在官网查询，这里做个cache。&lt;/p&gt;
+&lt;h2 id="遍历文件"&gt;遍历文件
+&lt;/h2&gt;&lt;p&gt;遍历当前文件夹，并且&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nb"&gt;file&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="n"&gt;file_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;file&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;file_path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h2 id="判断文件是否存在"&gt;判断文件是否存在
+&lt;/h2&gt;&lt;p&gt;判断文件是否存在，如果不存在，创建新文件夹&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mkdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h2 id="删除文件"&gt;删除文件
+&lt;/h2&gt;&lt;p&gt;递归的删除文件&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;shutil&lt;/span&gt;
+&lt;span class="n"&gt;shutil&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rmtree&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;file&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a class="link" href="https://docs.python.org/2/library/shutil.html#" target="_blank" rel="noopener"
+&gt;shutil&lt;/a&gt;是一个&lt;code&gt;high-level file operations&lt;/code&gt;，因此相对于其他的&lt;code&gt;python&lt;/code&gt;接口，更加偏向于人们的习惯性思维。&lt;/p&gt;</description></item><item><title>Python拆包的好处</title><link>https://svtter.cn/p/python%E6%8B%86%E5%8C%85%E7%9A%84%E5%A5%BD%E5%A4%84/</link><pubDate>Tue, 12 Jun 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E6%8B%86%E5%8C%85%E7%9A%84%E5%A5%BD%E5%A4%84/</guid><description>&lt;h2 id="内容"&gt;内容
+&lt;/h2&gt;&lt;p&gt;在最近的一期 realpython 中，我阅读到了这样一段代码：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Why Python Is Great:&lt;/span&gt;
+&lt;span class="c1"&gt;# Function argument unpacking&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;tuple_vec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;dict_vec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;x&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;y&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;tuple_vec&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;dict_vec&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;之前因为：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;这个东西不是很直观&lt;/li&gt;
+&lt;li&gt;这个可能造成参数混乱&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;而不是很在意这段代码。现在想来，真是很方便的一个东西：我们可以通过这个特性，轻松的拆解&lt;code&gt;response.json&lt;/code&gt;这个&lt;code&gt;dict&lt;/code&gt;，从而直接使用参数。&lt;/p&gt;
+&lt;p&gt;注意一点，如果一个函数的参数超过三个，说明你需要拆解这个函数，而不是被参数的数量搞得焦头烂额。&lt;/p&gt;
+&lt;h2 id="具体例子"&gt;具体例子
+&lt;/h2&gt;&lt;p&gt;这个方法可以方便很多事情，比如说，我可以这样来重新构建输出的变量，而不是一个个&lt;code&gt;print&lt;/code&gt;&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;add_parameters&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="sd"&gt;"""add kwargs to dict&lt;/span&gt;
+&lt;span class="sd"&gt; Args:&lt;/span&gt;
+&lt;span class="sd"&gt; params: the dict need to add&lt;/span&gt;
+&lt;span class="sd"&gt; kwargs: variable&lt;/span&gt;
+&lt;span class="sd"&gt; """&lt;/span&gt;
+&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+&lt;span class="n"&gt;add_parameters&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;x_train&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;x_train&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;pretty&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;</description></item><item><title>Visual Studio Code Tips - 0</title><link>https://svtter.cn/p/visual-studio-code-tips-0/</link><pubDate>Sat, 24 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-0/</guid><description>&lt;p&gt;使用vscode进行&lt;code&gt;django&lt;/code&gt;开发的时候，总会出现一些错误，比如说对&lt;code&gt;Django&lt;/code&gt;的一些结构进行错误的报错；&lt;/p&gt;
+&lt;p&gt;这个时候可以安装&lt;code&gt;pylint-django&lt;/code&gt;这个插件。&lt;/p&gt;
+&lt;p&gt;安装方法：&lt;code&gt;pip install pylint-django&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;使用：&lt;/p&gt;
+&lt;p&gt;在&lt;code&gt;.vscode/&lt;/code&gt;配置文件中增加：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;pylint.args&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;load-plugins=pylint_django&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;即可。&lt;/p&gt;
+&lt;h2 id="参考"&gt;参考
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://stackoverflow.com/questions/45135263/class-has-no-objects-member" target="_blank" rel="noopener"
+&gt;https://stackoverflow.com/questions/45135263/class-has-no-objects-member&lt;/a&gt;&lt;/p&gt;</description></item><item><title>python如何使用不可变量const</title><link>https://svtter.cn/p/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/</link><pubDate>Tue, 06 Feb 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%87%8Fconst/</guid><description>&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# python2&lt;/span&gt;
+&lt;span class="c1"&gt;# Put in const.py...:&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;_const&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ConstError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ne"&gt;TypeError&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="k"&gt;pass&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__setattr__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__dict__&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;has_key&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ConstError&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;"Can&amp;#39;t rebind const(&lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s2"&gt;)"&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;
+&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__dict__&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;modules&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;_const&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="c1"&gt;# that&amp;#39;s all -- now any client-code can&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;const&lt;/span&gt;
+&lt;span class="c1"&gt;# and bind an attribute ONCE:&lt;/span&gt;
+&lt;span class="n"&gt;const&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;magic&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;23&lt;/span&gt;
+&lt;span class="c1"&gt;# but NOT re-bind it:&lt;/span&gt;
+&lt;span class="n"&gt;const&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;magic&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;88&lt;/span&gt; &lt;span class="c1"&gt;# raises const.ConstError&lt;/span&gt;
+&lt;span class="c1"&gt;# you may also want to add the obvious __delattr__&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# python3 version&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;_const&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ConstError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ne"&gt;TypeError&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;pass&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__setattr__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__dict__&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ConstError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"Can&amp;#39;t rebind const(&lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s2"&gt;)"&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__dict__&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;modules&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;_const&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这样一来，就可以在python中使用不可变量了。其中，利用魔术方法&lt;code&gt;__setattr__&lt;/code&gt;，把一个变量当作是&lt;code&gt;const&lt;/code&gt;类的属性，然后使用&lt;code&gt;__dict__&lt;/code&gt;来判断当前变量是否已经存在。&lt;/p&gt;
+&lt;p&gt;通过这个技巧我们还能构造出一系列有意思的东西——&lt;/p&gt;
+&lt;h2 id="运行截图"&gt;运行截图
+&lt;/h2&gt;&lt;img alt="" src="https://i2.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fo6qa3mr0mj20ve0kg0vx.jpg?w=625&amp;#038;ssl=1" data-recalc-dims="1" /&gt;
+&lt;h2 id="refer"&gt;refer
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://gist.github.com/Svtter/c96e3259e264621e8bc1ab45b4c2675a" target="_blank" rel="noopener"
+&gt;https://gist.github.com/Svtter/c96e3259e264621e8bc1ab45b4c2675a&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="http://code.activestate.com/recipes/65207-constants-in-python/?in=user-97991" target="_blank" rel="noopener"
+&gt;http://code.activestate.com/recipes/65207-constants-in-python/?in=user-97991&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>pipenv入门指南</title><link>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</link><pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</guid><description>&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;pipenv是书写flask的大神kennethreitz的新作；pipenv集成了virtualenv和pip等工具，让你从&lt;code&gt;requirements.pip&lt;/code&gt;以及&lt;code&gt;virtualenv&lt;/code&gt;的环境中解放出来。并且他还集成了&lt;code&gt;pyenv&lt;/code&gt;的选择&lt;code&gt;python&lt;/code&gt;版本，可以说是所向披靡了。&lt;/p&gt;
+&lt;p&gt;这是他的原话：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;You no longer need to use pip and virtualenv separately. They work together.
 Managing a requirements.txt file can be problematic, so Pipenv uses the upcoming Pipfile and Pipfile.lock instead, which is superior for basic use cases.
 Hashes are used everywhere, always. Security. Automatically expose security vulnerabilities.
 Give you insight into your dependency graph (e.g. $ pipenv graph).
 Streamline development workflow by loading .env files.
-&lt;/pre>
-&lt;/div>
-&lt;p>相信随着pipenv更加流行，许多工具也会在自己的环境中对pipenv提供支持，解决许多令人不舒服的问题，也能更好的提高编辑的舒适度。&lt;/p>
-&lt;h2 id="安装pipenv">安装pipenv
-&lt;/h2>&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>$ pip install pipenv
-&lt;/pre>
-&lt;/div>
-&lt;h2 id="创建虚拟环境-virtualenv">创建虚拟环境 virtualenv
-&lt;/h2>&lt;ol>
-&lt;li>当不存在一个虚拟环境的时候，pipenv将会自动创建一个环境&lt;/li>
-&lt;li>你也可以手动创建虚拟环境：
-&lt;ol>
-&lt;li>&lt;code>$ pipenv --three&lt;/code> 创建Python3虚拟环境&lt;/li>
-&lt;li>&lt;code>$ pipenv --two&lt;/code> 创建Python2虚拟环境&lt;/li>
-&lt;/ol>
-&lt;/li>
-&lt;li>其他的东西和&lt;code>virtualenv&lt;/code>是一样的。&lt;/li>
-&lt;/ol>
-&lt;h2 id="安装包">安装包
-&lt;/h2>&lt;p>比如你要使用&lt;code>requests&lt;/code>（是的也是这个大神写的）。&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>$ pipenv install requests
-&lt;/pre>
-&lt;/div>
-&lt;p>安装完成后，会生成&lt;code>Pipfile&lt;/code>以及&lt;code>Pipfile.lock&lt;/code>；这一点很像&lt;code>npm&lt;/code>.&lt;/p>
-&lt;h2 id="其他命令">其他命令
-&lt;/h2>&lt;ol>
-&lt;li>激活当前虚拟环境 &lt;code>pipenv shell&lt;/code>&lt;/li>
-&lt;li>运行虚拟环境中的命令 &lt;code>pipenv run python&lt;/code>&lt;/li>
-&lt;li>把你的依赖图输出出来 &lt;code>pipenv graph&lt;/code>&lt;/li>
-&lt;li>安装当前目录的相关依赖 &lt;code>pipenv install&lt;/code>&lt;/li>
-&lt;/ol>
-&lt;h2 id="使用问题">使用问题
-&lt;/h2>&lt;p>目前我使用的时候也会多少存在问题，比如说我看不见下载的进度条，默认不是开启的；&lt;/p>
-&lt;p>然后就是因为网络环境的问题，我的&lt;code>pip.conf&lt;/code>设置不能应用到&lt;code>pipenv&lt;/code>上，我需要自己手动更改&lt;code>Pipfile&lt;/code>，这一点有些麻烦。&lt;/p>
-&lt;h2 id="后记">后记
-&lt;/h2>&lt;p>本身我想把这个文章针对的群体稍微降降，针对一些技术能力不是特别高的群体，但是存在一些问题，比如有些东西是需要一定知识才能看懂的。如果出现了不懂的内容，尽量自己查找一下吧。&lt;/p></description></item><item><title>Python-Tips</title><link>https://svtter.cn/p/python-tips/</link><pubDate>Sun, 26 Nov 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-tips/</guid><description>&lt;p>来自分布在各处的开发tips&lt;/p>
-&lt;h2 id="使用nametuple">使用nametuple
-&lt;/h2>&lt;p>nametuple用来构建只有少数属性但是没有方法的对象，比如数据库条目。&lt;/p>
-&lt;p>使用python的时候经常会出现这样的问题，我想构建一个很简单的类来进行测试，但是我不得不书写大量的代码，例如&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span class="k">class&lt;/span> &lt;span class="nc">A&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">name&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="bp">None&lt;/span>
-&lt;span class="n">num&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="bp">None&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="fm">__init__&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">num&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">name&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">name&lt;/span>
-&lt;span class="bp">self&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">num&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">num&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="fm">__str__&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="k">return&lt;/span> &lt;span class="s1">'&amp;lt;A&amp;gt; name: {}, num: {}’.format(self.name, self.num)&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>然后才能进行创建。如果使用nametuples的话，这个例子会变成这样：&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span class="kn">import&lt;/span> &lt;span class="nn">collections&lt;/span>
-&lt;span class="n">A&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">collections&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">namedtuple&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="err">‘&lt;/span>&lt;span class="n">A&lt;/span>&lt;span class="s1">', ['&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="s1">', '&lt;/span>&lt;span class="n">weight&lt;/span>&lt;span class="s1">'])&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>这个时候代码量相对较少。&lt;/p>
-&lt;h2 id="python模仿bash管道编程">Python模仿Bash管道编程
-&lt;/h2>&lt;p>这个用法十分有趣，重载&lt;code>|&lt;/code>操作符来完成这个操作。&lt;/p>
-&lt;h2 id="python中的tryexcept会在各种情况下被使用">Python中的try/except会在各种情况下被使用
-&lt;/h2>&lt;div class="codehilite">
-&lt;pre>&lt;span class="k">def&lt;/span> &lt;span class="nf">test&lt;/span>&lt;span class="p">():&lt;/span>
-&lt;span class="k">try&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">'test start'&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">return&lt;/span>
-&lt;span class="k">except&lt;/span> &lt;span class="n">e&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="ne">Exception&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">e&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">finally&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">'test end'&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>输出&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="n">test&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="n">test&lt;/span> &lt;span class="n">start&lt;/span>
-&lt;span class="n">test&lt;/span> &lt;span class="n">end&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;img src="https://i2.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmmdtvsq7oj20og0fomxg.jpg?w=625&amp;#038;ssl=1" alt="" data-recalc-dims="1" />
-&lt;h2 id="python3-reload模块">Python3 reload模块
-&lt;/h2>&lt;div class="codehilite">
-&lt;pre>&lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="nn">spam&lt;/span>
-&lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="kn">import&lt;/span> &lt;span class="nn">imp&lt;/span>
-&lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span class="n">imp&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">reload&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">spam&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">module&lt;/span> &lt;span class="s1">'spam'&lt;/span> &lt;span class="kn">from&lt;/span> &lt;span class="s1">'./spam.py'&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>
-&lt;span class="o">&amp;gt;&amp;gt;&amp;gt;&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>在一些代码进行修改之后，不想要重新打开shell，可以通过&lt;code>imp&lt;/code>进行模块的重载，具体的代码如上所示。&lt;/p>
-&lt;h2 id="not-not-none">not not None
-&lt;/h2>&lt;div class="codehilite">
-&lt;pre>&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">13&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="n">a&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">14&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">a&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">14&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">True&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">15&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">a&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">15&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">False&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">16&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="bp">None&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">17&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="n">a&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">18&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">a&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">18&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">True&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">19&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">a&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">19&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">False&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="bp">True&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">False&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">21&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="bp">None&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">21&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">True&lt;/span>
-&lt;span class="n">In&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="mi">22&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="bp">False&lt;/span>
-&lt;span class="n">Out&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">22&lt;/span>&lt;span class="p">]:&lt;/span> &lt;span class="bp">True&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p> &lt;figure class="wp-block-embed">&lt;/p>
-&lt;div class="wp-block-embed__wrapper">
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;相信随着pipenv更加流行，许多工具也会在自己的环境中对pipenv提供支持，解决许多令人不舒服的问题，也能更好的提高编辑的舒适度。&lt;/p&gt;
+&lt;h2 id="安装pipenv"&gt;安装pipenv
+&lt;/h2&gt;&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ pip install pipenv
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h2 id="创建虚拟环境-virtualenv"&gt;创建虚拟环境 virtualenv
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;当不存在一个虚拟环境的时候，pipenv将会自动创建一个环境&lt;/li&gt;
+&lt;li&gt;你也可以手动创建虚拟环境：
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;$ pipenv --three&lt;/code&gt; 创建Python3虚拟环境&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$ pipenv --two&lt;/code&gt; 创建Python2虚拟环境&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;其他的东西和&lt;code&gt;virtualenv&lt;/code&gt;是一样的。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="安装包"&gt;安装包
+&lt;/h2&gt;&lt;p&gt;比如你要使用&lt;code&gt;requests&lt;/code&gt;（是的也是这个大神写的）。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ pipenv install requests
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;安装完成后，会生成&lt;code&gt;Pipfile&lt;/code&gt;以及&lt;code&gt;Pipfile.lock&lt;/code&gt;；这一点很像&lt;code&gt;npm&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="其他命令"&gt;其他命令
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;激活当前虚拟环境 &lt;code&gt;pipenv shell&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;运行虚拟环境中的命令 &lt;code&gt;pipenv run python&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;把你的依赖图输出出来 &lt;code&gt;pipenv graph&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;安装当前目录的相关依赖 &lt;code&gt;pipenv install&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="使用问题"&gt;使用问题
+&lt;/h2&gt;&lt;p&gt;目前我使用的时候也会多少存在问题，比如说我看不见下载的进度条，默认不是开启的；&lt;/p&gt;
+&lt;p&gt;然后就是因为网络环境的问题，我的&lt;code&gt;pip.conf&lt;/code&gt;设置不能应用到&lt;code&gt;pipenv&lt;/code&gt;上，我需要自己手动更改&lt;code&gt;Pipfile&lt;/code&gt;，这一点有些麻烦。&lt;/p&gt;
+&lt;h2 id="后记"&gt;后记
+&lt;/h2&gt;&lt;p&gt;本身我想把这个文章针对的群体稍微降降，针对一些技术能力不是特别高的群体，但是存在一些问题，比如有些东西是需要一定知识才能看懂的。如果出现了不懂的内容，尽量自己查找一下吧。&lt;/p&gt;</description></item><item><title>Python-Tips</title><link>https://svtter.cn/p/python-tips/</link><pubDate>Sun, 26 Nov 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-tips/</guid><description>&lt;p&gt;来自分布在各处的开发tips&lt;/p&gt;
+&lt;h2 id="使用nametuple"&gt;使用nametuple
+&lt;/h2&gt;&lt;p&gt;nametuple用来构建只有少数属性但是没有方法的对象，比如数据库条目。&lt;/p&gt;
+&lt;p&gt;使用python的时候经常会出现这样的问题，我想构建一个很简单的类来进行测试，但是我不得不书写大量的代码，例如&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;A&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;
+&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;num&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;num&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__str__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'&amp;lt;A&amp;gt; name: {}, num: {}’.format(self.name, self.num)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;然后才能进行创建。如果使用nametuples的话，这个例子会变成这样：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;collections&lt;/span&gt;
+&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;collections&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;namedtuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="err"&gt;‘&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="s1"&gt;', ['&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="s1"&gt;', '&lt;/span&gt;&lt;span class="n"&gt;weight&lt;/span&gt;&lt;span class="s1"&gt;'])&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这个时候代码量相对较少。&lt;/p&gt;
+&lt;h2 id="python模仿bash管道编程"&gt;Python模仿Bash管道编程
+&lt;/h2&gt;&lt;p&gt;这个用法十分有趣，重载&lt;code&gt;|&lt;/code&gt;操作符来完成这个操作。&lt;/p&gt;
+&lt;h2 id="python中的tryexcept会在各种情况下被使用"&gt;Python中的try/except会在各种情况下被使用
+&lt;/h2&gt;&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;test&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'test start'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt;
+&lt;span class="k"&gt;except&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="ne"&gt;Exception&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;finally&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'test end'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;输出&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;
+&lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;end&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;img src="https://i2.wp.com/ws1.sinaimg.cn/large/c53b1907ly1fmmdtvsq7oj20og0fomxg.jpg?w=625&amp;#038;ssl=1" alt="" data-recalc-dims="1" /&gt;
+&lt;h2 id="python3-reload模块"&gt;Python3 reload模块
+&lt;/h2&gt;&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;spam&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;imp&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;imp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reload&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;spam&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt; &lt;span class="s1"&gt;'spam'&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;'./spam.py'&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在一些代码进行修改之后，不想要重新打开shell，可以通过&lt;code&gt;imp&lt;/code&gt;进行模块的重载，具体的代码如上所示。&lt;/p&gt;
+&lt;h2 id="not-not-none"&gt;not not None
+&lt;/h2&gt;&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;13&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;14&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;14&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;18&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;18&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;19&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;19&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;22&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;22&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt; &lt;figure class="wp-block-embed"&gt;&lt;/p&gt;
+&lt;div class="wp-block-embed__wrapper"&gt;
 https://docs.python.org/3/library/pathlib.html
-&lt;/div>&lt;/figure>
-&lt;p>使用 Pathlib 来操作路径相关的字符串&lt;/p>
-&lt;p>&amp;lt;未完待续&amp;gt;&lt;/p></description></item><item><title>Python在Ubuntu中使用形式</title><link>https://svtter.cn/p/python%E5%9C%A8ubuntu%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%BD%A2%E5%BC%8F/</link><pubDate>Sun, 07 Aug 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E5%9C%A8ubuntu%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%BD%A2%E5%BC%8F/</guid><description>&lt;p>Python在Ubuntu中的形式十分杂乱。对于&lt;code>Debian&lt;/code>已经很久没有使用过了，因此不太清楚Debian对于Python的版本是如何管理的。&lt;/p>
-&lt;p>但是在CentOS中，Python的管理方式是，默认不安装Python3。（CentOS6.5）这对于系统的&lt;strong>纯洁性&lt;/strong>具有相当的保护性。&lt;/p>
-&lt;!-- more-->
-&lt;p>行文至此，不得不想到，肯定有对于此类讲解的书籍，也会说的比我更加明确。对于此问题，如果我继续深入的读读书，谈一谈，可能会更好。&lt;/p>
-&lt;p>Debian系的Ubuntu顺承了上游的想法同时包含两个东西，但是我认为，这并不是一个正确的做法。因为总有程序员写代码的时候不喜欢使用&lt;code>env python2&lt;/code>。这也就解释了为什么我们仅仅修改了&lt;code>python&lt;/code>的指向，但是依然容易出问题。&lt;/p>
-&lt;p>&lt;a class="link" href="https://www.zhihu.com/question/21653286" target="_blank" rel="noopener"
->https://www.zhihu.com/question/21653286&lt;/a>&lt;/p>
-&lt;p>知乎上有许多&lt;code>pip3&lt;/code>这种答案，但是这其实是有问题的。尤其是当存在缓存的时候，如果&lt;code>pip2&lt;/code>和&lt;code>pip3&lt;/code>同时安装一个包的时候，&lt;code>pip3&lt;/code>或者&lt;code>pip2&lt;/code>会读取另一方的缓存，导致安装失败。然后陆续出现问题。这是我所遇到的， 尽管不一定100%发生，但是如果发生了，就对行云流水的体验造成了很大的影响——我不得不去G搜看看问题所在。&lt;/p>
-&lt;p>所以，最终的解决方案？&lt;/p>
-&lt;p>&lt;a class="link" href="http://www.ituring.com.cn/article/261302" target="_blank" rel="noopener"
->http://www.ituring.com.cn/article/261302&lt;/a>&lt;/p>
-&lt;p>以后Linux相关书籍以及想法就写在图灵社区，最终成书，对于大学程序员起指导作用。&lt;/p></description></item><item><title>Python – 数据结构</title><link>https://svtter.cn/p/python-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link><pubDate>Thu, 09 Jul 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid><description>&lt;ul>
-&lt;li>&lt;a class="link" href="http://blog.jobbole.com/65218/" target="_blank" rel="noopener"
->http://blog.jobbole.com/65218/&lt;/a>&lt;/li>
-&lt;li>&lt;a class="link" href="http://blog.csdn.net/column/details/wklken4ds-alg-py.html" target="_blank" rel="noopener"
->http://blog.csdn.net/column/details/wklken4ds-alg-py.html&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Python-建立最简单的web服务器</title><link>https://svtter.cn/p/python-%E5%BB%BA%E7%AB%8B%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/</link><pubDate>Thu, 11 Dec 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E5%BB%BA%E7%AB%8B%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid><description>&lt;blockquote>
-&lt;p>本文出自&lt;a class="link" href="http://svtter.github.io" target="_blank" rel="noopener"
->svtter.github.io&lt;/a>&lt;/p>&lt;/blockquote>
-&lt;p>有三个服务模块可以使用:&lt;/p>
-&lt;ul>
-&lt;li>BaseHTTPServer 最基础web服务.&lt;/li>
-&lt;li>SimpleHTTPServer 可以处理GET和HEAD.&lt;/li>
-&lt;li>CGIHTTPServer 可以处理POST请求和执行CGI.&lt;/li>
-&lt;/ul>
-&lt;p>只需要一行代码即可:&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>python -m SimpleHTTPServer 8080
-&lt;/pre>
-&lt;/div>
-&lt;p>如果8080端口被占用，可以选择别的端口来使用.&lt;/p>
-&lt;p>此处的 SimpleHTTPServer 可以使用以上三个服务模块替代&lt;/p></description></item><item><title>python的自动补全</title><link>https://svtter.cn/p/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/</link><pubDate>Fri, 21 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/</guid><description>&lt;h2 id="新建python_start_up_file文件">新建python_start_up_file文件
-&lt;/h2>&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="c1"># python startup file&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">readline&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">rlcompleter&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">atexit&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
-&lt;span class="c1"># tab completion&lt;/span>
-&lt;span class="n">readline&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">parse_and_bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;tab: complete&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="c1"># history file&lt;/span>
-&lt;span class="n">histfile&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">path&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">environ&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;home&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="s1">&amp;#39;.pythonhistory&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">try&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">readline&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">read_history_file&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">histfile&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">except&lt;/span> &lt;span class="n">ioerror&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="mi">&lt;/span>
-&lt;span class="n">atexit&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">register&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">readline&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">write_history_file&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">histfile&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">del&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">histfile&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">readline&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">rlcompleter&lt;/span>
-&lt;/pre>
-&lt;/div>
-&lt;p>在&lt;code>$HOME/.profile&lt;/code>文件中写入&lt;/p>
-&lt;p>&lt;code>export PYTHONSTARTUP=$HOME/.python_start_up_file&lt;/code>&lt;/p>
-&lt;h2 id="小注">小注：
-&lt;/h2>&lt;p>可以使用py3compile来编译文件，然后使用python3+文件名来运行&lt;/p></description></item><item><title>Python-使用hexo的python脚本</title><link>https://svtter.cn/p/python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/</link><pubDate>Wed, 19 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/</guid><description>&lt;p>为了简化blog的使用写的python脚本，用来简化自己的操作= =&lt;/p>
-&lt;p>更新了一下。&lt;/p>
-&lt;p>最新的代码在coding.net上&lt;/p>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="ch">#!/usr/bin/env python2&lt;/span>
-&lt;span class="c1"># coding: UTF-8&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">sys&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
-&lt;span class="c1"># 博客目录&lt;/span>
-&lt;span class="n">blog_dir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;/home/svitter/svtter.github.io/source/_posts&amp;#39;&lt;/span>
-&lt;span class="k">def&lt;/span> &lt;span class="nf">help&lt;/span>&lt;span class="p">():&lt;/span>
-&lt;span class="sd">&amp;#39;&amp;#39;&amp;#39;output help information&amp;#39;&amp;#39;&amp;#39;&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;-n: new blog&amp;#39;&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;-g: Generate and push&amp;#39;&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;-h: help&amp;#39;&lt;/span>
-&lt;span class="k">if&lt;/span> &lt;span class="nb">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="mi">2&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;no option&amp;#39;&lt;/span>
-&lt;span class="n">help&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">if&lt;/span> &lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">startswith&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;-&amp;#39;&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;span class="c1"># 改变工作目录&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">chdir&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">blog_dir&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">option&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">:]&lt;/span>
-&lt;span class="k">if&lt;/span> &lt;span class="n">option&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;n&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">"hexo n "&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">])&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">"gvim "&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">sys&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">argv&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s2">".md"&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">elif&lt;/span> &lt;span class="n">option&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;g&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;hexo g&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;hexo d&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">chdir&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;/home/svitter/svtter.github.io&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;. update&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">elif&lt;/span> &lt;span class="n">option&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;h&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">help&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;span class="k">elif&lt;/span> &lt;span class="n">option&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;dir&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="n">blog_dir&lt;/span>
-&lt;span class="k">elif&lt;/span> &lt;span class="n">option&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;e&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;gvim &amp;#39;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">blog_dir&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;no such command.&amp;#39;&lt;/span>
-&lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="n">help&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/pre>
-&lt;/div></description></item><item><title>Python – 一个Python的备份脚本</title><link>https://svtter.cn/p/python-%E4%B8%80%E4%B8%AApython%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/</link><pubDate>Fri, 14 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E4%B8%80%E4%B8%AApython%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/</guid><description>&lt;h1 id="tags">TAGS
-&lt;/h1>&lt;ul>
-&lt;li>python的注释必须与代码相隔两个空格&lt;/li>
-&lt;li>#与注释语言间必须有一个空格&lt;/li>
-&lt;/ul>
-&lt;div class="codehilite">
-&lt;pre>&lt;span>&lt;/span>&lt;span class="ch">#!/usr/bin/python&lt;/span>
-&lt;span class="c1"># FileName: backup.py&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">os&lt;/span>
-&lt;span class="kn">import&lt;/span> &lt;span class="nn">time&lt;/span>
-&lt;span class="c1"># 1. The files and directories be backed up are specified in a list.&lt;/span>
-&lt;span class="n">source&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;/home/svitter/bin&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;/home/svitter/tmp&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;span class="c1"># 2. The backup must be stored in a main backup directories.&lt;/span>
-&lt;span class="n">target_dir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s1">&amp;#39;/home/svitter/backup/&amp;#39;&lt;/span>
-&lt;span class="c1"># 3. The files are backed up into a zipfile&lt;/span>
-&lt;span class="c1"># 4. The name of the zip archieve is the current date and time&lt;/span>
-&lt;span class="n">target&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">target_dir&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">time&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">strftime&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%Y_%m_&lt;/span>&lt;span class="si">%d&lt;/span>&lt;span class="s1">_%H_%M_%S&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="s1">&amp;#39;.zip&amp;#39;&lt;/span>
-&lt;span class="c1"># 5. we use the zip command to put the files in a zip archive&lt;/span>
-&lt;span class="n">zip_command&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s2">"zip -qr &amp;#39;&lt;/span>&lt;span class="si">%s&lt;/span>&lt;span class="s2">&amp;#39; &lt;/span>&lt;span class="si">%s&lt;/span>&lt;span class="s2">"&lt;/span> &lt;span class="o">%&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39; &amp;#39;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">source&lt;/span>&lt;span class="p">))&lt;/span>
-&lt;span class="c1"># Run the backup&lt;/span>
-&lt;span class="k">if&lt;/span> &lt;span class="n">os&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">system&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">zip_command&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;Successful backup to&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">target&lt;/span>
-&lt;span class="k">else&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;span class="k">print&lt;/span> &lt;span class="s1">&amp;#39;Backup FAILED&amp;#39;&lt;/span>
-&lt;/pre>
-&lt;/div></description></item></channel></rss>
+&lt;/div&gt;&lt;/figure&gt;
+&lt;p&gt;使用 Pathlib 来操作路径相关的字符串&lt;/p&gt;
+&lt;p&gt;&amp;lt;未完待续&amp;gt;&lt;/p&gt;</description></item><item><title>Python在Ubuntu中使用形式</title><link>https://svtter.cn/p/python%E5%9C%A8ubuntu%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%BD%A2%E5%BC%8F/</link><pubDate>Sun, 07 Aug 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E5%9C%A8ubuntu%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%BD%A2%E5%BC%8F/</guid><description>&lt;p&gt;Python在Ubuntu中的形式十分杂乱。对于&lt;code&gt;Debian&lt;/code&gt;已经很久没有使用过了，因此不太清楚Debian对于Python的版本是如何管理的。&lt;/p&gt;
+&lt;p&gt;但是在CentOS中，Python的管理方式是，默认不安装Python3。（CentOS6.5）这对于系统的&lt;strong&gt;纯洁性&lt;/strong&gt;具有相当的保护性。&lt;/p&gt;
+&lt;!-- more--&gt;
+&lt;p&gt;行文至此，不得不想到，肯定有对于此类讲解的书籍，也会说的比我更加明确。对于此问题，如果我继续深入的读读书，谈一谈，可能会更好。&lt;/p&gt;
+&lt;p&gt;Debian系的Ubuntu顺承了上游的想法同时包含两个东西，但是我认为，这并不是一个正确的做法。因为总有程序员写代码的时候不喜欢使用&lt;code&gt;env python2&lt;/code&gt;。这也就解释了为什么我们仅仅修改了&lt;code&gt;python&lt;/code&gt;的指向，但是依然容易出问题。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.zhihu.com/question/21653286" target="_blank" rel="noopener"
+&gt;https://www.zhihu.com/question/21653286&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;知乎上有许多&lt;code&gt;pip3&lt;/code&gt;这种答案，但是这其实是有问题的。尤其是当存在缓存的时候，如果&lt;code&gt;pip2&lt;/code&gt;和&lt;code&gt;pip3&lt;/code&gt;同时安装一个包的时候，&lt;code&gt;pip3&lt;/code&gt;或者&lt;code&gt;pip2&lt;/code&gt;会读取另一方的缓存，导致安装失败。然后陆续出现问题。这是我所遇到的， 尽管不一定100%发生，但是如果发生了，就对行云流水的体验造成了很大的影响——我不得不去G搜看看问题所在。&lt;/p&gt;
+&lt;p&gt;所以，最终的解决方案？&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="http://www.ituring.com.cn/article/261302" target="_blank" rel="noopener"
+&gt;http://www.ituring.com.cn/article/261302&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;以后Linux相关书籍以及想法就写在图灵社区，最终成书，对于大学程序员起指导作用。&lt;/p&gt;</description></item><item><title>Python – 数据结构</title><link>https://svtter.cn/p/python-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link><pubDate>Thu, 09 Jul 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid><description>&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://blog.jobbole.com/65218/" target="_blank" rel="noopener"
+&gt;http://blog.jobbole.com/65218/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="http://blog.csdn.net/column/details/wklken4ds-alg-py.html" target="_blank" rel="noopener"
+&gt;http://blog.csdn.net/column/details/wklken4ds-alg-py.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Python-建立最简单的web服务器</title><link>https://svtter.cn/p/python-%E5%BB%BA%E7%AB%8B%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/</link><pubDate>Thu, 11 Dec 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E5%BB%BA%E7%AB%8B%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;本文出自&lt;a class="link" href="http://svtter.github.io" target="_blank" rel="noopener"
+&gt;svtter.github.io&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;有三个服务模块可以使用:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BaseHTTPServer 最基础web服务.&lt;/li&gt;
+&lt;li&gt;SimpleHTTPServer 可以处理GET和HEAD.&lt;/li&gt;
+&lt;li&gt;CGIHTTPServer 可以处理POST请求和执行CGI.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;只需要一行代码即可:&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;python -m SimpleHTTPServer 8080
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;如果8080端口被占用，可以选择别的端口来使用.&lt;/p&gt;
+&lt;p&gt;此处的 SimpleHTTPServer 可以使用以上三个服务模块替代&lt;/p&gt;</description></item><item><title>python的自动补全</title><link>https://svtter.cn/p/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/</link><pubDate>Fri, 21 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8/</guid><description>&lt;h2 id="新建python_start_up_file文件"&gt;新建python_start_up_file文件
+&lt;/h2&gt;&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# python startup file&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;readline&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;rlcompleter&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;atexit&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+&lt;span class="c1"&gt;# tab completion&lt;/span&gt;
+&lt;span class="n"&gt;readline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parse_and_bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;tab: complete&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# history file&lt;/span&gt;
+&lt;span class="n"&gt;histfile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;environ&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;home&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.pythonhistory&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;readline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_history_file&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;histfile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;except&lt;/span&gt; &lt;span class="n"&gt;ioerror&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="mi"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;atexit&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;register&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;readline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write_history_file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;histfile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;del&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;histfile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;readline&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rlcompleter&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在&lt;code&gt;$HOME/.profile&lt;/code&gt;文件中写入&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;export PYTHONSTARTUP=$HOME/.python_start_up_file&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="小注"&gt;小注：
+&lt;/h2&gt;&lt;p&gt;可以使用py3compile来编译文件，然后使用python3+文件名来运行&lt;/p&gt;</description></item><item><title>Python-使用hexo的python脚本</title><link>https://svtter.cn/p/python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/</link><pubDate>Wed, 19 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E4%BD%BF%E7%94%A8hexo%E7%9A%84python%E8%84%9A%E6%9C%AC/</guid><description>&lt;p&gt;为了简化blog的使用写的python脚本，用来简化自己的操作= =&lt;/p&gt;
+&lt;p&gt;更新了一下。&lt;/p&gt;
+&lt;p&gt;最新的代码在coding.net上&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python2&lt;/span&gt;
+&lt;span class="c1"&gt;# coding: UTF-8&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+&lt;span class="c1"&gt;# 博客目录&lt;/span&gt;
+&lt;span class="n"&gt;blog_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/home/svitter/svtter.github.io/source/_posts&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;help&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;span class="sd"&gt;&amp;#39;&amp;#39;&amp;#39;output help information&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;-n: new blog&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;-g: Generate and push&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;-h: help&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;no option&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;startswith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;-&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="c1"&gt;# 改变工作目录&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;chdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;blog_dir&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;option&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;option&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;n&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"hexo n "&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"gvim "&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;".md"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;option&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;g&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hexo g&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hexo d&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;chdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/home/svitter/svtter.github.io&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;. update&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;option&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;h&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;option&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;dir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;blog_dir&lt;/span&gt;
+&lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;option&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;e&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;gvim &amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;blog_dir&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;no such command.&amp;#39;&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;</description></item><item><title>Python – 一个Python的备份脚本</title><link>https://svtter.cn/p/python-%E4%B8%80%E4%B8%AApython%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/</link><pubDate>Fri, 14 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E4%B8%80%E4%B8%AApython%E7%9A%84%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC/</guid><description>&lt;h1 id="tags"&gt;TAGS
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;python的注释必须与代码相隔两个空格&lt;/li&gt;
+&lt;li&gt;#与注释语言间必须有一个空格&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/python&lt;/span&gt;
+&lt;span class="c1"&gt;# FileName: backup.py&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+&lt;span class="c1"&gt;# 1. The files and directories be backed up are specified in a list.&lt;/span&gt;
+&lt;span class="n"&gt;source&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/home/svitter/bin&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/home/svitter/tmp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="c1"&gt;# 2. The backup must be stored in a main backup directories.&lt;/span&gt;
+&lt;span class="n"&gt;target_dir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/home/svitter/backup/&amp;#39;&lt;/span&gt;
+&lt;span class="c1"&gt;# 3. The files are backed up into a zipfile&lt;/span&gt;
+&lt;span class="c1"&gt;# 4. The name of the zip archieve is the current date and time&lt;/span&gt;
+&lt;span class="n"&gt;target&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;target_dir&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strftime&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%Y_%m_&lt;/span&gt;&lt;span class="si"&gt;%d&lt;/span&gt;&lt;span class="s1"&gt;_%H_%M_%S&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.zip&amp;#39;&lt;/span&gt;
+&lt;span class="c1"&gt;# 5. we use the zip command to put the files in a zip archive&lt;/span&gt;
+&lt;span class="n"&gt;zip_command&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;"zip -qr &amp;#39;&lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s2"&gt;&amp;#39; &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;source&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="c1"&gt;# Run the backup&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;zip_command&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Successful backup to&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;target&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Backup FAILED&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;</description></item></channel></rss>

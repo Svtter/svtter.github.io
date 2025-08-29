@@ -1,110 +1,110 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tricks on Svtter's Blog</title><link>https://svtter.cn/tags/tricks/</link><description>Recent content in Tricks on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 12 Jan 2024 10:09:40 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/tricks/index.xml" rel="self" type="application/rss+xml"/><item><title>Print Trick for Python</title><link>https://svtter.cn/p/print-trick-for-python/</link><pubDate>Fri, 12 Jan 2024 10:09:40 +0800</pubDate><guid>https://svtter.cn/p/print-trick-for-python/</guid><description>&lt;p>这是一个可以同时将print内容输出到屏幕以及保存到日志文件的简单代码。&lt;/p>
-&lt;p>主要利用了 builtins 对 print 方法进行 hook，从而让方法全局有效。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;&amp;#34;&amp;#34;global print function&amp;#34;&amp;#34;&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">builtins&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">_print&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">print&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">set_print&lt;/span>&lt;span class="p">():&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">def&lt;/span> &lt;span class="nf">print_to_file&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">args&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">kwargs&lt;/span>&lt;span class="p">):&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">_print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">args&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">kwargs&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">with&lt;/span> &lt;span class="nb">open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;print_ouptut.txt&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;w&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">f&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">args&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">**&lt;/span>&lt;span class="n">kwargs&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">builtins&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">print&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">print_to_file&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">reset_print&lt;/span>&lt;span class="p">():&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">builtins&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">print&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">_print&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">test_print&lt;/span>&lt;span class="p">():&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;hello world&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="vm">__name__&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;__main__&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">test_print&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>实际上，借助这个思路，还能禁用全局的 print。例如在 print 中直接添加 exception。&lt;/p></description></item><item><title>My Keras tricks</title><link>https://svtter.cn/p/my-keras-tricks/</link><pubDate>Mon, 07 Jan 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/my-keras-tricks/</guid><description>&lt;p>记录了一些使用 keras 的技巧。&lt;/p>
-&lt;h2 id="categorical_crossentropy-vs-sparse_categorical_crossentropy">categorical_crossentropy vs sparse_categorical_crossentropy.
-&lt;/h2>&lt;h4 id="3-the-answerin-a-nutshell">3. The Answer, In a Nutshell
-&lt;/h4>&lt;ul>
-&lt;li>
-&lt;p>If your targets are one-hot encoded, use categorical_crossentropy.&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>Examples of &lt;a href="https://jovianlin.io/keras-one-hot-encode-decode-sequence-data/" target="_blank" rel="noreferrer noopener">one-hot encodings&lt;/a>:&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>[1,0,0]&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>[0,1,0]&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>[0,0,1]&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>But if your targets are integers, use sparse_categorical_crossentropy.&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>Examples of integer encodings (&lt;em>for the sake of completion&lt;/em>):&lt;/p>
-&lt;ul>
-&lt;li>1, 2, 3&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
-&lt;h2 id="clip-norm">&lt;strong>clip norm&lt;/strong>
-&lt;/h2>&lt;p style="text-align:center">
-&lt;br />&lt;a rel="noreferrer noopener" href="https://wulc.me/2018/05/01/%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/" target="_blank">https://wulc.me/2018/05/01/%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/&lt;/a>&lt;br />可以加速 RNN 训练
-&lt;/p>
-&lt;h2 id="multiple-gpu">&lt;strong>Multiple GPU&lt;/strong>
-&lt;/h2>&lt;p># &lt;a class="link" href="https://keras.io/utils/#multi" target="_blank" rel="noopener"
->https://keras.io/utils/#multi&lt;/a>_gpu_model#&lt;/p>
-&lt;p>使用多GPU，注意使用 save 的时候，传参传 model (multi_gpu_model的model参数)&lt;/p>
-&lt;h2 id="encode-labels">&lt;strong>Encode Labels&lt;/strong>
-&lt;/h2>&lt;p>可以把不同的字符[‘aa’, ‘bb’, ‘cc’, ‘aa’] 编码成 [0, 1, 2, 0]&lt;/p>
-&lt;table class="wp-block-table">
-&lt;tr>
-&lt;td>
-1&lt;br />2&lt;br />3&lt;br />4&lt;br />5&lt;br />6
-&lt;/td>
-&lt;pre>&lt;code>&amp;lt;td&amp;gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tricks on Svtter's Blog</title><link>https://svtter.cn/tags/tricks/</link><description>Recent content in Tricks on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 12 Jan 2024 10:09:40 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/tricks/index.xml" rel="self" type="application/rss+xml"/><item><title>Print Trick for Python</title><link>https://svtter.cn/p/print-trick-for-python/</link><pubDate>Fri, 12 Jan 2024 10:09:40 +0800</pubDate><guid>https://svtter.cn/p/print-trick-for-python/</guid><description>&lt;p&gt;这是一个可以同时将print内容输出到屏幕以及保存到日志文件的简单代码。&lt;/p&gt;
+&lt;p&gt;主要利用了 builtins 对 print 方法进行 hook，从而让方法全局有效。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;&amp;#34;&amp;#34;global print function&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;builtins&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;_print&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;print&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;set_print&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;print_to_file&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;_print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;print_ouptut.txt&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;builtins&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;print&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;print_to_file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;reset_print&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;builtins&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;print&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;_print&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;test_print&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;test_print&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;实际上，借助这个思路，还能禁用全局的 print。例如在 print 中直接添加 exception。&lt;/p&gt;</description></item><item><title>My Keras tricks</title><link>https://svtter.cn/p/my-keras-tricks/</link><pubDate>Mon, 07 Jan 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/my-keras-tricks/</guid><description>&lt;p&gt;记录了一些使用 keras 的技巧。&lt;/p&gt;
+&lt;h2 id="categorical_crossentropy-vs-sparse_categorical_crossentropy"&gt;categorical_crossentropy vs sparse_categorical_crossentropy.
+&lt;/h2&gt;&lt;h4 id="3-the-answerin-a-nutshell"&gt;3. The Answer, In a Nutshell
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;If your targets are one-hot encoded, use categorical_crossentropy.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Examples of &lt;a href="https://jovianlin.io/keras-one-hot-encode-decode-sequence-data/" target="_blank" rel="noreferrer noopener"&gt;one-hot encodings&lt;/a&gt;:&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;[1,0,0]&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;[0,1,0]&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;[0,0,1]&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;But if your targets are integers, use sparse_categorical_crossentropy.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Examples of integer encodings (&lt;em&gt;for the sake of completion&lt;/em&gt;):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1, 2, 3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="clip-norm"&gt;&lt;strong&gt;clip norm&lt;/strong&gt;
+&lt;/h2&gt;&lt;p style="text-align:center"&gt;
+&lt;br /&gt;&lt;a rel="noreferrer noopener" href="https://wulc.me/2018/05/01/%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/" target="_blank"&gt;https://wulc.me/2018/05/01/%E6%A2%AF%E5%BA%A6%E8%A3%81%E5%89%AA%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8/&lt;/a&gt;&lt;br /&gt;可以加速 RNN 训练
+&lt;/p&gt;
+&lt;h2 id="multiple-gpu"&gt;&lt;strong&gt;Multiple GPU&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;# &lt;a class="link" href="https://keras.io/utils/#multi" target="_blank" rel="noopener"
+&gt;https://keras.io/utils/#multi&lt;/a&gt;_gpu_model#&lt;/p&gt;
+&lt;p&gt;使用多GPU，注意使用 save 的时候，传参传 model (multi_gpu_model的model参数)&lt;/p&gt;
+&lt;h2 id="encode-labels"&gt;&lt;strong&gt;Encode Labels&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;可以把不同的字符[‘aa’, ‘bb’, ‘cc’, ‘aa’] 编码成 [0, 1, 2, 0]&lt;/p&gt;
+&lt;table class="wp-block-table"&gt;
+&lt;tr&gt;
+&lt;td&gt;
+1&lt;br /&gt;2&lt;br /&gt;3&lt;br /&gt;4&lt;br /&gt;5&lt;br /&gt;6
+&lt;/td&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;td&amp;gt;
 # encode class values as integers&amp;lt;br /&amp;gt;encoder&amp;amp;nbsp;=&amp;amp;nbsp;LabelEncoder()&amp;lt;br /&amp;gt;encoder.fit(Y)&amp;lt;br /&amp;gt;encoded_Y&amp;amp;nbsp;=&amp;amp;nbsp;encoder.transform(Y)&amp;lt;br /&amp;gt;# convert integers to dummy variables (i.e. one hot encoded)&amp;lt;br /&amp;gt;dummy_y&amp;amp;nbsp;=&amp;amp;nbsp;np_utils.to_categorical(encoded_Y)
 &amp;lt;/td&amp;gt;
-&lt;/code>&lt;/pre>
-&lt;/tr>
-&lt;/table>
-&lt;h2 id="训练中存在的问题">训练中存在的问题
-&lt;/h2>&lt;p>训练性能低了别急着调参，首先看看数据预处理有没有问题，评价指标是不是写错了。再一个，batch norm 要勤快点加上。&lt;/p>
-&lt;p>相似的文章还有：&lt;a class="link" href="https://svtter.github.io/2018/02/01/keras%e5%9d%91/" target="_blank" rel="noopener"
->https://svtter.github.io/2018/02/01/keras%e5%9d%91/&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;h2 id="训练中存在的问题"&gt;训练中存在的问题
+&lt;/h2&gt;&lt;p&gt;训练性能低了别急着调参，首先看看数据预处理有没有问题，评价指标是不是写错了。再一个，batch norm 要勤快点加上。&lt;/p&gt;
+&lt;p&gt;相似的文章还有：&lt;a class="link" href="https://svtter.github.io/2018/02/01/keras%e5%9d%91/" target="_blank" rel="noopener"
+&gt;https://svtter.github.io/2018/02/01/keras%e5%9d%91/&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>

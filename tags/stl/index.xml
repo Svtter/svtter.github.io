@@ -1,39 +1,39 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>STL on Svtter's Blog</title><link>https://svtter.cn/tags/stl/</link><description>Recent content in STL on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 27 Aug 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/stl/index.xml" rel="self" type="application/rss+xml"/><item><title># Difference between map &amp; unordered_map</title><link>https://svtter.cn/p/%23-difference-between-map-unordered_map/</link><pubDate>Mon, 27 Aug 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%23-difference-between-map-unordered_map/</guid><description>&lt;p>目前有三个容器我不太了解其内部实现，打算通过 &amp;lt;c++ primer&amp;gt; 进行学习&lt;/p>
-&lt;ol>
-&lt;li>map&lt;/li>
-&lt;li>multimap&lt;/li>
-&lt;li>unordered_map&lt;/li>
-&lt;/ol>
-&lt;h2 id="map">map
-&lt;/h2>&lt;p>map 是目前最简单的结构，实现的方法是 BST（binary search tree）。因此，其时间复杂度等都与 BST 相同，搜索，增加，删除基本时间都是 log(n)。&lt;/p>
-&lt;h3 id="use-map-when">use map when
-&lt;/h3>&lt;ol>
-&lt;li>数据有序&lt;/li>
-&lt;li>需要按照有序的顺序获得元素&lt;/li>
-&lt;/ol>
-&lt;h2 id="unordered_map">unordered_map
-&lt;/h2>&lt;p>unordered_map 则是通常所说的 hash table，哈希表，搜索，增加，删除都是以hash表为主，较好的情况是o(1)，也就是hash函数可以较好的把元素分布到表中，如果 hash 函数比较糟糕，则每一次添加删除查找，都是完整遍历一个表。&lt;/p>
-&lt;h3 id="use-unordered_map-when">use unordered_map when
-&lt;/h3>&lt;ol>
-&lt;li>对数据计数&lt;/li>
-&lt;li>只需要根据 key 访问 value&lt;/li>
-&lt;/ol>
-&lt;p>简单来讲，就是当你需要使用 vector 来计数的时候，可以用 unordered_map 来代替。&lt;/p>
-&lt;pre class="wp-block-preformatted">| map | unordered_map
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>STL on Svtter's Blog</title><link>https://svtter.cn/tags/stl/</link><description>Recent content in STL on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 27 Aug 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/stl/index.xml" rel="self" type="application/rss+xml"/><item><title># Difference between map &amp; unordered_map</title><link>https://svtter.cn/p/%23-difference-between-map-unordered_map/</link><pubDate>Mon, 27 Aug 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%23-difference-between-map-unordered_map/</guid><description>&lt;p&gt;目前有三个容器我不太了解其内部实现，打算通过 &amp;lt;c++ primer&amp;gt; 进行学习&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;map&lt;/li&gt;
+&lt;li&gt;multimap&lt;/li&gt;
+&lt;li&gt;unordered_map&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="map"&gt;map
+&lt;/h2&gt;&lt;p&gt;map 是目前最简单的结构，实现的方法是 BST（binary search tree）。因此，其时间复杂度等都与 BST 相同，搜索，增加，删除基本时间都是 log(n)。&lt;/p&gt;
+&lt;h3 id="use-map-when"&gt;use map when
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;数据有序&lt;/li&gt;
+&lt;li&gt;需要按照有序的顺序获得元素&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="unordered_map"&gt;unordered_map
+&lt;/h2&gt;&lt;p&gt;unordered_map 则是通常所说的 hash table，哈希表，搜索，增加，删除都是以hash表为主，较好的情况是o(1)，也就是hash函数可以较好的把元素分布到表中，如果 hash 函数比较糟糕，则每一次添加删除查找，都是完整遍历一个表。&lt;/p&gt;
+&lt;h3 id="use-unordered_map-when"&gt;use unordered_map when
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;对数据计数&lt;/li&gt;
+&lt;li&gt;只需要根据 key 访问 value&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;简单来讲，就是当你需要使用 vector 来计数的时候，可以用 unordered_map 来代替。&lt;/p&gt;
+&lt;pre class="wp-block-preformatted"&gt;| map | unordered_map
 ---------------------------------------------------------
 Ordering | increasing order | no ordering
 | (by default) |
 Implementation | Self balancing BST | Hash Table
-| like&lt;a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/"> Red-Black Tree &lt;/a>|
-search time | log(n) | O(1) -> Average
-| | O(n) -> Worst Case
+| like&lt;a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/"&gt; Red-Black Tree &lt;/a&gt;|
+search time | log(n) | O(1) -&gt; Average
+| | O(n) -&gt; Worst Case
 Insertion time | log(n) + Rebalance | Same as search
-Deletion time | log(n) + Rebalance | Same as search&lt;/pre>
-&lt;h2 id="multimap">multimap
-&lt;/h2>&lt;p>multimap containers are generally slower than &lt;a class="link" href="http://www.cplusplus.com/unordered_multimap" target="_blank" rel="noopener"
->unordered_multimap&lt;/a> containers to access individual elements by their &lt;em>key&lt;/em>, but they allow the direct iteration on subsets based on their order.&lt;/p>
-&lt;p>Multimaps are typically implemented as &lt;em>binary search trees&lt;/em>.&lt;/p>
-&lt;p>multiple 也是用 bst 实现的，相比 map，允许按照顺序遍历元素。&lt;/p>
-&lt;h2 id="reference">Reference&lt;figure class="wp-block-embed"> &lt;a class="link" href="https://www.geeksforgeeks.org/map-vs-unordered_map-c/" target="_blank" rel="noopener"
->https://www.geeksforgeeks.org/map-vs-unordered_map-c/&lt;/a> &lt;/figure>
-&lt;/h2></description></item></channel></rss>
+Deletion time | log(n) + Rebalance | Same as search&lt;/pre&gt;
+&lt;h2 id="multimap"&gt;multimap
+&lt;/h2&gt;&lt;p&gt;multimap containers are generally slower than &lt;a class="link" href="http://www.cplusplus.com/unordered_multimap" target="_blank" rel="noopener"
+&gt;unordered_multimap&lt;/a&gt; containers to access individual elements by their &lt;em&gt;key&lt;/em&gt;, but they allow the direct iteration on subsets based on their order.&lt;/p&gt;
+&lt;p&gt;Multimaps are typically implemented as &lt;em&gt;binary search trees&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;multiple 也是用 bst 实现的，相比 map，允许按照顺序遍历元素。&lt;/p&gt;
+&lt;h2 id="reference"&gt;Reference&lt;figure class="wp-block-embed"&gt; &lt;a class="link" href="https://www.geeksforgeeks.org/map-vs-unordered_map-c/" target="_blank" rel="noopener"
+&gt;https://www.geeksforgeeks.org/map-vs-unordered_map-c/&lt;/a&gt; &lt;/figure&gt;
+&lt;/h2&gt;</description></item></channel></rss>

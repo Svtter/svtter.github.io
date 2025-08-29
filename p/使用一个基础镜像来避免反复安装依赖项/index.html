@@ -52,9 +52,9 @@
 </span><span class=lnt>16
 </span><span class=lnt>17
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=line><span class=cl><span class=c># FROM node:20 as build-stage</span><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> svtter/cathodic-frontend-base:latest as build-stage</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=w> </span><span class=s>svtter/cathodic-frontend-base:latest</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=s>build-stage</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>WORKDIR</span><span class=s> /app</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>WORKDIR</span><span class=w> </span><span class=s>/app</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENV</span> <span class=nv>ELECTRON_MIRROR</span><span class=o>=</span><span class=s2>&#34;https://npmmirror.com/mirrors/electron/&#34;</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
@@ -65,7 +65,7 @@
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> pnpm run build:vite<span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> nginx:1.25.1 as prod</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=w> </span><span class=s>nginx:1.25.1</span><span class=w> </span><span class=k>as</span><span class=w> </span><span class=s>prod</span><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err>
 </span></span></span><span class=line><span class=cl><span class=err></span><span class=k>COPY</span> --from<span class=o>=</span>build-stage /app/src/out /usr/share/nginx/html<span class=err>
 </span></span></span></code></pre></td></tr></table></div></div><blockquote><p>注意：因为我的代码里使用了 electron，所以为了速度更快，我使用了<code>ELECTRON_MIRROR</code>。</p></blockquote><p>这里的构建命令是：<code>docker build -t svtter/frontend:latest .</code>

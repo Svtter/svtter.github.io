@@ -1,62 +1,62 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Language on Svtter's Blog</title><link>https://svtter.cn/tags/language/</link><description>Recent content in Language on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 20 Nov 2021 10:12:45 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/language/index.xml" rel="self" type="application/rss+xml"/><item><title>在 MacOS 上使用 Ruby</title><link>https://svtter.cn/p/%E5%9C%A8-macos-%E4%B8%8A%E4%BD%BF%E7%94%A8-ruby/</link><pubDate>Sat, 20 Nov 2021 10:12:45 +0800</pubDate><guid>https://svtter.cn/p/%E5%9C%A8-macos-%E4%B8%8A%E4%BD%BF%E7%94%A8-ruby/</guid><description>&lt;blockquote>
-&lt;p>Ruby 是一个伟大的编程语言，但是很多国内的工程师尚未体会到它的精髓。&lt;/p>&lt;/blockquote>
-&lt;p>MacOS 上本身自带一个 Ruby runtime，在笔者的系统上，这个版本是 &lt;code>2.6.0&lt;/code>。&lt;/p>
-&lt;p>建议读者通过安装&lt;code>rbenv&lt;/code>来控制ruby的版本，而不是直接使用&lt;code>brew install ruby&lt;/code>安装的 ruby。&lt;/p>
-&lt;p>brew 直接安装的 ruby，会导致&lt;code>gem env home&lt;/code>仍然是 &lt;code>/Library/...&lt;/code>的目录，从而无法安装&lt;code>rails&lt;/code>等工具。&lt;/p>
-&lt;h2 id="安装-rbenv">安装 rbenv
-&lt;/h2>&lt;ol>
-&lt;li>执行&lt;code>brew install rbenv&lt;/code>命令；&lt;/li>
-&lt;li>配置&lt;code>zshrc/bashrc&lt;/code>文件。&lt;/li>
-&lt;/ol>
-&lt;p>因为笔者使用的 SHELL 为 zsh，所以添加命令到&lt;code>.zshrc&lt;/code>：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">export&lt;/span> &lt;span class="nv">PATH&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="nv">$HOME&lt;/span>&lt;span class="s2">/.rbenv/bin:&lt;/span>&lt;span class="nv">$PATH&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">eval&lt;/span> &lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="k">$(&lt;/span>rbenv init - zsh&lt;span class="k">)&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="安装-ruby">安装 Ruby
-&lt;/h2>&lt;p>在本文发表时，ruby 的最新版本为&lt;code>3.0.2&lt;/code>。&lt;/p>
-&lt;p>&lt;code>rbenv install 3.0.2&lt;/code>&lt;/p>
-&lt;p>安装完成后，使用&lt;/p>
-&lt;p>&lt;code>rbenv local 3.0.2&lt;/code>&lt;/p>
-&lt;p>指定当前使用的 ruby 版本。&lt;/p>
-&lt;h2 id="执行-ruby">执行 ruby
-&lt;/h2>&lt;p>通过&lt;code>ruby --version&lt;/code>命令，我们可以查看当前 ruby 的版本。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ruby --version
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ruby 3.0.2p107 &lt;span class="o">(&lt;/span>2021-07-07 revision 0db68f0233&lt;span class="o">)&lt;/span> &lt;span class="o">[&lt;/span>arm64-darwin21&lt;span class="o">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="配置-gem">配置 gem
-&lt;/h2>&lt;p>gem 是 Ruby 的包管理工具，类似于Python 的 pip，Nodejs 的 npm。&lt;/p>
-&lt;p>在国内的环境下，因为安全原因，gem 下载软件包的速度十分缓慢。&lt;/p>
-&lt;p>因此，我们需要配置一下国内的 mirror （镜像），来加快包的下载速度。&lt;/p>
-&lt;p>在此推荐一下&lt;a class="link" href="https://gems.ruby-china.com/" target="_blank" rel="noopener"
->Ruby China&lt;/a>。（——但是国内的镜像源真的可信吗？）&lt;/p>
-&lt;p>采用如下方式进行更新:&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ gem sources -l
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">https://gems.ruby-china.com
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># 确保只有 gems.ruby-china.com
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>更新完成后，gem 的下载速度就会飞快。&lt;/p>
-&lt;p>此时就可以畅游 Ruby 啦~赶紧把&lt;code>rails&lt;/code>安装起来吧！&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Language on Svtter's Blog</title><link>https://svtter.cn/tags/language/</link><description>Recent content in Language on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 20 Nov 2021 10:12:45 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/language/index.xml" rel="self" type="application/rss+xml"/><item><title>在 MacOS 上使用 Ruby</title><link>https://svtter.cn/p/%E5%9C%A8-macos-%E4%B8%8A%E4%BD%BF%E7%94%A8-ruby/</link><pubDate>Sat, 20 Nov 2021 10:12:45 +0800</pubDate><guid>https://svtter.cn/p/%E5%9C%A8-macos-%E4%B8%8A%E4%BD%BF%E7%94%A8-ruby/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;Ruby 是一个伟大的编程语言，但是很多国内的工程师尚未体会到它的精髓。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;MacOS 上本身自带一个 Ruby runtime，在笔者的系统上，这个版本是 &lt;code&gt;2.6.0&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;建议读者通过安装&lt;code&gt;rbenv&lt;/code&gt;来控制ruby的版本，而不是直接使用&lt;code&gt;brew install ruby&lt;/code&gt;安装的 ruby。&lt;/p&gt;
+&lt;p&gt;brew 直接安装的 ruby，会导致&lt;code&gt;gem env home&lt;/code&gt;仍然是 &lt;code&gt;/Library/...&lt;/code&gt;的目录，从而无法安装&lt;code&gt;rails&lt;/code&gt;等工具。&lt;/p&gt;
+&lt;h2 id="安装-rbenv"&gt;安装 rbenv
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;执行&lt;code&gt;brew install rbenv&lt;/code&gt;命令；&lt;/li&gt;
+&lt;li&gt;配置&lt;code&gt;zshrc/bashrc&lt;/code&gt;文件。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;因为笔者使用的 SHELL 为 zsh，所以添加命令到&lt;code&gt;.zshrc&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$HOME&lt;/span&gt;&lt;span class="s2"&gt;/.rbenv/bin:&lt;/span&gt;&lt;span class="nv"&gt;$PATH&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;eval&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;rbenv init - zsh&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="安装-ruby"&gt;安装 Ruby
+&lt;/h2&gt;&lt;p&gt;在本文发表时，ruby 的最新版本为&lt;code&gt;3.0.2&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;rbenv install 3.0.2&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;安装完成后，使用&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;rbenv local 3.0.2&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;指定当前使用的 ruby 版本。&lt;/p&gt;
+&lt;h2 id="执行-ruby"&gt;执行 ruby
+&lt;/h2&gt;&lt;p&gt;通过&lt;code&gt;ruby --version&lt;/code&gt;命令，我们可以查看当前 ruby 的版本。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ ruby --version
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ruby 3.0.2p107 &lt;span class="o"&gt;(&lt;/span&gt;2021-07-07 revision 0db68f0233&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;arm64-darwin21&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="配置-gem"&gt;配置 gem
+&lt;/h2&gt;&lt;p&gt;gem 是 Ruby 的包管理工具，类似于Python 的 pip，Nodejs 的 npm。&lt;/p&gt;
+&lt;p&gt;在国内的环境下，因为安全原因，gem 下载软件包的速度十分缓慢。&lt;/p&gt;
+&lt;p&gt;因此，我们需要配置一下国内的 mirror （镜像），来加快包的下载速度。&lt;/p&gt;
+&lt;p&gt;在此推荐一下&lt;a class="link" href="https://gems.ruby-china.com/" target="_blank" rel="noopener"
+&gt;Ruby China&lt;/a&gt;。（——但是国内的镜像源真的可信吗？）&lt;/p&gt;
+&lt;p&gt;采用如下方式进行更新:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;$ gem sources -l
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;https://gems.ruby-china.com
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# 确保只有 gems.ruby-china.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;更新完成后，gem 的下载速度就会飞快。&lt;/p&gt;
+&lt;p&gt;此时就可以畅游 Ruby 啦~赶紧把&lt;code&gt;rails&lt;/code&gt;安装起来吧！&lt;/p&gt;</description></item></channel></rss>

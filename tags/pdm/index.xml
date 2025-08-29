@@ -1,62 +1,62 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PDM on Svtter's Blog</title><link>https://svtter.cn/tags/pdm/</link><description>Recent content in PDM on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 19 Feb 2025 16:46:24 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/pdm/index.xml" rel="self" type="application/rss+xml"/><item><title>Dynamic Version in PDM.md</title><link>https://svtter.cn/p/dynamic-version-in-pdm.md/</link><pubDate>Wed, 19 Feb 2025 16:46:24 +0800</pubDate><guid>https://svtter.cn/p/dynamic-version-in-pdm.md/</guid><description>&lt;p>How to set dynamic version in PDM.&lt;/p>
-&lt;p>Change the &lt;code>pyproject.toml&lt;/code>&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">project&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">...&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">-&lt;/span> &lt;span class="nx">version&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;0.1.0&amp;#34;&lt;/span> &lt;span class="nx">remove&lt;/span> &lt;span class="nx">this&lt;/span> &lt;span class="nx">line&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="err">+&lt;/span> &lt;span class="nx">dynamic&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;version&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>Add new configuration:&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="nx">tool&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">pdm&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">version&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">source&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;file&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">path&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;mypackage/__init__.py&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item><item><title>PDM 使用过程中的问题</title><link>https://svtter.cn/p/pdm-%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 09 Feb 2025 12:15:25 +0800</pubDate><guid>https://svtter.cn/p/pdm-%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</guid><description>&lt;p>在使用 pdm 的时候，如果更新包很快，有时候会无法更新 lockfile，也就是&lt;code>pdm lock&lt;/code>无法根据最新的包生成内容。&lt;/p>
-&lt;p>这个时候，可以使用&lt;code>pdm cache info&lt;/code>来查看 cache 情况。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">➜ high-energy git:&lt;span class="o">(&lt;/span>main&lt;span class="o">)&lt;/span> ✗ pdm cache info
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Cache Root: /home/svtter/.cache/pdm, Total size: 17.9 MB
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> File Hash Cache: /home/svtter/.cache/pdm/hashes
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 793, Size: &lt;span class="m">56&lt;/span> kB
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> HTTP Cache: /home/svtter/.cache/pdm/http
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 317, Size: 12.1 MB
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Wheels Cache: /home/svtter/.cache/pdm/wheels
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 6, Size: 5.6 MB
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Metadata Cache: /home/svtter/.cache/pdm/metadata
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Files: 6, Size: &lt;span class="m">147&lt;/span> kB
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Package Cache: /home/svtter/.cache/pdm/packages
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Packages: 0, Size: &lt;span class="m">0&lt;/span> bytes
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>一般删除 &lt;code>HTTP Cache&lt;/code> 可以解决问题。默认路径是&lt;code>$HOME/.cache/pdm/http&lt;/code>。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PDM on Svtter's Blog</title><link>https://svtter.cn/tags/pdm/</link><description>Recent content in PDM on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 19 Feb 2025 16:46:24 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/pdm/index.xml" rel="self" type="application/rss+xml"/><item><title>Dynamic Version in PDM.md</title><link>https://svtter.cn/p/dynamic-version-in-pdm.md/</link><pubDate>Wed, 19 Feb 2025 16:46:24 +0800</pubDate><guid>https://svtter.cn/p/dynamic-version-in-pdm.md/</guid><description>&lt;p&gt;How to set dynamic version in PDM.&lt;/p&gt;
+&lt;p&gt;Change the &lt;code&gt;pyproject.toml&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;project&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;version&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;0.1.0&amp;#34;&lt;/span&gt; &lt;span class="nx"&gt;remove&lt;/span&gt; &lt;span class="nx"&gt;this&lt;/span&gt; &lt;span class="nx"&gt;line&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;dynamic&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;version&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Add new configuration:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;tool&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;pdm&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;version&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;source&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;file&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;path&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;mypackage/__init__.py&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>PDM 使用过程中的问题</title><link>https://svtter.cn/p/pdm-%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 09 Feb 2025 12:15:25 +0800</pubDate><guid>https://svtter.cn/p/pdm-%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98/</guid><description>&lt;p&gt;在使用 pdm 的时候，如果更新包很快，有时候会无法更新 lockfile，也就是&lt;code&gt;pdm lock&lt;/code&gt;无法根据最新的包生成内容。&lt;/p&gt;
+&lt;p&gt;这个时候，可以使用&lt;code&gt;pdm cache info&lt;/code&gt;来查看 cache 情况。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;➜ high-energy git:&lt;span class="o"&gt;(&lt;/span&gt;main&lt;span class="o"&gt;)&lt;/span&gt; ✗ pdm cache info
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Cache Root: /home/svtter/.cache/pdm, Total size: 17.9 MB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; File Hash Cache: /home/svtter/.cache/pdm/hashes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Files: 793, Size: &lt;span class="m"&gt;56&lt;/span&gt; kB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; HTTP Cache: /home/svtter/.cache/pdm/http
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Files: 317, Size: 12.1 MB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Wheels Cache: /home/svtter/.cache/pdm/wheels
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Files: 6, Size: 5.6 MB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Metadata Cache: /home/svtter/.cache/pdm/metadata
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Files: 6, Size: &lt;span class="m"&gt;147&lt;/span&gt; kB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Package Cache: /home/svtter/.cache/pdm/packages
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Packages: 0, Size: &lt;span class="m"&gt;0&lt;/span&gt; bytes
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;一般删除 &lt;code&gt;HTTP Cache&lt;/code&gt; 可以解决问题。默认路径是&lt;code&gt;$HOME/.cache/pdm/http&lt;/code&gt;。&lt;/p&gt;</description></item></channel></rss>

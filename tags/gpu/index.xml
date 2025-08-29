@@ -1,178 +1,178 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GPU on Svtter's Blog</title><link>https://svtter.cn/tags/gpu/</link><description>Recent content in GPU on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 30 May 2025 11:25:39 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/gpu/index.xml" rel="self" type="application/rss+xml"/><item><title>Kill Ghost Process</title><link>https://svtter.cn/p/kill-ghost-process/</link><pubDate>Fri, 30 May 2025 11:25:39 +0800</pubDate><guid>https://svtter.cn/p/kill-ghost-process/</guid><description>&lt;p>有时候我们会遇到一些幽灵进程，这些进程占用了显卡资源，但实际上并未发挥作用。&lt;/p>
-&lt;p>例如这样：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;span class="lnt">25
-&lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;span class="lnt">27
-&lt;/span>&lt;span class="lnt">28
-&lt;/span>&lt;span class="lnt">29
-&lt;/span>&lt;span class="lnt">30
-&lt;/span>&lt;span class="lnt">31
-&lt;/span>&lt;span class="lnt">32
-&lt;/span>&lt;span class="lnt">33
-&lt;/span>&lt;span class="lnt">34
-&lt;/span>&lt;span class="lnt">35
-&lt;/span>&lt;span class="lnt">36
-&lt;/span>&lt;span class="lnt">37
-&lt;/span>&lt;span class="lnt">38
-&lt;/span>&lt;span class="lnt">39
-&lt;/span>&lt;span class="lnt">40
-&lt;/span>&lt;span class="lnt">41
-&lt;/span>&lt;span class="lnt">42
-&lt;/span>&lt;span class="lnt">43
-&lt;/span>&lt;span class="lnt">44
-&lt;/span>&lt;span class="lnt">45
-&lt;/span>&lt;span class="lnt">46
-&lt;/span>&lt;span class="lnt">47
-&lt;/span>&lt;span class="lnt">48
-&lt;/span>&lt;span class="lnt">49
-&lt;/span>&lt;span class="lnt">50
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">Fri May &lt;span class="m">30&lt;/span> 11:22:31 &lt;span class="m">2025&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------------------------------------------------------------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NVIDIA-SMI 545.29.06 Driver Version: 545.29.06 CUDA Version: 12.3 &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span>-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> GPU Name Persistence-M &lt;span class="p">|&lt;/span> Bus-Id Disp.A &lt;span class="p">|&lt;/span> Volatile Uncorr. ECC &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> Fan Temp Perf Pwr:Usage/Cap &lt;span class="p">|&lt;/span> Memory-Usage &lt;span class="p">|&lt;/span> GPU-Util Compute M. &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> MIG M. &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span>&lt;span class="o">=========================================&lt;/span>+&lt;span class="o">======================&lt;/span>+&lt;span class="o">======================&lt;/span>&lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:1A:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 38C P0 43W / 300W &lt;span class="p">|&lt;/span> 8696MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">1&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:1B:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 41C P0 42W / 300W &lt;span class="p">|&lt;/span> 9408MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">2&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:3D:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 39C P0 44W / 300W &lt;span class="p">|&lt;/span> 4288MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">3&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:3E:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 39C P0 43W / 300W &lt;span class="p">|&lt;/span> 404MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">4&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:88:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 42C P0 43W / 300W &lt;span class="p">|&lt;/span> 13248MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">5&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:89:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 45C P0 49W / 300W &lt;span class="p">|&lt;/span> 9450MiB / 16384MiB &lt;span class="p">|&lt;/span> 8% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">6&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:B1:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 42C P0 40W / 300W &lt;span class="p">|&lt;/span> 9200MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">7&lt;/span> Tesla P100-SXM2-16GB Off &lt;span class="p">|&lt;/span> 00000000:B2:00.0 Off &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> N/A 43C P0 41W / 300W &lt;span class="p">|&lt;/span> 5350MiB / 16384MiB &lt;span class="p">|&lt;/span> 0% Default &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> N/A &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------+----------------------+----------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------------------------------------------------------------------------+
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> Processes: &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> GPU GI CI PID Type Process name GPU Memory &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> ID ID Usage &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span>&lt;span class="o">=======================================================================================&lt;/span>&lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">1&lt;/span> N/A N/A &lt;span class="m">65559&lt;/span> C python 9406MiB &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">3&lt;/span> N/A N/A &lt;span class="m">85647&lt;/span> C ...Polyspace/R2020a/bin/glnxa64/MATLAB 400MiB &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> &lt;span class="m">5&lt;/span> N/A N/A &lt;span class="m">20759&lt;/span> C rddfg_cent_rw-StarCraft2-debug@syc 9448MiB &lt;span class="p">|&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------------------------------------------------------------------------+
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>明确占用显存的就三个进程，但是其他的显存都被占用了。&lt;/p>
-&lt;h2 id="解决方案">解决方案
-&lt;/h2>&lt;p>我们保存并运行如下的脚本:&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#!/bin/bash
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># nvidia-smi 显示的合法 PID&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 以下 PID 为合法的示例&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">KEEP_PIDS&lt;/span>&lt;span class="o">=(&lt;/span>&lt;span class="s2">&amp;#34;65559&amp;#34;&lt;/span> &lt;span class="s2">&amp;#34;85647&amp;#34;&lt;/span> &lt;span class="s2">&amp;#34;20759&amp;#34;&lt;/span>&lt;span class="o">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 所有 GPU 相关的进程（不通过 nvidia-smi 显示）&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">ALL_PIDS&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="k">$(&lt;/span>fuser /dev/nvidia* 2&amp;gt;/dev/null &lt;span class="p">|&lt;/span> tr &lt;span class="s1">&amp;#39; &amp;#39;&lt;/span> &lt;span class="s1">&amp;#39;\n&amp;#39;&lt;/span> &lt;span class="p">|&lt;/span> sort -u&lt;span class="k">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">for&lt;/span> pid in &lt;span class="nv">$ALL_PIDS&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="k">do&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">[[&lt;/span> ! &lt;span class="s2">&amp;#34; &lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nv">KEEP_PIDS&lt;/span>&lt;span class="p">[@]&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> &amp;#34;&lt;/span> &lt;span class="o">=&lt;/span>~ &lt;span class="s2">&amp;#34; &lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nv">pid&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2"> &amp;#34;&lt;/span> &lt;span class="o">]]&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="k">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;Killing ghost process PID &lt;/span>&lt;span class="nv">$pid&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> sudo &lt;span class="nb">kill&lt;/span> -9 &lt;span class="nv">$pid&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;Keeping important process PID &lt;/span>&lt;span class="nv">$pid&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">done&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;!-- 参考链接：https://chatgpt.com/share/683925bd-0860-8009-8756-b3b2c067c20b --></description></item><item><title>Ubuntu 装机总结</title><link>https://svtter.cn/p/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/</link><pubDate>Tue, 19 Mar 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/</guid><description>&lt;p>本以为常年 Ubuntu 装机小达人的我不会再出现重装的失败的情况，不想，竟然成功将自己的重装次数刷新到30次（仔细想想，不应该是30次，应该是50次都有了吧）。&lt;/p>
-&lt;p>绝望之余，打算记录一下自己装机的心路历程。&lt;/p>
-&lt;ul>
-&lt;li>首先很恶心的一件事，Ubuntu 安装的时候如果网络环境不好，那么安装程序会闪退。基于 Ubuntu 的 mint 就没有这个问题。可见 Ubuntu的安装程序写的有多么不鲁棒。。（WTF）。&lt;/li>
-&lt;li>再一个事情，cuda 最近（2019-03-19）安装不上了。我不知道是内核的原因，还是 header 的问题，反正就是安装不上了。我想尝试一下 runfile，看看能不能安装上，如果不能安装，那么我打算在网上找一个教程。我连 cuda 都没能装上，真不知道是哪里出了问题。&lt;/li>
-&lt;li>装不上的表现是，mint 无法进入图形界面，并且键盘和鼠标都没有反应。-.- 我的天啊。&lt;/li>
-&lt;li>&lt;/li>
-&lt;/ul>
-&lt;hr class="wp-block-separator" />
-&lt;p>放弃了，真是老狗，只要安装 nvidia 驱动电脑就启动不了，闹呢，浪费这么多时间。
-我也想只安装 cuda 然后直接上 docker 然后上 deepo 啊。&lt;/p>
-&lt;hr class="wp-block-separator" />
-&lt;p>19日晚：明天再试试自带的驱动。&lt;/p>
-&lt;p>为啥重装呢？&lt;/p>
-&lt;blockquote class="wp-block-quote">
-&lt;p>
-之前的根目录分的还是太小。分给根目录32G，然后给&lt;code>/usr/local&lt;/code>分了大概128G，但是东西都安装到 &lt;code>/usr/bin/lib&lt;/code> 下面了，索性就重装了。当然&lt;code>/home&lt;/code>是肯定分出去了的。
-&lt;/p>
-&lt;p>&lt;cite>&lt;br />&lt;br />&lt;/cite>&lt;/p>
-&lt;/blockquote>
-&lt;p>With third-party driver ( nvidia – 390 ) I finally success. ALL HAIL MINT !&lt;/p>
-&lt;p>最后通过 Mint 安装了一下第三方的 nvidia 驱动，390版本，终于成功了。看来以后还是要搜索相关的博客才行了。&lt;/p>
-&lt;p>Cuda 装好了，但是没有办法跑深度。这是最尴尬的。&lt;/p>
-&lt;hr class="wp-block-separator" />
-&lt;p>可能是 nomodeset 的问题，我尝试一下。&lt;/p>
-&lt;hr class="wp-block-separator" />
-&lt;p>原来是 gdm3 与 nvidia-driver-410 冲突的bug，现在已经解决了。这个问题最终是看了一篇 CSDN 博客得到的，博主查了 launchpad 里面的 bug report，做的十分不错。这也提供了一个思路，就是在排查类似问题的时候，可以首先查一下 launchpad，随后，可以根据排查错误的过程，学习更多的东西。受教了。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GPU on Svtter's Blog</title><link>https://svtter.cn/tags/gpu/</link><description>Recent content in GPU on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 30 May 2025 11:25:39 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/gpu/index.xml" rel="self" type="application/rss+xml"/><item><title>Kill Ghost Process</title><link>https://svtter.cn/p/kill-ghost-process/</link><pubDate>Fri, 30 May 2025 11:25:39 +0800</pubDate><guid>https://svtter.cn/p/kill-ghost-process/</guid><description>&lt;p&gt;有时候我们会遇到一些幽灵进程，这些进程占用了显卡资源，但实际上并未发挥作用。&lt;/p&gt;
+&lt;p&gt;例如这样：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;span class="lnt"&gt;41
+&lt;/span&gt;&lt;span class="lnt"&gt;42
+&lt;/span&gt;&lt;span class="lnt"&gt;43
+&lt;/span&gt;&lt;span class="lnt"&gt;44
+&lt;/span&gt;&lt;span class="lnt"&gt;45
+&lt;/span&gt;&lt;span class="lnt"&gt;46
+&lt;/span&gt;&lt;span class="lnt"&gt;47
+&lt;/span&gt;&lt;span class="lnt"&gt;48
+&lt;/span&gt;&lt;span class="lnt"&gt;49
+&lt;/span&gt;&lt;span class="lnt"&gt;50
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Fri May &lt;span class="m"&gt;30&lt;/span&gt; 11:22:31 &lt;span class="m"&gt;2025&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+---------------------------------------------------------------------------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; NVIDIA-SMI 545.29.06 Driver Version: 545.29.06 CUDA Version: 12.3 &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt;-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; GPU Name Persistence-M &lt;span class="p"&gt;|&lt;/span&gt; Bus-Id Disp.A &lt;span class="p"&gt;|&lt;/span&gt; Volatile Uncorr. ECC &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; Fan Temp Perf Pwr:Usage/Cap &lt;span class="p"&gt;|&lt;/span&gt; Memory-Usage &lt;span class="p"&gt;|&lt;/span&gt; GPU-Util Compute M. &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; MIG M. &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="o"&gt;=========================================&lt;/span&gt;+&lt;span class="o"&gt;======================&lt;/span&gt;+&lt;span class="o"&gt;======================&lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:1A:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 38C P0 43W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 8696MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:1B:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 41C P0 42W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 9408MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:3D:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 39C P0 44W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 4288MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:3E:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 39C P0 43W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 404MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:88:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 42C P0 43W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 13248MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:89:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 45C P0 49W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 9450MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 8% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;6&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:B1:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 42C P0 40W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 9200MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;7&lt;/span&gt; Tesla P100-SXM2-16GB Off &lt;span class="p"&gt;|&lt;/span&gt; 00000000:B2:00.0 Off &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; N/A 43C P0 41W / 300W &lt;span class="p"&gt;|&lt;/span&gt; 5350MiB / 16384MiB &lt;span class="p"&gt;|&lt;/span&gt; 0% Default &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; N/A &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+-----------------------------------------+----------------------+----------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+---------------------------------------------------------------------------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; Processes: &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; GPU GI CI PID Type Process name GPU Memory &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; ID ID Usage &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="o"&gt;=======================================================================================&lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt; N/A N/A &lt;span class="m"&gt;65559&lt;/span&gt; C python 9406MiB &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; N/A N/A &lt;span class="m"&gt;85647&lt;/span&gt; C ...Polyspace/R2020a/bin/glnxa64/MATLAB 400MiB &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt; N/A N/A &lt;span class="m"&gt;20759&lt;/span&gt; C rddfg_cent_rw-StarCraft2-debug@syc 9448MiB &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+---------------------------------------------------------------------------------------+
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;明确占用显存的就三个进程，但是其他的显存都被占用了。&lt;/p&gt;
+&lt;h2 id="解决方案"&gt;解决方案
+&lt;/h2&gt;&lt;p&gt;我们保存并运行如下的脚本:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#!/bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# nvidia-smi 显示的合法 PID&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 以下 PID 为合法的示例&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;KEEP_PIDS&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;65559&amp;#34;&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;85647&amp;#34;&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;20759&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 所有 GPU 相关的进程（不通过 nvidia-smi 显示）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ALL_PIDS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;fuser /dev/nvidia* 2&amp;gt;/dev/null &lt;span class="p"&gt;|&lt;/span&gt; tr &lt;span class="s1"&gt;&amp;#39; &amp;#39;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;\n&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sort -u&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;for&lt;/span&gt; pid in &lt;span class="nv"&gt;$ALL_PIDS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; ! &lt;span class="s2"&gt;&amp;#34; &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;KEEP_PIDS&lt;/span&gt;&lt;span class="p"&gt;[@]&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; &amp;#34;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;~ &lt;span class="s2"&gt;&amp;#34; &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; &amp;#34;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Killing ghost process PID &lt;/span&gt;&lt;span class="nv"&gt;$pid&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sudo &lt;span class="nb"&gt;kill&lt;/span&gt; -9 &lt;span class="nv"&gt;$pid&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Keeping important process PID &lt;/span&gt;&lt;span class="nv"&gt;$pid&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;!-- 参考链接：https://chatgpt.com/share/683925bd-0860-8009-8756-b3b2c067c20b --&gt;</description></item><item><title>Ubuntu 装机总结</title><link>https://svtter.cn/p/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/</link><pubDate>Tue, 19 Mar 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/</guid><description>&lt;p&gt;本以为常年 Ubuntu 装机小达人的我不会再出现重装的失败的情况，不想，竟然成功将自己的重装次数刷新到30次（仔细想想，不应该是30次，应该是50次都有了吧）。&lt;/p&gt;
+&lt;p&gt;绝望之余，打算记录一下自己装机的心路历程。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先很恶心的一件事，Ubuntu 安装的时候如果网络环境不好，那么安装程序会闪退。基于 Ubuntu 的 mint 就没有这个问题。可见 Ubuntu的安装程序写的有多么不鲁棒。。（WTF）。&lt;/li&gt;
+&lt;li&gt;再一个事情，cuda 最近（2019-03-19）安装不上了。我不知道是内核的原因，还是 header 的问题，反正就是安装不上了。我想尝试一下 runfile，看看能不能安装上，如果不能安装，那么我打算在网上找一个教程。我连 cuda 都没能装上，真不知道是哪里出了问题。&lt;/li&gt;
+&lt;li&gt;装不上的表现是，mint 无法进入图形界面，并且键盘和鼠标都没有反应。-.- 我的天啊。&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;放弃了，真是老狗，只要安装 nvidia 驱动电脑就启动不了，闹呢，浪费这么多时间。
+我也想只安装 cuda 然后直接上 docker 然后上 deepo 啊。&lt;/p&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;19日晚：明天再试试自带的驱动。&lt;/p&gt;
+&lt;p&gt;为啥重装呢？&lt;/p&gt;
+&lt;blockquote class="wp-block-quote"&gt;
+&lt;p&gt;
+之前的根目录分的还是太小。分给根目录32G，然后给&lt;code&gt;/usr/local&lt;/code&gt;分了大概128G，但是东西都安装到 &lt;code&gt;/usr/bin/lib&lt;/code&gt; 下面了，索性就重装了。当然&lt;code&gt;/home&lt;/code&gt;是肯定分出去了的。
+&lt;/p&gt;
+&lt;p&gt;&lt;cite&gt;&lt;br /&gt;&lt;br /&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;With third-party driver ( nvidia – 390 ) I finally success. ALL HAIL MINT !&lt;/p&gt;
+&lt;p&gt;最后通过 Mint 安装了一下第三方的 nvidia 驱动，390版本，终于成功了。看来以后还是要搜索相关的博客才行了。&lt;/p&gt;
+&lt;p&gt;Cuda 装好了，但是没有办法跑深度。这是最尴尬的。&lt;/p&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;可能是 nomodeset 的问题，我尝试一下。&lt;/p&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;原来是 gdm3 与 nvidia-driver-410 冲突的bug，现在已经解决了。这个问题最终是看了一篇 CSDN 博客得到的，博主查了 launchpad 里面的 bug report，做的十分不错。这也提供了一个思路，就是在排查类似问题的时候，可以首先查一下 launchpad，随后，可以根据排查错误的过程，学习更多的东西。受教了。&lt;/p&gt;</description></item></channel></rss>

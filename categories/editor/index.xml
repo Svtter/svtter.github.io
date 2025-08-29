@@ -1,88 +1,88 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Editor on Svtter's Blog</title><link>https://svtter.cn/categories/editor/</link><description>Recent content in Editor on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 30 Apr 2025 10:54:07 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/editor/index.xml" rel="self" type="application/rss+xml"/><item><title>Visual Studio Code Tips - 2</title><link>https://svtter.cn/p/visual-studio-code-tips-2/</link><pubDate>Wed, 30 Apr 2025 10:54:07 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-2/</guid><description>&lt;img src="https://svtter.cn/p/visual-studio-code-tips-2/bg.png" alt="Featured image of post Visual Studio Code Tips - 2" />&lt;p>当我们使用 vscode （cursor）进行 python 编码的时候，难免会引入大文件到工作目录里。此时，如果不对分析器加以限制，容易导致整个系统非常卡顿。&lt;/p>
-&lt;h2 id="避免大文件引入">避免大文件引入
-&lt;/h2>&lt;p>我们可以编辑设置来避免这个问题。&lt;/p>
-&lt;p>例如，我们希望忽略的路径是&lt;code>/app/data&lt;/code>，相对目录是&lt;code>./data&lt;/code>。通过打开&lt;code>&amp;lt;project_root&amp;gt;/.vscode/settings.json&lt;/code>，加入如下内容：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;span class="lnt">8
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;python.analysis.exclude&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;/app/data&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;/app/data/**&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;./data/**&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;./data&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这样一来，就可以避免分析器，例如 pylancer，分析你的数据目录了。&lt;/p>
-&lt;h2 id="增加默认-pythonpath">增加默认 PYTHONPATH
-&lt;/h2>&lt;p>有时候我们希望在某个文件夹下的 python 包可以被直接引入。我们可以设置 &lt;code>PYHONPATH&lt;/code> 到 &lt;code>.vscode/settings.json&lt;/code>:&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;python.envFile&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;${workspaceFolder}/.env&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>然后配置 env 文件（例如将 /app 加入到 PYTHONPATH）&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-env" data-lang="env">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">PYTHONPATH&lt;/span>&lt;span class="o">=&lt;/span>/app
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item><item><title>Visual Studio Code Tips - 1</title><link>https://svtter.cn/p/visual-studio-code-tips-1/</link><pubDate>Tue, 09 Jun 2020 11:25:25 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-1/</guid><description>&lt;p>又有一段时间没有更新博客啦！这篇文章是&lt;code>vscode&lt;/code>使用技巧。&lt;/p>
-&lt;p>最近因为学生&lt;code>pycharm&lt;/code>到期，因此采用&lt;code>visual studio code&lt;/code>代替。使用过程中遇到不少问题，在此记录一下，为以后提供备忘。&lt;/p>
-&lt;h2 id="关于测试">关于测试
-&lt;/h2>&lt;ol>
-&lt;li>只有使用 &lt;code>pytest&lt;/code>， 才能将错误显示到 &lt;code>problems&lt;/code> 中&lt;/li>
-&lt;li>test 的上级目录必须是 &lt;code>package&lt;/code>，这意味着每层目录都要有 &lt;code>__init__.py&lt;/code>&lt;/li>
-&lt;/ol>
-&lt;p>并行测试：&lt;/p>
-&lt;p>&lt;code>pip install pytest-xdist&lt;/code>&lt;/p>
-&lt;p>并且在&lt;code>pytest.ini&lt;/code>下增加：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">[pytest]
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">addopts = -n4
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="文件管理器">文件管理器
-&lt;/h2>&lt;ol>
-&lt;li>打开&lt;code>User Settings&lt;/code>，搜素&lt;code>files.exclude&lt;/code> 选项：去掉不想在文件管理器中看到的东西&lt;/li>
-&lt;/ol>
-&lt;h2 id="lint">lint
-&lt;/h2>&lt;p>在错误检查方面，vscode 有许多细节可以设置。&lt;/p>
-&lt;p>&lt;a class="link" href="https://code.visualstudio.com/docs/python/linting" target="_blank" rel="noopener"
->https://code.visualstudio.com/docs/python/linting&lt;/a>&lt;/p>
-&lt;p>增加&lt;code>django&lt;/code>的检查：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="s2">&amp;#34;python.linting.pylintArgs&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;--load-plugins&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;pylint_django&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这样就可以避免一些错误。比如：&lt;code>objects&lt;/code>检查的错误。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Editor on Svtter's Blog</title><link>https://svtter.cn/categories/editor/</link><description>Recent content in Editor on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 30 Apr 2025 10:54:07 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/editor/index.xml" rel="self" type="application/rss+xml"/><item><title>Visual Studio Code Tips - 2</title><link>https://svtter.cn/p/visual-studio-code-tips-2/</link><pubDate>Wed, 30 Apr 2025 10:54:07 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-2/</guid><description>&lt;img src="https://svtter.cn/p/visual-studio-code-tips-2/bg.png" alt="Featured image of post Visual Studio Code Tips - 2" /&gt;&lt;p&gt;当我们使用 vscode （cursor）进行 python 编码的时候，难免会引入大文件到工作目录里。此时，如果不对分析器加以限制，容易导致整个系统非常卡顿。&lt;/p&gt;
+&lt;h2 id="避免大文件引入"&gt;避免大文件引入
+&lt;/h2&gt;&lt;p&gt;我们可以编辑设置来避免这个问题。&lt;/p&gt;
+&lt;p&gt;例如，我们希望忽略的路径是&lt;code&gt;/app/data&lt;/code&gt;，相对目录是&lt;code&gt;./data&lt;/code&gt;。通过打开&lt;code&gt;&amp;lt;project_root&amp;gt;/.vscode/settings.json&lt;/code&gt;，加入如下内容：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;python.analysis.exclude&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;/app/data&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;/app/data/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;./data/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;./data&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样一来，就可以避免分析器，例如 pylancer，分析你的数据目录了。&lt;/p&gt;
+&lt;h2 id="增加默认-pythonpath"&gt;增加默认 PYTHONPATH
+&lt;/h2&gt;&lt;p&gt;有时候我们希望在某个文件夹下的 python 包可以被直接引入。我们可以设置 &lt;code&gt;PYHONPATH&lt;/code&gt; 到 &lt;code&gt;.vscode/settings.json&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;python.envFile&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;${workspaceFolder}/.env&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后配置 env 文件（例如将 /app 加入到 PYTHONPATH）&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-env" data-lang="env"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;PYTHONPATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/app
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>Visual Studio Code Tips - 1</title><link>https://svtter.cn/p/visual-studio-code-tips-1/</link><pubDate>Tue, 09 Jun 2020 11:25:25 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-1/</guid><description>&lt;p&gt;又有一段时间没有更新博客啦！这篇文章是&lt;code&gt;vscode&lt;/code&gt;使用技巧。&lt;/p&gt;
+&lt;p&gt;最近因为学生&lt;code&gt;pycharm&lt;/code&gt;到期，因此采用&lt;code&gt;visual studio code&lt;/code&gt;代替。使用过程中遇到不少问题，在此记录一下，为以后提供备忘。&lt;/p&gt;
+&lt;h2 id="关于测试"&gt;关于测试
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;只有使用 &lt;code&gt;pytest&lt;/code&gt;， 才能将错误显示到 &lt;code&gt;problems&lt;/code&gt; 中&lt;/li&gt;
+&lt;li&gt;test 的上级目录必须是 &lt;code&gt;package&lt;/code&gt;，这意味着每层目录都要有 &lt;code&gt;__init__.py&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;并行测试：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;pip install pytest-xdist&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;并且在&lt;code&gt;pytest.ini&lt;/code&gt;下增加：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[pytest]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;addopts = -n4
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="文件管理器"&gt;文件管理器
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;打开&lt;code&gt;User Settings&lt;/code&gt;，搜素&lt;code&gt;files.exclude&lt;/code&gt; 选项：去掉不想在文件管理器中看到的东西&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="lint"&gt;lint
+&lt;/h2&gt;&lt;p&gt;在错误检查方面，vscode 有许多细节可以设置。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://code.visualstudio.com/docs/python/linting" target="_blank" rel="noopener"
+&gt;https://code.visualstudio.com/docs/python/linting&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;增加&lt;code&gt;django&lt;/code&gt;的检查：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;python.linting.pylintArgs&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;--load-plugins&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pylint_django&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样就可以避免一些错误。比如：&lt;code&gt;objects&lt;/code&gt;检查的错误。&lt;/p&gt;</description></item></channel></rss>
