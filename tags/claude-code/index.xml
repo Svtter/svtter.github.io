@@ -1,4 +1,78 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 26 Aug 2025 14:42:54 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://svtter.cn/p/how-to-use-claude-code-with-deepseek/pics/bg.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;有时候我们无法直接使用 anthropic API。但是 Claude Code (CC) 体验非常好，我们又希望使用 CC。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 05 Sep 2025 10:05:01 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>动态切换 Provider 的 Claude Code</title><link>https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/</link><pubDate>Fri, 05 Sep 2025 10:05:01 +0800</pubDate><guid>https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/</guid><description>&lt;p&gt;Claude Code 额度有 5 小时限制（20美元版本），因此如果处理一些简单的任务，通过部分便宜的 API 来做更好。&lt;/p&gt;
+&lt;p&gt;我编写了一个脚本，可以完成这个事情：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-zsh" data-lang="zsh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# claude --dangerously-skip-permissions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;cc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;claude&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Function to unset DeepSeek environment variables&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;unset_cc&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;unset&lt;/span&gt; ANTHROPIC_BASE_URL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;unset&lt;/span&gt; ANTHROPIC_AUTH_TOKEN
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;unset&lt;/span&gt; ANTHROPIC_MODEL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;unset&lt;/span&gt; ANTHROPIC_SMALL_FAST_MODEL
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;CC environment variables unset&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Function to set DeepSeek environment variables&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;enable_ds&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_BASE_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;https://api.deepseek.com/anthropic
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_AUTH_TOKEN&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;DEEPSEEK_API_KEY&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_MODEL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;deepseek-chat
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_SMALL_FAST_MODEL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;deepseek-chat
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek environment variables set&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;enable_kimi&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_BASE_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;https://api.moonshot.cn/anthropic
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_AUTH_TOKEN&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;MOONSHOT_API_KEY&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_MODEL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;kimi-k2-turbo-preview
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;ANTHROPIC_SMALL_FAST_MODEL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;kimi-k2-turbo-preview
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Kimi environment variables set&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="如何使用"&gt;如何使用
+&lt;/h2&gt;&lt;p&gt;将这个脚本放在你的配置目录下。例如:&lt;code&gt;~/.config/cc.zsh&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;在你的 zsh 配置文件中，加载这个脚本: &lt;code&gt;source ~/.config/cc.zsh&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;当你需要使用&lt;code&gt;Deepseek API&lt;/code&gt;的时候，运行&lt;code&gt;enable_ds&lt;/code&gt;。如果需要使用 kimi，则运行&lt;code&gt;enable_kimi&lt;/code&gt; 即可。&lt;/p&gt;
+&lt;p&gt;注意：每次打开新的 shell，都需要手动 &lt;code&gt;enable_*&lt;/code&gt;&lt;/p&gt;</description></item><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://svtter.cn/p/how-to-use-claude-code-with-deepseek/pics/bg.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;有时候我们无法直接使用 anthropic API。但是 Claude Code (CC) 体验非常好，我们又希望使用 CC。&lt;/p&gt;
 &lt;p&gt;这个时候可以试试 deepseek 提供的 API，来使用 CC。&lt;/p&gt;
 &lt;p&gt;Deepseek 已经提供了对应的接口：&lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/guides/anthropic_api" target="_blank" rel="noopener"
 &gt;如何使用 Claude Code + DeepSeek 的组合？&lt;/a&gt;&lt;/p&gt;
