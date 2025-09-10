@@ -1,4 +1,52 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 05 Sep 2025 10:05:01 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>动态切换 Provider 的 Claude Code</title><link>https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/</link><pubDate>Fri, 05 Sep 2025 10:05:01 +0800</pubDate><guid>https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/</guid><description>&lt;p&gt;Claude Code 额度有 5 小时限制（20美元版本），因此如果处理一些简单的任务，通过部分便宜的 API 来做更好。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 10 Sep 2025 10:15:30 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>通过 docker 使用 claude code</title><link>https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/</link><pubDate>Wed, 10 Sep 2025 10:15:30 +0800</pubDate><guid>https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/</guid><description>&lt;p&gt;部分的系统比较老旧，无法很好的运行 Claude Code (CC)。&lt;/p&gt;
+&lt;h2 id="使用一个简单的-docker-镜像"&gt;使用一个简单的 docker 镜像
+&lt;/h2&gt;&lt;p&gt;这种情况情况下，可以使用 docker 来运行。可以使用这样的脚本：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#!/bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run --rm -it &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; --env-file &lt;span class="nv"&gt;$HOME&lt;/span&gt;/.config/ccenv &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -e GITHUB_TOKEN &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -w &lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -v &lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;:&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -v claude-code-docker-node-versions:/home/appuser/.nodenv/versions &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; gendosu/claude-code-docker:latest
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;将这个脚本命名为&lt;code&gt;cc&lt;/code&gt;，然后放在&lt;code&gt;$HOME/.local/bin&lt;/code&gt;目录下，即可使用。&lt;/p&gt;
+&lt;p&gt;如果需要保存相关的配置，可以添加&lt;code&gt;-v $HOME/.config/.claude:/home/appuser/.claude&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="一个完整的-docker-环境-claudebox"&gt;一个完整的 docker 环境 claudebox
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/RchGrav/claudebox" target="_blank" rel="noopener"
+&gt;claudebox&lt;/a&gt; 的自我定位是：&lt;/p&gt;
+&lt;p&gt;The Ultimate Claude Code Docker Development Environment - Run Claude AI&amp;rsquo;s coding assistant in a fully containerized, reproducible environment with pre-configured development profiles and MCP servers.&lt;/p&gt;
+&lt;p&gt;安装方法：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Download the latest release&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;wget https://github.com/RchGrav/claudebox/releases/latest/download/claudebox.run
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;chmod +x claudebox.run
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;./claudebox.run
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>动态切换 Provider 的 Claude Code</title><link>https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/</link><pubDate>Fri, 05 Sep 2025 10:05:01 +0800</pubDate><guid>https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/</guid><description>&lt;p&gt;Claude Code 额度有 5 小时限制（20美元版本），因此如果处理一些简单的任务，通过部分便宜的 API 来做更好。&lt;/p&gt;
 &lt;p&gt;我编写了一个脚本，可以完成这个事情：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
