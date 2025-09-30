@@ -1,4 +1,37 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Til on Svtter's Blog</title><link>https://svtter.cn/tags/til/</link><description>Recent content in Til on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 24 Sep 2025 11:20:30 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/til/index.xml" rel="self" type="application/rss+xml"/><item><title>Real Time Html From Markdown</title><link>https://svtter.cn/p/real-time-html-from-markdown/</link><pubDate>Wed, 24 Sep 2025 11:20:30 +0800</pubDate><guid>https://svtter.cn/p/real-time-html-from-markdown/</guid><description>&lt;img src="https://svtter.cn/p/real-time-html-from-markdown/pics/featured_20250924_145002.png" alt="Featured image of post Real Time Html From Markdown" /&gt;&lt;p&gt;我在使用 claude code 时候，会使用 markdown 文件作为数据基础。但是 markdown 文件直接在终端下浏览效果不好，因此更喜欢采用 html 形式去看。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Til on Svtter's Blog</title><link>https://svtter.cn/tags/til/</link><description>Recent content in Til on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 30 Sep 2025 11:54:06 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/til/index.xml" rel="self" type="application/rss+xml"/><item><title>Why Agent</title><link>https://svtter.cn/p/why-agent/</link><pubDate>Tue, 30 Sep 2025 11:54:06 +0800</pubDate><guid>https://svtter.cn/p/why-agent/</guid><description>&lt;p&gt;一直以来我都有一个问题，为什么我们需要 agent framework，大模型不够用吗？&lt;/p&gt;
+&lt;p&gt;最近深度使用了几个工具，以及参与几个 agent 项目后，我得到了结论。&lt;/p&gt;
+&lt;h2 id="llm-的问题"&gt;LLM 的问题
+&lt;/h2&gt;&lt;p&gt;之所以要有 agent，最大的问题是，llm 本身的局限性。&lt;/p&gt;
+&lt;p&gt;首先，我认为最大的问题是 context 长度。虽然现在很多模型 context 都变长了很多（GPT-4 Turbo 128K，Claude-3.5 Sonnet 200K，Gemini-1.5 Pro 最高 2M），但是对于真正复杂的任务来说，还是不够长。比如你要处理一个大型代码库，或者分析很多文档，这点 context 还是不够用。而且这些长 context 处理起来费用很高，也很慢。&lt;/p&gt;
+&lt;p&gt;此外，则是其他能力的问题。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;对于视觉能力，现在的 VLM 虽然已经很强了，但是在一些特定场景下，传统的 CV 模型还是会更好一些。而且部分模型（如 &lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/news/news250929" target="_blank" rel="noopener"
+&gt;deepseek-v3&lt;/a&gt;）本身就没有视觉能力。&lt;/li&gt;
+&lt;li&gt;LLM 本身不能直接访问数据库、文件系统、网络服务等外部资源。&lt;/li&gt;
+&lt;li&gt;一些专门的工具，比如代码执行、数学计算、数据分析等，需要通过 MCP 等协议才能给 LLM 用。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="agent-可以做什么"&gt;agent 可以做什么
+&lt;/h2&gt;&lt;p&gt;除了上述原因之外，应该还有其他原因，但是我目前没有在实践中遇到。欢迎大家补充。但以上原因足够表明我们需要 agent。下文是几个常见的 agent。&lt;/p&gt;
+&lt;h3 id="分领域的文本处理"&gt;分领域的文本处理
+&lt;/h3&gt;&lt;p&gt;将不同文本块（context）使用不同的 agent 进行处理。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;context 节省：通过 agent，我们可以将部分 context 进行压缩，或者干脆不给 context。这样一来，context 的长度就被节省下来了。&lt;/li&gt;
+&lt;li&gt;性能优势：进而，agent 中的 llm 可以聚焦在某一件具体的事情上，从而获得较好的性能。例如，如果我们将大段的文本给与 LLM，他可能无法找到关键信息。但是如果我们减少给于 LLM 的文本数量，找到关键信息就变得相对容易了。&lt;/li&gt;
+&lt;li&gt;LLM 是使用相对通用的文本训练的。因此，如果我们要 agent 掌握领域知识，就需要在 context 中添加这些领域知识。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="视觉能力集成"&gt;视觉能力集成
+&lt;/h3&gt;&lt;p&gt;通过 agent，我们可以集成一些传统的视觉模型，来做一些之前视觉上不好做的事情。例如，我们可以通过 mcp 与 agent 配合，增加视觉能力。&lt;/p&gt;
+&lt;p&gt;常见的是&lt;a class="link" href="https://docs.bigmodel.cn/cn/coding-plan/mcp/vision-mcp-server" target="_blank" rel="noopener"
+&gt;智谱的视觉 MCP&lt;/a&gt;。通过使用这个 MCP + Agent，可以增强视觉能力。&lt;/p&gt;
+&lt;p&gt;我想这也是部分完全整合其他 mcp 服务的 mcp server 存在的意义。&lt;/p&gt;
+&lt;h2 id="agent-框架"&gt;agent 框架
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://ai.pydantic.dev/" target="_blank" rel="noopener"
+&gt;pydantic ai&lt;/a&gt;: 我认为是比较好用的。其优势在于将 pydantic basemodel 引入了 agent 框架，比较容易调试。我测试了其与 &lt;a class="link" href="https://ai.pydantic.dev/" target="_blank" rel="noopener"
+&gt;qwen3 的集成&lt;/a&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.langchain.com/" target="_blank" rel="noopener"
+&gt;langchain&lt;/a&gt;: 没有在生产环境中使用过。开发环境中简单调试过。其 api 变化比较大。一个小的问题是 prompt 的处理，&lt;a class="link" href="https://svtter.cn/p/string-template-in-prompt.md/" &gt;我使用了 jinja 来解决&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Real Time Html From Markdown</title><link>https://svtter.cn/p/real-time-html-from-markdown/</link><pubDate>Wed, 24 Sep 2025 11:20:30 +0800</pubDate><guid>https://svtter.cn/p/real-time-html-from-markdown/</guid><description>&lt;img src="https://svtter.cn/p/real-time-html-from-markdown/pics/featured_20250924_145002.png" alt="Featured image of post Real Time Html From Markdown" /&gt;&lt;p&gt;我在使用 claude code 时候，会使用 markdown 文件作为数据基础。但是 markdown 文件直接在终端下浏览效果不好，因此更喜欢采用 html 形式去看。&lt;/p&gt;
 &lt;p&gt;这里，我编写了一个脚本，来实时监测 markdown 文件的变化，并且提供 http 服务，让我可以快速浏览变化。&lt;/p&gt;
 &lt;script src="https://gist.github.com/Svtter/c2a4635129a40513c1b8e9607341d636.js"&gt;&lt;/script&gt;</description></item><item><title>通过 docker 使用 claude code</title><link>https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/</link><pubDate>Wed, 10 Sep 2025 10:15:30 +0800</pubDate><guid>https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/</guid><description>&lt;img src="https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/pics/featured_20250924_145020.png" alt="Featured image of post 通过 docker 使用 claude code" /&gt;&lt;p&gt;部分的系统比较老旧，无法很好的运行 Claude Code (CC)。&lt;/p&gt;
 &lt;h2 id="使用一个简单的-docker-镜像"&gt;使用一个简单的 docker 镜像
