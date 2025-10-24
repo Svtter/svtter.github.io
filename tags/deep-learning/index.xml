@@ -258,11 +258,13 @@ data-flex-basis="1074px"
 &lt;p&gt;image_encoder 和 text_encoder 的输出，分别是两个不同的特征 tensor。&lt;/p&gt;
 &lt;p&gt;将两个 tensor 进行矩阵乘积，分别得到一个相似性矩阵。这个相似性矩阵的大小是 &lt;code&gt;(batch_size, batch_size)&lt;/code&gt;。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;TIPS: 如果说 batch-size 太小，为1，那么对比学习的性能可能就大打折扣了。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;TIPS: 如果说 batch-size 太小，为1，那么对比学习的性能可能就大打折扣了。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;这两个 tensor 使用 symmetric cross-entropy loss 进行计算，来用于更新网络权重。&lt;/p&gt;
 &lt;p&gt;专门做智能指标的提升，不太在意计算量。不追求最新最高的智能指标，更加关注模型计算的运行效率。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;trick: 给参数加一个 log 来使得权重更新没有那么剧烈，计算起来没有那么大。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;trick: 给参数加一个 log 来使得权重更新没有那么剧烈，计算起来没有那么大。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
 &gt;CLIP&lt;/a&gt; 代码中没有给出能够直接进行训练的代码。下一篇文章，尝试阅读一下 openclip。&lt;/p&gt;</description></item><item><title>Reimplment MAE Work Path.md</title><link>https://svtter.cn/p/reimplment-mae-work-path.md/</link><pubDate>Wed, 12 Mar 2025 11:12:03 +0800</pubDate><guid>https://svtter.cn/p/reimplment-mae-work-path.md/</guid><description>&lt;img src="https://svtter.cn/p/reimplment-mae-work-path.md/arch.png" alt="Featured image of post Reimplment MAE Work Path.md" /&gt;&lt;p&gt;这两天我一直在尝试复现 MAE，与我的数据进行结合，来做出一点新的东西。&lt;/p&gt;
 &lt;h2 id="offical-mae"&gt;Offical MAE
@@ -697,7 +699,8 @@ alt="img"
 &lt;h2 id="不翻译了这里有更直接的结果"&gt;不翻译了。。这里有更直接的结果
 &lt;/h2&gt;&lt;p&gt;beam search 时在每一个时间点选择 beam_width 个最大的可能类别，然后在每个时间点 beam_width 个类别组成的空间里寻找整体概率最大的一条路径，得到最后得识别输出。而 greedy search 则直接在每个时间点寻找概率最大的类别，然后依次组成这个路径。也就是说，greedy search 是 beam_width=1 版本的 beam search。上图是 CTC 论文里 greedy search 示意图。&lt;/p&gt;</description></item><item><title>对于 CTC 的一个直观理解与解释</title><link>https://svtter.cn/p/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A/</link><pubDate>Thu, 22 Nov 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%AF%B9%E4%BA%8E-ctc-%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3%E4%B8%8E%E8%A7%A3%E9%87%8A/</guid><description>&lt;blockquote&gt;
 &lt;p&gt;这篇文章是一个翻译：&lt;a class="link" href="https://towardsdatascience.com/intuitively-understanding-connectionist-temporal-classification-3797e43a86c" target="_blank" rel="noopener"
-&gt;towardsdatascience-ctc&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&gt;towardsdatascience-ctc&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;通过 CTC loss 以及编码操作进行文字识别。&lt;/p&gt;
 &lt;p&gt;如果想用使用计算机识别文字，神经网络很好用。使用一些列 CNN 从序列中提取特征，使用 RNN 来传播需略的信息。它会输出字符得分，给每个序列元素，通过一个简单的矩阵表示。现在，有两个事情我们想要对矩阵进行处理。&lt;/p&gt;
 &lt;ol&gt;

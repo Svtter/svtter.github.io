@@ -4,7 +4,8 @@
 &lt;h2 id="流程"&gt;流程
 &lt;/h2&gt;&lt;p&gt;检查了app以后，判断应该是开启了&lt;code&gt;fast TCP&lt;/code&gt;导致的，于是考虑在mac上也开启对应的&lt;code&gt;fast TCP&lt;/code&gt;，但是效果并不是十分显著；于是再次排查，发现服务器端并没有开启&lt;code&gt;fast TCP&lt;/code&gt;。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;这就很奇怪了，为什么速度这么快呢？是因为对“同源”的加密方法有优化吗？&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;这就很奇怪了，为什么速度这么快呢？是因为对“同源”的加密方法有优化吗？&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;于是，&lt;strong&gt;自然而然&lt;/strong&gt;的考虑是不是可以通过开启这个TCP加速来加速服务器。这就开启了噩梦的开端。因为需要3.7以上的Linux Kernel才支持这个特性，所以需要先升级内核。我的内核难道不应该是最新的吗？带着这个以为输入了&lt;code&gt;uname sr&lt;/code&gt;，显示内核版本&lt;code&gt;2.6*&lt;/code&gt;。惊奇，我的VPS内核这么旧吗？于是&lt;strong&gt;自然而然&lt;/strong&gt;的想到要升级一下内核，并且&lt;strong&gt;理所应当&lt;/strong&gt;的把升级内核的脚本&lt;code&gt;apt-get install linux-kernel-lts-wily&lt;/code&gt;运行了一下。于是噩梦开始了。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;OpenVZ本身是不支持升级内核的&lt;/strong&gt;，所有的VM都使用同一个内核版本，因此这个命令导致了很神奇的BUG，安装内核装不上，卸载内核卸载不了。&lt;/p&gt;
 &lt;p&gt;这个时候我面临两个选择，一个是重新安装系统，一个是解决当前的这个问题。&lt;/p&gt;
