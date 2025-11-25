@@ -15,7 +15,34 @@
 &lt;/div&gt;&lt;p&gt;这样一来，就可以在本地对该内容进行操作了。&lt;/p&gt;
 &lt;p&gt;当然，这样做的前提是，远程主机本身支持 ssh 登录。sshfs 底层是使用 ssh 技术来支撑的。&lt;/p&gt;
 &lt;p&gt;实际上，之前就采用过 sshfs 的技术来同步数据。但由于时间久远，忘记了这个技术的存在。&lt;/p&gt;
-&lt;p&gt;这里写一篇小文章，用于记录一下。&lt;/p&gt;</description></item><item><title>ssh 显示图像</title><link>https://svtter.cn/p/ssh-%E6%98%BE%E7%A4%BA%E5%9B%BE%E5%83%8F/</link><pubDate>Thu, 20 Sep 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ssh-%E6%98%BE%E7%A4%BA%E5%9B%BE%E5%83%8F/</guid><description>&lt;p&gt;原来一直认为ssh仅仅是一个字符界面，最近发现其实可以传输xserver中的图像。&lt;/p&gt;
+&lt;p&gt;这里写一篇小文章，用于记录一下。&lt;/p&gt;</description></item><item><title>Coding With Cloud Server</title><link>https://svtter.cn/p/coding-with-cloud-server/</link><pubDate>Tue, 07 Nov 2023 17:19:00 +0800</pubDate><guid>https://svtter.cn/p/coding-with-cloud-server/</guid><description>&lt;p&gt;程序开发经常会让本地机器卡顿，尤其是编译某些较大文件的时候。除此之外，如果涉及到数据集处理，会带来更多麻烦，例如下载数据动辄10G，部署环境不一致导致包冲突问题。&lt;/p&gt;
+&lt;p&gt;因此，如果只进行 web 开发，或者数据应用相关的，那么云服务器是一个相当不错的选择。
+云服务器现在价格很优惠。经过本人测试，腾讯云轻量服务器相当靠谱。可以直接搞定基本问题：公网ip，带宽，存储，服务器本体。&lt;/p&gt;
+&lt;p&gt;这个是我的&lt;a class="link" href="https://curl.qcloud.com/2w2Hjd24" target="_blank" rel="noopener"
+&gt;推广链接&lt;/a&gt;，可以直接跳转购买。&lt;/p&gt;
+&lt;p&gt;当然，如果本地有服务器或者虚拟化的主机，直接在本地创建新的 Debian 服务器来链接配置，其实更好用。&lt;/p&gt;
+&lt;h2 id="如何做"&gt;如何做
+&lt;/h2&gt;&lt;p&gt;进入正题：使用vscode进行开发。设置好 remote ssh，也就是这个插件：&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/images/image_1699347932775_0.png"
+loading="lazy"
+&gt;&lt;/p&gt;
+&lt;p&gt;这个插件可以让我们通过 ssh 连接到服务器，并且自动开放端口，从本地的链接，例如 127.0.0.1:1080 进行访问。可以在 port 中看到。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/images/image_1699348134681_0.png"
+loading="lazy"
+alt="image.png"
+&gt;&lt;/p&gt;
+&lt;p&gt;通过这样的方式，调试也变得容易了。你可以直接启动数据库等服务，不用在本地配置复杂的环境。&lt;/p&gt;
+&lt;iframe src="//player.bilibili.com/player.html?isOutside=true&amp;aid=1156174523&amp;bvid=BV13Z421T7oz&amp;cid=1614226086&amp;p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"&gt;&lt;/iframe&gt;
+&lt;p&gt;总结一下，有几个好处：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;性能占用都在服务器上，本地机器运行通畅。&lt;/li&gt;
+&lt;li&gt;依赖简单，linux 系统；环境独立，不容易破坏。&lt;/li&gt;
+&lt;li&gt;重装容易，一键重装。&lt;/li&gt;
+&lt;li&gt;不需要担心垃圾文件问题，可以备份后直接重制系统。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;版权所有©️ svtter&lt;/p&gt;
+&lt;/blockquote&gt;</description></item><item><title>ssh 显示图像</title><link>https://svtter.cn/p/ssh-%E6%98%BE%E7%A4%BA%E5%9B%BE%E5%83%8F/</link><pubDate>Thu, 20 Sep 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ssh-%E6%98%BE%E7%A4%BA%E5%9B%BE%E5%83%8F/</guid><description>&lt;p&gt;原来一直认为ssh仅仅是一个字符界面，最近发现其实可以传输xserver中的图像。&lt;/p&gt;
 &lt;p&gt;方法很简单，只需要在ssh的选项中添加&lt;code&gt;-Y&lt;/code&gt;就可以了。比如原来的ssh命令是这样：&lt;/p&gt;
 &lt;pre class="wp-block-code"&gt;&lt;code lang="bash" class="language-bash"&gt;ssh ubuntu@localhost&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;现在改成这样&lt;/p&gt;
