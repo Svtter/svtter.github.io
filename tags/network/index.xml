@@ -1,4 +1,136 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Network on Svtter's Blog</title><link>https://svtter.cn/tags/network/</link><description>Recent content in Network on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 10 Feb 2025 20:49:27 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/network/index.xml" rel="self" type="application/rss+xml"/><item><title>Change Network of Debian.md</title><link>https://svtter.cn/p/change-network-of-debian.md/</link><pubDate>Mon, 10 Feb 2025 20:49:27 +0800</pubDate><guid>https://svtter.cn/p/change-network-of-debian.md/</guid><description>&lt;p&gt;有时候我们希望修改默认的 ip 地址以及 DNS 服务器，来获得更好的网络。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Network on Svtter's Blog</title><link>https://svtter.cn/tags/network/</link><description>Recent content in Network on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 15 Jun 2025 16:43:47 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/network/index.xml" rel="self" type="application/rss+xml"/><item><title>Docker Registry for Personal Docker Images</title><link>https://svtter.cn/p/docker-registry-for-personal-docker-images/</link><pubDate>Sun, 15 Jun 2025 16:43:47 +0800</pubDate><guid>https://svtter.cn/p/docker-registry-for-personal-docker-images/</guid><description>&lt;img src="https://svtter.cn/p/docker-registry-for-personal-docker-images/bg.jpg" alt="Featured image of post Docker Registry for Personal Docker Images" /&gt;&lt;p&gt;这篇文章中我尝试一种新的形式: 由我要提出问题，答案由 gpt 回答和撰写。另外，我会初步审核一下 gpt 回复的内容。&lt;/p&gt;
+&lt;h2 id="亚马逊与-docker-镜像存储服务对比相关问题"&gt;亚马逊与 Docker 镜像存储服务对比相关问题
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;亚马逊美国Serverless服务器的价格是多少？&lt;/li&gt;
+&lt;li&gt;亚马逊私有Docker Registry（如ECR）的价格是多少？&lt;/li&gt;
+&lt;li&gt;Docker个人用户一个月的使用费用是多少？&lt;/li&gt;
+&lt;li&gt;Docker个人版和其他付费版本（专业版、团队版、商业版）的区别是什么？&lt;/li&gt;
+&lt;li&gt;对比亚马逊ECR和Docker Hub提供的镜像存储服务，用于存储即将过期的镜像及未来通过Docker Image部署函数服务。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="keypoints"&gt;Keypoints
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;使用 Amazon 可以让其他服务，例如 serverless 在不使用外部流量的前提下来获取 docker image.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="answer-by-gpt-doubao"&gt;Answer by GPT (doubao)
+&lt;/h2&gt;&lt;p&gt;豆包：&lt;/p&gt;
+&lt;h3 id="亚马逊与-docker-镜像存储服务对比文档"&gt;亚马逊与 Docker 镜像存储服务对比文档
+&lt;/h3&gt;&lt;h4 id="一服务概述"&gt;&lt;strong&gt;一、服务概述&lt;/strong&gt;
+&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;1. **亚马逊ECR（Elastic Container Registry）**
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;亚马逊 AWS 提供的托管 Docker 镜像存储服务，深度集成 AWS 生态（如 Lambda、ECS、EC2 等），支持私有和公共镜像仓库，具备高可用性和安全管控能力。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2. **Docker Hub**
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Docker 官方提供的镜像存储服务，分为公共仓库和私有仓库，面向个人及企业用户，支持全球镜像分发和社区共享。&lt;/p&gt;
+&lt;h4 id="二核心功能对比"&gt;&lt;strong&gt;二、核心功能对比&lt;/strong&gt;
+&lt;/h4&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;对比维度&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;亚马逊 ECR&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Docker Hub&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;存储类型&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;私有仓库为主（支持公共仓库，但需手动配置）&lt;/td&gt;
+&lt;td&gt;公共仓库免费，私有仓库需付费升级&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;集成能力&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;深度集成 AWS 服务（Lambda/ECS/CodePipeline）&lt;/td&gt;
+&lt;td&gt;支持与 Docker Desktop、CI/CD 工具通用集成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;安全性&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;- 支持 AWS IAM 权限控制、加密（KMS）&lt;/td&gt;
+&lt;td&gt;- 基础安全扫描（付费版增强）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;- 镜像签名、漏洞扫描（需配合 AWS Inspector）&lt;/td&gt;
+&lt;td&gt;- 企业版支持 SSO、团队权限管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;全球分发&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;多区域部署，自动复制镜像到指定区域&lt;/td&gt;
+&lt;td&gt;全球镜像缓存节点，加速拉取&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;构建与自动化&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;支持与 CodeBuild 集成，自动构建镜像&lt;/td&gt;
+&lt;td&gt;支持 Docker Cloud 自动构建（付费版）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;免费额度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;- 新用户首年 500MB 私有存储/月&lt;/td&gt;
+&lt;td&gt;- 公共仓库无限，私有仓库免费版仅 1 个仓库&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;过期镜像管理&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;需手动配置生命周期策略（删除旧版本镜像）&lt;/td&gt;
+&lt;td&gt;付费版支持镜像过期策略设置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="三费用对比以美国地区为例"&gt;&lt;strong&gt;三、费用对比（以美国地区为例）&lt;/strong&gt;
+&lt;/h4&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;服务项&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;亚马逊 ECR&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Docker Hub&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;存储费用&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;- 超出 500MB 后：0.1 美元/GB/月&lt;/td&gt;
+&lt;td&gt;- 私有仓库：专业版 5 美元/月起（含 2GB 存储）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;数据传输&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;- 同区域内 AWS 服务间传输免费&lt;/td&gt;
+&lt;td&gt;- 公共仓库拉取免费，私有仓库按流量计费&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;镜像拉取限制&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;无明确限制（按需付费）&lt;/td&gt;
+&lt;td&gt;- 免费版：匿名用户每 6 小时 100 次拉取&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;- 专业版：5000 次/天，团队版无限制&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="四适用场景建议"&gt;&lt;strong&gt;四、适用场景建议&lt;/strong&gt;
+&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;1. **选择亚马逊ECR的场景**
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;已使用 AWS 生态&lt;/strong&gt;：如计划通过 Lambda 部署函数服务，ECR 可直接与 Lambda 集成，简化部署流程，无需额外配置网络或认证。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;高安全需求&lt;/strong&gt;：依赖 AWS IAM 权限体系，需镜像加密、细粒度访问控制（如仅限特定 AWS 账号访问）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;多区域部署&lt;/strong&gt;：需将镜像自动同步到不同 AWS 区域，降低函数服务部署的网络延迟。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2. **选择Docker Hub的场景**
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;轻量级个人/团队项目&lt;/strong&gt;：公共仓库适合开源协作，私有仓库专业版（5 美元/月）性价比高，适合小规模镜像存储。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;跨平台兼容性&lt;/strong&gt;：不依赖特定云服务商，支持本地开发与多云部署（如 AWS、Azure、GCP）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;社区资源依赖&lt;/strong&gt;：需直接拉取社区公共镜像（如官方 Docker 镜像），或需要通过 Docker CLI 快速管理镜像。&lt;/p&gt;
+&lt;h4 id="五针对函数服务部署的建议"&gt;&lt;strong&gt;五、针对函数服务部署的建议&lt;/strong&gt;
+&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;1. **当前过期镜像存储**
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;若镜像用于 AWS Lambda，优先选择 ECR，可通过生命周期策略自动清理旧版本，避免冗余存储费用。&lt;/p&gt;
+&lt;p&gt;若镜像为通用型（非 AWS 专属），Docker Hub 专业版可设置私有仓库存储，并标记过期镜像为“存档”状态，节省空间。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2. **未来函数服务部署**
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;AWS Lambda 集成&lt;/strong&gt;：使用 ECR 存储镜像，通过 Lambda 控制台直接关联 ECR 仓库，实现代码更新自动部署（需配置 CodePipeline 触发器）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;跨云或本地部署&lt;/strong&gt;：Docker Hub 私有仓库配合 Docker Compose 或 Kubernetes，支持多环境一致性部署，适合需要灵活迁移的场景。&lt;/p&gt;
+&lt;h4 id="六总结"&gt;&lt;strong&gt;六、总结&lt;/strong&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;亚马逊 ECR&lt;/strong&gt;：适合深度绑定 AWS 的企业级用户，安全与集成能力强，费用按存储和流量按需计算。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Docker Hub&lt;/strong&gt;：适合个人开发者、中小团队或跨云场景，付费版功能均衡，性价比高。
+根据您的需求（存储过期镜像+函数服务部署），若已使用 AWS 生态，ECR 是更优选择；若追求通用性和成本控制，Docker Hub 专业版可满足基础需求。&lt;/p&gt;
+&lt;h2 id="結論"&gt;結論
+&lt;/h2&gt;&lt;p&gt;完全可以使用 Docker 的私人倉庫作為自己的主力倉庫。Docker 私人仓库价格相对划算，在使用 aws 或者 tencent cloud 的时候，完全可以配置一个合适的代理来拉取相关的镜像。或者使用 docker login 登录之后再进行拉取。&lt;/p&gt;</description></item><item><title>Change Network of Debian.md</title><link>https://svtter.cn/p/change-network-of-debian.md/</link><pubDate>Mon, 10 Feb 2025 20:49:27 +0800</pubDate><guid>https://svtter.cn/p/change-network-of-debian.md/</guid><description>&lt;p&gt;有时候我们希望修改默认的 ip 地址以及 DNS 服务器，来获得更好的网络。&lt;/p&gt;
 &lt;p&gt;对 Debian 来说，修改两个文件，一个是&lt;code&gt;/etc/network/interfaces&lt;/code&gt;，另一个是&lt;code&gt;/etc/resolv.conf&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;对于&lt;code&gt;interfaces&lt;/code&gt;来说&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -57,7 +189,701 @@
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;net.ipv6.conf.all.disable_ipv6 = 1
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;别忘了重启网络：&lt;code&gt;systemctl restart networking&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>近日事项</title><link>https://svtter.cn/p/%E8%BF%91%E6%97%A5%E4%BA%8B%E9%A1%B9/</link><pubDate>Thu, 27 Aug 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E8%BF%91%E6%97%A5%E4%BA%8B%E9%A1%B9/</guid><description>&lt;p&gt;最近因为考研准备一直都没有更新blog。考研复习进度已经非常糟糕了，但愿别出什么差错。。&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;别忘了重启网络：&lt;code&gt;systemctl restart networking&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>我的 Linux 开发环境</title><link>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</link><pubDate>Sun, 02 Jun 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</guid><description>&lt;p&gt;GNU/Linux 操作系统数量繁多，对于新手直接使用进行开发十分不友好。但是，随着
+许多工具的发展，Linux 入门已经没有那么困难，这里简单介绍笔者的几个开发环境，
+供读者参考。&lt;/p&gt;
+&lt;h2 id="操作系统以及桌面环境"&gt;操作系统以及桌面环境
+&lt;/h2&gt;&lt;p&gt;推荐使用 &lt;code&gt;Linux Mint&lt;/code&gt; 辅以 &lt;code&gt;Cinnamon Edition&lt;/code&gt; 桌面环境，
+根据笔者五年的使用经验，这个桌面环境非常稳定，不容易出问题，
+且基本的配置都可以提供。&lt;/p&gt;
+&lt;p&gt;这里建议：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;既然是开发环境，就不要折腾。&lt;/li&gt;
+&lt;li&gt;使用效率最高的开发环境&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;有些人会推荐使用 i3 等非常粗暴的开发环境，可以说，笔者的个人感觉是，i3 等
+基于 openbox 就只是个图形界面，而不是一个桌面环境。&lt;/p&gt;
+&lt;p&gt;除此之外，也可以考虑 gnome 桌面环境。KDE 是不建议使用的，笔者没能配置好，也比较
+吃配置。基于 QT 的桌面环境也不够自由。&lt;/p&gt;
+&lt;h2 id="终端环境"&gt;终端环境
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;fish&lt;/code&gt; 是一个新的 shell，不过&lt;code&gt;zsh&lt;/code&gt;更加好用一些。可以考虑安装&lt;code&gt;oh-my-zsh&lt;/code&gt;来加强
+自己的&lt;code&gt;shell&lt;/code&gt;，不过这个事情已经被网上的文章讲烂了。我这里更建议使用&lt;code&gt;antigen&lt;/code&gt;
+来配置自己的&lt;code&gt;zsh&lt;/code&gt;，并且通过&lt;code&gt;github&lt;/code&gt;或者&lt;code&gt;gitee&lt;/code&gt;进行网络同步，从而在多个环境下
+可以使用同一套配置。&lt;/p&gt;
+&lt;h2 id="编辑器"&gt;编辑器
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;vscode&lt;/code&gt;，&lt;code&gt;pycharm&lt;/code&gt;这些东西都是可以用的。&lt;/p&gt;
+&lt;h2 id="办公软件"&gt;办公软件
+&lt;/h2&gt;&lt;p&gt;可以考虑使用 &lt;a class="link" href="https://shimo.im" target="_blank" rel="noopener"
+&gt;石墨&lt;/a&gt;，或者&lt;a class="link" href="https//docs.qq.com" target="_blank" rel="noopener"
+&gt;腾讯文档&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;可以做 ppt 啥的。自带的&lt;code&gt;libreoffice&lt;/code&gt;体验不是很好，不是很建议使用。不过按照发展
+速度，这些东西迟早会赶上来的。&lt;/p&gt;
+&lt;h2 id="im"&gt;IM
+&lt;/h2&gt;&lt;p&gt;electron 版本的微信虽然可以勉强用一下，但是笔者还是建议多使用邮箱
+网易和腾讯均可。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;在使用 Linux 的过程中，可以不断的优化自己的使用环境。Linux 给予了用户最大的自由，
+这也意味着用户需要对自己的行为负责。&lt;/p&gt;
+&lt;h3 id="20201230"&gt;2020/12/30
+&lt;/h3&gt;&lt;p&gt;现在我已经不使用 Linux 桌面环境了，基本上都是采用 虚拟机 的方式来使用 Linux。因此 Vim、Zsh 这些工具才是主要的软件环境。
+2020年，Linux 桌面环境对于使用 &lt;code&gt;word&lt;/code&gt;, &lt;code&gt;excel&lt;/code&gt;, &lt;code&gt;ppt&lt;/code&gt; 以及 微信，钉钉，QQ 的人仍然不是很友好。&lt;/p&gt;
+&lt;!-- 尽管 2020年中美贸易战使得 Linux 进入了人们的视野，但是对于一个非开发者而言，Linux 不够用。 --&gt;</description></item><item><title>Ubuntu 装机总结</title><link>https://svtter.cn/p/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/</link><pubDate>Tue, 19 Mar 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/ubuntu-%E8%A3%85%E6%9C%BA%E6%80%BB%E7%BB%93/</guid><description>&lt;p&gt;本以为常年 Ubuntu 装机小达人的我不会再出现重装的失败的情况，不想，竟然成功将自己的重装次数刷新到30次（仔细想想，不应该是30次，应该是50次都有了吧）。&lt;/p&gt;
+&lt;p&gt;绝望之余，打算记录一下自己装机的心路历程。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先很恶心的一件事，Ubuntu 安装的时候如果网络环境不好，那么安装程序会闪退。基于 Ubuntu 的 mint 就没有这个问题。可见 Ubuntu的安装程序写的有多么不鲁棒。。（WTF）。&lt;/li&gt;
+&lt;li&gt;再一个事情，cuda 最近（2019-03-19）安装不上了。我不知道是内核的原因，还是 header 的问题，反正就是安装不上了。我想尝试一下 runfile，看看能不能安装上，如果不能安装，那么我打算在网上找一个教程。我连 cuda 都没能装上，真不知道是哪里出了问题。&lt;/li&gt;
+&lt;li&gt;装不上的表现是，mint 无法进入图形界面，并且键盘和鼠标都没有反应。-.- 我的天啊。&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;放弃了，真是老狗，只要安装 nvidia 驱动电脑就启动不了，闹呢，浪费这么多时间。
+我也想只安装 cuda 然后直接上 docker 然后上 deepo 啊。&lt;/p&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;19日晚：明天再试试自带的驱动。&lt;/p&gt;
+&lt;p&gt;为啥重装呢？&lt;/p&gt;
+&lt;blockquote class="wp-block-quote"&gt;
+&lt;p&gt;
+之前的根目录分的还是太小。分给根目录32G，然后给&lt;code&gt;/usr/local&lt;/code&gt;分了大概128G，但是东西都安装到 &lt;code&gt;/usr/bin/lib&lt;/code&gt; 下面了，索性就重装了。当然&lt;code&gt;/home&lt;/code&gt;是肯定分出去了的。
+&lt;/p&gt;
+&lt;p&gt;&lt;cite&gt;&lt;br /&gt;&lt;br /&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;With third-party driver ( nvidia – 390 ) I finally success. ALL HAIL MINT !&lt;/p&gt;
+&lt;p&gt;最后通过 Mint 安装了一下第三方的 nvidia 驱动，390版本，终于成功了。看来以后还是要搜索相关的博客才行了。&lt;/p&gt;
+&lt;p&gt;Cuda 装好了，但是没有办法跑深度。这是最尴尬的。&lt;/p&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;可能是 nomodeset 的问题，我尝试一下。&lt;/p&gt;
+&lt;hr class="wp-block-separator" /&gt;
+&lt;p&gt;原来是 gdm3 与 nvidia-driver-410 冲突的bug，现在已经解决了。这个问题最终是看了一篇 CSDN 博客得到的，博主查了 launchpad 里面的 bug report，做的十分不错。这也提供了一个思路，就是在排查类似问题的时候，可以首先查一下 launchpad，随后，可以根据排查错误的过程，学习更多的东西。受教了。&lt;/p&gt;</description></item><item><title>为你的 Docker 项目集成 ELK</title><link>https://svtter.cn/p/%E4%B8%BA%E4%BD%A0%E7%9A%84-docker-%E9%A1%B9%E7%9B%AE%E9%9B%86%E6%88%90-elk/</link><pubDate>Fri, 04 Jan 2019 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%B8%BA%E4%BD%A0%E7%9A%84-docker-%E9%A1%B9%E7%9B%AE%E9%9B%86%E6%88%90-elk/</guid><description>&lt;p&gt;&lt;a class="link" href="https://github.com/twtrubiks/docker-elk-tutorial" target="_blank" rel="noopener"
+&gt;https://github.com/twtrubiks/docker-elk-tutorial&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;基本上按照这个配置就可以了，创建 @timestamp 这一步，可以用如下脚本替代 Postman&lt;/p&gt;
+&lt;pre&gt;$ &lt;span class="pl-s1"&gt;curl -XPOST -D- &lt;span class="pl-s"&gt;&lt;span class="pl-pds"&gt;'&lt;/span&gt;http://localhost:5601/api/saved_objects/index-pattern&lt;span class="pl-pds"&gt;'&lt;/span&gt;&lt;/span&gt; \&lt;/span&gt;
+&lt;span class="pl-c1"&gt; -H 'Content-Type: application/json' \&lt;/span&gt;
+&lt;span class="pl-c1"&gt; -H 'kbn-version: 6.5.4' \&lt;/span&gt;
+&lt;span class="pl-c1"&gt; -d '{"attributes":{"title":"logstash-*","timeFieldName":"@timestamp"}}'&lt;/span&gt;&lt;/pre&gt;
+&lt;p&gt;这也是 tutorials 中，使用的 ELK images 给出的。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/deviantony/docker-elk" target="_blank" rel="noopener"
+&gt;https://github.com/deviantony/docker-elk&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="elk-是什么"&gt;ELK 是什么？
+&lt;/h2&gt;&lt;p&gt;以下内容摘自 &lt;a href="https://www.cnblogs.com/soar1688/p/6849183.html" target="_blank" rel="noopener"&gt;soar1688的博客&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ELK 由 Elasticsearch、Logstash 和 Kibana 三部分组件组成；&lt;/p&gt;
+&lt;p&gt;Elasticsearch 是个开源分布式搜索引擎，它的特点有：分布式，零配置，自动发现，索引自动分片，索引副本机制，restful 风格接口，多数据源，自动搜索负载等。&lt;/p&gt;
+&lt;p&gt;Logstash 是一个完全开源的工具，它可以对你的日志进行收集、分析，并将其存储供以后使用&lt;/p&gt;
+&lt;p&gt;kibana 是一个开源和免费的工具，它可以为 Logstash 和 ElasticSearch 提供的日志分析友好的 Web 界面，可以帮助您汇总、分析和搜索重要数据日志。&lt;/p&gt;
+&lt;p&gt;2、四大组件&lt;/p&gt;
+&lt;p&gt;Logstash: logstash server 端用来搜集日志；&lt;/p&gt;
+&lt;p&gt;Elasticsearch: 存储各类日志；&lt;/p&gt;
+&lt;p&gt;Kibana: web 化接口用作查寻和可视化日志；&lt;/p&gt;
+&lt;p&gt;Logstash Forwarder: logstash client 端用来通过 lumberjack 网络协议发送日志到 logstash server；&lt;/p&gt;
+&lt;h2 id="还可参考"&gt;还可参考
+&lt;/h2&gt;&lt;p&gt;– https://www.codementor.io/samueljames/using-django-with-elasticsearch-logstash-and-kibana-elk-stack-9l4fwx138&lt;/p&gt;</description></item><item><title>使用主动学习加速机器学习</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%8A%A8%E5%AD%A6%E4%B9%A0%E5%8A%A0%E9%80%9F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link><pubDate>Tue, 20 Nov 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8%E4%B8%BB%E5%8A%A8%E5%AD%A6%E4%B9%A0%E5%8A%A0%E9%80%9F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</guid><description>&lt;blockquote class="wp-block-quote"&gt;
+&lt;p&gt;
+一篇 medium 文章的渣翻
+&lt;/p&gt;
+&lt;p&gt;&lt;cite&gt;&lt;a class="link" href="https://becominghuman.ai/accelerate-machine-learning-with-active-learning-96cea4b72fdb" target="_blank" rel="noopener"
+&gt;https://becominghuman.ai/accelerate-machine-learning-with-active-learning-96cea4b72fdb&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;让我们讨论一下主动学习。我相信这个方法可以极大的增速，以及减少许多机器学习工程的花费。这篇文章我将从两个部分说明这个问题。在第一部分，我给出了一个极高的层级的主动学习的说明，以及如何把它利用到机器学习工程中。在第二部分，深入到一个主动学习 demo 中。&lt;/p&gt;
+&lt;h2 id="第一部分"&gt;第一部分
+&lt;/h2&gt;&lt;h3 id="主动学习是如何工作的"&gt;主动学习是如何工作的
+&lt;/h3&gt;&lt;p&gt;让我们通过一个很简单的概览，来看看机器学习是如何工作地。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd3awts2j218g0j4wj2.jpg?w=625" alt="Repeat thousands of times and you get a trained model!" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;许多机器学习模型是巨大的猜疑机器——他们看了许多数据，计算出一个猜测的结果，检查他们的答案，微调一下，然后再试试。在许多数据之后，模型将会变得十分准确。&lt;/p&gt;
+&lt;h3 id="标记数据"&gt;标记数据
+&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;
+&lt;h3 id="主动学习"&gt;主动学习
+&lt;/h3&gt;&lt;p&gt;主动学习是一种方法，有时可以极大减少标记样本的数量。它通过专家标记样本来完成这个工作。&lt;/p&gt;
+&lt;p&gt;不使用全部的数据一次标注所有数据，主动学习优先处理那些让模型感到困惑的数据，并且仅仅需要好那些数据的标签。模型在小样本数据上进行训练，然后根据那些最令模型疑惑的数据，请求更多的标签。&lt;/p&gt;
+&lt;p&gt;通过优先处理那些最迷惑的样本，模型可以专注于提供一些最有价值的信息。这帮助模型训练的更快，并且让专家跳过那些对于模型帮助不是很大的数据。结果是，我们可以很大程度上减少标记样本的数量，并且我们仍然得到一个很好的模型。这意味着节省时间和金钱！&lt;/p&gt;
+&lt;h2 id="第二部分"&gt;第二部分
+&lt;/h2&gt;&lt;h3 id="mnist-例子"&gt;MNIST 例子
+&lt;/h3&gt;&lt;p&gt;让我们看一下实际的主动学习样本。&lt;/p&gt;
+&lt;p&gt;使用文档良好的 MNIST 数据集，以及经典的 Tensorflow 卷积神经完了过。一个聪明的模型和架构可以做的更好，但是我们想要直接使用这个模型。&lt;/p&gt;
+&lt;p&gt;MNIST 数据集是公开可获取得的数据集，包含了大量的手写数字，以及数值标签。它经常被使用于机器学习入门教程，因为他的标记数据质量很高，并且简单地模型也可以表现的不错。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i1.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd4dewm6j20ho04fq38.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id="设计"&gt;设计
+&lt;/h3&gt;&lt;p&gt;这个工程包含两个部分：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在训练模型的时候，模仿主动学习&lt;/li&gt;
+&lt;li&gt;在严格的模型上确定主动学习的效率&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="训练一个模型"&gt;训练一个模型
+&lt;/h3&gt;&lt;p&gt;我们使用 mini-batch 训练。这个模型仅仅在训练集中，看一个小数量样本，通过小数量样本进行学习。&lt;/p&gt;
+&lt;p&gt;这里，我们可以看到一个正常的（非 – 主动学习）的训练过程，模型在一个随机结合的小批次上进行训练。每在小 – 批次训练中的迭代，都在测试记上运行模型（不作为训练集的一部分）来追踪模型是怎样增长的。我提供了准确率以及 cross-entropy 损失（就像是平均误差一样）。在这里，每一个小批次有个 10 个例子，我运行了 2000 批次（20000 个标注）。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i1.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd4pv3b2j218g0fhjtx.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;对于这个分类任务，我们试图把 0~9 的数字进行分类，意味着随机猜测仅有 10% 的准确率。简单的神经网络已经做的不错了。&lt;/p&gt;
+&lt;h3 id="模拟主动学习"&gt;模拟主动学习
+&lt;/h3&gt;&lt;p&gt;获得主动学习结果有一点小技巧。我们不在数据集中的随机选择数据，相反，模型将会评估许多在训练集中的例子，然后将置信度最小的数据作为小 – 批次（在这个工程中，我查看了 1000 个在训练集中的随机样本，来确定置信度至少为 10）。在那里，模型将会像处理小 – 批次数据一样处理进行训练过程，它将会重复这个过程来更新模型。就像是在 “非 – 主动学习” 样例中，每经过一些迭代，我将会在测试记上运行模型，追踪模型的训练过程。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd5z4a18j218g0ljjwd.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;有许多很好的文章来说明如何实现 主动学习。在这里，我仅仅想要把事情做的简单一些。这个模型使用一个 “softmax” 来生成概率——在这个例子中，是数字 0~9。” 置信度” 通过选择” 最大的概率减去最小的概率 “。模型越自信，这个差值越大。（置信度不意味着准确率）。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i0.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd96i561j218g0ejte0.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;主动学习过程，使用了那些置信度比较低的数据，并且在上面进行训练。并且当然的，当模型改变了，它的置信度也一样会改变。&lt;/p&gt;
+&lt;p&gt;MNIST 数据集已经有了我们需要的标签，但是这个过程，在 mini-batch 中，模拟询问了专家，来获取标签。在通常情况下，专家会随机被提问，来获取数据。在主动学习的例子中，模型会选择那些数据，希望专家进行标注。&lt;/p&gt;
+&lt;p&gt;让我们来看一下主动学习结果 VS 一般的结果。注意 y-axis。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i1.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxddharrn6j218g0h378k.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;通过 mini-batch（8000 标签），主动学习的方法匹配了 2000 mini-batch（20000label）数据的准确率。所以，使用一接近一半的数据，主动学习可以达到同样地准确率。&lt;/p&gt;
+&lt;h3 id="倾斜数据的二分类任务"&gt;倾斜数据的二分类任务
+&lt;/h3&gt;&lt;p&gt;主动学习可以大施拳脚的地方是，数据的强烈偏差。&lt;/p&gt;
+&lt;p&gt;训练一个模型的时候，重要的不仅仅是标记的数据，还有不同数据的，合理的不同表示。如果我们尝试在 MNIST 上训练一个模型，而没有任何包含 3 的数据，收集多少数据并不重要，重要的是我们的模型不可能区分 3。如果我们仅仅含有一小部分 3，我们仍然会面临一个问题，就是模型仅仅会准确的区分其他数字，也就是那些有更好表达的数据。&lt;/p&gt;
+&lt;p&gt;数据的偏差，不均衡对于 MNIST 数据集中不存在，但是它的确是一个真实世界的问题。如果我们训练一个模型来识别 CT 中的脑瘤，大多数 CT 图像不会含有肿瘤图像，所以标注 “肿瘤” 的数据将会远不均衡于 “非肿瘤” 的样本数据。因为主动学习优先考虑的例子不那么自信，因此主动学习可能有助于识别 “异常 “或代表性不足的数据并且确定优先级。&lt;/p&gt;
+&lt;p&gt;我们在 MNIST 上模拟一下 skew 的问题。重新定义 MNIST 的问题，定义成 3 或者非 3，然后，非 3 的数据有 90%，而 3 的数据仅有 10%。所以愚蠢的策略将会在” 非 3“上达到 90% 的准确率，让我们看一下主动学习是如何做的：&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdf9177f8j218g0hdwkb.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;在使用主动学习的时候，在 500mini-batch（5000labels）我们就达到，甚至更好地准确率。相比之下，cross-entropy 算法，通过 2000 mini-batch。主动学习减少了 4 倍的数据量。主动学习是如何做到的？看下图。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdfe5ahvnj20ua0nkjv0.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id="后续"&gt;后续
+&lt;/h2&gt;&lt;p&gt;未完，后面翻不翻看心情。。也不知道工业界玩 active learning 的多不多。&lt;/p&gt;</description></item><item><title>pipenv入门指南</title><link>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</link><pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</guid><description>&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;pipenv是书写flask的大神kennethreitz的新作；pipenv集成了virtualenv和pip等工具，让你从&lt;code&gt;requirements.pip&lt;/code&gt;以及&lt;code&gt;virtualenv&lt;/code&gt;的环境中解放出来。并且他还集成了&lt;code&gt;pyenv&lt;/code&gt;的选择&lt;code&gt;python&lt;/code&gt;版本，可以说是所向披靡了。&lt;/p&gt;
+&lt;p&gt;这是他的原话：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;You no longer need to use pip and virtualenv separately. They work together.
+Managing a requirements.txt file can be problematic, so Pipenv uses the upcoming Pipfile and Pipfile.lock instead, which is superior for basic use cases.
+Hashes are used everywhere, always. Security. Automatically expose security vulnerabilities.
+Give you insight into your dependency graph (e.g. $ pipenv graph).
+Streamline development workflow by loading .env files.
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;相信随着pipenv更加流行，许多工具也会在自己的环境中对pipenv提供支持，解决许多令人不舒服的问题，也能更好的提高编辑的舒适度。&lt;/p&gt;
+&lt;h2 id="安装pipenv"&gt;安装pipenv
+&lt;/h2&gt;&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ pip install pipenv
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h2 id="创建虚拟环境-virtualenv"&gt;创建虚拟环境 virtualenv
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;当不存在一个虚拟环境的时候，pipenv将会自动创建一个环境&lt;/li&gt;
+&lt;li&gt;你也可以手动创建虚拟环境：
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;$ pipenv --three&lt;/code&gt; 创建Python3虚拟环境&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$ pipenv --two&lt;/code&gt; 创建Python2虚拟环境&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;其他的东西和&lt;code&gt;virtualenv&lt;/code&gt;是一样的。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="安装包"&gt;安装包
+&lt;/h2&gt;&lt;p&gt;比如你要使用&lt;code&gt;requests&lt;/code&gt;（是的也是这个大神写的）。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;$ pipenv install requests
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;安装完成后，会生成&lt;code&gt;Pipfile&lt;/code&gt;以及&lt;code&gt;Pipfile.lock&lt;/code&gt;；这一点很像&lt;code&gt;npm&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="其他命令"&gt;其他命令
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;激活当前虚拟环境 &lt;code&gt;pipenv shell&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;运行虚拟环境中的命令 &lt;code&gt;pipenv run python&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;把你的依赖图输出出来 &lt;code&gt;pipenv graph&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;安装当前目录的相关依赖 &lt;code&gt;pipenv install&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="使用问题"&gt;使用问题
+&lt;/h2&gt;&lt;p&gt;目前我使用的时候也会多少存在问题，比如说我看不见下载的进度条，默认不是开启的；&lt;/p&gt;
+&lt;p&gt;然后就是因为网络环境的问题，我的&lt;code&gt;pip.conf&lt;/code&gt;设置不能应用到&lt;code&gt;pipenv&lt;/code&gt;上，我需要自己手动更改&lt;code&gt;Pipfile&lt;/code&gt;，这一点有些麻烦。&lt;/p&gt;
+&lt;h2 id="后记"&gt;后记
+&lt;/h2&gt;&lt;p&gt;本身我想把这个文章针对的群体稍微降降，针对一些技术能力不是特别高的群体，但是存在一些问题，比如有些东西是需要一定知识才能看懂的。如果出现了不懂的内容，尽量自己查找一下吧。&lt;/p&gt;</description></item><item><title>最近看到的那些有意思的东西</title><link>https://svtter.cn/p/%E6%9C%80%E8%BF%91%E7%9C%8B%E5%88%B0%E7%9A%84%E9%82%A3%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E4%B8%9C%E8%A5%BF/</link><pubDate>Tue, 02 Aug 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%9C%80%E8%BF%91%E7%9C%8B%E5%88%B0%E7%9A%84%E9%82%A3%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E4%B8%9C%E8%A5%BF/</guid><description>&lt;h2 id="语言系列"&gt;语言系列
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://www.buildyourownlisp.com/chapter1_introduction" target="_blank" rel="noopener"
+&gt;使用C写一个lisp&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="http://www.ituring.com.cn/tupubarticle/1793" target="_blank" rel="noopener"
+&gt;clojure疾风教程&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="http://developer.51cto.com/art/201307/401465.htm" target="_blank" rel="noopener"
+&gt;几分钟clojure&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="python"&gt;python
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://blog.csdn.net/marising/article/details/2845339" target="_blank" rel="noopener"
+&gt;Python调用C/CPP模块&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="http://www.pythondoc.com/" target="_blank" rel="noopener"
+&gt;Python中文学习大本营&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="nodejavascript"&gt;node/javascript
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/nswbmw/N-blog/wiki/%E7%AC%AC1%E7%AB%A0--%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%8D%9A%E5%AE%A2" target="_blank" rel="noopener"
+&gt;express-blog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="http://jinjiang.github.io/h5slides/demo/" target="_blank" rel="noopener"
+&gt;批量教程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="common-lisp"&gt;common-lisp
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="" &gt;clisp&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="自动安装工具"&gt;自动安装工具
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://www.the5fire.com/ansible-guide-cn.html" target="_blank" rel="noopener"
+&gt;ansible&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="网络"&gt;网络
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://www.cnblogs.com/TankXiao/archive/2012/10/10/2711777.html" target="_blank" rel="noopener"
+&gt;wireshark&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;dstat – other things&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="工具"&gt;工具
+&lt;/h2&gt;&lt;h3 id="tmux"&gt;tmux
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://blog.jobbole.com/87584/" target="_blank" rel="noopener"
+&gt;http://blog.jobbole.com/87584/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="除此之外"&gt;除此之外
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://blog.xcatliu.com/2016/04/21/setup-linux-workspace-in-windows/" target="_blank" rel="noopener"
+&gt;Windows以及Linux解决方案&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="博客"&gt;博客
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://www.pythonpub.com/" target="_blank" rel="noopener"
+&gt;http://www.pythonpub.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>傻瓜函数式编程</title><link>https://svtter.cn/p/%E5%82%BB%E7%93%9C%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</link><pubDate>Wed, 30 Mar 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%82%BB%E7%93%9C%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</guid><description>&lt;p&gt;这篇文章是转载的，讲的如何进行函数式编程。&lt;/p&gt;
+&lt;h1 id="傻瓜函数式编程"&gt;傻瓜函数式编程
+&lt;/h1&gt;&lt;p&gt;2006年6月19日，星期一&lt;/p&gt;
+&lt;h3 id="开篇"&gt;开篇
+&lt;/h3&gt;&lt;p&gt;我们这些码农做事都是很拖拉的。每天例行报到后，先来点咖啡，看看邮件还有RSS订阅的文章。然后翻翻新闻还有那些技术网站上的更新，再过一遍编程论坛口水区里那些无聊的论战。最后从头把这些再看一次以免错过什么精彩的内容。然后就可以吃午饭了。饭饱过后，回来盯着IDE发一会呆，再看看邮箱，再去搞杯咖啡。光阴似箭，可以回家了……&lt;/p&gt;
+&lt;p&gt;（在被众人鄙视之前）我唯一想说的是，在这些拖拉的日子里总会时不时读到一些&lt;a class="link" href="http://www.baike.com/wiki/%E4%B8%8D%E6%98%8E%E8%A7%89%E5%8E%89" target="_blank" rel="noopener"
+&gt;不明觉厉&lt;/a&gt;的文章。如果没有打开不应该打开的网站，每隔几天你都可以看到至少一篇这样的东西。它们的共性：难懂，耗时，于是这些文章就慢慢的堆积成山了。很快你就会发现自己已经累积了一堆的收藏链接还有数不清的PDF文件，此时你只希望隐入一个杳无人烟的深山老林里什么也不做，用一年半载好好的消化这些私藏宝贝。当然，我是说最好每天还是能有人来给送吃的顺带帮忙打扫卫生倒垃圾，哇哈哈。&lt;/p&gt;
+&lt;p&gt;我不知道你都收藏了些什么，我的阅读清单里面相当大部分都是函数式编程相关的东东：基本上是最难啃的。这些文章充斥着无比枯燥的教科书语言，我想就连那些在华尔街浸淫10年以上的大牛都无法搞懂这些函数式编程（简称FP）文章到底在说什么。你可以去花旗集团或者德意志银行找个项目经理来问问&lt;sup&gt;1&lt;/sup&gt;：你们为什么要选JMS而不用Erlang？答案基本上是：我认为这个学术用的语言还无法胜任实际应用。可是，现有的一些系统不仅非常复杂还需要满足十分严苛的需求，它们就都是用函数式编程的方法来实现的。这，就说不过去了。&lt;/p&gt;
+&lt;p&gt;关于FP的文章确实比较难懂，但我不认为一定要搞得那么晦涩。有一些历史原因造成了这种知识断层，可是FP概念本身并不难理解。我希望这篇文章可以成为一个“FP入门指南”，帮助你从&lt;a class="link" href="http://zh.wikipedia.org/zh/%E6%8C%87%E4%BB%A4%E5%BC%8F%E7%B7%A8%E7%A8%8B" target="_blank" rel="noopener"
+&gt;指令式编程&lt;/a&gt;走向&lt;a class="link" href="http://zh.wikipedia.org/zh/%E5%87%BD%E6%95%B8%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80" target="_blank" rel="noopener"
+&gt;函数式编程&lt;/a&gt;。先来点咖啡，然后继续读下去。很快你对FP的理解就会让同事们刮目相看了。&lt;/p&gt;
+&lt;p&gt;什么是函数式编程（Functional Programming，FP）？它从何而来？可以吃吗？倘若它真的像那些鼓吹FP的人说的那么好，为什么实际应用中那么少见？为什么只有那些在读博士的家伙想要用它？而最重要的是，它母亲的怎么就那么难学？那些所谓的closure、continuation，currying，lazy evaluation还有no side effects都是什么东东（译者：本着保留专用术语的原则，此处及下文类似情形均不译）？如果没有那些大学教授的帮忙怎样把它应用到实际工程里去？为什么它和我们熟悉的万能而神圣的指令式编程那么的不一样？&lt;/p&gt;
+&lt;p&gt;我们很快就会解开这些谜团。刚才我说过实际工程和学术界之间的知识断层是有其历史原因的，那么就先让我来解释一下这个问题。答案，就在接下来的一次公园漫步中：&lt;/p&gt;
+&lt;h3 id="公园漫步"&gt;公园漫步
+&lt;/h3&gt;&lt;p&gt;时间机器启动……我们来到公元前380年，也就是2000多年前的雅典城外。这是一个阳光明媚的久违的春天，&lt;a class="link" href="http://zh.wikipedia.org/zh/%E6%9F%8F%E6%8B%89%E5%9B%BE" target="_blank" rel="noopener"
+&gt;柏拉图&lt;/a&gt;和一个帅气的小男仆走在一片橄榄树荫下。他们正准备前往一个学院。天气很好，吃得很饱，渐渐的，两人的谈话转向了哲学。&lt;/p&gt;
+&lt;p&gt;“你看那两个学生，哪一个更高一些？”，柏拉图小心的选择用字，以便让这个问题更好的引导眼前的这个小男孩。&lt;/p&gt;
+&lt;p&gt;小男仆望向水池旁边的两个男生，“他们差不多一样高。”。&lt;/p&gt;
+&lt;p&gt;“‘差不多一样高’是什么意思？”柏拉图问。&lt;/p&gt;
+&lt;p&gt;“嗯……从这里看来他们是一样高的，但是如果走近一点我肯定能看出差别来。”&lt;/p&gt;
+&lt;p&gt;柏拉图笑了。他知道这个小孩已经朝他引导的方向走了。“这么说来你的意思是世界上没有什么东西是完全相同的咯？”&lt;/p&gt;
+&lt;p&gt;思考了一会，小男孩回答：“是的。万物之间都至少有一丁点差别，哪怕我们无法分辨出来。”&lt;/p&gt;
+&lt;p&gt;说到点子上了！“那你说，如果世界上没有什么东西是完全相等的，你怎么理解‘完全相等’这个概念？”&lt;/p&gt;
+&lt;p&gt;小男仆看起来很困惑。“这我就不知道了。”&lt;/p&gt;
+&lt;p&gt;这是人类第一次试图了解数学的本质。柏拉图认为我们所在的世界中，万事万物都是完美模型的一个近似。他同时意识到虽然我们不能感受到完美的模型，但这丝毫不会阻止我们了解完美模型的概念。柏拉图进而得出结论：完美的数学模型只存在于另外一个世界，而因为某种原因我们却可以通过联系着这两个世界的一个纽带来认识这些模型。一个简单的例子就是完美的圆形。没有人见过这样的一个圆，但是我们知道怎样的圆是完美的圆，而且可以用公式把它描述出来。&lt;/p&gt;
+&lt;p&gt;如此说来，什么是数学呢？为什么可以用数学法则来描述我们的这个宇宙？我们所处的这个世界中万事万物都可以用数学来描述吗？&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;数理哲学是一门很复杂的学科。它和其他多数哲学一样，更着重于提出问题而不是给出答案。数学就像拼图一样，很多结论都是这样推导出来的：先是确立一些互不冲突的基础原理，以及一些操作这些原理的规则，然后就可以把这些原理以及规则拼凑起来形成新的更加复杂的规则或是定理了。数学家把这种方法称为“形式系统”或是“演算”。如果你想做的话，可以用形式系统描述俄罗斯方块这个游戏。而事实上，俄罗斯方块这个游戏的实现，只要它正确运行，就是一个形式系统。只不过它以一种不常见的形式表现出来罢了。&lt;/p&gt;
+&lt;p&gt;如果&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E5%8D%8A%E4%BA%BA%E9%A9%AC%E5%BA%A7%CE%B1" target="_blank" rel="noopener"
+&gt;半人马阿尔法&lt;/a&gt;上有文明存在的话，那里的生物可能无法解读我们的俄罗斯方块形式系统甚至是简单的圆形的形式系统，因为它们感知世界的唯一器官可能只有鼻子（译者：偶的妈你咋知道？）也许它们是无法得知俄罗斯方块的形式系统了，但是它们很有可能知道圆形。它们的圆形我们可能没法解读，因为我们的鼻子没有它们那么灵敏（译者：那狗可以么？）可是只要越过形式系统的表示方式（比如通过使用“超级鼻子”之类的工具来感知这些用味道表示的形式系统，然后使用标准的解码技术把它们翻译成人类能理解的语言），那么任何有足够智力的文明都可以理解这些形式系统的本质。&lt;/p&gt;
+&lt;p&gt;有意思的是，哪怕宇宙中完全不存在任何文明，类似俄罗斯方块还有圆形这样的形式系统依旧是成立的：只不过没有智慧生物去发现它们而已。这个时候如果忽然一个文明诞生了，那么这些具有智慧的生物就很有可能发现各种各样的形式系统，并且用它们发现的系统去描述各种宇宙法则。不过它们可能不会发现俄罗斯方块这样的形式系统，因为在它们的世界里没有俄罗斯方块这种东西嘛。有很多像俄罗斯方块这样的形式系统是与客观世界无关的，比如说自然数，很难说所有的自然数都与客观世界有关，随便举一个超级大的数，这个数可能就和世界上任何事物无关，因为这个世界可能不是无穷大的。&lt;/p&gt;
+&lt;h3 id="历史回眸3"&gt;历史回眸&lt;sup&gt;3&lt;/sup&gt;
+&lt;/h3&gt;&lt;p&gt;再次启动时间机……这次到达的是20世纪30年代，离今天近了很多。无论&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E6%96%B0%E5%A4%A7%E9%99%B8" target="_blank" rel="noopener"
+&gt;新&lt;/a&gt;&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E8%88%8A%E5%A4%A7%E9%99%B8" target="_blank" rel="noopener"
+&gt;旧&lt;/a&gt;大陆，经济大萧条都造成了巨大的破坏。社会各阶层几乎每一个家庭都深受其害。只有极其少数的几个地方能让人们免于遭受穷困之苦。几乎没有人能够幸运的在这些避难所里度过危机，注意，我说的是几乎没有，还真的有这么些幸运儿，比如说当时普林斯顿大学的数学家们。&lt;/p&gt;
+&lt;p&gt;新建成的哥特式办公楼给普林斯顿大学带来一种天堂般的安全感。来自世界各地的逻辑学者应邀来到普林斯顿，他们将组建一个新的学部。正当大部分美国人还在为找不到一片面包做晚餐而发愁的时候，在普林斯顿却是这样一番景象：高高的天花板和木雕包覆的墙，每天品茶论道，漫步丛林。&lt;/p&gt;
+&lt;p&gt;一个名叫&lt;a class="link" href="http://zh.wikipedia.org/zh/%E9%98%BF%E9%9A%86%E4%BD%90%C2%B7%E9%82%B1%E5%A5%87" target="_blank" rel="noopener"
+&gt;阿隆佐·邱奇&lt;/a&gt;(Alonzo Church)的年轻数学家就过着这样优越的生活。阿隆佐本科毕业于普林斯顿后被留在研究院。他觉得这样的生活完全没有必要，于是他鲜少出现在那些数学茶会中也不喜欢到树林里散心。阿隆佐更喜欢独处：自己一个人的时候他的工作效率更高。尽管如此他还是和普林斯顿学者保持着联系，这些人当中有&lt;a class="link" href="http://zh.wikipedia.org/zh/%E8%89%BE%E4%BC%A6%C2%B7%E5%9B%BE%E7%81%B5" target="_blank" rel="noopener"
+&gt;艾伦·图灵&lt;/a&gt;、&lt;a class="link" href="http://zh.wikipedia.org/zh/%E7%BA%A6%E7%BF%B0%C2%B7%E5%86%AF%C2%B7%E8%AF%BA%E4%BC%8A%E6%9B%BC" target="_blank" rel="noopener"
+&gt;约翰·冯·诺伊曼&lt;/a&gt;、&lt;a class="link" href="http://zh.wikipedia.org/zh-hant/%E5%BA%93%E5%B0%94%E7%89%B9%C2%B7%E5%93%A5%E5%BE%B7%E5%B0%94" target="_blank" rel="noopener"
+&gt;库尔特·哥德尔&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;这四个人都对形式系统感兴趣。相对于现实世界，他们更关心如何解决抽象的数学问题。而他们的问题都有这么一个共同点：都在尝试解答关于计算的问题。诸如：如果有一台拥有无穷计算能力的超级机器，可以用来解决什么问题？它可以自动的解决这些问题吗？是不是还是有些问题解决不了，如果有的话，是为什么？如果这样的机器采用不同的设计，它们的计算能力相同吗？&lt;/p&gt;
+&lt;p&gt;在与这些人的合作下，阿隆佐设计了一个名为&lt;a class="link" href="http://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97" target="_blank" rel="noopener"
+&gt;lambda演算&lt;/a&gt;的形式系统。这个系统实质上是为其中一个超级机器设计的编程语言。在这种语言里面，函数的参数是函数，返回值也是函数。这种函数用希腊字母lambda（&lt;a class="link" href="http://en.wikipedia.org/wiki/Lambda" target="_blank" rel="noopener"
+&gt;λ&lt;/a&gt;），这种系统因此得名&lt;sup&gt;4&lt;/sup&gt;。有了这种形式系统，阿隆佐终于可以分析前面的那些问题并且能够给出答案了。&lt;/p&gt;
+&lt;p&gt;除了阿隆佐·邱奇，艾伦·图灵也在进行类似的研究。他设计了一种完全不同的系统（后来被称为&lt;a class="link" href="http://zh.wikipedia.org/zh/%E5%9B%BE%E7%81%B5%E6%9C%BA" target="_blank" rel="noopener"
+&gt;图灵机&lt;/a&gt;），并用这种系统得出了和阿隆佐相似的答案。到了后来人们证明了图灵机和lambda演算的能力是一样的。&lt;/p&gt;
+&lt;p&gt;如果二战没有发生，这个故事到这里就应该结束了，我的这篇小文没什么好说的了，你们也可以去看看有什么其他好看的文章。可是二战还是爆发了，整个世界陷于火海之中。那时的美军空前的大量使用炮兵。为了提高轰炸的精度，军方聘请了大批数学家夜以继日的求解各种差分方程用于计算各种火炮发射数据表。后来他们发现单纯手工计算这些方程太耗时了，为了解决这个问题，各种各样的计算设备应运而生。IBM制造的Mark一号就是用来计算这些发射数据表的第一台机器。Mark一号重5吨，由75万个零部件构成，每一秒可以完成3次运算。&lt;/p&gt;
+&lt;p&gt;战后，人们为提高计算能力而做出的努力并没有停止。1949年第一台电子离散变量自动计算机诞生并取得了巨大的成功。它是&lt;a class="link" href="http://zh.wikipedia.org/zh/%E5%86%AF%C2%B7%E8%AF%BA%E4%BC%8A%E6%9B%BC%E7%BB%93%E6%9E%84" target="_blank" rel="noopener"
+&gt;冯·诺伊曼设计架构&lt;/a&gt;的第一个实例，也是一台现实世界中实现的图灵机。相比他的这些同事，那个时候阿隆佐的运气就没那么好了。&lt;/p&gt;
+&lt;p&gt;到了50年代末，一个叫John McCarthy的MIT教授（他也是普林斯顿的硕士）对阿隆佐的成果产生了兴趣。1958年他发明了一种列表处理语言（Lisp），这种语言是一种阿隆佐lambda演算在现实世界的实现，而且它能在冯·诺伊曼计算机上运行！很多计算机科学家都认识到了Lisp强大的能力。1973年在MIT人工智能实验室的一些程序员研发出一种机器，并把它叫做Lisp机。于是阿隆佐的lambda演算也有自己的硬件实现了！&lt;/p&gt;
+&lt;h3 id="函数式编程"&gt;函数式编程
+&lt;/h3&gt;&lt;p&gt;函数式编程是阿隆佐思想的在现实世界中的实现。不过不是全部的lambda演算思想都可以运用到实际中，因lambda演算在设计的时候就不是为了在各种现实世界中的限制下工作的。所以，就像面向对象的编程思想一样，函数式编程只是一系列想法，而不是一套严苛的规定。有很多支持函数式编程的程序语言，它们之间的具体设计都不完全一样。在这里我将用Java写的例子介绍那些被广泛应用的函数式编程思想（没错，如果你是受虐狂你可以用Java写出函数式程序）。在下面的章节中我会在Java语言的基础上，做一些修改让它变成实际可用的函数式编程语言。那么现在就开始吧。&lt;/p&gt;
+&lt;p&gt;Lambda演算在最初设计的时候就是为了研究计算相关的问题。所以函数式编程主要解决的也是计算问题，而出乎意料的是，是用函数来解决的！（译者：请理解原作者的苦心，我想他是希望加入一点调皮的风格以免读者在中途睡着或是转台……）。函数就是函数式编程中的基础元素，可以完成几乎所有的操作，哪怕最简单的计算，也是用函数完成的。我们通常理解的变量在函数式编程中也被函数代替了：在函数式编程中变量仅仅代表某个表达式（这样我们就不用把所有的代码都写在同一行里了）。所以我们这里所说的‘变量’是不能被修改的。所有的变量只能被赋一次初值。在Java中就意味着每一个变量都将被声明为final（如果你用C++，就是const）。在FP中，没有非final的变量。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;既然FP中所有的变量都是final的，可以引出两个规定：一是变量前面就没有必要再加上final这个关键字了，二是变量就不能再叫做‘变量’了……于是现在开始对Java做两个改动：所有Java中声明的变量默认为final，而且我们把所谓的‘变量’称为‘符号’。&lt;/p&gt;
+&lt;p&gt;到现在可能会有人有疑问：这个新创造出来的语言可以用来写什么有用的复杂一些的程序吗？毕竟，如果每个符号的值都是不能修改的，那么我们就什么东西都不能改变了！别紧张，这样的说法不完全正确。阿隆佐在设计lambda演算的时候他并不想要保留状态的值以便稍后修改这些值。他更关心的是基于数据之上的操作（也就是更容易理解的“计算”）。而且，lambda演算和图灵机已经被证明了是具有同样能力的系统，因此指令式编程能做到的函数式编程也同样可以做到。那么，怎样才能做到呢？&lt;/p&gt;
+&lt;p&gt;事实上函数式程序是可以保存状态的，只不过它们用的不是变量，而是函数。状态保存在函数的参数中，也就是说在栈上。如果你需要保存一个状态一段时间并且时不时的修改它，那么你可以编写一个递归函数。举个例子，试着写一个函数，用来反转一个Java的字符串。记住咯，这个程序里的变量都是默认为final的&lt;sup&gt;5&lt;/sup&gt;。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;reverse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;length&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;reverse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;substring&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;length&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;substring&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这个方程运行起来会相对慢一些，因为它重复调用自己&lt;sup&gt;6&lt;/sup&gt;。同时它也会大量的消耗内存，因为它会不断的分配创建内存对象。无论如何，它是用函数式编程思想写出来的。这时候可能有人要问了，为什么要用这种奇怪的方式编写程序呢？嘿，我正准备告诉你。&lt;/p&gt;
+&lt;h3 id="fp之优点"&gt;FP之优点
+&lt;/h3&gt;&lt;p&gt;你大概已经在想：上面这种怪胎函数怎么也不合理嘛。在我刚开始学习FP的时候我也这样想的。不过后来我知道我是错的。使用这种方式编程有很多好处。其中一些是主观的。比如说有人认为函数式程序更容易理解。这个我就不说了，哪怕街上随便找个小孩都知道‘容易理解’是多么主观的事情。幸运的是，客观方面的好处还有很多。&lt;/p&gt;
+&lt;h4 id="单元测试"&gt;单元测试
+&lt;/h4&gt;&lt;p&gt;因为FP中的每个符号都是final的，于是没有什么函数会有副作用。谁也不能在运行时修改任何东西，也没有函数可以修改在它的作用域之外修改什么值给其他函数继续使用（在指令式编程中可以用类成员或是全局变量做到）。这意味着决定函数执行结果的唯一因素就是它的返回值，而影响其返回值的唯一因素就是它的参数。&lt;/p&gt;
+&lt;p&gt;这正是单元测试工程师梦寐以求的啊。现在测试程序中的函数时只需要关注它的参数就可以了。完全不需要担心函数调用的顺序，也不用费心设置外部某些状态值。唯一需要做的就是传递一些可以代表边界条件的参数给这些函数。相对于指令式编程，如果FP程序中的每一个函数都能通过单元测试，那么我们对这个软件的质量必将信心百倍。反观Java或者C++，仅仅检查函数的返回值是不够的：代码可能修改外部状态值，因此我们还需要验证这些外部的状态值的正确性。在FP语言中呢，就完全不需要。&lt;/p&gt;
+&lt;h4 id="调试查错"&gt;调试查错
+&lt;/h4&gt;&lt;p&gt;如果一段FP程序没有按照预期设计那样运行，调试的工作几乎不费吹灰之力。这些错误是百分之一百可以重现的，因为FP程序中的错误不依赖于之前运行过的不相关的代码。而在一个指令式程序中，一个bug可能有时能重现而有些时候又不能。因为这些函数的运行依赖于某些外部状态， 而这些外部状态又需要由某些与这个bug完全不相关的代码通过某个特别的执行流程才能修改。在FP中这种情况完全不存在：如果一个函数的返回值出错了，它一直都会出错，无论你之前运行了什么代码。&lt;/p&gt;
+&lt;p&gt;一旦问题可以重现，解决它就变得非常简单，几乎就是一段愉悦的旅程。中断程序的运行，检查一下栈，就可以看到每一个函数调用时使用的每一个参数，这一点和指令式代码一样。不同的是指令式程序中这些数据还不足够，因为函数的运行还可能依赖于成员变量，全局变量，还有其他类的状态（而这些状态又依赖于类似的变量）。FP中的函数只依赖于传给它的参数，而这些参数就在眼前！还有，对指令式程序中函数返回值的检查并不能保证这个函数是正确运行的。还要逐一检查若干作用域以外的对象以确保这个函数没有对这些牵连的对象做出什么越轨的行为（译者：好吧，翻译到这里我自己已经有点激动了）。对于一个FP程序，你要做的仅仅是看一下函数的返回值。&lt;/p&gt;
+&lt;p&gt;把栈上的数据过一遍就可以得知有哪些参数传给了什么函数，这些函数又返回了什么值。当一个返回值看起来不对头的那一刻，跳进这个函数看看里面发生了什么。一直重复跟进下去就可以找到bug的源头！&lt;/p&gt;
+&lt;h4 id="并发执行"&gt;并发执行
+&lt;/h4&gt;&lt;p&gt;不需要任何改动，所有FP程序都是可以并发执行的。由于根本不需要采用锁机制，因此完全不需要担心死锁或是并发竞争的发生。在FP程序中没有哪个线程可以修改任何数据，更不用说多线程之间了。这使得我们可以轻松的添加线程，至于那些祸害并发程序的老问题，想都不用想！&lt;/p&gt;
+&lt;p&gt;既然是这样，为什么没有人在那些高度并行的那些应用程序中采用FP编程呢？事实上，这样的例子并不少见。爱立信开发了一种FP语言，名叫Erlang，并应用在他们的电信交换机上，而这些交换机不仅容错度高而且拓展性强。许多人看到了Erlang的这些优势也纷纷开始使用这一语言。在这里提到的电信交换控制系统远远要比华尔街上使用的系统具有更好的扩展性也更可靠。事实上，用Erlang搭建的系统并不具备可扩展性和可靠性，而Java可以提供这些特性。Erlang只是像岩石一样结实不容易出错而已。&lt;/p&gt;
+&lt;p&gt;FP关于并行的优势不仅于此。就算某个FP程序本身只是单线程的，编译器也可以将其优化成可以在多CPU上运行的并发程序。以下面的程序为例：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;s1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;somewhatLongOperation1&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;s2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;somewhatLongOperation2&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;s3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;concatenate&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s1&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s2&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;如果是函数式程序，编译器就可以对代码进行分析，然后可能分析出生成字符串s1和s2的两个函数可能会比较耗时，进而安排它们并行运行。这在指令式编程中是无法做到的，因为每一个函数都有可能修改其外部状态，然后接下来的函数又可能依赖于这些状态的值。在函数式编程中，自动分析代码并找到适合并行执行的函数十分简单，和分析C的内联函数没什么两样。从这个角度来说用FP风格编写的程序是“永不过时”的（虽然我一般不喜欢说大话空话，不过这次就算个例外吧）。硬件厂商已经没办法让CPU运行得再快了。他们只能靠增加CPU核的数量然后用并行来提高运算的速度。这些厂商故意忽略一个事实：只有可以并行的软件才能让你花大价钱买来的这些硬件物有所值。指令式的软件中只有很小一部分能做到跨核运行，而所有的函数式软件都能实现这一目标，因为FP的程序从一开始就是可以并行运行的。&lt;/p&gt;
+&lt;h4 id="热部署"&gt;热部署
+&lt;/h4&gt;&lt;p&gt;在Windows早期，如果要更新系统那可是要重启电脑的，而且还要重启很多次。哪怕只是安装一个新版本的播放器。到了XP的时代这种情况得到比较大的改善，尽管还是不理想（我工作的时候用的就是Windows，就在现在，我的系统托盘上就有个讨厌的图标，我不重启机子就不消失）。这一方面Unix好一些，曾经。只需要暂停一些相关的部件而不是整个操作系统，就可以安装更新了。虽然是要好一些了，对很多服务器应用来说这也还是不能接受的。电信系统要求的是100%的在线率，如果一个救急电话因为系统升级而无法拨通，成千上万的人就会因此丧命。同样的，华尔街的那些公司怎么也不能说要安装软件而在整个周末停止他们系统的服务。&lt;/p&gt;
+&lt;p&gt;最理想的情况是更新相关的代码而不用暂停系统的其他部件。对指令性程序来说是不可能的。想想看，试着在系统运行时卸载掉一个Java的类然后再载入这个类的新的实现，这样做的话系统中所有该类的实例都会立刻不能运行，因为该类的相关状态已经丢失了。这种情况下可能需绞尽脑汁设计复杂的版本控制代码，需要将所有这种类正在运行的实例&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E5%BA%8F%E5%88%97%E5%8C%96" target="_blank" rel="noopener"
+&gt;序列化&lt;/a&gt;，逐一销毁它们，然后创建新类的实例，将现有数据也序列化后装载到这些新的实例中，最后希望负责装载的程序可以正确的把这些数据移植到新实例中并正常的工作。这种事很麻烦，每次有新的改动都需要手工编写装载程序来完成更新，而且这些装载程序还要很小心，以免破坏了现有对象之间的联系。理论上是没问题，可是实际上完全行不通。&lt;/p&gt;
+&lt;p&gt;FP的程序中所有状态就是传给函数的参数，而参数都是储存在栈上的。这一特性让软件的热部署变得十分简单。只要比较一下正在运行的代码以及新的代码获得一个diff，然后用这个diff更新现有的代码，新代码的热部署就完成了。其它的事情有FP的语言工具自动完成！如果还有人认为这只存在于科幻小说中，他需要再想想：多年来Erlang工程师已经使用这种技术对它们的系统进行升级而完全不用暂停运行了。&lt;/p&gt;
+&lt;h4 id="机器辅助优化及证明"&gt;机器辅助优化及证明
+&lt;/h4&gt;&lt;p&gt;FP语言有一个特性很有意思，那就是它们是可以用数学方法来分析的。FP语言本身就是形式系统的实现，只要是能在纸上写出来的数学运算就可以用这种语言表述出来。于是只要能够用数学方法证明两段代码是一致的，编译器就可以把某段代码解析成在数学上等同的但效率又更高的另外一段代码&lt;sup&gt;7&lt;/sup&gt;。 关系数据库已经用这种方法进行优化很多年了。没有理由在常规的软件行业就不能应用这种技术。&lt;/p&gt;
+&lt;p&gt;另外，还可以用这种方法来证明代码的正确性，甚至可以设计出能够自动分析代码并为单元测试自动生成边缘测试用例的工具出来！对于那些对缺陷零容忍的系统来说，这一功能简直就是无价之宝。例如心脏起搏器，例如飞行管控系统，这几乎就是必须满足的需求。哪怕你正在开发的程序不是为了完成什么重要核心任务，这些工具也可以帮助你写出更健壮的程序，直接甩竞争对手n条大街。&lt;/p&gt;
+&lt;h3 id="高阶函数"&gt;高阶函数
+&lt;/h3&gt;&lt;p&gt;我还记得在了解到FP以上的各种好处后想到：“这些优势都很吸引人，可是，如果必须非要用这种所有变量都是final的蹩脚语言，估计还是不怎么实用吧”。其实这样的想法是不对的。对于Java这样的指令式语言来说，如果所有的变量都是必须是final的，那么确实很束手束脚。然而对函数式语言来说，情况就不一样了。函数式语言提供了一种特别的抽象工具，这种工具将帮助使用者编写FP代码，让他们甚至都没想到要修改变量的值。高阶函数就是这种工具之一。&lt;/p&gt;
+&lt;p&gt;FP语言中的函数有别于Java或是C。可以说这种函数是一个&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E5%85%A8%E9%9B%86" target="_blank" rel="noopener"
+&gt;全集&lt;/a&gt;：Java函数可以做到的它都能做，同时它还有更多的能力。首先，像在C里写程序那样创建一个函数：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;看起来和C程序没什么区别，但是很快你就可以看出区别来。接下来我们扩展Java的编译器以便支持这种代码，也就是说，当我们写下以上的程序编译器会把它转化成下面的Java程序（别忘了，所有的变量都是final的）：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;add_function_t&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;add_function_t&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;add_function_t&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在这里，符号add并不是一个函数，它是只有一个函数作为其成员的简单的类。这样做有很多好处，可以在程序中把add当成参数传给其他的函数，也可以把add赋给另外一个符号，还可以在运行时创建add_function_t的实例然后在不再需要这些实例的时候由系统回收机制处理掉。这样做使得函数成为和integer或是string这样的&lt;a class="link" href="http://zh.wikipedia.org/zh/%E7%AC%AC%E4%B8%80%E9%A1%9E%E7%89%A9%E4%BB%B6" target="_blank" rel="noopener"
+&gt;第一类对象&lt;/a&gt;。对其他函数进行操作（比如说把这些函数当成参数）的函数，就是所谓的高阶函数。别让这个看似高深的名字吓倒你（译者：好死不死起个这个名字，初一看还准备搬出已经尘封的高数教材……），它和Java中操作其他类（也就是把一个类实例传给另外的类）的类没有什么区别。可以称这样的类为“高阶类”，但是没人会在意，因为Java圈里就没有什么很强的学术社团。（译者：这是高级黑吗？）&lt;/p&gt;
+&lt;p&gt;那么什么时候该用高阶函数，又怎样用呢？我很高兴有人问这个问题。设想一下，你写了一大堆程序而不考虑什么类结构设计，然后发现有一部分代码重复了几次，于是你就会把这部分代码独立出来作为一个函数以便多次调用（所幸学校里至少会教这个）。如果你发现这个函数里有一部分逻辑需要在不同的情况下实现不同的行为，那么你可以把这部分逻辑独立出来作为一个高阶函数。搞晕了？下面来看看我工作中的一个真实的例子。&lt;/p&gt;
+&lt;p&gt;假设有一段Java的客户端程序用来接收消息，用各种方式对消息做转换，然后发给一个服务器。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MessageHandler&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;handleMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Message&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setClientCode&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"ABCD_123"&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;sendMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;再进一步假设，整个系统改变了，现在需要发给两个服务器而不再是一个了。系统其他部分都不变，唯独客户端的代码需要改变：额外的那个服务器需要用另外一种格式发送消息。应该如何处理这种情况呢？我们可以先检查一下消息要发送到哪里，然后选择相应的格式把这个消息发出去：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MessageHandler&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;handleMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Message&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getDestination&lt;/span&gt;&lt;span class="o"&gt;().&lt;/span&gt;&lt;span class="na"&gt;equals&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"server1"&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setClientCode&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"ABCD_123"&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setClientCode&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"123_ABC"&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;sendMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;可是这样的实现是不具备扩展性的。如果将来需要增加更多的服务器，上面函数的大小将呈线性增长，使得维护这个函数最终变成一场噩梦。面向对象的编程方法告诉我们，可以把MessageHandler变成一个基类，然后将针对不同格式的消息编写相应的子类。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;abstract&lt;/span&gt; &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MessageHandler&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;handleMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Message&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setClientCode&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;getClientCode&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;sendMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="kd"&gt;abstract&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;getClientCode&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MessageHandlerOne&lt;/span&gt; &lt;span class="kd"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;MessageHandler&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;getClientCode&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;"ABCD_123"&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MessageHandlerTwo&lt;/span&gt; &lt;span class="kd"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;MessageHandler&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;getClientCode&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;"123_ABCD"&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这样一来就可以为每一个接收消息的服务器生成一个相应的类对象，添加服务器就变得更加容易维护了。可是，这一个简单的改动引出了很多的代码。仅仅是为了支持不同的客户端行为代码，就要定义两种新的类型！现在来试试用我们刚才改造的语言来做同样的事情，注意，这种语言支持高阶函数：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MessageHandler&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;handleMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Message&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Function&lt;/span&gt; &lt;span class="n"&gt;getClientCode&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;Message&lt;/span&gt; &lt;span class="n"&gt;msg1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setClientCode&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;getClientCode&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="n"&gt;sendMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;msg1&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;getClientCodeOne&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;"ABCD_123"&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;getClientCodeTwo&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;"123_ABCD"&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;MessageHandler&lt;/span&gt; &lt;span class="n"&gt;handler&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;MessageHandler&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;handler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;handleMessage&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;someMsg&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;getClientCodeOne&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在上面的程序里，我们没有创建任何新的类型或是多层类的结构。仅仅是把相应的函数作为参数进行传递，就做到了和用面向对象编程一样的事情，而且还有额外的好处：一是不再受限于多层类的结构。这样做可以做运行时传递新的函数，可以在任何时候改变这些函数，而且这些改变不仅更加精准而且触碰的代码更少。这种情况下编译器其实就是在替我们编写面向对象的“粘合”代码（译者：又称胶水代码，粘接代码）！除此之外我们还可以享用FP编程的其他所有优势。函数式编程能提供的抽象服务还远不止于此。高阶函数只不过是个开始。&lt;/p&gt;
+&lt;h3 id="currying"&gt;Currying
+&lt;/h3&gt;&lt;p&gt;我遇见的大多数码农都读过“&lt;a class="link" href="http://baike.baidu.com/view/66964.htm#2" target="_blank" rel="noopener"
+&gt;四人帮&lt;/a&gt;”的那本《设计模式》。任何稍有自尊心的码农都会说这本书和语言无关，因此无论你用什么编程语言，当中提到的那些模式大体上适用于所有软件工程。听起来很厉害，然而事实却不是这样。&lt;/p&gt;
+&lt;p&gt;函数式语言的表达能力很强。用这种语言编程的时候基本不需要设计模式，因为这种语言层次已经足够高，使得使用者可以以概念编程，从而完全不需要设计模式了。以&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener"
+&gt;适配器模式&lt;/a&gt;为例（有人知道这个模式和&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener"
+&gt;外观模式&lt;/a&gt;有什么区别吗？怎么觉得有人为了出版合同的要求而硬生生凑页数？）（译者：您不愧是高级黑啊）。对于一个支持currying技术的语言来说，这个模式就是多余的。&lt;/p&gt;
+&lt;p&gt;在Java中最有名的适配器模式就是在其“默认”抽象单元中的应用：类。在函数式语言中这种模式其实就是函数。在这个模式中，一个接口被转换成另外一个接口，让不同的用户代码调用。接下来就有一个适配器模式的例子：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;pow&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;square&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;pow&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;上面的代码中square函数计算一个整数的平方，这个函数的接口被转换成计算一个整数的任意整数次幂。在学术圈里这种简单的技术就被叫做currying（因为逻辑学家&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener"
+&gt;哈斯凯尔·加里&lt;/a&gt;用其数学技巧将这种技术描述出来，于是就以他的名字来命名了）。在一个FP语言中函数（而不是类）被作为参数进行传递，currying常常用于转化一个函数的接口以便于其他代码调用。函数的接口就是它的参数，于是currying通常用于减少函数参数的数量（见前例）。&lt;/p&gt;
+&lt;p&gt;函数式语言生来就支持这一技术，于是没有必要为某个函数手工创建另外一个函数去包装并转换它的接口，这些函数式语言已经为你做好了。我们继续拓展Java来支持这一功能。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;pow&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;上面的语句实现了一个平方计算函数，它只需要一个参数。它会继而调用pow函数并且把第二个参数置为2。编译过后将生成以下Java代码：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;square_function_t&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;square&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;pow&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;square_function_t&lt;/span&gt; &lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;square_function_t&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;从上面的例子可以看到，很简单的，函数pow的封装函数就创建出来了。在FP语言中currying就这么简单：一种可以快速且简单的实现函数封装的捷径。我们可以更专注于自己的设计，编译器则会为你编写正确的代码！什么时候使用currying呢？很简单，当你想要用适配器模式（或是封装函数）的时候，就是用currying的时候。&lt;/p&gt;
+&lt;h3 id="惰性求值"&gt;&lt;a class="link" href="http://zh.wikipedia.org/zh/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC" target="_blank" rel="noopener"
+&gt;惰性求值&lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;惰性求值（或是延迟求值）是一种有趣的技术，而当我们投入函数式编程的怀抱后这种技术就有了得以实现的可能。前面介绍并发执行的时候已经提到过如下代码：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;s1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;somewhatLongOperation1&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;s2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;somewhatLongOperation2&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;s3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;concatenate&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s1&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s2&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在指令式语言中以上代码执行的顺序是显而易见的。由于每个函数都有可能改动或者依赖于其外部的状态，因此必须顺序执行。先是计算somewhatLongOperation1，然后到somewhatLongOperation2，最后执行concatenate。函数式语言就不一样了。&lt;/p&gt;
+&lt;p&gt;在前面讨论过，somewhatLongOperation1和somewhatLongOperation2是可以并发执行的，因为函数式语言保证了一点：没有函数会影响或者依赖于全局状态。可是万一我们不想要这两个函数并发执行呢？这种情况下是不是也还是要顺序执行这些函数？答案是否定的。只有到了执行需要s1、s2作为参数的函数的时候，才真正需要执行这两个函数。于是在concatenate这个函数没有执行之前，都没有需要去执行这两个函数：这些函数的执行可以一直推迟到concatenate()中需要用到s1和s2的时候。假如把concatenate换成另外一个函数，这个函数中有条件判断语句而且实际上只会需要两个参数中的其中一个，那么就完全没有必要执行计算另外一个参数的函数了！Haskell语言就是一个支持惰性求值的例子。Haskell不能保证任何语句会顺序执行（甚至完全不会执行到），因为Haskell的代码只有在需要的时候才会被执行到。&lt;/p&gt;
+&lt;p&gt;除了这些优点，惰性求值也有缺点。这里介绍了它的优点，我们将在下一章节介绍这些缺点以及如何克服它们。&lt;/p&gt;
+&lt;h4 id="代码优化"&gt;代码优化
+&lt;/h4&gt;&lt;p&gt;惰性求值使得代码具备了巨大的优化潜能。支持惰性求值的编译器会像数学家看待代数表达式那样看待函数式程序：抵消相同项从而避免执行无谓的代码，安排代码执行顺序从而实现更高的执行效率甚至是减少错误。在此基础上优化是不会破坏代码正常运行的。严格使用形式系统的基本元素进行编程带来的最大的好处，是可以用数学方法分析处理代码，因为这样的程序是完全符合数学法则的。&lt;/p&gt;
+&lt;h4 id="抽象化控制结构"&gt;抽象化控制结构
+&lt;/h4&gt;&lt;p&gt;惰性求值技术提供了更高阶的抽象能力，这提供了实现程序设计独特的方法。比如说下面的控制结构：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;unless&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stock&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;isEuropean&lt;/span&gt;&lt;span class="o"&gt;())&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;sendToSEC&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stock&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;程序中只有在stock为European的时候才执行sendToSEC。如何实现例子中的unless？如果没有惰性求值就需要求助于某种形式的宏（译者：用if不行么？），不过在像Haskell这样的语言中就不需要那么麻烦了。直接实现一个unless函数就可以！&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nf"&gt;void&lt;/span&gt; &lt;span class="n"&gt;unless&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;boolean&lt;/span&gt; &lt;span class="n"&gt;condition&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;List&lt;/span&gt; &lt;span class="n"&gt;code&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;condition&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;code&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;请注意，如果condition值为真，那就不会计算code。在其他严格语言（见&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E6%B1%82%E5%80%BC%E7%AD%96%E7%95%A5#.E4.B8.A5.E6.A0.BC.E6.B1.82.E5.80.BC_.28Strict_evaluation.29" target="_blank" rel="noopener"
+&gt;严格求值&lt;/a&gt;）中这种行为是做不到的，因为在进入unless这个函数之前，作为参数的code已经被计算过了。&lt;/p&gt;
+&lt;h4 id="无穷数据结构"&gt;无穷数据结构
+&lt;/h4&gt;&lt;p&gt;惰性求值技术允许定义无穷数据结构，这要在严格语言中实现将非常复杂。例如一个储存Fibonacci数列数字的列表。很明显这样一个列表是无法在有限的时间内计算出这个无穷的数列并存储在内存中的。在像Java这样的严格语言中，可以定义一个Fibonacci函数，返回这个序列中的某个数。而在Haskell或是类似的语言中，可以把这个函数进一步抽象化并定义一个Fibonacci数列的无穷列表结构。由于语言本身支持惰性求值，这个列表中只有真正会被用到的数才会被计算出来。这让我们可以把很多问题抽象化，然后在更高的层面上解决它们（比如可以在一个列表处理函数中处理无穷多数据的列表）。&lt;/p&gt;
+&lt;h4 id="不足之处"&gt;不足之处
+&lt;/h4&gt;&lt;p&gt;俗话说天下没有免费的午餐™。惰性求值当然也有其缺点。其中最大的一个就是，嗯，惰性。现实世界中很多问题还是需要严格求值的。比如说下面的例子：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Please enter your name: "&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;in&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;readLine&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在惰性语言中没人能保证第一行会中第二行之前执行！这也就意味着我们不能处理IO，不能调用系统函数做任何有用的事情（这些函数需要按照顺序执行，因为它们依赖于外部状态），也就是说不能和外界交互了！如果在代码中引入支持顺序执行的代码原语，那么我们就失去了用数学方式分析处理代码的优势（而这也意味着失去了函数式编程的所有优势）。幸运的是我们还不算一无所有。数学家们研究了不同的方法用以保证代码按一定的顺序执行（in a functional setting?）。这一来我们就可以同时利用到函数式和指令式编程的优点了！这些方法有continuations，monads以及uniqueness typing。这篇文章仅仅介绍了continuations，以后再讨论monads和uniqueness typing。有意思的是呢，coutinuations处理强制代码以特定顺序执行之外还有其他很多出处，这些我们在后面也会提及。&lt;/p&gt;
+&lt;h3 id="continuation"&gt;Continuation
+&lt;/h3&gt;&lt;p&gt;continuation对于编程，就像是达芬奇密码对于人类历史一样：它揭开了人类有史以来最大的谜团。好吧，也许没有那么夸张，不过它们的影响至少和当年发现负数有平方根不相上下。&lt;/p&gt;
+&lt;p&gt;我们对函数的理解只有一半是正确的，因为这样的理解基于一个错误的假设：函数一定要把其返回值返回给调用者。按照这样的理解，continuation就是更加广义的函数。这里的函数不一定要把返回值传回给调用者，相反，它可以把返回值传给程序中的任意代码。continuation就是一种特别的参数，把这种参数传到函数中，函数就能够根据continuation将返回值传递到程序中的某段代码中。说得很高深，实际上没那么复杂。直接来看看下面的例子好了：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;square&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;add这个函数将返回15然后这个值会赋给i，这也是add被调用的地方。接下来i的值又会被用于调用square。请注意支持惰性求值的编译器是不能打乱这段代码执行顺序的，因为第二个函数的执行依赖于第一个函数成功执行并返回结果。这段代码可以用Continuation Pass Style（CPS）技术重写，这样一来add的返回值就不是传给其调用者，而是直接传到square里去了。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;square&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;在上例中，add多了一个参数：一个函数，add必须在完成自己的计算后，调用这个函数并把结果传给它。这时square就是add的一个continuation。上面两段程序中j的值都是225。&lt;/p&gt;
+&lt;p&gt;这样，我们学习到了强制惰性语言顺序执行两个表达式的第一个技巧。再来看看下面IO程序（是不是有点眼熟？）：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Please enter your name: "&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;in&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;readLine&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这两行代码彼此之间没有依赖关系，因此编译器可以随意的重新安排它们的执行顺序。可是只要用CPS重写它，编译器就必须顺序执行了，因为重写后的代码存在依赖关系了。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"Please enter your name: "&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;in&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;readLine&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这段新的代码中println需要结合其计算结果调用readLine，然后再返回readLine的返回值。这使得两个函数得以保证按顺序执行而且readLine总被执行（这是由于整个运算需要它的返回值作为最终结果）。Java的println是没有返回值的，但是如果它可以返回一个能被readnLine接受的抽象值，问题就解决了！（译者：别忘了，这里作者一开始就在Java的基础上修改搭建自己的语言）当然，如果一直把函数按照这种方法串下去，代码很快就变得不可读了，可是没有人要求你一定要这样做。可以通过在语言中添加&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E8%AF%AD%E6%B3%95%E7%B3%96" target="_blank" rel="noopener"
+&gt;语法糖&lt;/a&gt;的方式来解决这个问题，这样程序员只要按照顺序写代码，编译器负责自动把它们串起来就好了。于是就可以任意安排代码的执行顺序而不用担心会失去FP带来的好处了（包括可以用数学方法来分析我们的程序）！如果到这里还有人感到困惑，可以这样理解，函数只是有唯一成员的类的实例而已。试着重写上面两行程序，让println和readLine编程这种类的实例，所有问题就都搞清楚了。&lt;/p&gt;
+&lt;p&gt;到这里本章基本可以结束了，而我们仅仅了解到continuation的一点皮毛，对它的用途也知之甚少。我们可以用CPS完成整个程序，程序里所有的函数都有一个额外的continuation作为参数接受其他函数的返回值。还可以把任何程序转换为CPS的，需要做的只是把当中的函数看作是特殊的continuation（总是将返回值传给调用者的continuation）就可以了，简单到完全可以由工具自动完成（史上很多编译器就是这样做的）。&lt;/p&gt;
+&lt;p&gt;一旦将程序转为CPS的风格，有些事情就变得显而易见了：每一条指令都会有一些continuation，都会将它的计算结果传给某一个函数并调用它，在一个普通的程序中这个函数就是该指令被调用并且返回的地方。随便找个之前提到过的代码，比如说add(5,10)好了。如果add属于一个用CPS风格写出的程序，add的continuation很明显就是当它执行结束后要调用的那个函数。可是在一个非CPS的程序中，add的continuation又是什么呢？当然我们还是可以把这段程序转成CPS的，可是有必要这样做吗？&lt;/p&gt;
+&lt;p&gt;事实上没有必要。注意观察整个CPS转换过程，如果有人尝试要为CPS程序写编译器并且认真思考过就会发现：CPS的程序是不需要栈的！在这里完全没有函数需要做传统意义上的“返回”操作，函数执行完后仅需要接着调用另外一个函数就可以了。于是就不需要在每次调用函数的时候把参数压栈再将它们从中取出，只要把这些参数存放在一片内存中然后使用跳转指令就解决问题了。也完全不需要保留原来的参数：因为这种程序里的函数都不返回，所以它们不会被用第二次！&lt;/p&gt;
+&lt;p&gt;简单点说呢，用CPS风格写出来的程序不需要栈，但是每次调用函数的时候都会要多加一个参数。非CPS风格的程序不需要额外的参数但又需要栈才能运行。栈里面存的是什么？仅仅是参数还有一个供函数运行结束后返回的程序指针而已。这个时候你是不是已经恍然大悟了？对啊，栈里面的数据实际上就是continuation的信息！栈上的程序返回指针实质上就是CPS程序中需要调用的下一个函数！想要知道add(5, 10)的continuation是什么？只要看它运行时栈的内容就可以了。&lt;/p&gt;
+&lt;p&gt;接下来就简单多了。continuation和栈上指示函数返回地址的指针其实是同一样东西，只是continuation是显式的传递该地址并且因此代码就不局限于只能返回到函数被调用的地方了。前面说过，continuation就是函数，而在我们特制的语言中函数就是类的实例，那么可以得知栈上指向函数返回地址的指针和continuation的参数是一样的，因为我们所谓的函数（就像类的一个实例）其实就是指针。这也意味着在程序运行的任何时候，你都可以得到当前的continuation（就是栈上的信息）。&lt;/p&gt;
+&lt;p&gt;好了，我们已经搞清楚当前的continuation是什么了。接下来要弄明白它的存在有什么意义。只要得到了当前的continuation并将它保存起来，就相当于保存了程序的当前状态：在时间轴上把它冻结起来了。这有点像操作系统进入休眠状态。continuation对象保存了足够的信息随时可以从指定的某个状态继续运行程序。在切换线程的时候操作系统也是这样做的。唯一的区别在于它保留了所有的控制权利。当请求某个continuation对象时（在Scheme语言中是通过调用call-with-current-continuation函数实现的）得到的是一个存有当前continuation的对象，也就是栈对象（在CPS中也就是下一个要执行的函数）。可以把这个对象保存做一个变量中（或者是存在磁盘上）。当以该continuation对象“重启”该程序时，程序的状态就会立即“转换”为该对象中保存的状态。这一点和切换回一个被暂停的线程或是从系统休眠中唤醒很相像，唯一不同的是continuatoin对象可以反复的这样使用。当系统唤醒后，休眠前保存的信息就会销毁，否则你也可以反复的从该点唤醒系统，就像乘时光机回到过去一样。有了continuation你就可以做到这一点！&lt;/p&gt;
+&lt;p&gt;那么continuation在什么情况下有用呢？有一些应用程序天生就没有状态，如果要在这样的系统中模拟出状态以简化工作的时候，就可以用到continuation。最合适的应用场合之一就是网页应用程序。微软的ASP.NET为了让程序员更轻松的编写应用程序，花了大量的精力去模拟各种状态。假如C#支持continuation的话，那么ASP.NET的复杂度将减半：因为只要把某一时刻的continuation保存起来，下次用户再次发起同样请求的时候，重新载入这个continuation即可。对于网络应用的程序员来说就再也没有中断了：轻轻松松程序就从下一行开始继续运行了！对于一些实际问题来说，continuation是一种非常有用的抽象工具。如今大量的传统胖客户端（见&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E7%98%A6%E5%AE%A2%E6%88%B7%E7%AB%AF" target="_blank" rel="noopener"
+&gt;瘦客户端&lt;/a&gt;）正纷纷走进网络，continuation在未来将扮演越来越重要的角色。&lt;/p&gt;
+&lt;h3 id="模式匹配"&gt;模式匹配
+&lt;/h3&gt;&lt;p&gt;模式匹配并不是什么新功能。而事实上它和函数式编程也没有什么太大的关系。它之所以常常被认为是FP的一个特性，是因为在函数式语言已经支持模式匹配很长一段时间后的今天，指令式语言是还没有这个功能。&lt;/p&gt;
+&lt;p&gt;还是直接用例子来看看什么是模式匹配吧，这是一个用Java写的Fibonacci函数：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;再看看用我们基于Java修改过的新语言写出来的Fibonacci函数，这种新语言就支持模式匹配：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;区别在哪里呢？在于后者的编译器替我们实现了程序的分支。&lt;/p&gt;
+&lt;p&gt;这有什么了不起的？确实也没什么。只是有人注意到很多函数中有非常复杂的switch结构（对于函数式程序而言更是如此），于是想到如果能把这层结构也抽象化就更好了。然后就把这个复杂的函数拆分成若干新的函数，并在这些函数的某些参数中应用模式（这和&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD" target="_blank" rel="noopener"
+&gt;重载&lt;/a&gt;有点类似）。这样依赖当这个函数被调用的时候，编译器会在运行时将调用者传入的参数与各个新函数的参数定义进行比较，找出合适的那个函数来执行。合适的函数往往是参数定义上最具体最接近传入参数的那个函数。在这个例子中，当n为1时，可以用函数int fib(int n)，不过真正调用的是int fib(1)因为这个函数更具体更接近调用者的要求。&lt;/p&gt;
+&lt;p&gt;模式匹配一般来说要比这里举的例子更加复杂。比如说，高级模式匹配系统可以支持下面的操作：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="o"&gt;...&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;那么什么情况下模式匹配会有用呢？在需要处理一大堆程序分支的时候！每当需要实现复杂的嵌套if语句的时候，模式匹配可以帮助你用更少的代码更好的完成任务。我所知道的一个这样的函数是标准的WndProc函数，该函数是所有Win32应用程序必须具备的（尽管它经常会被抽象化）。模式匹配系统一般都可以像匹配简单数值一样匹配数据集合。举个例子，对于一个接受数组作为参数的函数，可以通过模式匹配数组中第一个数字为1并且第三个数字大于3的输入。&lt;/p&gt;
+&lt;p&gt;模式匹配的另外一个好处是每当需要添加或者修改程序分支时，再也不用面对那个庞大臃肿的函数了。只要添加（或者修改）相关的函数定义即可。有了模式匹配就不再需要四人帮的很多设计模式了。程序分支越多越复杂，模式匹配就越有用。而在习惯使用这一技术之后，你可能会怀疑没有它你一天都过不下去了。&lt;/p&gt;
+&lt;h3 id="closure"&gt;Closure
+&lt;/h3&gt;&lt;p&gt;目前为止关于函数式编程各种功能的讨论都只局限在“纯”函数式语言范围内：这些语言都是lambda演算的实现并且都没有那些和阿隆佐形式系统相冲突的特性。然而，很多函数式语言的特性哪怕是在lambda演算框架之外都是很有用的。确实，如果一个公理系统的实现可以用数学思维来看待程序，那么这个实现还是很有用的，但这样的实现却不一定可以付诸实践。很多现实中的语言都选择吸收函数式编程的一些元素，却又不完全受限于函数式教条的束缚。很多这样的语言（比如Common Lisp）都不要求所有的变量必须为final，可以修改他们的值。也不要求函数只能依赖于它们的参数，而是可以读写函数外部的状态。同时这些语言又包含了FP的特性，如高阶函数。与在lambda演算限制下将函数作为参数传递不同，在指令式语言中要做到同样的事情需要支持一个有趣的特性，人们常把它称为lexical closure。还是来看看例子。要注意的是，这个例子中变量不是final，而且函数也可以读写其外部的变量：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="n"&gt;Function&lt;/span&gt; &lt;span class="nf"&gt;makePowerFn&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;power&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;powerFn&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;pow&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;base&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;power&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;powerFn&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;Function&lt;/span&gt; &lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;makePowerFn&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;square&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// returns 9&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;makePowerFn函数返回另一个函数，这个新的函数需要一个整数参数然后返回它的平方值。执行square(3)的时候具体发生了什么事呢？变量power并不在powerFn的域内，因为makePowerFn早就运行结束返回了，所以它的栈也已经不存在了。那么square又是怎么正常工作的呢？这个时候需要语言通过某种方式支持继续存储power的值，以便square后面继续使用。那么如果再定义一个函数，cube，用来计算立方，又应该怎么做呢？那么运行中的程序就必须存储两份power的值，提供给makePowerFn生成的两个函数分别使用。这种保存变量值的方法就叫做closure。closure不仅仅保存宿主函数的参数值，还可以用在下例的用法中：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;Function&lt;/span&gt; &lt;span class="nf"&gt;makeIncrementer&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;increment&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;Function&lt;/span&gt; &lt;span class="n"&gt;inc1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;makeIncrementer&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;Function&lt;/span&gt; &lt;span class="n"&gt;inc2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;makeIncrementer&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;span class="n"&gt;inc1&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// returns 1;&lt;/span&gt;
+&lt;span class="n"&gt;inc1&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// returns 2;&lt;/span&gt;
+&lt;span class="n"&gt;inc1&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// returns 3;&lt;/span&gt;
+&lt;span class="n"&gt;inc2&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// returns 1;&lt;/span&gt;
+&lt;span class="n"&gt;inc2&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// returns 2;&lt;/span&gt;
+&lt;span class="n"&gt;inc2&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;// returns 3;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;运行中的程序负责存储n的值，以便incrementer稍后可以访问它。与此同时，程序还会保存多份n的拷贝，虽然这些值应该在makeIncrementer返回后就消失，但在这个情况下却继续保留下来给每一个incrementer对象使用。这样的代码编译之后会是什么样子？closure幕后的真正工作机理又是什么？这次运气不错，我们有一个后台通行证，可以一窥究竟。&lt;/p&gt;
+&lt;p&gt;一点小常识往往可以帮大忙。乍一看这些本地变量已经不再受限于基本的域限制并拥有无限的生命周期了。于是可以得出一个很明显的结论：它们已经不是存在栈上，而是堆上了&lt;sup&gt;8&lt;/sup&gt;。这么说来closure的实现和前面讨论过的函数差不多，只不过closure多了一个额外的引用指向其外部的变量而已：&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;some_function_t&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="n"&gt;SymbolTable&lt;/span&gt; &lt;span class="n"&gt;parentScope&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;当closure需要访问不在它本地域的变量时，就可以通过这个引用到更外一层的父域中寻找该变量。谜底揭开了！closure将函数编程与面向对象的方法结合了起来。下一次为了保存并传递某些状态而创建类的时候，想想closure。它能在运行时从相应的域中获得变量，从而可以把该变量当初“成员变量”来访问，也因为这样，就不再需要去创建一个成员变量了。&lt;/p&gt;
+&lt;h3 id="路在何方"&gt;路在何方？
+&lt;/h3&gt;&lt;p&gt;这篇文章仅仅涉及到函数式编程的一些皮毛。考虑到有时候星星之火可以燎原，所以如果它能给你一些帮助那就再好不过了。接下来我计划就&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E8%8C%83%E7%95%B4%E8%AE%BA" target="_blank" rel="noopener"
+&gt;范畴论&lt;/a&gt;、monads、函数式编程数据结构、函数式语言中的&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E9%A1%9E%E5%9E%8B%E7%B3%BB%E7%B5%B1" target="_blank" rel="noopener"
+&gt;类型系统&lt;/a&gt;、并行函数式编程、数据库的函数式编程以及更多的话题写些类似的文章。如果我可以写出（在我学习的同时）以上清单的一半，我的人生就完整了。于此同时，Google将是我们的良师益友。&lt;/p&gt;
+&lt;h3 id="欢迎联系"&gt;欢迎联系
+&lt;/h3&gt;&lt;p&gt;如果您有任何问题，评价或者建议，请发邮件到coffeemug@gmail.com（译者：如果翻译方面的问题／建议请发到yang.huang@ymail.com:)）。期待您的回复。&lt;/p&gt;
+&lt;p&gt;注：&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;1&lt;/sup&gt;当我在2005年求职时的的确确经常问别人这个问题。看着那些茫然的面孔实在是很好玩的事情。你们这些年薪30万美金的家伙，至少应该对自己可以利用的工具有个起码的理解嘛。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;2&lt;/sup&gt;这是个有争议的问题。物理学家和数学家不得不承认目前还无法确定宇宙万物是不是都遵从可以用数学方法描述的各种法则。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;3&lt;/sup&gt;我一直一来都很讨厌在历史课上罗列一堆枯燥无味的时间、人名、事件。对我来说历史就是关于那些改变世界的人们活生生的故事，是他们行为背后的个人动机，是那些他们用以影响芸芸众生的方法和工具。从这个角度来说，接下来的这堂历史课是不完整的，很遗憾。只有那些非常相关的人和事会被提及。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;4&lt;/sup&gt;在我学习函数式编程的时候，“lambda”这个术语搞得我很烦，因为我不知道它到底是什么意思。在这里lambda就是一个函数，在数学符号中用这个希腊字母只是因为它更容易写。所以以后在谈及函数式编程的时候只要你听到lambda，把它在脑中翻译为“函数”就可以了。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;5&lt;/sup&gt;有意思的是不论如何Java中的字符串总是不可修改的。讨论这种背叛Java的设计背后的原因会很有意思，可惜这样会让我们跑题的。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;6&lt;/sup&gt;大部分函数式语言的编译器都会尽量将迭代函数转换为对等的循环语句。这种做法叫做&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8" target="_blank" rel="noopener"
+&gt;尾调用优化&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;7&lt;/sup&gt;反之则不一定成立。尽管有时候可以证明两段代码是等价的，但不是在所有的情况下都可以得出这样的结论。&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;8&lt;/sup&gt;实际上这样做并不比栈上存储要慢，因为在引入&lt;a class="link" href="http://zh.wikipedia.org/wiki/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6_%28%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%B8%29" target="_blank" rel="noopener"
+&gt;垃圾回收机制&lt;/a&gt;后，内存分配操作的时间代价仅为O(1)。&lt;/p&gt;</description></item><item><title>安腾Linux下使用笔记.md</title><link>https://svtter.cn/p/%E5%AE%89%E8%85%BElinux%E4%B8%8B%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.md/</link><pubDate>Thu, 24 Mar 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%AE%89%E8%85%BElinux%E4%B8%8B%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.md/</guid><description>&lt;p&gt;在Linux下是没有一个合适的安腾客户端的（烟大）&lt;/p&gt;
+&lt;p&gt;因此利用虚拟机来实现这个问题&lt;/p&gt;
+&lt;h2 id="需要的环境"&gt;需要的环境
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;win7 iso&lt;/li&gt;
+&lt;li&gt;virtualbox&lt;/li&gt;
+&lt;li&gt;wproxy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="安装"&gt;安装
+&lt;/h2&gt;&lt;p&gt;安装好win7以后（设置什么，自己百度吧），设置网络为桥接。然后查询一下自己网卡的Mac地址（Linux下），点高级设置，将高级设置的Mac地址更改为Linux的Mac地址。&lt;/p&gt;
+&lt;p&gt;进入以后，安装安腾客户端。&lt;/p&gt;
+&lt;h2 id="方法"&gt;方法
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;打开wproxy，代理设置中，选择ip为本机的ip（Windows下），打开代理。&lt;/li&gt;
+&lt;li&gt;然后在Linux中，将代理服务器设置为Windows的ip即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="原理"&gt;原理
+&lt;/h2&gt;&lt;p&gt;桥接（Bridge）模式可以这样理解，主机和虚拟机都作为一个独立的机器在互联网中。因此，仅仅是虚拟机上网，主机也是无法连接到网络的，因此需要在Win上安装代理服务器，提供网络服务。这里其实还可以用ss等著名的代理软件，wproxy并不是必须的。本人也不保证wproxy的安全性。&lt;/p&gt;</description></item><item><title>创建VLAN，和你的朋友玩局域网游戏吧！</title><link>https://svtter.cn/p/%E5%88%9B%E5%BB%BAvlan%E5%92%8C%E4%BD%A0%E7%9A%84%E6%9C%8B%E5%8F%8B%E7%8E%A9%E5%B1%80%E5%9F%9F%E7%BD%91%E6%B8%B8%E6%88%8F%E5%90%A7/</link><pubDate>Sat, 23 Jan 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%88%9B%E5%BB%BAvlan%E5%92%8C%E4%BD%A0%E7%9A%84%E6%9C%8B%E5%8F%8B%E7%8E%A9%E5%B1%80%E5%9F%9F%E7%BD%91%E6%B8%B8%E6%88%8F%E5%90%A7/</guid><description>&lt;p&gt;探索了一下，Shadowsocks仅仅是作为一个代理，并不提供VLAN服务，其他的例如openvpn（Windows上配置有些麻烦，卸载程序做的不彻底，换了安装路径出现问题），Gamer’s Internet Tunnel（好东西，但是并不易于小白操作）。&lt;/p&gt;
+&lt;p&gt;最后发现了一款日本人写的开源软件。（其实也是不易于小白操作。。）&lt;/p&gt;
+&lt;h3 id="softether-vpnserver"&gt;【softether-vpnserver】
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;具体的搭建教程：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a class="link" href="http://bluereader.org/article/6875396" target="_blank" rel="noopener"
+&gt;http://bluereader.org/article/6875396&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;非常简单粗暴地是，不少简单的互联系统采取拆包挖洞的方法，因此需要分析各种协议，例如IPX等，但是此软件直接粗暴地在vpn基础上加上个dhcp服务器，也就是加入这个vpnserver，就加入了一个远程局域网。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;因此，我们可以利用此特点，不做坏坏的事情，只是单纯的和朋友们建立私人通道，玩玩游戏。。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;下载&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.softether.org/" target="_blank" rel="noopener"
+&gt;https://www.softether.org/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="pptp"&gt;【pptp】
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="http://ju.outofmemory.cn/entry/195240" target="_blank" rel="noopener"
+&gt;http://ju.outofmemory.cn/entry/195240&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://bbs.aliyun.com/read/162297.html" target="_blank" rel="noopener"
+&gt;https://bbs.aliyun.com/read/162297.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对于对战平台不知道是怎么做的， 应该是从协议方面入手吧&lt;/p&gt;
+&lt;hr&gt;
+&lt;h1 id="后记"&gt;后记
+&lt;/h1&gt;&lt;p&gt;现在看来，网络编程方面做得十分欠缺，写出这种博客也只能反应出自己的知识匮乏不足。继续修行。&lt;/p&gt;</description></item><item><title>近日事项</title><link>https://svtter.cn/p/%E8%BF%91%E6%97%A5%E4%BA%8B%E9%A1%B9/</link><pubDate>Thu, 27 Aug 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E8%BF%91%E6%97%A5%E4%BA%8B%E9%A1%B9/</guid><description>&lt;p&gt;最近因为考研准备一直都没有更新blog。考研复习进度已经非常糟糕了，但愿别出什么差错。。&lt;/p&gt;
 &lt;h2 id="宿舍直播视频网络搭建"&gt;宿舍直播视频网络搭建
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;
@@ -101,6 +927,112 @@ alt="握拳"
 &lt;p&gt;昨天简单的看了看坚果手机发布会后的新闻报道。看见一个支持开源项目等等等。不知道小米等公司支持了没说还是怎的，锤子拿出来我就感觉很有逼格，瞬间路转粉。当然粉也没什么用处。坚果手机应该分期12个月是买的起的，但是手里有着粑粑买的肾6，再买个坚果纯粹是作。所以暂时作罢。估计坚果很讲究情怀的话，也没什么可以玩的地方吧。要是能刷ubuntu那也是屌屌哒。SSD存储的话就不担心坏道了= =。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>近期算法笔记</title><link>https://svtter.cn/p/%E8%BF%91%E6%9C%9F%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/</link><pubDate>Fri, 08 May 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E8%BF%91%E6%9C%9F%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/</guid><description>&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class="link" href="http://argcv.com/articles/72.c" target="_blank" rel="noopener"
+&gt;算法书籍&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;莫队算法&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最大团&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最短路&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;A _搜索算法——图形搜索算法，从给定起点到给定终点计算出路径。其中使用了一种启发式的估算，为每个节点估算通过该节点的最佳路径，并以之为各个地点排定次序。算法以得到的次序访问这些节点。因此，A_搜索算法是最佳优先搜索的范例。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;集束搜索（又名定向搜索，Beam Search）——最佳优先搜索算法的优化。使用启发式函数评估它检查的每个节点的能力。不过，集束搜索只能在每个深度中发现最前面的m个最符合条件的节点，m是固定数字——集束的宽度。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;二分查找（Binary Search）——在线性数组中找特定值的算法，每个步骤去掉一半不符合要求的数据。&lt;/p&gt;
+&lt;p&gt;分支界定算法（Branch and Bound）——在多种最优化问题中寻找特定最优化解决方案的算法，特别是针对离散、组合的最优化。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Buchberger算法——一种数学算法，可将其视为针对单变量最大公约数求解的欧几里得算法和线性系统中高斯消元法的泛化。&lt;/p&gt;
+&lt;p&gt;数据压缩——采取特定编码方案，使用更少的字节数（或是其他信息承载单元）对信息编码的过程，又叫来源编码。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Diffie-Hellman密钥交换算法——一种加密协议，允许双方在事先不了解对方的情况下，在不安全的通信信道中，共同建立共享密钥。该密钥以后可与一个对称密码一起，加密后续通讯。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dijkstra算法——针对没有负值权重边的有向图，计算其中的单一起点最短算法。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;离散微分算法（Discrete differentiation）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;动态规划算法（Dynamic Programming）——展示互相覆盖的子问题和最优子架构算法&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;欧几里得算法（Euclidean algorithm）——计算两个整数的最大公约数。最古老的算法之一，出现在公元前300前欧几里得的《几何原本》。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;期望-最大算法（Expectation-maximization algorithm，又名EM-Training）——在统计计算中，期望-最大算法在概率模型中寻找可能性最大的参数估算值，其中模型依赖于未发现的潜在变量。EM在两个步骤中交替计算，第一步是计算期望，利用对隐藏变量的现有估计值，计算其最大可能估计值；第二步是最大化，最大化在第一步上求得的最大可能值来计算参数的值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;快速傅里叶变换（Fast Fourier transform，FFT）——计算离散的傅里叶变换（DFT）及其反转。该算法应用范围很广，从数字信号处理到解决偏微分方程，到快速计算大整数乘积。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;梯度下降（Gradient descent）——一种数学上的最优化算法。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;哈希算法（Hashing）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;堆排序（Heaps）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Karatsuba乘法——需要完成上千位整数的乘法的系统中使用，比如计算机代数系统和大数程序库，如果使用长乘法，速度太慢。该算法发现于1962年。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LLL算法（Lenstra-Lenstra-Lovasz lattice reduction）——以格规约（lattice）基数为输入，输出短正交向量基数。LLL算法在以下公共密钥加密方法中有大量使用：背包加密系统（knapsack）、有特定设置的RSA加密等等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最大流量算法（Maximum flow）——该算法试图从一个流量网络中找到最大的流。它优势被定义为找到这样一个流的值。最大流问题可以看作更复杂的网络流问题的特定情况。最大流与网络中的界面有关，这就是最大流-最小截定理（Max-flow min-cut theorem）。Ford-Fulkerson 能找到一个流网络中的最大流。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;合并排序（Merge Sort）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;牛顿法（Newton’s method）——求非线性方程（组）零点的一种重要的迭代法。&lt;/p&gt;
+&lt;p&gt;Q-learning学习算法——这是一种通过学习动作值函数（action-value function）完成的强化学习算法，函数采取在给定状态的给定动作，并计算出期望的效用价值，在此后遵循固定的策略。Q-leanring的优势是，在不需要环境模型的情况下，可以对比可采纳行动的期望效用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;两次筛法（Quadratic Sieve）——现代整数因子分解算法，在实践中，是目前已知第二快的此类算法（仅次于数域筛法Number Field Sieve）。对于110位以下的十位整数，它仍是最快的，而且都认为它比数域筛法更简单。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;RANSAC——是“RANdom SAmple Consensus”的缩写。该算法根据一系列观察得到的数据，数据中包含异常值，估算一个数学模型的参数值。其基本假设是：数据包含非异化值，也就是能够通过某些模型参数解释的值，异化值就是那些不符合模型的数据点。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;RSA——公钥加密算法。首个适用于以签名作为加密的算法。RSA在电商行业中仍大规模使用，大家也相信它有足够安全长度的公钥。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Schönhage-Strassen算法——在数学中，Schönhage-Strassen算法是用来完成大整数的乘法的快速渐近算法。其算法复杂度为：O(N log(N) log(log(N)))，该算法使用了傅里叶变换。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;单纯型算法（Simplex Algorithm）——在数学的优化理论中，单纯型算法是常用的技术，用来找到线性规划问题的数值解。线性规划问题包括在一组实变量上的一系列线性不等式组，以及一个等待最大化（或最小化）的固定线性函数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;奇异值分解（Singular value decomposition，简称SVD）——在线性代数中，SVD是重要的实数或复数矩阵的分解方法，在信号处理和统计中有多种应用，比如计算矩阵的伪逆矩阵（以求解最小二乘法问题）、解决超定线性系统（overdetermined linear systems）、矩阵逼近、数值天气预报等等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;求解线性方程组（Solving a system of linear equations）——线性方程组是数学中最古老的问题，它们有很多应用，比如在数字信号处理、线性规划中的估算和预测、数值分析中的非线性问题逼近等等。求解线性方程组，可以使用高斯—约当消去法（Gauss-Jordan elimination），或是柯列斯基分解（ Cholesky decomposition）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Strukturtensor算法——应用于模式识别领域，为所有像素找出一种计算方法，看看该像素是否处于同质区域（ homogenous region），看看它是否属于边缘，还是是一个顶点。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;合并查找算法（Union-find）——给定一组元素，该算法常常用来把这些元素分为多个分离的、彼此不重合的组。不相交集（disjoint-set）的数据结构可以跟踪这样的切分方法。合并查找算法可以在此种数据结构上完成两个有用的操作：&lt;/p&gt;
+&lt;p&gt;查找：判断某特定元素属于哪个组。&lt;/p&gt;
+&lt;p&gt;合并：联合或合并两个组为一个组。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;维特比算法（Viterbi algorithm）——寻找隐藏状态最有可能序列的动态规划算法，这种序列被称为维特比路径，其结果是一系列可以观察到的事件，特别是在隐藏的Markov模型中。&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>网络-CDMA接受检验</title><link>https://svtter.cn/p/%E7%BD%91%E7%BB%9C-cdma%E6%8E%A5%E5%8F%97%E6%A3%80%E9%AA%8C/</link><pubDate>Wed, 31 Dec 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%BD%91%E7%BB%9C-cdma%E6%8E%A5%E5%8F%97%E6%A3%80%E9%AA%8C/</guid><description>&lt;p _="%" endblockquote="endblockquote"&gt;{% blockquote 本文出自 http://svtter.github.io svtter.github.io %}
 &lt;p&gt;本文可以随意转载，但是转载请保留本信息.&lt;/p&gt;&lt;/p&gt;
 &lt;p&gt;做CDMA简单的接收处理。&lt;/p&gt;
@@ -144,4 +1076,97 @@ alt="握拳"
 &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;
-&lt;/div&gt;</description></item></channel></rss>
+&lt;/div&gt;</description></item><item><title>archlinux-安装笔记</title><link>https://svtter.cn/p/archlinux-%E5%AE%89%E8%A3%85%E7%AC%94%E8%AE%B0/</link><pubDate>Sun, 30 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/archlinux-%E5%AE%89%E8%A3%85%E7%AC%94%E8%AE%B0/</guid><description>&lt;ul&gt;
+&lt;li&gt;本文出自&amp;lt;svtter.github.io&amp;gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;花了一些时间安装arch，记录一下注意事项。&lt;/p&gt;
+&lt;h2 id="多重引导"&gt;多重引导
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;安装多重引导支持&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;pacman -S os-prober&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;更新grub&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;grub-mkconfig -o /boot/grub/grub.cfg&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;写入mbr&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;grub-install --target=i386-pc --recheck /dev/sda&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="图形化的网络服务"&gt;图形化的网络服务
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;systemctl enable NetWorkManager.service&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="wifi配置"&gt;wifi配置
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;如果你想使用wifi（在图形界面下），首先你要停止dhcp服务&lt;code&gt;systemctl stop dhcpcd.service&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;开机停止运行&lt;code&gt;systemctl disable dhcpcd.service&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;我们之所以这样，是为了保证我们的NetWorkManager正常服务。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="session控制器"&gt;session控制器
+&lt;/h2&gt;&lt;p&gt;我选择的是gdm，原因是slim我不太会配置。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;pacman -S gdm&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;另外patheon在我书写这篇blog的时候，还是存在不少bug.官方的wiki在这个时候也不是很好用了。期待patheon！&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;添加了官方给的patheon库，会出现一个gnome-lib的冲突&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="输入法的注意事项"&gt;输入法的注意事项
+&lt;/h2&gt;&lt;p&gt;使用fcitx需要注意.xprofile的配置问题。&lt;/p&gt;
+&lt;div class="codehilite"&gt;
+&lt;pre&gt;&lt;span&gt;&lt;/span&gt;export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;其他的安装情况可以看看官方的wiki&lt;/p&gt;
+&lt;h2 id="sudoer的配置"&gt;sudoer的配置
+&lt;/h2&gt;&lt;p&gt;使用pacman安装sudoer&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;pacman -S sudo&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;编辑&lt;code&gt;/etc/sudoers&lt;/code&gt;，取消&lt;code&gt;wheel&lt;/code&gt;用户组的注释.&lt;/p&gt;
+&lt;h2 id="vim配置"&gt;vim配置
+&lt;/h2&gt;&lt;p&gt;在&lt;strong&gt;gvim&lt;/strong&gt;中，直接使用synatic on而不用判断，否则会造成代码高亮失效。&lt;/p&gt;
+&lt;h2 id="locate配置"&gt;locate配置
+&lt;/h2&gt;&lt;p&gt;安装以后发现&lt;strong&gt;locate&lt;/strong&gt;命令无法使用，安装&lt;code&gt;pacman -S mlocate&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="另外-mark一个项目gitbook-很好很强大"&gt;另外, mark一个项目:&lt;code&gt;gitbook&lt;/code&gt;, 很好很强大
+&lt;/h2&gt;&lt;p&gt;应该涵盖了所有的我安装时候遇到的问题，如果还有什么问题，我再后续添加。&lt;/p&gt;</description></item><item><title>Linux – 基础学习笔记(1)</title><link>https://svtter.cn/p/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/</link><pubDate>Sun, 09 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/linux-%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/</guid><description>&lt;h1 id="linux基础学习笔记"&gt;Linux基础学习笔记
+&lt;/h1&gt;&lt;p&gt;以鸟哥的私房菜为基础进行学习。&lt;/p&gt;
+&lt;p&gt;用Linux有接近两年的时间了，还是很水，于是决定从头开始，认真学习基础。&lt;/p&gt;
+&lt;h2 id="date的基础用法"&gt;date的基础用法
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;date +%H:%M&lt;/code&gt; 显示&lt;code&gt;19:54&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;date +%Y/%m/%d&lt;/code&gt; 显示&lt;code&gt;2014/11/09&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="使用man进行查询"&gt;使用man进行查询
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;man + (command)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;一般，2代表系统内核可调用的函数与工具，3代表一些常用的函数，7代表惯例与协议，例如Linux文件系统，网络协议，ASCcode，8代表系统管理员可用命令，9&lt;/p&gt;
+&lt;p&gt;代表与kernel有关的文件。&lt;/p&gt;
+&lt;p&gt;man的操作方式和vi差不多，而info的操作方式则更接近于emacs（= =莫非又是两大党的斗争？！）&lt;/p&gt;
+&lt;h2 id="数据同步写入磁盘sync"&gt;数据同步写入磁盘：sync
+&lt;/h2&gt;&lt;p&gt;在Linux中为了避免过多对磁盘的I/O，所以很多操作并未马上写入硬盘，所以使用sync进行写入。对于root而言，则是更新整个磁盘的数据了。&lt;/p&gt;
+&lt;h2 id="shutdown命令关机"&gt;shutdown命令关机
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;立即关机&lt;code&gt;shutdown -h now&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;定时关机&lt;code&gt;shutdown -h 20:25&lt;/code&gt; —会在20:25分关机，如果超过了这个时间使用这个命令，则会在第二天的这个时间关机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;再过10分钟关机&lt;code&gt;shutdown -h +10&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;警告所有用户&lt;code&gt;shutdown -k 'this system will reboot.'&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重启，并警告所有用户&lt;code&gt;shutdown -r +30 'The system will reboot.'&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="三种执行等级"&gt;三种执行等级
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;因为CentOS7使用systemd启动，所以可能并不支持。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;run level 0 关机&lt;/li&gt;
+&lt;li&gt;run level 3 纯命令行&lt;/li&gt;
+&lt;li&gt;run level 5 含有图形界面&lt;/li&gt;
+&lt;li&gt;run level 6 重启&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;因此，可以使用&lt;code&gt;init 0&lt;/code&gt;来关闭系统。&lt;/p&gt;</description></item></channel></rss>
