@@ -3,9 +3,10 @@
                             rgba(${f.DarkMuted.rgb[0]}, ${f.DarkMuted.rgb[1]}, ${f.DarkMuted.rgb[2]}, 0.5) 0%, 
                             rgba(${f.Vibrant.rgb[0]}, ${f.Vibrant.rgb[1]}, ${f.Vibrant.rgb[2]}, 0.75) 100%)`})})}).observe(o);let d=document.querySelectorAll(".article-content div.highlight"),m="Copy",u="Copied!";d.forEach(a=>{let s=document.createElement("button");s.innerHTML=m,s.classList.add("copyCodeButton"),a.appendChild(s);let l=a.querySelector("code[data-lang]");l&&s.addEventListener("click",()=>{navigator.clipboard.writeText(l.textContent).then(()=>{s.textContent=u,setTimeout(()=>{s.textContent=m},1e3)}).catch(c=>{alert(c),console.log("Something went wrong",c)})})}),new k(document.getElementById("dark-mode-toggle"))}};window.addEventListener("load",()=>{setTimeout(function(){I.init()},0)});window.Stack=I;window.createElement=T;})();
 /*!
-*   Hugo Theme Stack
+*   Fried Rice Theme (based on Hugo Theme Stack)
 *
-*   @author: Jimmy Cai
-*   @website: https://jimmycai.com
-*   @link: https://github.com/CaiJimmy/hugo-theme-stack
+*   @original-author: Jimmy Cai
+*   @author: svtter
+*   @website: https://svtter.cn
+*   @link: https://github.com/Svtter/Fried-Rice
 */
