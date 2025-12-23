@@ -40,4 +40,102 @@
 &lt;p&gt;&lt;strong&gt;基于:&lt;/strong&gt;&lt;/p&gt;
 &lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;
 &lt;h2 id="赞助这个项目"&gt;赞助这个项目
-&lt;/h2&gt;&lt;p&gt;Arbitrum One (USDT0): &lt;code&gt;0xd22e9300c9a94c2b735b01cb2a3ed3f46c57c7e3&lt;/code&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;/h2&gt;&lt;p&gt;Arbitrum One (USDT0): &lt;code&gt;0xd22e9300c9a94c2b735b01cb2a3ed3f46c57c7e3&lt;/code&gt;&lt;/p&gt;</description></item><item><title>谨慎使用新兴开源软件</title><link>https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/</guid><description>&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/background.png" alt="Featured image of post 谨慎使用新兴开源软件" /&gt;&lt;p&gt;最近我在 dify/langchain 上翻车了，得出这个结论。&lt;/p&gt;
+&lt;h2 id="追溯"&gt;追溯
+&lt;/h2&gt;&lt;p&gt;大概7个月前，我部署了开源的 dify 到服务器，通过官方的 docker compose 启动了实例。但是最近，由于 Dify 代码节点的沙箱逃逸漏洞（CVE-2025-3466），被 webshell 提权，植入了门罗币挖矿程序。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png"
+width="2553"
+height="462"
+srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_dbeb3947f178aac9.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_2c824746f741f4ac.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="552"
+data-flex-basis="1326px"
+&gt;&lt;/p&gt;
+&lt;p&gt;好在，这次被提权之后，入侵者做的事情不多，并且入侵的是 docker container，损失可控。&lt;/p&gt;
+&lt;h2 id="cve-2025-3466-详情"&gt;CVE-2025-3466 详情
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;CVE编号&lt;/strong&gt;: CVE-2025-3466
+&lt;strong&gt;发布日期&lt;/strong&gt;: 2025年7月7日
+&lt;strong&gt;CVSS评分&lt;/strong&gt;: 9.8 (严重)
+&lt;strong&gt;影响版本&lt;/strong&gt;: langgenius/dify 1.1.0 - 1.1.2
+&lt;strong&gt;修复版本&lt;/strong&gt;: 1.1.3&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;漏洞描述&lt;/strong&gt;:
+Dify 的代码节点（code node）存在沙箱逃逸漏洞，允许攻击者通过覆盖全局 JavaScript 函数（如 &lt;code&gt;parseInt&lt;/code&gt;）来绕过沙箱安全限制，从而以完整 root 权限执行任意代码。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;攻击流程&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;攻击者在代码节点的输入中构造恶意 payload&lt;/li&gt;
+&lt;li&gt;恶意代码在沙箱限制实施前覆盖全局 JavaScript 函数&lt;/li&gt;
+&lt;li&gt;利用被覆盖的函数绕过安全检查&lt;/li&gt;
+&lt;li&gt;执行任意命令，获取容器完整控制权&lt;/li&gt;
+&lt;li&gt;植入 webshell 后门和门罗币挖矿程序&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;影响范围&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;未经授权访问 secret keys 和 API keys&lt;/li&gt;
+&lt;li&gt;访问内部网络服务器&lt;/li&gt;
+&lt;li&gt;在 dify.ai 系统内横向移动&lt;/li&gt;
+&lt;li&gt;完全接管服务器控制权&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;相关链接&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://nvd.nist.gov/vuln/detail/cve-2025-3466" target="_blank" rel="noopener"
+&gt;NVD 详情&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/advisories/GHSA-x53g-q9xm-rf4m" target="_blank" rel="noopener"
+&gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;从这个角度看，保护服务器安全，几个关键的因素不可少。&lt;/p&gt;
+&lt;h2 id="个人服务器安全"&gt;个人服务器安全
+&lt;/h2&gt;&lt;p&gt;从安全角度来说，个人服务器有几个事情是一定要做的。第一个事情就是尽可能不要使用密码。例如 ssh 密码。&lt;/p&gt;
+&lt;h3 id="ssh-密码"&gt;ssh 密码
+&lt;/h3&gt;&lt;p&gt;必须禁用密码登录。ssh 密码破解起来相对容易，如果密码简单，或者用户自行修改密码，使用了简单的密码，那么服务器就会被入侵。&lt;/p&gt;
+&lt;p&gt;如果使用 Debian/Linux，那么关闭密码登录和关闭 root 登录是必须的：&lt;/p&gt;
+&lt;p&gt;使用的软件越少，攻击者的攻击面就越窄。一旦你的服务器上只暴露了 nginx，和 80 端口，22 端口（ssh）都没开，那么攻击者能攻击的面就只有 nginx 相关的内容。&lt;/p&gt;
+&lt;h3 id="使用-rootless-docker"&gt;使用 rootless docker
+&lt;/h3&gt;&lt;p&gt;使用容器技术相当于在云服务商的基础上进一步做虚拟化。&lt;/p&gt;
+&lt;p&gt;使用 rootless docker 可以进一步限制容器的权限，即使容器被攻破，攻击者也无法直接获得宿主机的 root 权限。这是最后一道防线。&lt;/p&gt;
+&lt;h3 id="限制容器的网络访问"&gt;限制容器的网络访问
+&lt;/h3&gt;&lt;p&gt;大多数服务并不需要无限制的外网访问权限。合理配置容器的网络策略，限制不必要的网络访问，可以大大降低攻击面。&lt;/p&gt;
+&lt;p&gt;例如，很多服务只需要访问数据库或者内部服务，根本不需要访问外网。如果容器没有外网访问权限，即使被攻破，攻击者也无法下载挖矿程序或者 C2 服务器进行通信。&lt;/p&gt;
+&lt;h2 id="如何谨慎使用开源软件"&gt;如何谨慎使用开源软件
+&lt;/h2&gt;&lt;p&gt;这次事件让我反思，在使用新兴开源软件时需要注意以下几点：&lt;/p&gt;
+&lt;h3 id="选择成熟的项目"&gt;选择成熟的项目
+&lt;/h3&gt;&lt;p&gt;查看项目的 star 数、commit 频率、issue 处理情况。如果一个项目：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Star 数很少（少于几百）&lt;/li&gt;
+&lt;li&gt;最近几个月没有更新&lt;/li&gt;
+&lt;li&gt;大量未解决的 issue&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;那么使用这个项目的风险就很高。&lt;/p&gt;
+&lt;h3 id="审查依赖关系"&gt;审查依赖关系
+&lt;/h3&gt;&lt;p&gt;开源软件往往依赖大量的第三方库。像这次事件中的 Dify 就存在严重的代码节点沙箱逃逸漏洞。在部署前，最好能够：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;查看项目的依赖树&lt;/li&gt;
+&lt;li&gt;检查是否有已知漏洞&lt;/li&gt;
+&lt;li&gt;定期更新依赖&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="定期更新和安全扫描"&gt;定期更新和安全扫描
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;定期检查 CVE 数据库&lt;/li&gt;
+&lt;li&gt;使用工具如 &lt;code&gt;snyk&lt;/code&gt;、&lt;code&gt;trivy&lt;/code&gt; 进行依赖漏洞扫描&lt;/li&gt;
+&lt;li&gt;及时更新到修复了漏洞的版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="限制权限"&gt;限制权限
+&lt;/h3&gt;&lt;p&gt;即使你信任某个开源软件，也应该给它最小的权限：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不要给容器 privileged 权限&lt;/li&gt;
+&lt;li&gt;限制容器的资源使用（CPU、内存）&lt;/li&gt;
+&lt;li&gt;使用只读文件系统（如果可能）&lt;/li&gt;
+&lt;li&gt;不要把宿主机的敏感目录挂载到容器中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="监控和告警"&gt;监控和告警
+&lt;/h2&gt;&lt;p&gt;安全是一个持续的过程，不能仅仅依靠预防。建立完善的监控和告警机制至关重要：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;监控系统资源使用情况（CPU、内存、磁盘IO异常可能表明有挖矿程序）&lt;/li&gt;
+&lt;li&gt;监控网络流量（异常的出站连接）&lt;/li&gt;
+&lt;li&gt;监控进程列表（异常的进程）&lt;/li&gt;
+&lt;li&gt;设置日志告警（例如失败的登录尝试）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;开源软件为我们提供了巨大的便利，但也带来了安全风险。这次事件虽然损失不大，但给了我一个重要的教训：&lt;/p&gt;
+&lt;p&gt;不要盲目信任任何软件，尤其是新兴的开源项目。在使用前要多做调查，在使用时要给最小权限，在使用后要持续监控和更新。&lt;/p&gt;
+&lt;p&gt;服务器安全不是一劳永逸的，而是需要持续关注和维护的。&lt;/p&gt;</description></item></channel></rss>
