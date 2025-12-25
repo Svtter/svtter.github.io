@@ -1178,7 +1178,136 @@ alt="chat"
 class="gallery-image"
 data-flex-grow="302"
 data-flex-basis="724px"
-&gt;&lt;/p&gt;</description></item><item><title>Coolify 和 Traefic 结合使用</title><link>https://svtter.cn/p/coolify-%E5%92%8C-traefic-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/</link><pubDate>Fri, 07 Feb 2025 17:14:55 +0800</pubDate><guid>https://svtter.cn/p/coolify-%E5%92%8C-traefic-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/</guid><description>&lt;p&gt;我使用 coolify 来管理多台服务器；但是 coolify 域名管理有点让人迷惑，我一直没能搞定。今天测试了一下，终于搞明白了。&lt;/p&gt;
+&gt;&lt;/p&gt;</description></item><item><title>Extend LVM Disk.md</title><link>https://svtter.cn/p/extend-lvm-disk.md/</link><pubDate>Sat, 15 Feb 2025 14:12:37 +0800</pubDate><guid>https://svtter.cn/p/extend-lvm-disk.md/</guid><description>&lt;p&gt;使用 PVE + Debian 组合后，开发变得愉快了很多。今天遇到了一个新的问题，磁盘空间不足，拓展之后磁盘大小仍然不变。&lt;/p&gt;
+&lt;!-- 如果之前安装 Debian 没使用 LVM（逻辑卷），基本上就没救了，自己需要重新做一下系统。 --&gt;
+&lt;p&gt;我们讨论的是使用 LVM（逻辑卷管理器）的情况。&lt;/p&gt;
+&lt;p&gt;在这种情况下，我们需要首先看看系统。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;root@debian:/home/svtter# lsblk
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sda 8:0 &lt;span class="m"&gt;0&lt;/span&gt; 132G &lt;span class="m"&gt;0&lt;/span&gt; disk
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;├─sda1 8:1 &lt;span class="m"&gt;0&lt;/span&gt; 487M &lt;span class="m"&gt;0&lt;/span&gt; part /boot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;├─sda2 8:2 &lt;span class="m"&gt;0&lt;/span&gt; 1K &lt;span class="m"&gt;0&lt;/span&gt; part
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└─sda5 8:5 &lt;span class="m"&gt;0&lt;/span&gt; 31.5G &lt;span class="m"&gt;0&lt;/span&gt; part
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├─debian--vg-root 254:0 &lt;span class="m"&gt;0&lt;/span&gt; 30.5G &lt;span class="m"&gt;0&lt;/span&gt; lvm /
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └─debian--vg-swap_1 254:1 &lt;span class="m"&gt;0&lt;/span&gt; 976M &lt;span class="m"&gt;0&lt;/span&gt; lvm &lt;span class="o"&gt;[&lt;/span&gt;SWAP&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sr0 11:0 &lt;span class="m"&gt;1&lt;/span&gt; 1.4G &lt;span class="m"&gt;0&lt;/span&gt; rom
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时我们总共有 132G 的可用空间，使用了 31.5 G。&lt;/p&gt;
+&lt;p&gt;我们需要调整 &lt;code&gt;/dev/sda5&lt;/code&gt; 的大小。&lt;/p&gt;
+&lt;p&gt;我们首先需要使用一个 bootable usb。如果你使用的 PVE，你可以直接加载一个 iso 来启动。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注意：以下的操作不一定具有可复现性。请务必备份你的数据，以防不测。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;在 live system 中，运行&lt;code&gt;parted /dev/sda&lt;/code&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;debian live system 中，用户名密码为：&lt;code&gt;user/live&lt;/code&gt;，切换 root 用户，只需要&lt;code&gt;sudo su&lt;/code&gt;。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;在 parted 中，使用 print 查看磁盘情况。&lt;/p&gt;
+&lt;p&gt;下面是一个操作样例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 启动 parted 并选择磁盘&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;parted /dev/sda
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 查看当前分区表&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;print
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 调整分区大小（假设要将 /dev/sda5 扩展到最大可用空间）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;resizepart &lt;span class="m"&gt;5&lt;/span&gt; &lt;span class="c1"&gt;# 5 是 /dev/sda5 的分区编号&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 按照提示输入新的分区大小，按 Enter 选择默认的最大可用空间&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 退出 parted&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;quit
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时，需要首先&lt;code&gt;resizepart /dev/sda2&lt;/code&gt;，也就是逻辑卷组。然后在扩展&lt;code&gt;resizepart /dev/sda5&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;完成拓展后，运行&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;pvresize /dev/sda5
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vgextend debian-vg /dev/sda5
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;lvextend -l +100%FREE /dev/debian-vg/root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时磁盘空间已经拓展了。但是 ext4 文件系统还未适应。&lt;/p&gt;
+&lt;p&gt;运行命令来重新调整 ext4 文件系统。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;e2fsck -f /dev/debian-vg/root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;resize2fs /dev/debian-vg/root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;再次查看&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;root@debian:/home/user# sudo lvdisplay /dev/debian-vg/root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --- Logical volume ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV Path /dev/debian-vg/root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV Name root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; VG Name debian-vg
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV UUID 82SmmD-qnAc-KOIO-1B2Y-ynP3-Mo0E-D12Rq0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV Write Access read/write
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV Creation host, &lt;span class="nb"&gt;time&lt;/span&gt; debian, 2025-02-15 05:49:23 +0000
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV Status available
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# open 0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; LV Size &amp;lt;91.70 GiB
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Current LE &lt;span class="m"&gt;23475&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Segments &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Allocation inherit
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Read ahead sectors auto
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - currently &lt;span class="nb"&gt;set&lt;/span&gt; to &lt;span class="m"&gt;256&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Block device 254:0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样一来，磁盘空间就拓展了。&lt;/p&gt;</description></item><item><title>Coolify 和 Traefic 结合使用</title><link>https://svtter.cn/p/coolify-%E5%92%8C-traefic-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/</link><pubDate>Fri, 07 Feb 2025 17:14:55 +0800</pubDate><guid>https://svtter.cn/p/coolify-%E5%92%8C-traefic-%E7%BB%93%E5%90%88%E4%BD%BF%E7%94%A8/</guid><description>&lt;p&gt;我使用 coolify 来管理多台服务器；但是 coolify 域名管理有点让人迷惑，我一直没能搞定。今天测试了一下，终于搞明白了。&lt;/p&gt;
 &lt;p&gt;例如，如果我要部署一个&lt;code&gt;myapp&lt;/code&gt;，我的&lt;code&gt;docker-compose.yml&lt;/code&gt;应该这样写。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
