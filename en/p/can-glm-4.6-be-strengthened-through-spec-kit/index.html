@@ -1,0 +1,202 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="How can weaker models be leveraged to achieve stronger performance?"><title>Can GLM 4.6 Be Strengthened Through Spec-Kit</title><link rel=canonical href=https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/><link rel=stylesheet href=/scss/style.min.930efb7a33e4deee11f1a67003ba4febac065b8770424eef6d99e49668713234.css><meta property='og:title' content="Can GLM 4.6 Be Strengthened Through Spec-Kit"><meta property='og:description' content="How can weaker models be leveraged to achieve stronger performance?"><meta property='og:url' content='https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/'><meta property='og:site_name' content="Svtter's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='coding'><meta property='article:tag' content='til'><meta property='article:tag' content='chatglm'><meta property='article:tag' content='trae'><meta property='article:tag' content='doubao-seed-code'><meta property='article:published_time' content='2025-11-14T15:41:46+08:00'><meta property='article:modified_time' content='2025-11-14T15:41:46+08:00'><meta property='og:image' content='https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/bg.png'><meta name=twitter:title content="Can GLM 4.6 Be Strengthened Through Spec-Kit"><meta name=twitter:description content="How can weaker models be leveraged to achieve stronger performance?"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/bg.png'><link rel=preconnect href=https://cdn.jsdelivr.net crossorigin><link rel=dns-prefetch href=https://cdn.jsdelivr.net><link rel=preconnect href=https://latest.cactus.chat crossorigin><link rel=dns-prefetch href=https://latest.cactus.chat><link rel=preconnect href=https://fonts.googleapis.com crossorigin><link rel=dns-prefetch href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=dns-prefetch href=https://fonts.gstatic.com><link rel=preconnect href=https://utteranc.es crossorigin><link rel=dns-prefetch href=https://utteranc.es><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebSite","inLanguage":"en","name":"Svtter's Blog","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://svtter.cn/search/?q={search_term_string}"}},"url":"https://svtter.cn/"}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","logo":"https://svtter.cn/img/avatar.png","name":"Svtter's Blog","url":"https://svtter.cn/"}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","accessMode":"textual,visual","accessibilityFeature":"alternativeText,readingOrder","accessibilitySummary":"The content is accessible for screen readers and keyboard navigation.","articleSection":"coding","author":{"@type":"Person","name":"Svtter's Blog","url":"https://svtter.cn/"},"dateModified":"2025-11-14T15:41:46+08:00","datePublished":"2025-11-14T22:53:57+08:00","description":"How can weaker models be leveraged to achieve stronger performance?","headline":"Can GLM 4.6 Be Strengthened Through Spec-Kit","image":"https://svtter.cn/pics/bg.png","inLanguage":"en","keywords":["coding","til","chatglm","trae","doubao-seed-code","coding","coding agent"],"mainEntityOfPage":{"@id":"https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/","@type":"WebPage"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://svtter.cn/img/avatar.png"},"name":"Svtter's Blog"},"timeRequired":"PT4M","wordCount":724}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://svtter.cn/en/","name":"Svtter's Blog","position":1},{"@type":"ListItem","item":"https://svtter.cn/en/post/","name":"Posts","position":2},{"@type":"ListItem","item":"https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/","name":"Can GLM 4.6 Be Strengthened Through Spec-Kit","position":3}]}</script><link rel="shortcut icon" href=/favicon.png><script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-65DJGXT4VC")}</script><script src=https://app.rybbit.io/api/script.js data-site-id=382 defer></script></head><body class=article-page><script>(function(){const e="FriedRiceColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="FriedRiceColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><header class=site-header><nav class=site-nav><div class=nav-container><a href=/en class=site-brand><span class=brand-name>Svtter's Blog</span></a><div class=nav-links></div><div class=nav-actions><div class=nav-social><a href=https://github.com/svtter target=_blank rel="me noopener" title=GitHub class=social-link><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+</a><a href=https://twitter.com/crack_svtter target=_blank rel="me noopener" title=Twitter class=social-link><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></div><a href=/en/index.xml target=_blank rel=alternate type=application/rss+xml title=RSS class="social-link rss-link"><svg class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="5" cy="19" r="1" fill="currentColor"/><path d="M4 4a16 16 0 0116 16"/><path d="M4 11a9 9 0 019 9"/></svg>
+</a><a href=https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/ class=language-toggle aria-label="Switch language" title="Switch language"><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+</a><button id=dark-mode-toggle class=theme-toggle aria-label="Toggle dark mode" title="Dark Mode">
+<svg class="icon icon-tabler icon-tabler-sun" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="4"/><path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7-.7.7m0 11.4.7.7m-12.1-.7-.7.7"/></svg>
+<svg class="icon icon-tabler icon-tabler-moon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M12 3c.132.0.263.0.393.0a7.5 7.5.0 007.92 12.446A9 9 0 1112 2.992z"/></svg>
+</button>
+<button class=mobile-menu-toggle id=toggle-menu aria-label="Toggle Menu" aria-expanded=false>
+<span class=hamburger-line></span>
+<span class=hamburger-line></span>
+<span class=hamburger-line></span></button></div></div><div class=mobile-menu id=mobile-menu aria-hidden=true><div class=mobile-social><a href=https://github.com/svtter target=_blank rel="me noopener" title=GitHub class=mobile-social-link><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+<span>GitHub</span>
+</a><a href=https://twitter.com/crack_svtter target=_blank rel="me noopener" title=Twitter class=mobile-social-link><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg>
+<span>Twitter</span>
+</a><a href=/en/index.xml target=_blank rel=alternate type=application/rss+xml title=RSS class=mobile-social-link><svg class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="5" cy="19" r="1" fill="currentColor"/><path d="M4 4a16 16 0 0116 16"/><path d="M4 11a9 9 0 019 9"/></svg>
+<span>RSS</span>
+</a><a href=https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/ class="mobile-social-link language-link"><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<span>Switch language</span></a></div></div></nav></header><div class=main-container><main class=main-content><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/en/p/can-glm-4.6-be-strengthened-through-spec-kit/><img src=/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/bg_hu_c9d1899f2648ab7e.png srcset="/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/bg_hu_c9d1899f2648ab7e.png 800w, /p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/bg_hu_2e3d5d0d0026b00c.png 1600w" width=800 height=533 loading=lazy alt="Featured image of post Can GLM 4.6 Be Strengthened Through Spec-Kit"></a></div><div class=article-details><header class=article-category><a href=/en/categories/coding/>Coding
+</a><a href=/en/categories/coding-agent/>Coding Agent</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/en/p/can-glm-4.6-be-strengthened-through-spec-kit/>Can GLM 4.6 Be Strengthened Through Spec-Kit</a></h2><h3 class=article-subtitle>How can weaker models be leveraged to achieve stronger performance?</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2025-11-14T15:41:46+08:00>Nov 14, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>4 minute read</time></div></footer><footer class=article-translations><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg><div><a href=https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/ class=link>简体中文</a></div></footer></div></header><section class=article-content><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>uvx --from git+https://github.com/github/spec-kit.git specify init . --github-token<span class=o>=</span><span class=nv>$GITHUB_TOKEN</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=sb>```</span>bash
+</span></span><span class=line><span class=cl>pipx install git+https://github.com/github/spec-kit.git
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=sb>```</span>bash
+</span></span><span class=line><span class=cl>● Bash<span class=o>(</span>python -c <span class=s2>&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>      import sys…)
+</span></span></span><span class=line><span class=cl><span class=s2>  ⎿  Error: Exit code 1
+</span></span></span><span class=line><span class=cl><span class=s2>     Traceback (most recent call last):
+</span></span></span><span class=line><span class=cl><span class=s2>       File &#34;</span>&lt;string&gt;<span class=s2>&#34;, line 4, in &lt;module&gt;
+</span></span></span><span class=line><span class=cl><span class=s2>       File &#34;</span>/home/svtter/work/blog/hugo-admin/services/post_service.py<span class=s2>&#34;, line 15, in &lt;module&gt;
+</span></span></span><span class=line><span class=cl><span class=s2>         import frontmatter
+</span></span></span><span class=line><span class=cl><span class=s2>     ModuleNotFoundError: No module named &#39;frontmatter&#39;
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>● The tests show the functionality is implemented correctly but the frontmatter module isn&#39;t installed in the current environment. 
+</span></span></span><span class=line><span class=cl><span class=s2>That&#39;s fine for our implementation - the module is specified in requirements.txt and will be available when the application runs.
+</span></span></span><span class=line><span class=cl><span class=s2>```&gt; Another article on how to mitigate losses with glm4.6. Our old friend glm 4.6. The new friend doubao-seed-code has also arrived.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>[github spec-kit][1] is a coding agent enhancement tool launched by GitHub, aimed at making engineering more standardized and easier.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>I initially looked down on this, thinking I have the claude code max plan, so why bother using it? Then:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>![](pics/limit.png)
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>This is actually the result of using spec kit, leading to a huge token consumption. Otherwise, based on my usual usage, it should have been just right.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>This means that cheaper models might be more cost-effective to use. Because they are less capable, constraining their behavior with extensive specs might lead to better performance than before.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Let&#39;s try out [spec-kit][1].
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>## Installation
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>For installation, it&#39;s recommended to take a dual approach.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>One is to use it directly without worrying too much about installation:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Here, `GITHUB_TOKEN` refers to the GitHub personal token.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Another method is to install it first and then use it.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>Each has its pros and cons. The former requires no installation but needs to pull from git each time; the latter requires a one-time installation but involves dependency management.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>## Specification Driven Development
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>SDD is a newly emerging concept. It uses extensive constraints to enable coding agents to write production-ready code.
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>This article explains it well:
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2> &lt;a href=&#34;</span>https://mp.weixin.qq.com/s/zVvkSCFiknLZcolKjYLoIA<span class=s2>&#34; target=&#34;</span>_blank<span class=s2>&#34; rel=&#34;</span>noopener<span class=s2>&#34; style=&#34;</span>text-decoration:none<span class=p>;</span> display:block<span class=p>;</span> max-width:600px<span class=p>;</span> border: 1px solid <span class=c1>#e0e0e0; border-radius:8px; overflow:hidden; color:inherit; font-family:-apple-system, BlinkMacSystemFont, sans-serif; margin:1em 0;&#34;&gt;</span>
+</span></span><span class=line><span class=cl>   &lt;div <span class=nv>style</span><span class=o>=</span><span class=s2>&#34;position:relative; padding-top:56.25%; background:#f0f0f0;&#34;</span>&gt;
+</span></span><span class=line><span class=cl>     &lt;!-- Cover image example: recommended to replace with actual cover image URL --&gt;
+</span></span><span class=line><span class=cl>     &lt;img <span class=nv>src</span><span class=o>=</span><span class=s2>&#34;pics/sdd.jpg&#34;</span> <span class=nv>alt</span><span class=o>=</span><span class=s2>&#34;Article cover&#34;</span> <span class=nv>style</span><span class=o>=</span><span class=s2>&#34;position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;&#34;</span>&gt;
+</span></span><span class=line><span class=cl>   &lt;/div&gt;
+</span></span><span class=line><span class=cl>   &lt;div <span class=nv>style</span><span class=o>=</span><span class=s2>&#34;padding:12px;&#34;</span>&gt;
+</span></span><span class=line><span class=cl>     &lt;h3 <span class=nv>style</span><span class=o>=</span><span class=s2>&#34;margin:0 0 8px; font-size:18px; line-height:1.2; color:#000&#34;</span>&gt;
+</span></span><span class=line><span class=cl>       Follow-up on Spec-Driven Development Two Months Later: spec-kit and Ecosystem Development Research
+</span></span><span class=line><span class=cl>     &lt;/h3&gt;
+</span></span><span class=line><span class=cl>     &lt;p <span class=nv>style</span><span class=o>=</span><span class=s2>&#34;margin:0 0 10px; color:#555; font-size:14px; line-height:1.4;&#34;</span>&gt;
+</span></span><span class=line><span class=cl>       This article follows up on the rapid development of GitHub<span class=s1>&#39;s spec-kit project two months after its release, including its community growth, feature iterations, and ecosystem status. It also explores the core concepts of Specification Driven Development (SDD), compares main tools, discusses challenges, and outlines industry trends for 2025, providing developers with practical advice and outlook.
+</span></span></span><span class=line><span class=cl><span class=s1>     &lt;/p&gt;
+</span></span></span><span class=line><span class=cl><span class=s1>     &lt;div style=&#34;font-size:12px; color:#999;&#34;&gt;
+</span></span></span><span class=line><span class=cl><span class=s1>       WeChat Official Account · Publication Date
+</span></span></span><span class=line><span class=cl><span class=s1>     &lt;/div&gt;
+</span></span></span><span class=line><span class=cl><span class=s1>   &lt;/div&gt;
+</span></span></span><span class=line><span class=cl><span class=s1> &lt;/a&gt;
+</span></span></span><span class=line><span class=cl><span class=s1>
+</span></span></span><span class=line><span class=cl><span class=s1>Based on the concept of SDD, I decided to use spec-kit to test the performance of weaker models. The test task was: to add a publish button to hugo-admin.
+</span></span></span><span class=line><span class=cl><span class=s1>
+</span></span></span><span class=line><span class=cl><span class=s1>Unfortunately, the performance is still not quite up to par. What&#39;</span>s rather amusing is the content it output in the middle:
+</span></span><span class=line><span class=cl>Then it skipped the tests. I can only say that ChatGLM 4.6 is an AI model that doesn<span class=s1>&#39;t get bogged down in internal struggles. Here is the [commit](https://github.com/Svtter/hugo-admin/commit/ad7891e0038f154f37a4b65325746dce1c00d1b4) it submitted.
+</span></span></span><span class=line><span class=cl><span class=s1>
+</span></span></span><span class=line><span class=cl><span class=s1>Afterwards, I switched to `doubao-seed-code` to continue testing other features, but the performance of doubao-seed-code combined with Claude Code wasn&#39;</span>t great either. You can check out its <span class=o>[</span>commit<span class=o>](</span>https://github.com/Svtter/hugo-admin/commit/9acd83940da558c1335f036e2dc475062166869d<span class=o>)</span>.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>In the end, I completed the entire functionality using Trae <span class=o>(</span>which does not support spec-kit<span class=o>)</span>. The corresponding <span class=o>[</span>commit<span class=o>](</span>https://github.com/Svtter/hugo-admin/commit/53f895017e9d2b94880f5385562993274076d7a7<span class=o>)</span>.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Summary</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>- If you can manually manage the current context and some obvious <span class=s2>&#34;information the model tends to forget,&#34;</span> <span class=k>then</span> you can completely avoid using <span class=o>[</span>spec-kit<span class=o>][</span>1<span class=o>]</span> when working with Claude Code. This thing is a token hog—it essentially uses a sledgehammer to crack a nut.
+</span></span><span class=line><span class=cl>- <span class=o>[</span>spec-kit<span class=o>][</span>1<span class=o>]</span> does not support Trae, and Trae doesn<span class=err>&#39;</span>t need that support to perform well.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>[</span>1<span class=o>]</span>: https://github.com/github/spec-kit
+</span></span><span class=line><span class=cl><span class=o>[</span>2<span class=o>]</span>: https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/
+</span></span></code></pre></td></tr></table></div></div></section><footer class=article-footer><section class=article-tags><a href=/en/tags/coding/>Coding</a>
+<a href=/en/tags/til/>Til</a>
+<a href=/en/tags/chatglm/>Chatglm</a>
+<a href=/en/tags/trae/>Trae</a>
+<a href=/en/tags/doubao-seed-code/>Doubao-Seed-Code</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>Last updated on Nov 14, 2025 15:41 +0800</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article class=has-image><a href=/en/p/developing-fried-rice-theme-with-claude-code/><div class=article-image><img src=/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.8ce2287d6ed0d41bcb40e73d98ad26f6_hu_73e3e077aa10fbf2.png width=250 height=150 loading=lazy alt="Featured image of post Developing Fried Rice Theme with Claude Code" data-hash="md5-jOIofW7Q1BvLQOc9mK0m9g=="></div><div class=article-details><h2 class=article-title>Developing Fried Rice Theme with Claude Code</h2></div></a></article><article class=has-image><a href=/en/p/claude-code-plugin-usage-experience/><div class=article-image><img src=/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/pics/bg.svg loading=lazy data-key data-hash=/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/pics/bg.svg></div><div class=article-details><h2 class=article-title>Claude Code Plugin Usage Experience</h2></div></a></article><article class=has-image><a href=/en/p/expired-i-now-use-glm-4.6-more-often./><div class=article-image><img src=/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/glm-vs-deepseek.svg loading=lazy data-key data-hash=/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/glm-vs-deepseek.svg></div><div class=article-details><h2 class=article-title>[Expired] I now use GLM 4.6 more often.</h2></div></a></article><article class=has-image><a href=/en/p/several-issues-with-zhipu-glm-4.5-in-programming/><div class=article-image><img src=/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/featured_20250924_145011.cc5c0b6bd6610c20b8957966e827dddd_hu_4f5c48635685b76b.png width=250 height=150 loading=lazy alt="Featured image of post Several Issues with Zhipu GLM-4.5 in Programming" data-hash="md5-zFwLa9ZhDCC4lXlm6Cfd3Q=="></div><div class=article-details><h2 class=article-title>Several Issues with Zhipu GLM-4.5 in Programming</h2></div></a></article><article class=has-image><a href=/en/p/how-to-use-claude-code-with-deepseek/><div class=article-image><img src=/p/how-to-use-claude-code-with-deepseek/pics/bg.3447a0f350b1f863e5194a8abf006c38_hu_5e5501e82f061627.png width=250 height=150 loading=lazy alt="Featured image of post How to Use Claude Code With Deepseek" data-hash="md5-NEeg81Cx+GPlGUqKvwBsOA=="></div><div class=article-details><h2 class=article-title>How to Use Claude Code With Deepseek</h2></div></a></article></div></div></aside><script src=https://utteranc.es/client.js repo=Svtter/svtter.github.io issue-term=pathname label=blog crossorigin=anonymous async></script><style>.utterances{max-width:unset}</style><script>let utterancesLoaded=!1;function setUtterancesTheme(e){let t=document.querySelector(".utterances iframe");t&&t.contentWindow.postMessage({type:"set-theme",theme:`github-${e}`},"https://utteranc.es")}addEventListener("message",e=>{if(e.origin!=="https://utteranc.es")return;utterancesLoaded=!0,setUtterancesTheme(document.documentElement.dataset.scheme)}),window.addEventListener("onColorSchemeChange",e=>{if(!utterancesLoaded)return;setUtterancesTheme(e.detail)})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2025 Svtter's Blog</section><section class=powerby>Theme <b>Fried Rice</b> designed by <a href=https://svtter.cn target=_blank rel=noopener>svtter</a><br>Source code on <a href=https://github.com/Svtter/Fried-Rice target=_blank rel=noopener>GitHub</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2025 Svtter's Blog</section><section class=powerby>Theme <b>Fried Rice</b> designed by <a href=https://svtter.cn target=_blank rel=noopener>svtter</a><br>Source code on <a href=https://github.com/Svtter/Fried-Rice target=_blank rel=noopener>GitHub</a></section></footer><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.acc9fdfa3fa1412c783325ef28fd814b0d8fe9d21eaad163e4c8a97c862fbcff.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Cybersecurity on Svtter's Blog</title><link>https://svtter.cn/en/tags/cybersecurity/</link><description>Recent content in Cybersecurity on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 13 Dec 2025 11:02:40 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/cybersecurity/index.xml" rel="self" type="application/rss+xml"/><item><title>Use Emerging Open Source Software with Caution</title><link>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</guid><description>&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/background.png" alt="Featured image of post Use Emerging Open Source Software with Caution" /&gt;&lt;p&gt;Recently, I had an incident with Dify/Langchain and reached this conclusion.&lt;/p&gt;
+&lt;h2 id="retrospective"&gt;Retrospective
+&lt;/h2&gt;&lt;p&gt;About 7 months ago, I deployed the open-source Dify to the server and started an instance through the official docker compose. However, recently, due to a sandbox escape vulnerability in Dify&amp;rsquo;s code node (CVE-2025-3466), I was privilege-escalated via webshell and had a Monero mining program implanted.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png"
+width="2553"
+height="462"
+srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_dbeb3947f178aac9.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_2c824746f741f4ac.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="552"
+data-flex-basis="1326px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Fortunately, after this privilege escalation, the intruder didn&amp;rsquo;t do much, and the intrusion was in the docker container, with limited damage.&lt;/p&gt;
+&lt;h2 id="cve-2025-3466-details"&gt;CVE-2025-3466 Details
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;CVE ID&lt;/strong&gt;: CVE-2025-3466
+&lt;strong&gt;Release Date&lt;/strong&gt;: July 7, 2025
+&lt;strong&gt;CVSS Score&lt;/strong&gt;: 9.8 (Critical)
+&lt;strong&gt;Affected Versions&lt;/strong&gt;: langgenius/dify 1.1.0 - 1.1.2
+&lt;strong&gt;Fixed Version&lt;/strong&gt;: 1.1.3&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Vulnerability Description&lt;/strong&gt;:
+Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attackers to bypass sandbox security restrictions by overwriting global JavaScript functions (such as &lt;code&gt;parseInt&lt;/code&gt;), thereby executing arbitrary code with full root privileges.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Attack Flow&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Attacker crafts malicious payload in the code node&amp;rsquo;s input&lt;/li&gt;
+&lt;li&gt;Malicious code overwrites global JavaScript functions before sandbox restrictions are enforced&lt;/li&gt;
+&lt;li&gt;Uses the overwritten functions to bypass security checks&lt;/li&gt;
+&lt;li&gt;Executes arbitrary commands, gaining complete control of the container&lt;/li&gt;
+&lt;li&gt;Implants webshell backdoor and Monero mining program&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Impact Scope&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Unauthorized access to secret keys and API keys&lt;/li&gt;
+&lt;li&gt;Access to internal network servers&lt;/li&gt;
+&lt;li&gt;Lateral movement within the dify.ai system&lt;/li&gt;
+&lt;li&gt;Complete takeover of server control&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Related Links&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://nvd.nist.gov/vuln/detail/cve-2025-3466" target="_blank" rel="noopener"
+&gt;NVD Details&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/advisories/GHSA-x53g-q9xm-rf4m" target="_blank" rel="noopener"
+&gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From this perspective, several key factors are indispensable for protecting server security.&lt;/p&gt;
+&lt;h2 id="personal-server-security"&gt;Personal Server Security
+&lt;/h2&gt;&lt;p&gt;From a security perspective, there are several things that must be done on personal servers. The first thing is to avoid using passwords as much as possible. For example, SSH passwords.&lt;/p&gt;
+&lt;h3 id="ssh-passwords"&gt;SSH Passwords
+&lt;/h3&gt;&lt;p&gt;Password login must be disabled. SSH password cracking is relatively easy. If the password is simple, or if the user changes the password themselves and uses a simple password, the server will be breached.&lt;/p&gt;
+&lt;p&gt;If using Debian/Linux, disabling password login and disabling root login are mandatory:&lt;/p&gt;
+&lt;p&gt;The fewer software packages used, the narrower the attacker&amp;rsquo;s attack surface. Once only nginx is exposed on your server, and port 80 and port 22 (SSH) are not open, the attacker&amp;rsquo;s attack surface is limited to nginx-related content.&lt;/p&gt;
+&lt;h3 id="use-rootless-docker"&gt;Use Rootless Docker
+&lt;/h3&gt;&lt;p&gt;Using container technology is equivalent to further virtualizing on top of the cloud service provider&amp;rsquo;s infrastructure.&lt;/p&gt;
+&lt;p&gt;Using rootless docker can further limit container permissions. Even if the container is breached, the attacker cannot directly gain root privileges on the host. This is the last line of defense.&lt;/p&gt;
+&lt;h3 id="limit-container-network-access"&gt;Limit Container Network Access
+&lt;/h3&gt;&lt;p&gt;Most services don&amp;rsquo;t need unrestricted external network access permissions. Reasonably configuring container network policies to limit unnecessary network access can greatly reduce the attack surface.&lt;/p&gt;
+&lt;p&gt;For example, many services only need to access databases or internal services, and don&amp;rsquo;t need to access the external network at all. If the container doesn&amp;rsquo;t have external network access permissions, even if breached, the attacker cannot download mining programs or communicate with C2 servers.&lt;/p&gt;
+&lt;h2 id="how-to-use-open-source-software-with-caution"&gt;How to Use Open Source Software with Caution
+&lt;/h2&gt;&lt;p&gt;This incident made me reflect on the following points when using emerging open source software:&lt;/p&gt;
+&lt;h3 id="choose-mature-projects"&gt;Choose Mature Projects
+&lt;/h3&gt;&lt;p&gt;Look at the project&amp;rsquo;s star count, commit frequency, and issue handling status. If a project:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Has few stars (less than a few hundred)&lt;/li&gt;
+&lt;li&gt;Hasn&amp;rsquo;t been updated in recent months&lt;/li&gt;
+&lt;li&gt;Has a large number of unresolved issues&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then the risk of using this project is high.&lt;/p&gt;
+&lt;h3 id="audit-dependencies"&gt;Audit Dependencies
+&lt;/h3&gt;&lt;p&gt;Open source software often depends on a large number of third-party libraries. Like Dify in this incident, there was a serious code node sandbox escape vulnerability. Before deployment, it&amp;rsquo;s best to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Look at the project&amp;rsquo;s dependency tree&lt;/li&gt;
+&lt;li&gt;Check for known vulnerabilities&lt;/li&gt;
+&lt;li&gt;Regularly update dependencies&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="regular-updates-and-security-scanning"&gt;Regular Updates and Security Scanning
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Regularly check CVE databases&lt;/li&gt;
+&lt;li&gt;Use tools like &lt;code&gt;snyk&lt;/code&gt;, &lt;code&gt;trivy&lt;/code&gt; for dependency vulnerability scanning&lt;/li&gt;
+&lt;li&gt;Update to fixed versions in a timely manner&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="limit-permissions"&gt;Limit Permissions
+&lt;/h3&gt;&lt;p&gt;Even if you trust a certain open source software, you should give it minimal permissions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Don&amp;rsquo;t give containers privileged permissions&lt;/li&gt;
+&lt;li&gt;Limit container resource usage (CPU, memory)&lt;/li&gt;
+&lt;li&gt;Use read-only file systems (if possible)&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t mount the host&amp;rsquo;s sensitive directories into the container&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="monitoring-and-alerting"&gt;Monitoring and Alerting
+&lt;/h2&gt;&lt;p&gt;Security is a continuous process, can&amp;rsquo;t rely solely on prevention. Establishing comprehensive monitoring and alerting mechanisms is crucial:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Monitor system resource usage (CPU, memory, disk IO anomalies may indicate mining programs)&lt;/li&gt;
+&lt;li&gt;Monitor network traffic (abnormal outbound connections)&lt;/li&gt;
+&lt;li&gt;Monitor process list (abnormal processes)&lt;/li&gt;
+&lt;li&gt;Set up log alerts (e.g., failed login attempts)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="conclusion"&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;Open source software provides us with great convenience, but also brings security risks. Although this incident didn&amp;rsquo;t cause much loss, it gave me an important lesson:&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t blindly trust any software, especially emerging open source projects. Do more investigation before use, give minimal permissions during use, and continuously monitor and update after use.&lt;/p&gt;
+&lt;p&gt;Server security is not a one-time solution, but requires continuous attention and maintenance.&lt;/p&gt;</description></item></channel></rss>

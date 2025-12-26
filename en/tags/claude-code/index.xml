@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/en/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Dec 2025 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>Running Claude Code in a VM for Automated Testing and Development</title><link>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</guid><description>&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.png" alt="Featured image of post Running Claude Code in a VM for Automated Testing and Development" /&gt;&lt;p&gt;Recently, I verified an effective AI development method that doesn&amp;rsquo;t affect the existing workflow. Here&amp;rsquo;s a summary.&lt;/p&gt;
+&lt;h2 id="why-choose-vm--claude-code"&gt;Why Choose VM + Claude Code
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Isolation&lt;/strong&gt;: Avoid polluting the main system, can snapshot and rollback&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Reproducibility&lt;/strong&gt;: Team members can quickly replicate the same environment&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Suitable for automated testing&lt;/strong&gt;: Browser automation tools like Playwright require a desktop environment&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Safety&lt;/strong&gt;: Not too worried about agent generating &lt;code&gt;rm -rf /&lt;/code&gt; commands. The VM won&amp;rsquo;t crash.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="environment-setup"&gt;Environment Setup
+&lt;/h2&gt;&lt;h3 id="1-pve-creates-ubuntu-desktop-vm"&gt;1. PVE Creates Ubuntu Desktop VM
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Download Ubuntu Desktop ISO, upload to PVE&amp;rsquo;s ISO storage&lt;/li&gt;
+&lt;li&gt;Create VM:
+&lt;ul&gt;
+&lt;li&gt;CPU: host type, 2-4 cores&lt;/li&gt;
+&lt;li&gt;RAM: 4-8 GB&lt;/li&gt;
+&lt;li&gt;Disk: VirtIO SCSI, 40GB+&lt;/li&gt;
+&lt;li&gt;Network: VirtIO&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Mount ISO and start installation&lt;/li&gt;
+&lt;li&gt;After installation, install qemu-guest-agent:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt install qemu-guest-agent
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; --now qemu-guest-agent
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="2-configure-xfce--xrdp-remote-desktop"&gt;2. Configure Xfce + xrdp Remote Desktop
+&lt;/h3&gt;&lt;p&gt;Install xrdp and Xfce (lighter and more compatible than GNOME):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt install xrdp
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; xrdp
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl start xrdp
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt install xfce4 xfce4-goodies
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; xfce4-session &amp;gt; ~/.xsession
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;During installation, when prompted to choose a display manager, select &lt;strong&gt;lightdm&lt;/strong&gt;.&lt;/p&gt;
+&lt;h4 id="solve-black-screen-issue"&gt;Solve Black Screen Issue
+&lt;/h4&gt;&lt;p&gt;Edit xrdp startup script:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo nano /etc/xrdp/startwm.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Before the last two lines &lt;code&gt;test -x&lt;/code&gt; and &lt;code&gt;exec&lt;/code&gt;, add:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;unset&lt;/span&gt; DBUS_SESSION_BUS_ADDRESS
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;unset&lt;/span&gt; XDG_RUNTIME_DIR
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;startxfce4
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Restart xrdp:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart xrdp
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: Don&amp;rsquo;t log in to the desktop locally before connecting, otherwise the same user will see a black screen.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h4 id="adjust-resolutiondpi"&gt;Adjust Resolution/DPI
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Before Windows remote desktop connection, lower the resolution in &amp;ldquo;Display Options&amp;rdquo; (e.g., 1920×1080)&lt;/li&gt;
+&lt;li&gt;Or in Xfce: Settings Manager → Appearance → Fonts → Increase DPI (e.g., 120)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="disable-crash-prompts"&gt;Disable Crash Prompts
+&lt;/h4&gt;&lt;p&gt;After switching desktops, there may be GNOME component crash prompts (doesn&amp;rsquo;t affect usage):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl disable apport
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="3-install-claude-code"&gt;3. Install Claude Code
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Install Node.js (e.g., using nvm)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh &lt;span class="p"&gt;|&lt;/span&gt; bash
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;source&lt;/span&gt; ~/.bashrc
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;nvm install --lts
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Install Claude Code&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;npm install -g @anthropic-ai/claude-code
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Or use official installation script&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -fsSL https://claude.ai/install.sh &lt;span class="p"&gt;|&lt;/span&gt; bash
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Run &lt;code&gt;claude&lt;/code&gt; command for the first time and follow prompts to log in and authenticate.&lt;/p&gt;
+&lt;h2 id="automated-testing-workflow-mcp-configuration"&gt;Automated Testing Workflow: MCP Configuration
+&lt;/h2&gt;&lt;h3 id="playwright-mcp"&gt;Playwright MCP
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;MCP&lt;/th&gt;
+&lt;th&gt;Features&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (Microsoft official)&lt;/td&gt;
+&lt;td&gt;Lightweight, based on accessibility tree&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (community)&lt;/td&gt;
+&lt;td&gt;More complete features, supports screenshots, JS execution&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Console log monitoring, Lighthouse performance analysis&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="claude-code-configuration"&gt;Claude Code Configuration
+&lt;/h3&gt;&lt;p&gt;Create &lt;code&gt;.mcp.json&lt;/code&gt; in project root:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;mcpServers&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;playwright&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;npx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;args&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;-y&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@executeautomation/playwright-mcp-server&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;browser-tools&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;npx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;args&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;-y&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@agentdeskai/browser-tools-mcp&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Or add via CLI:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude mcp add playwright --scope project -- npx -y @executeautomation/playwright-mcp-server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="opencode-configuration"&gt;OpenCode Configuration
+&lt;/h3&gt;&lt;p&gt;If using OpenCode, the configuration format is different (&lt;code&gt;opencode.json&lt;/code&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://opencode.ai/config.json&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;mcp&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;playwright&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;local&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;-y&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@executeautomation/playwright-mcp-server&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;browser-tools&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;local&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;-y&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@agentdeskai/browser-tools-mcp&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Configuration Comparison&lt;/strong&gt;:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration Item&lt;/th&gt;
+&lt;th&gt;Claude Code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Top-level key&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;type&lt;/td&gt;
+&lt;td&gt;Not needed&lt;/td&gt;
+&lt;td&gt;Required (&lt;code&gt;local&lt;/code&gt;)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;command&lt;/td&gt;
+&lt;td&gt;String&lt;/td&gt;
+&lt;td&gt;Array&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="usage-example"&gt;Usage Example
+&lt;/h3&gt;&lt;p&gt;After configuration, you can drive tests with natural language:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude &lt;span class="s2"&gt;&amp;#34;Open localhost:3000, test the login flow, verify if it redirects to homepage&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude &lt;span class="s2"&gt;&amp;#34;Screenshot and compare homepage layout under mobile/tablet/desktop sizes&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude &lt;span class="s2"&gt;&amp;#34;Check if page console has any errors&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="results-display"&gt;Results Display
+&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
+width="2892"
+height="1848"
+srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_d68a3d99150ce2f4.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_3fce0f19d2ec6146.png 1024w"
+loading="lazy"
+alt="VM remote desktop running Claude Code"
+class="gallery-image"
+data-flex-grow="156"
+data-flex-basis="375px"
+&gt;&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary
+&lt;/h2&gt;&lt;p&gt;The VM + Claude Code + Playwright MCP combination provides an isolated, reproducible automated development testing environment. The entire process:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;PVE creates Ubuntu Desktop VM&lt;/li&gt;
+&lt;li&gt;Configure Xfce + xrdp remote access&lt;/li&gt;
+&lt;li&gt;Install Claude Code / OpenCode&lt;/li&gt;
+&lt;li&gt;Configure Playwright MCP&lt;/li&gt;
+&lt;li&gt;Drive automated testing with natural language&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>Developing Fried Rice Theme with Claude Code</title><link>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</link><pubDate>Tue, 23 Dec 2025 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post Developing Fried Rice Theme with Claude Code" /&gt;&lt;p&gt;Recently, I used Claude Code to add some SEO features to my own blog theme &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
+&gt;Fried Rice&lt;/a&gt;, and the overall experience was quite good.&lt;/p&gt;
+&lt;h2 id="background"&gt;Background
+&lt;/h2&gt;&lt;p&gt;Fried Rice is a theme forked from &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
+&gt;hugo-theme-stack&lt;/a&gt;. Previously, I had already added some basic JSON-LD structured data, and this time I wanted to continue improving it.&lt;/p&gt;
+&lt;h2 id="what-was-done-this-time"&gt;What Was Done This Time
+&lt;/h2&gt;&lt;p&gt;Mainly enhancing SEO structured data:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;WebSite schema (supports search action)&lt;/li&gt;
+&lt;li&gt;Organization schema (includes founder, contact point, address)&lt;/li&gt;
+&lt;li&gt;FAQ schema (supports inline FAQ in articles)&lt;/li&gt;
+&lt;li&gt;Enhanced Article/BlogPosting schema (added accessibility metadata)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="claude-codes-performance"&gt;Claude Code&amp;rsquo;s Performance
+&lt;/h2&gt;&lt;p&gt;The entire development process took about 2 hours. Claude Code helped me:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Write code&lt;/strong&gt; - Hugo template syntax is cumbersome, letting AI write it saves a lot of effort&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Review code&lt;/strong&gt; - After I committed, I asked it to check, and it found several issues:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;datePublished&lt;/code&gt; was defined 3 times&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;founder&lt;/code&gt; object was defined repeatedly&lt;/li&gt;
+&lt;li&gt;JSON output had double escaping issues&lt;/li&gt;
+&lt;li&gt;Variable scope errors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fix issues&lt;/strong&gt; - After finding issues, I asked it to fix them directly, all fixed at once&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Create PR, tag, write CHANGELOG&lt;/strong&gt; - These trivial tasks can also be done&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;A pleasant surprise was that it could find logical issues in the code. For example, Hugo&amp;rsquo;s &lt;code&gt;jsonify&lt;/code&gt; output was HTML-escaped causing JSON format errors, and it found the correct solution (using &lt;code&gt;safeJS&lt;/code&gt;).&lt;/p&gt;
+&lt;h2 id="shortcomings"&gt;Shortcomings
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Sometimes needs multiple reminders to use the correct tools&lt;/li&gt;
+&lt;li&gt;Not very familiar with Hugo template syntax in some places, needs several iterations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="summary"&gt;Summary
+&lt;/h2&gt;&lt;p&gt;For this kind of &amp;ldquo;add feature + fix bug&amp;rdquo; task, Claude Code is quite useful. Especially for tedious syntax like Hugo templates, having AI write it is much more efficient.&lt;/p&gt;
+&lt;h2 id="related-projects"&gt;Related Projects
+&lt;/h2&gt;
+&lt;script src="https://tarptaeya.github.io/repo-card/repo-card.js"&gt;&lt;/script&gt;&lt;div class="repo-card" data-repo="Svtter/Fried-Rice"&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Based on:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;
+&lt;h2 id="sponsor-this-project"&gt;Sponsor This Project
+&lt;/h2&gt;&lt;p&gt;Arbitrum One (USDT0): &lt;code&gt;0xd22e9300c9a94c2b735b01cb2a3ed3f46c57c7e3&lt;/code&gt;&lt;/p&gt;</description></item><item><title>CS146S is a Good Course</title><link>https://svtter.cn/en/p/cs146s-is-a-good-course/</link><pubDate>Mon, 15 Dec 2025 20:45:35 +0800</pubDate><guid>https://svtter.cn/en/p/cs146s-is-a-good-course/</guid><description>&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/bg.png" alt="Featured image of post CS146S is a Good Course" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
+&gt;CS146S&lt;/a&gt; is a good course, one of the reasons is that it teaches modern software engineers how to better collaborate with AI. Secondly, it basically covers all my modern coding capabilities. &lt;em&gt;(It&amp;rsquo;s a joke!)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In the following content, I will embed the slides from the course as hyperlinks in my text. If you&amp;rsquo;re interested, you can click the hyperlinks directly to open the corresponding slides.&lt;/p&gt;
+&lt;h2 id="basic-techniques"&gt;Basic Techniques
+&lt;/h2&gt;&lt;p&gt;I think everyone, like me, has already mastered the basic capabilities. More clear and explicit prompts let LLMs execute instructions unambiguously. Additionally, there are prompt optimization techniques, and using &lt;a class="link" href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompt-improver" target="_blank" rel="noopener"
+&gt;Claude to optimize prompts&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The course also talked about how to &lt;a class="link" href="https://docs.google.com/presentation/d/11CP26VhsjnZOmi9YFgLlonzdib9BLyAlgc4cEvC5Fps/edit?usp=sharing" target="_blank" rel="noopener"
+&gt;build coding agents&lt;/a&gt;, emphasizing that you can use the &lt;a class="link" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener"
+&gt;Claude Code SDK&lt;/a&gt;. It&amp;rsquo;s now called Claude Agent SDK.&lt;/p&gt;
+&lt;p&gt;To enhance LLM capabilities, you can also use &lt;a class="link" href="https://docs.google.com/presentation/d/1zSC2ra77XOUrJeyS85houg1DU7z9hq5Y4ebagTch-5o/edit?usp=drive_link" target="_blank" rel="noopener"
+&gt;MCP services&lt;/a&gt;. I built &lt;a class="link" href="https://github.com/Svtter/git-mcp" target="_blank" rel="noopener"
+&gt;git-mcp&lt;/a&gt;, and there&amp;rsquo;s also an unopen-sourced experimental startup MCP.&lt;/p&gt;
+&lt;h3 id="mcp-a-bit-deeper-content-from-the-ppt"&gt;MCP a bit deeper (content from the PPT)
+&lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png"
+width="2442"
+height="1268"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_d89f0ae8f1603602.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_f0b93cbeb72d32d8.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="192"
+data-flex-basis="462px"
+&gt;&lt;/p&gt;
+&lt;p&gt;With MCP, it&amp;rsquo;s worth noting the Host/Server/Client concept. Many Hosts are not open-source. Deepchat&amp;rsquo;s Host can be referenced.&lt;/p&gt;
+&lt;p&gt;Limitations:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Agents&lt;/span&gt; &lt;span class="n"&gt;don&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;t handle many tools very well today&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;APIs&lt;/span&gt; &lt;span class="n"&gt;eat&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="n"&gt;your&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;context&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt; &lt;span class="n"&gt;quickly&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Design&lt;/span&gt; &lt;span class="n"&gt;APIs&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;be&lt;/span&gt; &lt;span class="n"&gt;AI&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;native&lt;/span&gt; &lt;span class="n"&gt;rather&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;rigid&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="ide-agent"&gt;IDE Agent
+&lt;/h2&gt;&lt;p&gt;From the &lt;a class="link" href="https://docs.google.com/presentation/d/11pQNCde_mmRnImBat0Zymnp8TCS_cT_1up7zbcj6Sjg/edit?usp=sharing" target="_blank" rel="noopener"
+&gt;IDE&lt;/a&gt; perspective, I&amp;rsquo;ve switched from frequently using Cursor to using Claude Code + VSCode for programming. I feel Claude Code as a CLI is more powerful. However, I haven&amp;rsquo;t used Cursor for a while, so I don&amp;rsquo;t know if there have been some improvements. &lt;a class="link" href="https://www.trae.ai/solo" target="_blank" rel="noopener"
+&gt;Trae&amp;rsquo;s solo mode&lt;/a&gt; is just like that, basically insufficient intelligence is the biggest problem. Trae CN.&lt;/p&gt;
+&lt;p&gt;Additionally worth mentioning is that Silas Alberti, Head of Research &lt;a class="link" href="https://cognition.ai/" target="_blank" rel="noopener"
+&gt;Cognition&lt;/a&gt;&amp;rsquo;s &lt;a class="link" href="https://docs.google.com/presentation/d/1i0pRttHf72lgz8C-n7DSegcLBgncYZe_ppU7dB9zhUA/edit?usp=sharing" target="_blank" rel="noopener"
+&gt;slides&lt;/a&gt; are very powerful.&lt;/p&gt;
+&lt;p&gt;This summary diagram is awesome. &lt;code&gt;Is it really free to watch?&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png"
+width="2709"
+height="1491"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_42122bb2380063cf.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f408b3e25518dc04.png 1024w"
+loading="lazy"
+alt="local-cloud/sync-async limitations"
+class="gallery-image"
+data-flex-grow="181"
+data-flex-basis="436px"
+&gt;&lt;/p&gt;
+&lt;p&gt;This article also mentions the concept of parallel agents.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png"
+width="2730"
+height="1428"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_c029280737f11b12.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_50944036a3cee364.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="191"
+data-flex-basis="458px"
+&gt;&lt;/p&gt;
+&lt;p&gt;So for me, the next direction to improve is cloud + async.&lt;/p&gt;
+&lt;p&gt;This is Silas Alberti&amp;rsquo;s advice:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png"
+width="2730"
+height="1596"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_a90cae31e67954aa.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8b772c218c201c5f.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="410px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://devin.ai/" target="_blank" rel="noopener"
+&gt;devin&lt;/a&gt; and &lt;a class="link" href="https://claude.ai/code" target="_blank" rel="noopener"
+&gt;Claude Code Cloud&lt;/a&gt; are exactly the same. Actually, you can completely use Claude Code Cloud version for vibe coding.&lt;/p&gt;
+&lt;h2 id="agent-manager"&gt;Agent Manager
+&lt;/h2&gt;&lt;p&gt;Engineers need to become agent managers, not just software engineers.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png"
+width="2843"
+height="1514"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_5882d2934e05ccb5.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_24f37714fba8fc91.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="187"
+data-flex-basis="450px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Under the Claude Code designer mindset, the software design process should be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Provide high level requirements 🟩&lt;/li&gt;
+&lt;li&gt;Convert requirements into a design doc 🟩/🟦&lt;/li&gt;
+&lt;li&gt;Implement solution from doc 🟦&lt;/li&gt;
+&lt;li&gt;Add tests 🟦&lt;/li&gt;
+&lt;li&gt;Ensure CI (continuous integration) passes 🟦&lt;/li&gt;
+&lt;li&gt;Code review 🟦&lt;/li&gt;
+&lt;li&gt;Update docs 🟦&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;My habit is more to write simple requirements, then generate design, then let Claude Code implement the rest itself.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I recently found it&amp;rsquo;s not that capable. I adopted a test-driven development approach to ensure every step is done correctly. Otherwise, CI and Add tests actually have no meaning.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Techniques for directing agents:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Agent behavior files (Claude.md/Cursorrules/agents.md)&lt;/li&gt;
+&lt;li&gt;Hooks&lt;/li&gt;
+&lt;li&gt;Commands&lt;/li&gt;
+&lt;li&gt;Subagents&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I&amp;rsquo;ve already used subagents and commands a lot. But I haven&amp;rsquo;t found a killing scenario for hooks yet.&lt;/p&gt;
+&lt;h3 id="best-practice-claude-code"&gt;Best practice Claude Code
+&lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png"
+width="2613"
+height="1149"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_787eee0c4ac0c32e.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6dc3ac369f50f862.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="227"
+data-flex-basis="545px"
+&gt;&lt;/p&gt;
+&lt;p&gt;What I want to say is to use subagents as much as possible to avoid the &amp;ldquo;lost in the middle&amp;rdquo; phenomenon.&lt;/p&gt;
+&lt;h3 id="claude-code-cli"&gt;&lt;a class="link" href="https://docs.google.com/presentation/d/1bv7Zozn6z45CAh-IyX99dMPMyXCHC7zj95UfwErBYQ8/edit?slide=id.g35e8acebb8e_0_106#slide=id.g35e8acebb8e_0_106" target="_blank" rel="noopener"
+&gt;Claude Code CLI&lt;/a&gt;
+&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;Why did I buy Claude Code?&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png"
+width="2850"
+height="1659"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8c91fdb3b66afcb.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_df24bef214ac4e82.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="412px"
+&gt;&lt;/p&gt;
+&lt;p&gt;We can do more things through the SDK:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude -p &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;what did i do this week?&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; --allowedTools Bash&lt;span class="o"&gt;(&lt;/span&gt;git log:*&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --output-format stream-json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="conclusion"&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;This course is free, but the insights inside surpass most paid courses. If you can understand and quickly absorb it, don&amp;rsquo;t be stingy with your time, learn it.&lt;/p&gt;</description></item><item><title>Claude Code Plugin Usage Experience</title><link>https://svtter.cn/en/p/claude-code-plugin-usage-experience/</link><pubDate>Tue, 14 Oct 2025 10:16:54 +0800</pubDate><guid>https://svtter.cn/en/p/claude-code-plugin-usage-experience/</guid><description>&lt;img src="https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/pics/bg.svg" alt="Featured image of post Claude Code Plugin Usage Experience" /&gt;&lt;p&gt;Overall, the experience was not good.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s likely because it&amp;rsquo;s newly launched and generally feels immature.&lt;/p&gt;
+&lt;p&gt;Typical issues include:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Not using available &lt;a class="link" href="https://docs.claude.com/en/docs/claude-code/sub-agents#example-subagents" target="_blank" rel="noopener"
+&gt;agents&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Not using available &lt;a class="link" href="https://docs.claude.com/en/docs/agents-and-tools/mcp-connector#mcp-server-configuration" target="_blank" rel="noopener"
+&gt;MCP&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Tool calls are infrequent and require manual prompting. As a user, I generally don&amp;rsquo;t deliberately memorize which agents are available.&lt;/p&gt;
+&lt;p&gt;More importantly, it impacts efficiency.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If using DeepSeek V3.2, its relatively short context length (128K) means it doesn&amp;rsquo;t perform well when there are many tools or MCP connections.&lt;/li&gt;
+&lt;li&gt;Plugins often don&amp;rsquo;t improve the tool usage experience; they can actually degrade it. This is because MCP tools and plugins increase the input token count, forcing the model to process more context. Since the computational complexity of transformers is O(n²), any increase in length has a significant negative impact.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In summary, it&amp;rsquo;s not recommended for use at this time.&lt;/p&gt;</description></item><item><title>Several Issues with Zhipu GLM-4.5 in Programming</title><link>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</link><pubDate>Tue, 23 Sep 2025 10:24:43 +0800</pubDate><guid>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</guid><description>&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/featured_20250924_145011.png" alt="Featured image of post Several Issues with Zhipu GLM-4.5 in Programming" /&gt;&lt;p&gt;Through some leaderboards and the &lt;a class="link" href="https://arxiv.org/abs/2508.06471" target="_blank" rel="noopener"
+&gt;report&lt;/a&gt;, I saw that glm-4.5 received high scores, so I gritted my teeth and subscribed to the annual coding plan.&lt;/p&gt;
+&lt;p&gt;However, while using the Zhipu glm4.5 coding plan, I encountered several issues that severely impacted my work efficiency.&lt;/p&gt;
+&lt;h2 id="cline"&gt;Cline
+&lt;/h2&gt;&lt;p&gt;In cline, there are roughly a few problems.&lt;/p&gt;
+&lt;p&gt;Problem One: Simple diff tool calls fail to output correctly.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1.png"
+width="588"
+height="243"
+srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1_hu_40678bb4e4c7a0c1.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1_hu_2c04225f983576c5.png 1024w"
+loading="lazy"
+alt="diff prob"
+class="gallery-image"
+data-flex-grow="241"
+data-flex-basis="580px"
+&gt;&lt;/p&gt;
+&lt;p&gt;Problem Two: The task list tool is unusable.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/img/prob.png"
+loading="lazy"
+alt="tasklist prob"
+&gt;&lt;/p&gt;
+&lt;p&gt;I once suspected it was a cline issue. But then I thought, deepseek, gpt-5, and claude-4-opus all work fine.&lt;/p&gt;
+&lt;p&gt;The prompt doesn&amp;rsquo;t change because of these. It&amp;rsquo;s most likely an issue with Zhipu glm-4.5.&lt;/p&gt;
+&lt;h2 id="claude-code"&gt;Claude Code
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Misunderstanding problems (unable to understand some simple natural language)&lt;/li&gt;
+&lt;li&gt;Incoherent responses, not listening to the user, failing to identify the target.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Later, if I find similar situations, I will add screenshots to this blog post. I don&amp;rsquo;t want to waste more time on this.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s also a common issue: obsequiousness.&lt;/p&gt;
+&lt;h3 id="stopped-responding"&gt;Stopped Responding
+&lt;/h3&gt;&lt;p&gt;A new problem encountered on 2025-10-03: it stopped providing feedback while answering a question and terminated the process.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3.png"
+width="878"
+height="684"
+srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3_hu_345d49e45a084c07.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3_hu_e06bae55fc0c46df.png 1024w"
+loading="lazy"
+alt="stop responsing"
+class="gallery-image"
+data-flex-grow="128"
+data-flex-basis="308px"
+&gt;&lt;/p&gt;
+&lt;p&gt;The most likely cause of this problem is a lack of adaptation to the thinking interface, resulting in it thinking but not displaying the content.&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary
+&lt;/h2&gt;&lt;p&gt;Based on my current experience, among domestic AIs, apart from DeepSeek, the other major players tend to have unstable model outputs.&lt;/p&gt;
+&lt;p&gt;Without a doubt, Anthropic is the leader in this field.&lt;/p&gt;
+&lt;p&gt;I genuinely doubt the friends who told me Zhipu is good—have you actually used AI for programming? If so, how do you tolerate these issues? How has your efficiency improved?&lt;/p&gt;
+&lt;p&gt;If you think these problems are inevitable, then I sincerely suggest you use Anthropic&amp;rsquo;s products and models.&lt;/p&gt;
+&lt;h2 id="aside"&gt;Aside
+&lt;/h2&gt;&lt;p&gt;I really don&amp;rsquo;t want to use glm anymore, but there&amp;rsquo;s no choice—I&amp;rsquo;ve already paid for the annual subscription, and it&amp;rsquo;s non-refundable.&lt;/p&gt;
+&lt;p&gt;Therefore, as a user, you can only hope that glm will update its model.&lt;/p&gt;
+&lt;p&gt;As a consumer or customer, this feels very uncomfortable. It&amp;rsquo;s okay if the product isn&amp;rsquo;t fully developed yet; just don&amp;rsquo;t release it, or don&amp;rsquo;t charge for it like this. At 200 yuan a month, I might as well put all that money into deepseek. That&amp;rsquo;s a model that truly stands up to scrutiny.&lt;/p&gt;
+&lt;p&gt;Getting a refund is troublesome. I think reporting it to the consumer association could solve the problem to some extent. But it&amp;rsquo;s a waste of time. Furthermore, continuing to use it is a sunk cost. Therefore, I can only do this: I will not spend another cent on Zhipu in the future.&lt;/p&gt;
+&lt;h2 id="update"&gt;Update
+&lt;/h2&gt;&lt;p&gt;Very strange!&lt;/p&gt;
+&lt;p&gt;Not long after I published this article, I found that the usability of glm-4.5 has become significantly better.&lt;/p&gt;
+&lt;h2 id="related-coding-plan-articles"&gt;Related Coding Plan Articles
+&lt;/h2&gt;&lt;p&gt;If you&amp;rsquo;re interested in experiences with other AI coding plans, you can read my other articles:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/" target="_blank" rel="noopener"
+&gt;I Bought the Kimi Coding Plan Again&lt;/a&gt; - Experience and configuration methods for the Kimi monthly plan.&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/" target="_blank" rel="noopener"
+&gt;Doubao doubao-seed-code Test&lt;/a&gt; - In-depth testing of ByteDance&amp;rsquo;s Doubao coding plan.&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://svtter.cn/p/how-to-use-claude-code-with-deepseek/pics/bg.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;Sometimes we cannot directly use the Anthropic API. However, the Claude Code (CC) experience is excellent, and we still want to use CC.&lt;/p&gt;
+&lt;p&gt;In such cases, you can try using the API provided by DeepSeek to access CC.&lt;/p&gt;
+&lt;p&gt;DeepSeek has already provided the corresponding interface: &lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/guides/anthropic_api" target="_blank" rel="noopener"
+&gt;How to Use the Claude Code + DeepSeek Combination?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Currently, there are two mainstream LLM APIs: one is OpenAI, and the other is Anthropic. Anthropic has gained a certain level of influence through CC.&lt;/p&gt;
+&lt;p&gt;If you want to learn more about the use cases for CC, I recommend reading &lt;a class="link" href="https://www.anthropic.com/news/how-anthropic-teams-use-claude-code" target="_blank" rel="noopener"
+&gt;Anthropic&amp;rsquo;s Official Blog&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Additionally, here are some supplementary resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg" target="_blank" rel="noopener"
+&gt;https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Logseq on Svtter's Blog</title><link>https://svtter.cn/en/tags/logseq/</link><description>Recent content in Logseq on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 08 Feb 2025 18:18:29 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/logseq/index.xml" rel="self" type="application/rss+xml"/><item><title>Using git to manage logseq files</title><link>https://svtter.cn/en/p/using-git-to-manage-logseq-files/</link><pubDate>Sat, 08 Feb 2025 18:18:29 +0800</pubDate><guid>https://svtter.cn/en/p/using-git-to-manage-logseq-files/</guid><description>&lt;p&gt;Since I frequently use multiple devices simultaneously, I often encounter the issue of writing articles on one device and then continuing to use Logseq on another. Simply copying and pasting feels cumbersome.&lt;/p&gt;
+&lt;p&gt;I have roughly divided the solution to this problem into two stages. The first stage involves using a portable hard drive to directly copy data between different systems. During this stage, I utilized a Git bare repository.&lt;/p&gt;
+&lt;h2 id="stage-1"&gt;Stage 1
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;git init --bare logseq-database.git&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then, in other working Git repositories, I added a remote. For example, if my disk path is &lt;code&gt;E:\&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git remote add origin E:\logseq-database.git&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This way, I could synchronize Logseq data directly between different devices.&lt;/p&gt;
+&lt;h2 id="stage-2"&gt;Stage 2
+&lt;/h2&gt;&lt;p&gt;I found using a portable hard drive still inconvenient. I repurposed a 10-year-old ThinkPad, installed Gitea on it. Initially, I used Gogs, but Gogs had unfriendly handling of submodules and inexplicable bugs. Therefore, I ultimately switched to Gitea. After setting up Gitea, I migrated the original Git repository to my local machine. For example: &lt;code&gt;http://gitea.local/svtter/logseq-database.git&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="stage-3"&gt;Stage 3
+&lt;/h2&gt;&lt;p&gt;I discovered that storing and sharing large files often caused issues. I added support for &lt;code&gt;git-lfs&lt;/code&gt; by running:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git lfs install&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git lfs track *.pdf&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;to prevent large files from leaving too much data in the &lt;code&gt;.git&lt;/code&gt; directory.&lt;/p&gt;
+&lt;h2 id="stage-4"&gt;Stage 4
+&lt;/h2&gt;&lt;p&gt;Periodically back up part of the data to &lt;code&gt;GitHub&lt;/code&gt;. However, I generally no longer do this.&lt;/p&gt;
+&lt;p&gt;When using Git for merging, one must be cautious about an issue: if a file name changes, automated merging will simply ignore it. Here’s how it typically happens: I modify a file on two devices simultaneously, and on one device, not only is the content changed, but the file name is also altered. Then, both devices perform a Git commit separately. As a result, when Git performs the merge, it won’t prompt a conflict. After Git’s automated merge, the modifications made on one of the devices will disappear.&lt;/p&gt;
+&lt;p&gt;To address this issue, the approach is to use the rebase method as much as possible during merging. However, rebasing is slow when merging files and requires a lot of manual handling.&lt;/p&gt;
+&lt;p&gt;Therefore, when modifying the same file on two devices simultaneously, first pull the remote changes. Second, avoid changing file names whenever possible. Otherwise, changes may be lost.&lt;/p&gt;
+&lt;p&gt;Fortunately, Git commit history is always preserved. If all else fails, retrieve the lost parts from the commit records and add a new commit.&lt;/p&gt;</description></item></channel></rss>
