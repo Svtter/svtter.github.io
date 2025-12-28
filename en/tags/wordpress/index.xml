@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wordpress on Svtter's Blog</title><link>https://svtter.cn/en/tags/wordpress/</link><description>Recent content in Wordpress on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 15 Nov 2024 17:16:45 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/wordpress/index.xml" rel="self" type="application/rss+xml"/><item><title>Documenting a WordPress Migration</title><link>https://svtter.cn/en/p/documenting-a-wordpress-migration/</link><pubDate>Fri, 15 Nov 2024 17:16:45 +0800</pubDate><guid>https://svtter.cn/en/p/documenting-a-wordpress-migration/</guid><description>&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wordpress on Svtter's Blog</title><link>https://svtter.cn/en/tags/wordpress/</link><description>Recent content in Wordpress on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 15 Nov 2024 17:16:45 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/wordpress/index.xml" rel="self" type="application/rss+xml"/><item><title>Documenting a WordPress Migration</title><link>https://svtter.cn/en/p/documenting-a-wordpress-migration/</link><pubDate>Fri, 15 Nov 2024 17:16:45 +0800</pubDate><guid>https://svtter.cn/en/p/documenting-a-wordpress-migration/</guid><description>&lt;p&gt;Previously, WordPress was running on CentOS 7; the performance of this machine was often underutilized, so some migration was needed to improve performance. To avoid losing relevant data, the WordPress migration work was carried out. This article documents the WordPress migration process.&lt;/p&gt;
+&lt;p&gt;To minimize the time spent on backups, I first used the WordPress plugin, All-in-one WP migration. This plugin can back up plugins, articles, themes, and other plugins.&lt;/p&gt;
+&lt;p&gt;When backing up the old website, I downloaded the generated backup file.&lt;/p&gt;
+&lt;p&gt;When creating the new website (via Coolify), the file upload kept failing. I wasn&amp;rsquo;t sure what was happening.&lt;/p&gt;
+&lt;p&gt;Subsequently, I modified several upload restrictions.&lt;/p&gt;
+&lt;p&gt;One of them was .htaccess.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -14,7 +20,8 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;php_value&lt;/span&gt; &lt;span class="n"&gt;max_input_time&lt;/span&gt; &lt;span class="mi"&gt;300&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/div&gt;&lt;p&gt;Another one is wp-config.php&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -30,14 +37,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;max_input_time&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;300&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;Previously, WordPress was running on CentOS 7; the performance of this machine was often underutilized, so some migration was needed to improve performance. To avoid losing relevant data, the WordPress migration work was carried out. This article documents the WordPress migration process.&lt;/p&gt;
-&lt;p&gt;To minimize the time spent on backups, I first used the WordPress plugin, All-in-one WP migration. This plugin can back up plugins, articles, themes, and other plugins.&lt;/p&gt;
-&lt;p&gt;When backing up the old website, I downloaded the generated backup file.&lt;/p&gt;
-&lt;p&gt;When creating the new website (via Coolify), the file upload kept failing. I wasn&amp;rsquo;t sure what was happening.&lt;/p&gt;
-&lt;p&gt;Subsequently, I modified several upload restrictions.&lt;/p&gt;
-&lt;p&gt;One of them was .htaccess.&lt;/p&gt;
-&lt;p&gt;Another one is wp-config.php&lt;/p&gt;
-&lt;p&gt;My backup file is 199MB in size. However, despite adjusting the two files mentioned above, I found that I still couldn&amp;rsquo;t restore the backup. This left me puzzled. Through console debugging, I discovered that after the upload was completed, the server would return an HTTP 413 error. Later, I found &lt;a class="link" href="https://www.namehero.com/blog/how-to-fix-a-stuck-all-in-one-wp-migration-import/" target="_blank" rel="noopener"
+&lt;/div&gt;&lt;p&gt;My backup file is 199MB in size. However, despite adjusting the two files mentioned above, I found that I still couldn&amp;rsquo;t restore the backup. This left me puzzled. Through console debugging, I discovered that after the upload was completed, the server would return an HTTP 413 error. Later, I found &lt;a class="link" href="https://www.namehero.com/blog/how-to-fix-a-stuck-all-in-one-wp-migration-import/" target="_blank" rel="noopener"
 &gt;this article&lt;/a&gt; and identified the issue.&lt;/p&gt;
 &lt;p&gt;After troubleshooting, I realized that the problem was actually caused by Cloudflare. The free Cloudflare plan does not support file uploads larger than 100MB, resulting in an HTTP 413 error.&lt;/p&gt;
 &lt;p&gt;Subsequently, I configured my local hosts file to allow the domain to directly connect to the server&amp;rsquo;s real IP address.&lt;/p&gt;
