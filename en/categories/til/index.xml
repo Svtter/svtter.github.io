@@ -82,39 +82,22 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;new_timezone_time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strftime&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%Y-%m-&lt;/span&gt;&lt;span class="si"&gt;%d&lt;/span&gt;&lt;span class="s1"&gt; %H:%M:%S %Z%z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="c1"&gt;# Display time in the new timezone&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Cuda and Paddle</title><link>https://svtter.cn/en/p/cuda-and-paddle/</link><pubDate>Tue, 11 Feb 2025 15:41:18 +0800</pubDate><guid>https://svtter.cn/en/p/cuda-and-paddle/</guid><description>&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/div&gt;</description></item><item><title>Cuda and Paddle</title><link>https://svtter.cn/en/p/cuda-and-paddle/</link><pubDate>Tue, 11 Feb 2025 15:41:18 +0800</pubDate><guid>https://svtter.cn/en/p/cuda-and-paddle/</guid><description>&lt;p&gt;Configuring a deep learning environment is a hurdle many struggle to overcome. However, with large models, troubleshooting and pinpointing issues can be significantly faster.&lt;/p&gt;
+&lt;p&gt;I spent some time adapting an older version of PaddlePaddle and finally got it working. Here, I&amp;rsquo;ll share an article documenting the process.&lt;/p&gt;
+&lt;p&gt;In Docker images, many CUDA 11-based images fail to run in a CUDA 12 environment. The exact reason isn&amp;rsquo;t entirely clear to me. In such cases, you can opt for a CUDA version that matches the major release.&lt;/p&gt;
+&lt;p&gt;To avoid affecting the environments of others on the server, do not update the NVIDIA driver. Instead, install your own CUDA version and modify the environment variables to change the system&amp;rsquo;s CUDA.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bashrc" data-lang="bashrc"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# CUDA_VERSION=11.7&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;CUDA_HOME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;/usr/local/cuda-&lt;/span&gt;&lt;span class="nv"&gt;$CUDA_VERSION&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;LD_LIBRARY_PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$CUDA_HOME&lt;/span&gt;&lt;span class="s2"&gt;/lib64:&lt;/span&gt;&lt;span class="nv"&gt;$LD_LIBRARY_PATH&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$CUDA_HOME&lt;/span&gt;/bin:&lt;span class="nv"&gt;$PATH&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sb"&gt;```&lt;/span&gt;Configuring a deep learning environment is a hurdle many struggle to overcome. However, with large models, troubleshooting and pinpointing issues can be significantly faster.
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;I spent some &lt;span class="nb"&gt;time&lt;/span&gt; adapting an older version of PaddlePaddle and finally got it working. Here, I’ll share an article documenting the process.
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;In Docker images, many CUDA 11-based images fail to run in a CUDA &lt;span class="m"&gt;12&lt;/span&gt; environment. The exact reason isn’t entirely clear to me. In such cases, you can opt &lt;span class="k"&gt;for&lt;/span&gt; a CUDA version that matches the major release.
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;To avoid affecting the environments of others on the server, &lt;span class="k"&gt;do&lt;/span&gt; not update the NVIDIA driver. Instead, install your own CUDA version and modify the environment variables to change the system’s CUDA.Apply this environment variable, &lt;span class="k"&gt;then&lt;/span&gt; check &lt;span class="sb"&gt;`&lt;/span&gt;nvidia-smi&lt;span class="sb"&gt;`&lt;/span&gt; to see the version change.
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item></channel></rss>
+&lt;/div&gt;&lt;p&gt;Apply this environment variable, then check &lt;code&gt;nvidia-smi&lt;/code&gt; to see the version change.&lt;/p&gt;</description></item></channel></rss>
