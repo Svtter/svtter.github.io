@@ -1,4 +1,40 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent on Svtter's Blog</title><link>https://svtter.cn/en/categories/agent/</link><description>Recent content in Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 21 Apr 2025 14:51:38 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Work With Langfuse</title><link>https://svtter.cn/en/p/work-with-langfuse/</link><pubDate>Mon, 21 Apr 2025 14:51:38 +0800</pubDate><guid>https://svtter.cn/en/p/work-with-langfuse/</guid><description>&lt;img src="https://svtter.cn/p/work-with-langfuse.md/image.png" alt="Featured image of post Work With Langfuse" /&gt;&lt;p&gt;When developing LLM applications, we consider performance issues during LLM calls and monitor outputs during the process.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent on Svtter's Blog</title><link>https://svtter.cn/en/categories/agent/</link><description>Recent content in Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 30 Sep 2025 11:54:06 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Why Agent</title><link>https://svtter.cn/en/p/why-agent/</link><pubDate>Tue, 30 Sep 2025 11:54:06 +0800</pubDate><guid>https://svtter.cn/en/p/why-agent/</guid><description>&lt;img src="https://svtter.cn/p/why-agent/pics/why-agent-background.svg" alt="Featured image of post Why Agent" /&gt;&lt;p&gt;I&amp;rsquo;ve always had a question: Why do we need agent frameworks? Aren&amp;rsquo;t large models enough on their own? This article reflects my current understanding of the subject.&lt;/p&gt;
+&lt;p&gt;After using several tools extensively and participating in multiple agent projects recently, I&amp;rsquo;ve reached some conclusions.&lt;/p&gt;
+&lt;h2 id="the-limitations-of-llms"&gt;The Limitations of LLMs
+&lt;/h2&gt;&lt;p&gt;The primary reason for using agents is the inherent limitations of LLMs.&lt;/p&gt;
+&lt;p&gt;First and foremost is the &lt;strong&gt;context window&lt;/strong&gt;, as explicitly mentioned in &lt;a class="link" href="https://docs.langchain.com/oss/python/deepagents/subagents#why-use-subagents%3F" target="_blank" rel="noopener"
+&gt;langchain/subagent&lt;/a&gt;. Although many modern models have significantly expanded context windows (GPT-4 Turbo 128K, Claude-3.5 Sonnet 200K, Gemini-1.5 Pro up to 2M), they are still insufficient for truly complex tasks. For example, processing a massive codebase or analyzing hundreds of documents quickly exhausts these limits. Furthermore, processing extremely long contexts is both expensive and slow.&lt;/p&gt;
+&lt;p&gt;Beyond context, there are other capability gaps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Vision Capabilities&lt;/strong&gt;: While modern VLMs (Vision Language Models) are powerful, traditional CV (Computer Vision) models often perform better in specific scenarios. Additionally, some models (like DeepSeek-V3) don&amp;rsquo;t have native vision capabilities.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Resource Access&lt;/strong&gt;: LLMs cannot directly interact with databases, file systems, or network services.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Specialized Tools&lt;/strong&gt;: Tools for code execution, complex mathematics, or data analysis require protocols like MCP to be accessible to an LLM.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="what-agents-can-do"&gt;What Agents Can Do
+&lt;/h2&gt;&lt;p&gt;Beyond addressing the limitations above, here are some practical ways agents add value.&lt;/p&gt;
+&lt;h3 id="domain-specific-text-processing"&gt;Domain-Specific Text Processing
+&lt;/h3&gt;&lt;p&gt;Agents can process different text segments (contexts) independently.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Context Optimization&lt;/strong&gt;: Agents can compress or selectively provide context, effectively extending the usable context window.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Performance Gains&lt;/strong&gt;: An LLM within an agent can focus on a single, specific task, leading to better performance. When given too much text, LLMs often struggle to identify key information; smaller, targeted context makes this much easier.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Specialized Knowledge&lt;/strong&gt;: LLMs are trained on general data. To make an agent a domain expert, we can inject specific knowledge directly into its context.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="visual-capability-integration"&gt;Visual Capability Integration
+&lt;/h3&gt;&lt;p&gt;Through agents, we can integrate traditional vision models to handle tasks that LLMs struggle with. For example, using an MCP (Model Context Protocol) to bridge an agent with vision capabilities.&lt;/p&gt;
+&lt;p&gt;A notable example is &lt;a class="link" href="https://docs.bigmodel.cn/cn/coding-plan/mcp/vision-mcp-server" target="_blank" rel="noopener"
+&gt;Zhipu&amp;rsquo;s Vision MCP&lt;/a&gt;. Using this MCP in conjunction with an agent significantly enhances visual processing power. This highlights the value of MCP servers that integrate specialized services.&lt;/p&gt;
+&lt;h2 id="further-reading"&gt;Further Reading
+&lt;/h2&gt;&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="zh" dir="ltr"&gt;大家经常聊的 Agent，很多时候其实只是一个 Workflow。这两个概念混用，会导致产品设计和技术选型上走很多弯路。&lt;br&gt;&lt;br&gt;Anthropic 给了一个很清晰的划分，核心区别在于：&lt;br&gt;系统执行任务时，是由代码预设路径（Code-Driven），还是由LLM自己动态决定下一步（LLM-Driven）。前者是 Workflow，后者才是…&lt;/p&gt;&amp;mdash; 一泽Eze (@eze_is_1) &lt;a href="https://twitter.com/eze_is_1/status/1982740850070425826?ref_src=twsrc%5Etfw"&gt;October 27, 2025&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;p&gt;Agents and workflows allow LLMs to use tools. While the input and output remain text, the nature of what that text represents has changed. The creator of the text is no longer necessarily a human.&lt;/p&gt;
+&lt;h2 id="agent-frameworks"&gt;Agent Frameworks
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://ai.pydantic.dev/" target="_blank" rel="noopener"
+&gt;Pydantic AI&lt;/a&gt;: I find this particularly useful because it integrates Pydantic models into the agent framework, making it much easier to debug. I&amp;rsquo;ve tested its integration with &lt;a class="link" href="https://ai.pydantic.dev/" target="_blank" rel="noopener"
+&gt;Qwen3&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.langchain.com/" target="_blank" rel="noopener"
+&gt;LangChain&lt;/a&gt;: I haven&amp;rsquo;t used this in production, only for basic debugging. The API changes frequently, which can be challenging. One minor issue is prompt handling; &lt;a class="link" href="https://svtter.cn/p/string-template-in-prompt.md/" &gt;I used Jinja to solve this&lt;/a&gt;. Alternatively, the &amp;ldquo;LangChain way&amp;rdquo; involves using &lt;a class="link" href="https://python.langchain.com/docs/concepts/prompt_templates/#string-prompttemplates" target="_blank" rel="noopener"
+&gt;PromptTemplates&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Work With Langfuse</title><link>https://svtter.cn/en/p/work-with-langfuse/</link><pubDate>Mon, 21 Apr 2025 14:51:38 +0800</pubDate><guid>https://svtter.cn/en/p/work-with-langfuse/</guid><description>&lt;img src="https://svtter.cn/p/work-with-langfuse.md/image.png" alt="Featured image of post Work With Langfuse" /&gt;&lt;p&gt;When developing LLM applications, we consider performance issues during LLM calls and monitor outputs during the process.&lt;/p&gt;
 &lt;p&gt;At this point, tools like LangSmith and Langfuse become very useful.&lt;/p&gt;
 &lt;p&gt;However, sometimes we have local computing resources and prefer not to use cloud-based resources for LLM call monitoring, so we might not consider LangSmith.&lt;/p&gt;
 &lt;p&gt;In such cases, we can use Langfuse for this purpose.&lt;/p&gt;
