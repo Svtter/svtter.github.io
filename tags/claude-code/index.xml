@@ -5,20 +5,21 @@
 &lt;li&gt;让 claude code 不在无意义的位置上停止 &lt;code&gt;ralph-loop&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;端到端自动化测试 &lt;code&gt;playwright mcp&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id="tmux-mcp"&gt;tmux mcp
-&lt;/h2&gt;&lt;p&gt;先让 opencode 配置 Linux 环境的 tmux，然后让 opencode 安装 &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
+&lt;h2 id="工具列表"&gt;工具列表
+&lt;/h2&gt;&lt;h3 id="tmux-mcp"&gt;tmux mcp
+&lt;/h3&gt;&lt;p&gt;先让 opencode 配置 Linux 环境的 tmux，然后让 opencode 安装 &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
 &gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt; ；安装完成后即可使用 oc 来控制 tmux 的内容。&lt;/p&gt;
 &lt;p&gt;可以通过这种方式来重新激活的停止的 opencode session。例如，可以开多个 tmux，然后让其中一个 opencode 通过 tmux 工具来监控，启停任务。&lt;/p&gt;
-&lt;h2 id="ralph-loop"&gt;ralph-loop
-&lt;/h2&gt;&lt;p&gt;Ralph 是一个自主 AI 代理循环，它会反复运行 Amp，直到所有 PRD 项都完成。每次迭代都会创建一个全新的 Amp 实例，并具有干净的上下文。&lt;/p&gt;
+&lt;h3 id="ralph-loop"&gt;ralph-loop
+&lt;/h3&gt;&lt;p&gt;Ralph 是一个自主 AI 代理循环，它会反复运行 Amp，直到所有 PRD 项都完成。每次迭代都会创建一个全新的 Amp 实例，并具有干净的上下文。&lt;/p&gt;
 &lt;p&gt;Ralph 最早可能来自这里 &lt;a class="link" href="https://github.com/snarktank/ralph" target="_blank" rel="noopener"
 &gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;因为其卓有成效（实际上是在模型性能进一步提升之后发生的），也被引入了 claude code。&lt;/p&gt;
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
 &lt;div class="repo-card" data-repo="frankbria/ralph-claude-code"&gt;&lt;/div&gt;
 &lt;p&gt;Ralph-loop 是一个 Claude Code 插件，可以让 Claude Code 在完成任务时自动重新启动，形成一个循环执行任务的机制。这对于需要持续改进或迭代的任务特别有用。&lt;/p&gt;
-&lt;h3 id="安装方法"&gt;安装方法
-&lt;/h3&gt;&lt;ol&gt;
+&lt;h4 id="安装方法"&gt;安装方法
+&lt;/h4&gt;&lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;通过 Claude Code 官方插件市场安装&lt;/strong&gt;：&lt;/p&gt;
 &lt;ul&gt;
@@ -34,17 +35,21 @@
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id="使用场景"&gt;使用场景
-&lt;/h3&gt;&lt;ul&gt;
+&lt;h4 id="使用场景"&gt;使用场景
+&lt;/h4&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;代码重构&lt;/strong&gt;：让 Claude Code 持续改进代码质量&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;测试驱动开发&lt;/strong&gt;：编写测试，然后让 Claude Code 不断改进实现&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;调试循环&lt;/strong&gt;：自动重新启动调试会话&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;持续集成&lt;/strong&gt;：在本地模拟 CI/CD 流程&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;这个插件的缺点是非常烧 token；如果没有 max20 订阅，还是不要订阅比较好。但对于需要高质量输出的任务，这个工具可以显著提高工作效率。&lt;/p&gt;
-&lt;h2 id="playwright-mcp"&gt;playwright mcp
-&lt;/h2&gt;&lt;p&gt;这个插件可以启动浏览器来完成端到端测试，或者编写端到端测试代码。可以更好的形成 loop，来让 cc 或者 oc 改进代码。&lt;/p&gt;
+&lt;h3 id="playwright-mcp"&gt;playwright mcp
+&lt;/h3&gt;&lt;p&gt;这个插件可以启动浏览器来完成端到端测试，或者编写端到端测试代码。可以更好的形成 loop，来让 cc 或者 oc 改进代码。&lt;/p&gt;
 &lt;p&gt;安装方法 &lt;code&gt;claude '帮我安装 playwright mcp'&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="改写成-agents"&gt;改写成 agents
+&lt;/h2&gt;&lt;p&gt;我建议直接通过 opencode 或者 claude code 将这些工具和 mcp 改写成 agent。&lt;/p&gt;
+&lt;p&gt;相比于 skills command，这些工具，更适合通过 agent 来调用。&lt;a class="link" href="https://svtter.cn/p/why-agent/#llm-%E7%9A%84%E9%97%AE%E9%A2%98" target="_blank" rel="noopener"
+&gt;agent 上下文很干净&lt;/a&gt;，对工具调用几乎是必然的事情。&lt;/p&gt;
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;随着 LLM 越来越强，大量的 mcp，依赖于 LLM 能力的 MCP 自然而然的获得了提升。原本不怎么好用的工具变得更好用了。这也正是迎合了那句话：不要做大模型能力增强之后没有意义的东西。
 大模型的能力仍然在增强，并且价格在不断下降。&lt;/p&gt;
