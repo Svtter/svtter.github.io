@@ -1,4 +1,272 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ai on Svtter's Blog</title><link>https://svtter.cn/tags/ai/</link><description>Recent content in Ai on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 24 Oct 2025 17:03:48 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>我又买了 Kimi Coding Plan</title><link>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</link><pubDate>Fri, 24 Oct 2025 17:03:48 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/bg.svg" alt="Featured image of post 我又买了 Kimi Coding Plan" /&gt;&lt;p&gt;kimi 的包月计划推出了。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/tags/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 23 Jan 2026 11:52:52 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？</title><link>https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/</guid><description>&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;最近，国内多家大模型厂商纷纷推出面向开发者的 Coding Plan 订阅套餐，主打&amp;quot;低价享受海量用量&amp;quot;，宣称每月仅需几十到几百元，即可获得&amp;quot;数百亿 tokens&amp;quot;的使用额度。&lt;/p&gt;
+&lt;p&gt;听起来很美好，但作为一个习惯用数据说话的开发者，我决定算一笔账：&lt;strong&gt;在并发限制下，这些承诺的用量真的能用完吗？&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="典型套餐结构"&gt;典型套餐结构
+&lt;/h2&gt;&lt;p&gt;以市面上常见的三档套餐为例：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;套餐&lt;/th&gt;
+&lt;th&gt;月费&lt;/th&gt;
+&lt;th&gt;承诺用量（每 5 小时）&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Lite&lt;/td&gt;
+&lt;td&gt;~20 元&lt;/td&gt;
+&lt;td&gt;约 120 次 prompts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Pro&lt;/td&gt;
+&lt;td&gt;~100 元&lt;/td&gt;
+&lt;td&gt;约 600 次 prompts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Max&lt;/td&gt;
+&lt;td&gt;~200 元&lt;/td&gt;
+&lt;td&gt;约 2,400 次 prompts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;官方还会补充说明：&amp;ldquo;每次 prompt 预计可调用模型 15-20 次，每月总计可用总量高达几十亿到数百亿 tokens。&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;看起来性价比爆表，但魔鬼藏在细节里。&lt;/p&gt;
+&lt;h2 id="关键限制并发数"&gt;关键限制：并发数
+&lt;/h2&gt;&lt;p&gt;大多数厂商的文档中会轻描淡写地提到：&amp;ldquo;套餐使用受到并发数（在途请求任务数量）的限制。&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;但具体是多少？往往不会明确告知。根据社区反馈和实测，典型的并发限制如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;套餐&lt;/th&gt;
+&lt;th&gt;并发数（在途请求）&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Lite&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Pro&lt;/td&gt;
+&lt;td&gt;~4-5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Max&lt;/td&gt;
+&lt;td&gt;~7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这个数字，直接决定了你的实际吞吐量上限。&lt;/p&gt;
+&lt;h2 id="数学时间max-套餐能否用完-2400-prompts"&gt;数学时间：Max 套餐能否用完 2,400 prompts？
+&lt;/h2&gt;&lt;p&gt;让我们以最高档的 Max 套餐为例，做一个简单的计算。&lt;/p&gt;
+&lt;h3 id="已知条件"&gt;已知条件
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;承诺用量&lt;/strong&gt;：每 5 小时 2,400 次 prompts&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;并发限制&lt;/strong&gt;：7&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;每 prompt 触发的模型调用次数&lt;/strong&gt;：15-20 次（官方数据）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模型生成速度&lt;/strong&gt;：约 50-60 tokens/秒&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;5 小时 = 18,000 秒&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="计算过程"&gt;计算过程
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Step 1：估算单次 API 调用耗时&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;一次完整的 API 调用包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;输入处理：~1 秒&lt;/li&gt;
+&lt;li&gt;模型推理生成（假设输出 500 tokens）：500 ÷ 55 ≈ 9 秒&lt;/li&gt;
+&lt;li&gt;网络往返延迟：~1 秒&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;合计：约 10-12 秒/次调用&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step 2：计算 5 小时内的最大调用次数&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;最大调用次数 = 并发数 × (总时间 ÷ 单次耗时)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; = 7 × (18,000 ÷ 10)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; = 12,600 次
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Step 3：换算为 prompts 数量&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;按官方说法，每 prompt 触发 15-20 次调用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;可完成 prompts = 12,600 ÷ 17.5 ≈ 720 次
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="结论"&gt;结论
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;指标&lt;/th&gt;
+&lt;th&gt;官方承诺&lt;/th&gt;
+&lt;th&gt;并发上限&lt;/th&gt;
+&lt;th&gt;达成率&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
+&lt;td&gt;2,400&lt;/td&gt;
+&lt;td&gt;~720&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;即使在理想条件下，Max 套餐的实际可用量也只有承诺的 30% 左右。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="更残酷的现实agent-模式下的调用膨胀"&gt;更残酷的现实：Agent 模式下的调用膨胀
+&lt;/h2&gt;&lt;p&gt;上面的计算还是基于官方宣称的&amp;quot;每 prompt 15-20 次调用&amp;quot;。但在实际的 AI Coding Agent（如 Claude Code、Cline 等）场景中，情况要糟糕得多。&lt;/p&gt;
+&lt;h3 id="agent-模式的工作方式"&gt;Agent 模式的工作方式
+&lt;/h3&gt;&lt;p&gt;当你给 AI 编程助手一个任务时，它通常会：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;分析需求，制定计划&lt;/li&gt;
+&lt;li&gt;读取相关文件（每个文件可能触发一次调用）&lt;/li&gt;
+&lt;li&gt;编写代码&lt;/li&gt;
+&lt;li&gt;运行测试&lt;/li&gt;
+&lt;li&gt;发现错误，修复&lt;/li&gt;
+&lt;li&gt;重复 3-5 直到成功&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;一个看似简单的 prompt，在 Agent 循环中可能触发 &lt;strong&gt;50-100+ 次模型调用&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="实测案例"&gt;实测案例
+&lt;/h3&gt;&lt;p&gt;有用户反馈：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;2 条简单 prompt，80 秒，消耗 38M Tokens，用掉 97% 的 5 小时限额&amp;rdquo;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;反推计算：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每个 prompt 消耗约 19M tokens&lt;/li&gt;
+&lt;li&gt;如果按 128K 上下文计算，相当于 &lt;strong&gt;~127 次模型调用/prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这比官方说的&amp;quot;15-20 次&amp;quot;高出 &lt;strong&gt;6-8 倍&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="修正后的实际可用量"&gt;修正后的实际可用量
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;场景&lt;/th&gt;
+&lt;th&gt;每 prompt 调用次数&lt;/th&gt;
+&lt;th&gt;5 小时可用 prompts&lt;/th&gt;
+&lt;th&gt;达成率&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;官方理想值&lt;/td&gt;
+&lt;td&gt;17.5&lt;/td&gt;
+&lt;td&gt;720&lt;/td&gt;
+&lt;td&gt;30%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;轻度使用&lt;/td&gt;
+&lt;td&gt;50&lt;/td&gt;
+&lt;td&gt;252&lt;/td&gt;
+&lt;td&gt;10.5%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;中度使用&lt;/td&gt;
+&lt;td&gt;75&lt;/td&gt;
+&lt;td&gt;168&lt;/td&gt;
+&lt;td&gt;7%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;重度 Agent&lt;/td&gt;
+&lt;td&gt;100+&lt;/td&gt;
+&lt;td&gt;&amp;lt;126&lt;/td&gt;
+&lt;td&gt;&amp;lt;5%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="为什么会这样"&gt;为什么会这样？
+&lt;/h2&gt;&lt;h3 id="1-token-计算包含-context"&gt;1. Token 计算包含 Context
+&lt;/h3&gt;&lt;p&gt;大模型的 token 消耗不仅仅是输出，还包括输入。在 Coding 场景下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每次调用都要发送完整的对话历史&lt;/li&gt;
+&lt;li&gt;代码项目的上下文动辄几十 K tokens&lt;/li&gt;
+&lt;li&gt;128K 上下文窗口意味着每次调用可能消耗 100K+ tokens&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-并发是硬约束"&gt;2. 并发是硬约束
+&lt;/h3&gt;&lt;p&gt;无论你的套餐额度有多大，并发数决定了单位时间内的最大吞吐量。这是一个&lt;strong&gt;物理瓶颈&lt;/strong&gt;，不是商业策略能绕过的。&lt;/p&gt;
+&lt;h3 id="3-承诺基于理想假设"&gt;3. 承诺基于理想假设
+&lt;/h3&gt;&lt;p&gt;厂商的宣传数字，往往基于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每次调用只用很小的 context&lt;/li&gt;
+&lt;li&gt;每个 prompt 只触发少量调用&lt;/li&gt;
+&lt;li&gt;用户不会连续高强度使用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但这些假设在真实的 AI Coding 场景中几乎不成立。&lt;/p&gt;
+&lt;h2 id="一张表看清真相"&gt;一张表看清真相
+&lt;/h2&gt;&lt;p&gt;以 Max 套餐（~200 元/月）为例：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;指标&lt;/th&gt;
+&lt;th&gt;官方宣传&lt;/th&gt;
+&lt;th&gt;理论上限&lt;/th&gt;
+&lt;th&gt;实际预期&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
+&lt;td&gt;2,400&lt;/td&gt;
+&lt;td&gt;720&lt;/td&gt;
+&lt;td&gt;150-400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;每月 prompts&lt;/td&gt;
+&lt;td&gt;345,600&lt;/td&gt;
+&lt;td&gt;103,680&lt;/td&gt;
+&lt;td&gt;21,600-57,600&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;每月 tokens&lt;/td&gt;
+&lt;td&gt;&amp;ldquo;数百亿&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;~100 亿&lt;/td&gt;
+&lt;td&gt;10-30 亿&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;达成率&lt;/td&gt;
+&lt;td&gt;100%&lt;/td&gt;
+&lt;td&gt;30%&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="给开发者的建议"&gt;给开发者的建议
+&lt;/h2&gt;&lt;h3 id="1-别被数百亿-tokens忽悠"&gt;1. 别被&amp;quot;数百亿 tokens&amp;quot;忽悠
+&lt;/h3&gt;&lt;p&gt;Token 数量是一个极具误导性的指标。在 Coding Agent 场景下，context 占了大头，真正有效的输出 tokens 可能只有 1-5%。&lt;/p&gt;
+&lt;h3 id="2-关注并发数"&gt;2. 关注并发数
+&lt;/h3&gt;&lt;p&gt;这才是决定实际体验的核心指标。如果厂商不公开并发限制，大概率是因为数字不好看。&lt;/p&gt;
+&lt;h3 id="3-计算单-prompt-成本"&gt;3. 计算单 prompt 成本
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;实际单 prompt 成本 = 月费 ÷ 实际可用 prompts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以 Max 套餐为例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;官方宣传：200 ÷ 345,600 = 0.0006 元/prompt&lt;/li&gt;
+&lt;li&gt;实际情况：200 ÷ 30,000 = &lt;strong&gt;0.007 元/prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;差了 10 倍。&lt;/p&gt;
+&lt;h3 id="4-考虑按量付费"&gt;4. 考虑按量付费
+&lt;/h3&gt;&lt;p&gt;如果你的使用量不大，按量付费可能比包月更划算。至少不会为&amp;quot;用不完的额度&amp;quot;买单。&lt;/p&gt;
+&lt;h2 id="结语"&gt;结语
+&lt;/h2&gt;&lt;p&gt;大模型 Coding Plan 套餐的出现本身是好事，降低了开发者使用 AI 编程助手的门槛。但在选择套餐时，请务必：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;要求厂商公开并发限制&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自己动手算一算吞吐量上限&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要被&amp;quot;数百亿 tokens&amp;quot;的大数字迷惑&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;毕竟，&lt;strong&gt;承诺的用量用不完，就等于变相涨价&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;本文基于公开信息和数学推导，具体数值可能因厂商调整而变化。建议读者以实测为准。&lt;/em&gt;&lt;/p&gt;</description></item><item><title>我又买了 Kimi Coding Plan</title><link>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</link><pubDate>Fri, 24 Oct 2025 17:03:48 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/bg.svg" alt="Featured image of post 我又买了 Kimi Coding Plan" /&gt;&lt;p&gt;kimi 的包月计划推出了。&lt;/p&gt;
 &lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;😋, it&amp;#39;s coming. &lt;a href="https://twitter.com/Kimi_Moonshot?ref_src=twsrc%5Etfw"&gt;@Kimi_Moonshot&lt;/a&gt; now has a subscription-based plan now!&lt;br&gt;&lt;br&gt;Start from $7/month up to $28.5/month, about 1/7 compared to Claude Code 😋 &lt;a href="https://t.co/hTnIbVjebg"&gt;https://t.co/hTnIbVjebg&lt;/a&gt; &lt;a href="https://t.co/Mi3EjOl346"&gt;pic.twitter.com/Mi3EjOl346&lt;/a&gt;&lt;/p&gt;&amp;mdash; Xuanwo (@OnlyXuanwo) &lt;a href="https://twitter.com/OnlyXuanwo/status/1981586444658548736?ref_src=twsrc%5Etfw"&gt;October 24, 2025&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
 &lt;p&gt;我试用了一下，感觉 kimi 集成 claude code 相比于 glm 要好很多。例如，不需要单独配置 web search。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
