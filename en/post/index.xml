@@ -1,4 +1,393 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/en/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 05 Jan 2026 16:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Efficient and Cost-Effective: My AI Agent Workflow Choice</title><link>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</link><pubDate>Mon, 05 Jan 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</guid><description>&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/featured-image.jpg" alt="Featured image of post Efficient and Cost-Effective: My AI Agent Workflow Choice" /&gt;&lt;p&gt;Claude Code&amp;rsquo;s $100/month price tag is a bit steep for many. To address this, I&amp;rsquo;ve been experimenting with a more practical and affordable workflow.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/en/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 23 Jan 2026 11:52:52 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/post/index.xml" rel="self" type="application/rss+xml"/><item><title>The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?</title><link>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/cover.png" alt="Featured image of post The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?" /&gt;&lt;h2 id="preface"&gt;Preface
+&lt;/h2&gt;&lt;p&gt;Recently, several domestic big model manufacturers have launched Coding Plan subscription packages for developers, promoting &amp;ldquo;low prices for massive usage,&amp;rdquo; claiming that for just tens to hundreds of RMB per month, you can get &amp;ldquo;hundreds of billions of tokens&amp;rdquo; of usage quota.&lt;/p&gt;
+&lt;p&gt;It sounds wonderful, but as a developer accustomed to speaking with data, I decided to do some calculations: &lt;strong&gt;Under concurrency limits, can these promised usage amounts really be consumed?&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="typical-package-structure"&gt;Typical Package Structure
+&lt;/h2&gt;&lt;p&gt;Taking the common three-tier packages on the market as an example:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Package&lt;/th&gt;
+&lt;th&gt;Monthly Fee&lt;/th&gt;
+&lt;th&gt;Promised Usage (every 5 hours)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Lite&lt;/td&gt;
+&lt;td&gt;~20 RMB&lt;/td&gt;
+&lt;td&gt;About 120 prompts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Pro&lt;/td&gt;
+&lt;td&gt;~100 RMB&lt;/td&gt;
+&lt;td&gt;About 600 prompts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Max&lt;/td&gt;
+&lt;td&gt;~200 RMB&lt;/td&gt;
+&lt;td&gt;About 2,400 prompts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Officials will also add: &amp;ldquo;Each prompt is expected to call the model 15-20 times, with a total monthly usage of up to tens to hundreds of billions of tokens.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;It seems like incredible value, but the devil is in the details.&lt;/p&gt;
+&lt;h2 id="key-limitation-concurrency"&gt;Key Limitation: Concurrency
+&lt;/h2&gt;&lt;p&gt;Most manufacturers&amp;rsquo; documentation will casually mention: &amp;ldquo;Package usage is subject to concurrency limits (number of in-flight request tasks).&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;But what exactly is the limit? Often not explicitly stated. According to community feedback and actual measurements, typical concurrency limits are as follows:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Package&lt;/th&gt;
+&lt;th&gt;Concurrency (in-flight requests)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Lite&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Pro&lt;/td&gt;
+&lt;td&gt;~4-5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Max&lt;/td&gt;
+&lt;td&gt;~7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;This number directly determines your actual throughput ceiling.&lt;/p&gt;
+&lt;h2 id="math-time-can-the-max-package-use-2400-prompts"&gt;Math Time: Can the Max Package Use 2,400 Prompts?
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s take the highest-tier Max package as an example and do a simple calculation.&lt;/p&gt;
+&lt;h3 id="known-conditions"&gt;Known Conditions
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Promised Usage&lt;/strong&gt;: 2,400 prompts every 5 hours&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Concurrency Limit&lt;/strong&gt;: 7&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Model calls triggered per prompt&lt;/strong&gt;: 15-20 times (official data)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Model generation speed&lt;/strong&gt;: About 50-60 tokens/second&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;5 hours = 18,000 seconds&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="calculation-process"&gt;Calculation Process
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Step 1: Estimate single API call time&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A complete API call includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Input processing: ~1 second&lt;/li&gt;
+&lt;li&gt;Model inference generation (assuming 500 tokens output): 500 ÷ 55 ≈ 9 seconds&lt;/li&gt;
+&lt;li&gt;Network round-trip delay: ~1 second&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Total: About 10-12 seconds/call&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step 2: Calculate maximum calls in 5 hours&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Maximum calls = Concurrency × (Total time ÷ Single call time)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; = 7 × (18,000 ÷ 10)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; = 12,600 calls
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Step 3: Convert to prompts&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;According to official claims, each prompt triggers 15-20 calls:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Completable prompts = 12,600 ÷ 17.5 ≈ 720 prompts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="conclusion"&gt;Conclusion
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Metric&lt;/th&gt;
+&lt;th&gt;Official Promise&lt;/th&gt;
+&lt;th&gt;Concurrency Limit&lt;/th&gt;
+&lt;th&gt;Achievement Rate&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Prompts per 5 hours&lt;/td&gt;
+&lt;td&gt;2,400&lt;/td&gt;
+&lt;td&gt;~720&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Even under ideal conditions, the actual usable amount of the Max package is only about 30% of the promise.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="harsher-reality-call-inflation-in-agent-mode"&gt;Harsher Reality: Call Inflation in Agent Mode
+&lt;/h2&gt;&lt;p&gt;The above calculation is still based on the official claim of &amp;ldquo;15-20 calls per prompt.&amp;rdquo; But in actual AI Coding Agent scenarios (like Claude Code, Cline, etc.), the situation is much worse.&lt;/p&gt;
+&lt;h3 id="how-agent-mode-works"&gt;How Agent Mode Works
+&lt;/h3&gt;&lt;p&gt;When you give an AI programming assistant a task, it typically:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Analyzes requirements, creates a plan&lt;/li&gt;
+&lt;li&gt;Reads relevant files (each file may trigger a call)&lt;/li&gt;
+&lt;li&gt;Writes code&lt;/li&gt;
+&lt;li&gt;Runs tests&lt;/li&gt;
+&lt;li&gt;Discovers errors, fixes them&lt;/li&gt;
+&lt;li&gt;Repeats 3-5 until successful&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;A seemingly simple prompt may trigger &lt;strong&gt;50-100+ model calls&lt;/strong&gt; in an Agent loop.&lt;/p&gt;
+&lt;h3 id="actual-measurement-case"&gt;Actual Measurement Case
+&lt;/h3&gt;&lt;p&gt;User feedback:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;2 simple prompts, 80 seconds, consumed 38M Tokens, used up 97% of the 5-hour limit&amp;rdquo;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Reverse calculation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Each prompt consumes about 19M tokens&lt;/li&gt;
+&lt;li&gt;If calculated at 128K context, equivalent to &lt;strong&gt;~127 model calls/prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is &lt;strong&gt;6-8 times higher&lt;/strong&gt; than the official &amp;ldquo;15-20 times.&amp;rdquo;&lt;/p&gt;
+&lt;h3 id="revised-actual-usable-amount"&gt;Revised Actual Usable Amount
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Scenario&lt;/th&gt;
+&lt;th&gt;Calls per prompt&lt;/th&gt;
+&lt;th&gt;Usable prompts in 5 hours&lt;/th&gt;
+&lt;th&gt;Achievement Rate&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Official ideal&lt;/td&gt;
+&lt;td&gt;17.5&lt;/td&gt;
+&lt;td&gt;720&lt;/td&gt;
+&lt;td&gt;30%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Light usage&lt;/td&gt;
+&lt;td&gt;50&lt;/td&gt;
+&lt;td&gt;252&lt;/td&gt;
+&lt;td&gt;10.5%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Moderate usage&lt;/td&gt;
+&lt;td&gt;75&lt;/td&gt;
+&lt;td&gt;168&lt;/td&gt;
+&lt;td&gt;7%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Heavy Agent usage&lt;/td&gt;
+&lt;td&gt;100+&lt;/td&gt;
+&lt;td&gt;&amp;lt;126&lt;/td&gt;
+&lt;td&gt;&amp;lt;5%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="why-is-this-happening"&gt;Why Is This Happening?
+&lt;/h2&gt;&lt;h3 id="1-token-calculation-includes-context"&gt;1. Token Calculation Includes Context
+&lt;/h3&gt;&lt;p&gt;Big model token consumption isn&amp;rsquo;t just output, it includes input. In Coding scenarios:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Each call must send complete conversation history&lt;/li&gt;
+&lt;li&gt;Code project context can easily reach tens of K tokens&lt;/li&gt;
+&lt;li&gt;128K context window means each call may consume 100K+ tokens&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-concurrency-is-a-hard-constraint"&gt;2. Concurrency is a Hard Constraint
+&lt;/h3&gt;&lt;p&gt;Regardless of how large your package quota is, concurrency determines the maximum throughput per unit time. This is a &lt;strong&gt;physical bottleneck&lt;/strong&gt;, not something commercial strategies can bypass.&lt;/p&gt;
+&lt;h3 id="3-promises-based-on-ideal-assumptions"&gt;3. Promises Based on Ideal Assumptions
+&lt;/h3&gt;&lt;p&gt;Manufacturers&amp;rsquo; promotional numbers are often based on:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Each call uses only small context&lt;/li&gt;
+&lt;li&gt;Each prompt triggers only a few calls&lt;/li&gt;
+&lt;li&gt;Users won&amp;rsquo;t use continuously at high intensity&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;But these assumptions rarely hold true in real AI Coding scenarios.&lt;/p&gt;
+&lt;h2 id="a-table-to-see-the-truth"&gt;A Table to See the Truth
+&lt;/h2&gt;&lt;p&gt;Taking the Max package (~200 RMB/month) as an example:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Metric&lt;/th&gt;
+&lt;th&gt;Official Promotion&lt;/th&gt;
+&lt;th&gt;Theoretical Limit&lt;/th&gt;
+&lt;th&gt;Actual Expectation&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Prompts per 5 hours&lt;/td&gt;
+&lt;td&gt;2,400&lt;/td&gt;
+&lt;td&gt;720&lt;/td&gt;
+&lt;td&gt;150-400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Monthly prompts&lt;/td&gt;
+&lt;td&gt;345,600&lt;/td&gt;
+&lt;td&gt;103,680&lt;/td&gt;
+&lt;td&gt;21,600-57,600&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Monthly tokens&lt;/td&gt;
+&lt;td&gt;&amp;ldquo;Hundreds of billions&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;~10 billion&lt;/td&gt;
+&lt;td&gt;1-3 billion&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Achievement Rate&lt;/td&gt;
+&lt;td&gt;100%&lt;/td&gt;
+&lt;td&gt;30%&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="advice-for-developers"&gt;Advice for Developers
+&lt;/h2&gt;&lt;h3 id="1-dont-be-fooled-by-hundreds-of-billions-of-tokens"&gt;1. Don&amp;rsquo;t Be Fooled by &amp;ldquo;Hundreds of Billions of Tokens&amp;rdquo;
+&lt;/h3&gt;&lt;p&gt;Token count is a highly misleading metric. In Coding Agent scenarios, context takes up the majority, with truly effective output tokens possibly only 1-5%.&lt;/p&gt;
+&lt;h3 id="2-focus-on-concurrency"&gt;2. Focus on Concurrency
+&lt;/h3&gt;&lt;p&gt;This is the core metric that determines actual experience. If manufacturers don&amp;rsquo;t disclose concurrency limits, it&amp;rsquo;s likely because the numbers don&amp;rsquo;t look good.&lt;/p&gt;
+&lt;h3 id="3-calculate-cost-per-prompt"&gt;3. Calculate Cost per Prompt
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Actual cost per prompt = Monthly fee ÷ Actual usable prompts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Taking the Max package as an example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Official promotion: 200 ÷ 345,600 = 0.0006 RMB/prompt&lt;/li&gt;
+&lt;li&gt;Actual situation: 200 ÷ 30,000 = &lt;strong&gt;0.007 RMB/prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A 10x difference.&lt;/p&gt;
+&lt;h3 id="4-consider-pay-as-you-go"&gt;4. Consider Pay-as-You-Go
+&lt;/h3&gt;&lt;p&gt;If your usage isn&amp;rsquo;t high, pay-as-you-go may be more cost-effective than monthly packages. At least you won&amp;rsquo;t pay for &amp;ldquo;unusable quotas.&amp;rdquo;&lt;/p&gt;
+&lt;h2 id="conclusion-1"&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;The emergence of big model Coding Plan packages is itself a good thing, lowering the barrier for developers to use AI programming assistants. But when choosing packages, be sure to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Require manufacturers to disclose concurrency limits&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Calculate throughput limits yourself&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Don&amp;rsquo;t be misled by the big numbers of &amp;ldquo;hundreds of billions of tokens&amp;rdquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;After all, &lt;strong&gt;promised usage that can&amp;rsquo;t be consumed equals a disguised price increase.&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;This article is based on public information and mathematical derivation; specific values may vary due to manufacturer adjustments. Readers are advised to verify through actual measurements.&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Private Cloud for Small Companies</title><link>https://svtter.cn/en/p/private-cloud-for-small-companies/</link><pubDate>Sun, 18 Jan 2026 09:06:31 +0800</pubDate><guid>https://svtter.cn/en/p/private-cloud-for-small-companies/</guid><description>&lt;img src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/bg.png" alt="Featured image of post Private Cloud for Small Companies" /&gt;&lt;p&gt;Many friends want to know: What is the internal server situation and infrastructure of our small software development company?&lt;/p&gt;
+&lt;p&gt;Internal development clusters essentially solve the following issues:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Git code management&lt;/li&gt;
+&lt;li&gt;Data security and backup&lt;/li&gt;
+&lt;li&gt;Multiple virtual machines providing development environments&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;To address the above problems, we adopt the following solution.&lt;/p&gt;
+&lt;h2 id="hardware-configuration"&gt;Hardware Configuration
+&lt;/h2&gt;&lt;p&gt;We need to run approximately 10 virtual machine servers and 4 development machines simultaneously. If not counting electricity costs, I&amp;rsquo;ve kept the server hardware cost at around &lt;strong&gt;5000 RMB&lt;/strong&gt;, which has been running stably for 2 years.&lt;/p&gt;
+&lt;p&gt;Main equipment:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Second-hand Dell mini hosts&lt;/li&gt;
+&lt;li&gt;Thunderobot MIX hosts&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775.png"
+width="1334"
+height="912"
+srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_ea5271b88cf5fdd3.png 480w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_af3c2b424aaf9fbf.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="146"
+data-flex-basis="351px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438.png"
+width="2072"
+height="666"
+srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_e1b2d879ddaa9203.png 480w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_dca7e45aa1325c10.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="311"
+data-flex-basis="746px"
+&gt;&lt;/p&gt;
+&lt;h2 id="why-not-use-entry-level-or-mid-range-servers"&gt;Why Not Use Entry-Level or Mid-Range Servers?
+&lt;/h2&gt;&lt;p&gt;The biggest reason is &lt;strong&gt;unnecessary&lt;/strong&gt;. Power consumption comparison:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration Type&lt;/th&gt;
+&lt;th&gt;Power Consumption Equivalent&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Single-socket configuration&lt;/td&gt;
+&lt;td&gt;≈ 4-6 Mini hosts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Dual-socket configuration&lt;/td&gt;
+&lt;td&gt;≈ 10-15 Mini hosts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;While it saves money, when server memory requirements are high, it can still impact development efficiency.&lt;/p&gt;
+&lt;h2 id="storage-and-networking"&gt;Storage and Networking
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Switch&lt;/strong&gt;: Mercury entry-level 2.5G switch&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NAS Server&lt;/strong&gt;: UGREEN DH4300 Plus&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="usage"&gt;Usage
+&lt;/h2&gt;&lt;p&gt;Virtual machine servers mainly run:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CI Runner&lt;/li&gt;
+&lt;li&gt;Engineer development environments&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="finally"&gt;Finally
+&lt;/h2&gt;&lt;p&gt;However, recently, as we need to develop some services on Kubernetes, the current configuration has become somewhat inadequate.&lt;/p&gt;</description></item><item><title>Recently Discovered Useful MCP Tools</title><link>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</guid><description>&lt;img src="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/bg.png" alt="Featured image of post Recently Discovered Useful MCP Tools" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve been extensively using the opencode/claude code combination for development and have explored three particularly useful tools.&lt;/p&gt;
+&lt;p&gt;They address several issues:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Parallel development on a single server; controlling tmux: &lt;code&gt;tmux&lt;/code&gt; and &lt;code&gt;tmux-mcp&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Preventing claude code from stopping at meaningless points: &lt;code&gt;ralph-loop&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;End-to-end automated testing: &lt;code&gt;playwright mcp&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="tool-list"&gt;Tool List
+&lt;/h2&gt;&lt;h3 id="tmux-mcp"&gt;tmux mcp
+&lt;/h3&gt;&lt;p&gt;First, configure tmux in the Linux environment with opencode, then have opencode install &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
+&gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt;. Once installed, you can use oc to control tmux content.&lt;/p&gt;
+&lt;p&gt;This method can be used to reactivate stopped opencode sessions. For example, you can open multiple tmux sessions and have one opencode monitor, start, and stop tasks through the tmux tool.&lt;/p&gt;
+&lt;h3 id="ralph-loop"&gt;ralph-loop
+&lt;/h3&gt;&lt;p&gt;Ralph is an autonomous AI agent loop that repeatedly runs Amp until all PRD items are completed. Each iteration creates a brand new Amp instance with a clean context.&lt;/p&gt;
+&lt;p&gt;Ralph likely originated from here: &lt;a class="link" href="https://github.com/snarktank/ralph" target="_blank" rel="noopener"
+&gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Due to its effectiveness (which actually occurred after further improvements in model performance), it was also introduced to claude code.&lt;/p&gt;
+&lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
+&lt;div class="repo-card" data-repo="frankbria/ralph-claude-code"&gt;&lt;/div&gt;
+&lt;p&gt;Ralph-loop is a Claude Code plugin that allows Claude Code to automatically restart when tasks are completed, forming a loop execution mechanism. This is particularly useful for tasks that require continuous improvement or iteration.&lt;/p&gt;
+&lt;h4 id="installation-method"&gt;Installation Method
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install through Claude Code official plugin market&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/plugin install ralph-wiggum@claude-plugins-official&lt;/code&gt; or &lt;code&gt;cc '/plugin install ralph-wiggum@claude-plugins-official'&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Configuration and Usage&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;After installation, you can start it in Claude Code via the &lt;code&gt;/ralph-loop&lt;/code&gt; command&lt;/li&gt;
+&lt;li&gt;Set tasks and termination conditions, Claude Code will automatically restart each time it stops&lt;/li&gt;
+&lt;li&gt;This is particularly useful for scenarios requiring multiple iterations of code improvement, debugging, or testing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="use-cases"&gt;Use Cases
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Code Refactoring&lt;/strong&gt;: Have Claude Code continuously improve code quality&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Test-Driven Development&lt;/strong&gt;: Write tests, then have Claude Code continuously improve implementations&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Debugging Loops&lt;/strong&gt;: Automatically restart debugging sessions&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Continuous Integration&lt;/strong&gt;: Simulate CI/CD processes locally&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The drawback of this plugin is that it consumes a lot of tokens; without a max20 subscription, it&amp;rsquo;s better not to use it. However, for tasks requiring high-quality output, this tool can significantly improve work efficiency.&lt;/p&gt;
+&lt;h3 id="playwright-mcp"&gt;playwright mcp
+&lt;/h3&gt;&lt;p&gt;This plugin can launch browsers to complete end-to-end testing or write end-to-end test code. It can better form loops to have cc or oc improve code.&lt;/p&gt;
+&lt;p&gt;Installation method: &lt;code&gt;claude 'help me install playwright mcp'&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id="rewriting-as-agents"&gt;Rewriting as Agents
+&lt;/h2&gt;&lt;p&gt;I recommend directly rewriting these tools and MCPs as agents through opencode or claude code.&lt;/p&gt;
+&lt;p&gt;Compared to skills commands, these tools are more suitable for invocation through agents. &lt;a class="link" href="https://svtter.cn/p/why-agent/#llm-%E7%9A%84%E9%97%AE%E9%A2%98" target="_blank" rel="noopener"
+&gt;Agent context is very clean&lt;/a&gt;, making tool invocation almost inevitable.&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary
+&lt;/h2&gt;&lt;p&gt;As LLMs become increasingly powerful, numerous MCPs that rely on LLM capabilities naturally gain improvements. Tools that weren&amp;rsquo;t very useful before become more effective. This aligns with the saying: &amp;ldquo;Don&amp;rsquo;t build things that become meaningless after large model capability enhancements.&amp;rdquo;
+Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&gt;
+&lt;p&gt;I believe the next step is to bridge interactions between different modalities and tools, as well as endowing tools with large model capabilities, which is one of the inevitable development directions for agent engineers.&lt;/p&gt;</description></item><item><title>Efficient and Cost-Effective: My AI Agent Workflow Choice</title><link>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</link><pubDate>Mon, 05 Jan 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</guid><description>&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/featured-image.jpg" alt="Featured image of post Efficient and Cost-Effective: My AI Agent Workflow Choice" /&gt;&lt;p&gt;Claude Code&amp;rsquo;s $100/month price tag is a bit steep for many. To address this, I&amp;rsquo;ve been experimenting with a more practical and affordable workflow.&lt;/p&gt;
 &lt;p&gt;In terms of models, my recommendation is to use &lt;strong&gt;Gemini 3 Flash&lt;/strong&gt; on an as-needed (pay-as-you-go) basis as a replacement.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Why?&lt;/strong&gt; Gemini 3 Flash offers incredible value. It&amp;rsquo;s fast, efficient, and costs a fraction of what you&amp;rsquo;d pay for Opus or Sonnet. For the vast majority of tasks, Flash is more than enough.&lt;/p&gt;
 &lt;h2 id="the-cost-saving-workflow"&gt;The Cost-Saving Workflow
@@ -53,7 +442,11 @@ data-flex-basis="264px"
 &lt;li&gt;Execution is becoming faster.&lt;/li&gt;
 &lt;li&gt;Prices are dropping.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;While these trends are promising, we still need to balance speed, cost, and quality for every task. We might soon see agent systems that automate this balancing act, but for now, it&amp;rsquo;s a crucial part of the engineer&amp;rsquo;s role.&lt;/p&gt;</description></item><item><title>Configuring Claude Code Python UV Hooks and Skills</title><link>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/pics/bg.svg" alt="Featured image of post Configuring Claude Code Python UV Hooks and Skills" /&gt;&lt;p&gt;My project uses &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
+&lt;p&gt;While these trends are promising, we still need to balance speed, cost, and quality for every task. We might soon see agent systems that automate this balancing act, but for now, it&amp;rsquo;s a crucial part of the engineer&amp;rsquo;s role.&lt;/p&gt;</description></item><item><title>Coding Performance and Model Cost-Effectiveness Analysis</title><link>https://svtter.cn/en/p/coding-performance-and-model-cost-effectiveness-analysis/</link><pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/en/p/coding-performance-and-model-cost-effectiveness-analysis/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BC%96%E7%A0%81%E6%80%A7%E8%83%BD%E4%B8%8E%E6%A8%A1%E5%9E%8B%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/pics/bg-new-v2.jpg" alt="Featured image of post Coding Performance and Model Cost-Effectiveness Analysis" /&gt;&lt;p&gt;This is my analysis report on the coding performance and cost-effectiveness of several models, used to compare the performance and cost efficiency of different models in coding tasks, in order to select the most suitable model.&lt;/p&gt;
+&lt;iframe src="model-comparison.pdf" style="width:100%; height:85vh; border:0;"&gt;&lt;/iframe&gt;
+&lt;p&gt;For Chinese language tasks, using GLM 4.7 is clearly more cost-effective. The price of 2000 RMB basically covers a year of usage.
+The downside is that during peak hours, even the enterprise MAX version can be very slow.&lt;/p&gt;
+&lt;p&gt;From my practical experience, the capabilities of minimax m2.1 far exceed those of GLM 4.7.&lt;/p&gt;</description></item><item><title>Configuring Claude Code Python UV Hooks and Skills</title><link>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/pics/bg.svg" alt="Featured image of post Configuring Claude Code Python UV Hooks and Skills" /&gt;&lt;p&gt;My project uses &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
 &gt;uv&lt;/a&gt; to manage Python dependencies, but Claude Code habitually defaults to &lt;code&gt;python&lt;/code&gt; or &lt;code&gt;pip install&lt;/code&gt;. I tried using Skills and Hooks to enforce this standard and encountered quite a few pitfalls.&lt;/p&gt;
 &lt;h2 id="goal"&gt;Goal
 &lt;/h2&gt;&lt;ul&gt;
