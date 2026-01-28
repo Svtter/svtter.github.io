@@ -1,4 +1,160 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 26 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://svtter.cn/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/cover.png" alt="Featured image of post 使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查" /&gt;&lt;p&gt;最近在项目中集成了 OpenCode 的 AI 代码审查功能，使用智谱 AI 的 GLM-4.7 模型自动 review PR 代码。本文记录完整的集成过程和踩过的坑。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 28 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://svtter.cn/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode 配置优化记录</title><link>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/</link><pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/cover.png" alt="Featured image of post OpenCode 配置优化记录" /&gt;&lt;p&gt;不知道大家是否意识到，实际上使用 MCP 等服务的时候，会大量消耗 token。这是由于一次提交的上下文数量过多，导致 token 消耗较大。&lt;/p&gt;
+&lt;p&gt;那么在使用 opencode 的时候，可以进行哪些优化呢？&lt;/p&gt;
+&lt;h2 id="我已经进行的优化"&gt;我已经进行的优化
+&lt;/h2&gt;&lt;h3 id="1-启用-compaction-自动压缩"&gt;1. 启用 Compaction (自动压缩)
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;compaction&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;auto&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 上下文满时自动压缩
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;prune&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;// 移除旧的工具输出以节省空间
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;效果&lt;/strong&gt;: 预估节省 20-30% token&lt;/p&gt;
+&lt;h3 id="2-配置-watcher-忽略模式"&gt;2. 配置 Watcher 忽略模式
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;watcher&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;ignore&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;node_modules/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;dist/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;.git/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;*.lock&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;**/*.log&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;.cache/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;build/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;__pycache__/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;.venv/**&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;venv/**&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;效果&lt;/strong&gt;: 减少不必要的文件监控，预估节省 5-10% token&lt;/p&gt;
+&lt;h3 id="3-配置-small-model"&gt;3. 配置 Small Model
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;small_model&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;anthropic/claude-haiku-4-5&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;效果&lt;/strong&gt;: 轻量任务自动使用便宜模型，预估节省 10-20% token&lt;/p&gt;
+&lt;h3 id="4-启用-anthropic-缓存"&gt;4. 启用 Anthropic 缓存
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;provider&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;setCacheKey&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;timeout&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;600000&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;效果&lt;/strong&gt;: 预估节省 10-15% token&lt;/p&gt;
+&lt;h2 id="我没有采用的优化项"&gt;我没有采用的优化项
+&lt;/h2&gt;&lt;p&gt;这里的优化项是我认为暂时没有必要采用的。&lt;/p&gt;
+&lt;h3 id="5-减少-mcp-服务-高优先级"&gt;5. 减少 MCP 服务 (高优先级)
+&lt;/h3&gt;&lt;p&gt;MCP 工具描述可消耗 6000+ tokens。建议禁用不常用的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;playwright_headless&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;zai-mcp-server&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;tmux-mcp&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;sentry&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;预估节省&lt;/strong&gt;: 30-50% token&lt;/p&gt;
+&lt;h3 id="6-创建项目级-ignore-文件"&gt;6. 创建项目级 .ignore 文件
+&lt;/h3&gt;&lt;p&gt;在项目根目录创建 &lt;code&gt;.ignore&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;node_modules/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;dist/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;build/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;*.lock
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;*.log
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;coverage/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;.next/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;__pycache__/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;*.pyc
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;.venv/
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="7-使用技巧"&gt;7. 使用技巧
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;使用 &lt;code&gt;/compact&lt;/code&gt; 手动压缩长对话&lt;/li&gt;
+&lt;li&gt;使用 &lt;code&gt;/clear&lt;/code&gt; 清理历史&lt;/li&gt;
+&lt;li&gt;完成任务后开始新会话，避免&amp;quot;上下文腐烂&amp;quot;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="配置文件位置"&gt;配置文件位置
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;主配置: &lt;code&gt;~/.config/opencode/opencode.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Oh-My-OpenCode: &lt;code&gt;~/.config/opencode/oh-my-opencode.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Memory 插件: &lt;code&gt;~/.config/opencode/opencode-mem.jsonc&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="参考资料"&gt;参考资料
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/config/" target="_blank" rel="noopener"
+&gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.truefoundry.com/blog/opencode-token-usage-how-it-works-and-how-to-optimize-it" target="_blank" rel="noopener"
+&gt;Token 优化指南&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/sst/opencode/issues/5813" target="_blank" rel="noopener"
+&gt;GitHub Issue #5813 - Raw Chat Agent&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/cover.png" alt="Featured image of post 使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查" /&gt;&lt;p&gt;最近在项目中集成了 OpenCode 的 AI 代码审查功能，使用智谱 AI 的 GLM-4.7 模型自动 review PR 代码。本文记录完整的集成过程和踩过的坑。&lt;/p&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;项目需要一个自动化的代码审查机制：&lt;/p&gt;
 &lt;ul&gt;
