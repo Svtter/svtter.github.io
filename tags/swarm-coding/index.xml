@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Swarm Coding on Svtter's Blog</title><link>https://svtter.cn/tags/swarm-coding/</link><description>Recent content in Swarm Coding on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 10 Feb 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://svtter.cn/tags/swarm-coding/index.xml" rel="self" type="application/rss+xml"/><item><title>Swarm Coding：大模型编程的下一步</title><link>https://svtter.cn/p/swarm-coding%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5/</link><pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/swarm-coding%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;大模型编程的下一步，是 swarm coding。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id="工具体验"&gt;工具体验
+&lt;/h2&gt;&lt;p&gt;目前使用过的工具中，oh my opencode 是一个典型的 swarm 框架，基于 opencode。花了约 $400 体验下来，效果一般——对任务的拆分粒度和跨 agent 的分发调度做得不够好。Agentless [3] 从反面印证了这一体感：简单的三阶段方法有时可以媲美复杂的 agent 架构，复杂未必更好。&lt;/p&gt;
+&lt;p&gt;claude team 还没尝试，暂时不打算吃这个螃蟹。&lt;/p&gt;
+&lt;h2 id="核心观点控制交付"&gt;核心观点：控制交付
+&lt;/h2&gt;&lt;p&gt;随着大模型能力的提升，写代码的基本能力已经可以淘汰 2024 年的初级程序员。那么下一步是什么？&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;大模型的新阶段，说白了，就是&lt;strong&gt;控制交付&lt;/strong&gt;。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;想让大模型更好地运作，靠的不是给它更多自由度，而是用&lt;strong&gt;确定性的流程&lt;/strong&gt;去约束它的行为，做强制检查。MetaGPT [1] 将标准化操作流程（SOP）编码为 prompt 序列来编排多角色协作，正是这一思路的学术实践；CodeR [8] 提出的 task graph 也证明了前置规划优于即时决策。&lt;/p&gt;
+&lt;p&gt;具体做法包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;通过 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
+&gt;opencode 自动化检查&lt;/a&gt; 隔离上下文&lt;/li&gt;
+&lt;li&gt;使用 ruff、pytest 等工具控制代码质量——AgentCoder [10] 的实验表明，将代码生成与测试执行分离到不同 agent 后，质量显著提升&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此外，&lt;strong&gt;大规模强力小模型 + 聪明的 orchestrator 大模型&lt;/strong&gt;来规划任务和隔离上下文，也是一个很有潜力的方向。SwarmAgentic [5] 将粒子群优化改造为文本符号更新，实现了全自动的多 agent 架构生成；AgentCoder [10] 的程序员+测试设计+测试执行三 agent 框架也是典型实例。&lt;/p&gt;
+&lt;h2 id="相关研究"&gt;相关研究
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://hy.tencent.com/research/100025?langVersion=zh" target="_blank" rel="noopener"
+&gt;姚顺雨提出的 context 学习&lt;/a&gt;很有启发，本质上也是迁移学习的一部分。SWE-agent [11] 在此基础上定义了 Agent-Computer Interface，确立了 SWE-bench 作为编码 agent 的评测标准。&lt;/p&gt;
+&lt;p&gt;在多 agent 协同编程领域，ChatDev [2] 通过 &amp;ldquo;chat chain&amp;rdquo; 让 agent 在软件生命周期各阶段对话协作；MapCoder [9] 用四个 agent 模拟人类编程周期，HumanEval pass@1 达到 93.9%；MAGIS [4] 将多 agent 应用于 GitHub Issue 解决，分辨率比直接用 GPT-4 高 8 倍。&lt;/p&gt;
+&lt;p&gt;在蜂群智能方向，Model Swarms [6] 让多个 LLM 在权重空间中协同搜索，仅需 200 个样本即可免微调适应；Multi-scale Swarm [7] 提出多尺度蜂群框架用于代码生成，HumanEval 达 86.6%。&lt;/p&gt;
+&lt;p&gt;He et al. [15] 的综述系统审视了 41 篇 LMA（LLM-based Multi-Agent）论文，提出产品负责人/开发者/QA/管理者四角色框架，是该领域最全面的文献梳理。&lt;/p&gt;
+&lt;h2 id="如何评价蜂群能力"&gt;如何评价蜂群能力？
+&lt;/h2&gt;&lt;p&gt;目前大部分 swarm 产品还处于比较初级的阶段，尚未看到公开的、明确的评测标准。MultiAgentBench [12] 已开始用里程碑式 KPI 评测多 agent 协作质量，但整体仍不成熟；KDD 2025 的评测综述 [13] 提出了二维分类法（评测目标 × 评测流程），覆盖了企业级可靠性与合规性。&lt;/p&gt;
+&lt;p&gt;我认为蜂群能力的评价应包含以下维度：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;任务交付能力&lt;/strong&gt;——最终产出是否满足需求&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;交付时间&lt;/strong&gt;——端到端完成耗时&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;任务拆分程度&lt;/strong&gt;——子任务划分的合理性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;并行效果&lt;/strong&gt;——多 agent 并发带来的加速比&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;token 消耗（cost）&lt;/strong&gt;——完成任务的总成本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;尤其关键的是：在用户尚未给出明确交付指标时，蜂群系统能否自行分析任务并推导出合理的交付标准。&lt;/p&gt;
+&lt;p&gt;当然，现有产品内部也不见得没有这些标准，可能只是尚未公开。&lt;/p&gt;
+&lt;h2 id="参考文献"&gt;参考文献
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;[1] Hong et al. &lt;em&gt;MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework.&lt;/em&gt; ICLR 2024 (Oral). &lt;a class="link" href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[2] Qian et al. &lt;em&gt;ChatDev: Communicative Agents for Software Development.&lt;/em&gt; ACL 2024. &lt;a class="link" href="https://aclanthology.org/2024.acl-long.810/" target="_blank" rel="noopener"
+&gt;ACL&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[3] Xia et al. &lt;em&gt;Agentless: Demystifying LLM-Based Software Engineering Agents.&lt;/em&gt; FSE 2025. &lt;a class="link" href="https://arxiv.org/abs/2407.01489" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[4] Tao et al. &lt;em&gt;MAGIS: LLM-Based Multi-Agent Framework for GitHub Issue Resolution.&lt;/em&gt; NeurIPS 2024. &lt;a class="link" href="https://proceedings.neurips.cc/paper_files/paper/2024/file/5d1f02132ef51602adf07000ca5b6138-Paper-Conference.pdf" target="_blank" rel="noopener"
+&gt;PDF&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[5] Zhang et al. &lt;em&gt;SwarmAgentic: Towards Fully Automated Agentic System Generation via Swarm Intelligence.&lt;/em&gt; EMNLP 2025. &lt;a class="link" href="https://aclanthology.org/2025.emnlp-main.93/" target="_blank" rel="noopener"
+&gt;ACL&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[6] Feng et al. &lt;em&gt;Model Swarms: Collaborative Search to Adapt LLM Experts via Swarm Intelligence.&lt;/em&gt; ICML 2025. &lt;a class="link" href="https://arxiv.org/abs/2410.11163" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[7] Tan et al. &lt;em&gt;Multi-scale Swarm of Large Language Models for Python Code Generation.&lt;/em&gt; ICSI 2025. &lt;a class="link" href="https://link.springer.com/chapter/10.1007/978-981-95-0982-9_14" target="_blank" rel="noopener"
+&gt;Springer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[8] Chen et al. &lt;em&gt;CodeR: Issue Resolving with Multi-Agent and Task Graphs.&lt;/em&gt; arXiv 2024. &lt;a class="link" href="https://arxiv.org/abs/2406.01304" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[9] Islam et al. &lt;em&gt;MapCoder: Multi-Agent Code Generation for Competitive Problem Solving.&lt;/em&gt; ACL 2024. &lt;a class="link" href="https://aclanthology.org/2024.acl-long.269/" target="_blank" rel="noopener"
+&gt;ACL&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[10] Huang et al. &lt;em&gt;AgentCoder: Multi-Agent-based Code Generation with Iterative Testing and Optimisation.&lt;/em&gt; arXiv 2024. &lt;a class="link" href="https://arxiv.org/abs/2312.13010" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[11] Yang et al. &lt;em&gt;SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering.&lt;/em&gt; NeurIPS 2024. &lt;a class="link" href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[12] &lt;em&gt;MultiAgentBench: Evaluating the Collaboration and Competition of LLM Agents.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2503.01935" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[13] Mohammadi et al. &lt;em&gt;Evaluation and Benchmarking of LLM Agents: A Survey.&lt;/em&gt; KDD 2025. &lt;a class="link" href="https://arxiv.org/abs/2507.21504" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[14] &lt;em&gt;The Potential of LLMs in Automating Software Testing: From Generation to Reporting.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2501.00217" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[15] He et al. &lt;em&gt;LLM-Based Multi-Agent Systems for Software Engineering: Literature Review, Vision, and the Road Ahead.&lt;/em&gt; ACM TOSEM 2025. &lt;a class="link" href="https://arxiv.org/abs/2404.04834" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
