@@ -7,22 +7,23 @@
 &lt;/h2&gt;&lt;p&gt;随着大模型能力的提升，写代码的基本能力已经可以淘汰 2024 年的初级程序员。那么下一步是什么？&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;大模型的新阶段，说白了，就是&lt;strong&gt;控制交付&lt;/strong&gt;。&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;想让大模型更好地运作，靠的不是给它更多自由度，而是用&lt;strong&gt;确定性的流程&lt;/strong&gt;去约束它的行为，做强制检查。MetaGPT [1] 将标准化操作流程（SOP）编码为 prompt 序列来编排多角色协作，正是这一思路的学术实践；CodeR [8] 提出的 task graph 也证明了前置规划优于即时决策。&lt;/p&gt;
+&lt;p&gt;想让大模型更好地运作，靠的不是给它更多自由度，而是用&lt;strong&gt;确定性的流程&lt;/strong&gt;去约束它的行为，做强制检查。MetaGPT [1] 将标准化操作流程（SOP）编码为 prompt 序列来编排多角色协作，正是这一思路的学术实践；CodeR [8] 提出的 task graph 也证明了前置规划优于即时决策；Evolving Orchestration [15] 进一步用 RL 训练中央编排器动态调度 agent，以更低的计算成本实现了优于静态拓扑的效果。&lt;/p&gt;
 &lt;p&gt;具体做法包括：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;通过 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
 &gt;opencode 自动化检查&lt;/a&gt; 隔离上下文——AgentCoder [10] 的实验表明，将代码生成与测试执行分离到不同 agent 后，质量显著提升&lt;/li&gt;
 &lt;li&gt;使用 ruff、pytest 等工具控制代码质量&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;此外，&lt;strong&gt;大规模强力小模型 + 聪明的 orchestrator 大模型&lt;/strong&gt;来规划任务和隔离上下文，也是一个很有潜力的方向。SwarmAgentic [5] 将粒子群优化改造为文本符号更新，实现了全自动的多 agent 架构生成；AgentCoder [10] 的程序员+测试设计+测试执行三 agent 框架也是典型实例。&lt;/p&gt;
+&lt;p&gt;此外，&lt;strong&gt;大规模强力小模型 + 聪明的 orchestrator 大模型&lt;/strong&gt;来规划任务和隔离上下文，也是一个很有潜力的方向。SwarmAgentic [5] 将粒子群优化改造为文本符号更新，实现了全自动的多 agent 架构生成；AgentCoder [10] 的程序员+测试设计+测试执行三 agent 框架也是典型实例；AgentOrchestra [16] 的分层架构让 Planning Agent 负责高层推理和任务分解，再委派给专用 agent 执行，在 SimpleQA 上达到 95.3% 准确率。&lt;/p&gt;
 &lt;h2 id="相关研究"&gt;相关研究
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://hy.tencent.com/research/100025?langVersion=zh" target="_blank" rel="noopener"
 &gt;姚顺雨关于 in-context learning 的研究&lt;/a&gt;很有启发，本质上也是迁移学习的一部分。&lt;/p&gt;
 &lt;p&gt;在多 agent 协同编程领域，ChatDev [2] 通过 &amp;ldquo;chat chain&amp;rdquo; 让 agent 在软件生命周期各阶段对话协作；MapCoder [9] 用四个 agent 模拟人类编程周期，HumanEval pass@1 达到 93.9%；MAGIS [4] 将多 agent 应用于 GitHub Issue 解决，解决率比直接用 GPT-4 高 8 倍。&lt;/p&gt;
-&lt;p&gt;在蜂群智能方向，Model Swarms [6] 让多个 LLM 在权重空间中协同搜索，仅需 200 个样本即可免微调适应；Multi-scale Swarm [7] 提出多尺度蜂群框架用于代码生成，HumanEval 达 86.6%。&lt;/p&gt;
+&lt;p&gt;在蜂群智能方向，Model Swarms [6] 让多个 LLM 在权重空间中协同搜索，仅需 200 个样本即可免微调适应；Multi-scale Swarm [7] 提出多尺度蜂群框架用于代码生成，HumanEval 达 86.6%。Jimenez-Romero et al. [17] 首次用 LLM 替代硬编码 agent 程序驱动蚁群觅食和鸟群飞行等经典蜂群模拟，验证了 LLM 作为去中心化行为引擎的可行性。&lt;/p&gt;
 &lt;p&gt;He et al. [14] 的综述系统审视了 41 篇 LMA（LLM-based Multi-Agent）论文，提出产品负责人/开发者/QA/管理者四角色框架，是该领域最全面的文献梳理。&lt;/p&gt;
+&lt;p&gt;在开源编码 agent 平台方面，OpenHands [21]（原 OpenDevin）以事件流架构和 Docker 沙箱实现了通用 AI 软件开发者平台，SWE-Bench Verified 解决率达 72%；MOSAIC [23] 则面向科学代码生成，通过逐步问题分解在 SciCode 数据集上比 baseline 高 24%。近期两篇综述——代码生成 agent 综述 [24] 和复旦 SE Lab 的 124 篇论文系统综述 [25]——分别从技术演进和 SE+Agent 双视角对该领域进行了全面梳理。&lt;/p&gt;
 &lt;h2 id="如何评价蜂群能力"&gt;如何评价蜂群能力？
-&lt;/h2&gt;&lt;p&gt;SWE-agent [11] 定义了 Agent-Computer Interface，确立了 SWE-bench 作为编码 agent 的评测标准。但目前大部分 swarm 产品还处于比较初级的阶段，尚未看到公开的、明确的评测标准。MultiAgentBench [12] 已开始用里程碑式 KPI 评测多 agent 协作质量，但整体仍不成熟；KDD 2025 的评测综述 [13] 提出了二维分类法（评测目标 × 评测流程），覆盖了企业级可靠性与合规性。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;SWE-agent [11] 定义了 Agent-Computer Interface，确立了 SWE-bench 作为编码 agent 的评测标准。但目前大部分 swarm 产品还处于比较初级的阶段，尚未看到公开的、明确的评测标准。MultiAgentBench [12] 已开始用里程碑式 KPI 评测多 agent 协作质量，但整体仍不成熟；KDD 2025 的评测综述 [13] 提出了二维分类法（评测目标 × 评测流程），覆盖了企业级可靠性与合规性。SWE-Bench Pro [18] 将评测升级为长周期、跨多文件的企业级任务（平均 107.4 行、4.1 个文件），所有模型性能显著下降；Saving SWE-Bench [19] 则揭示现有 benchmark 高估 agent 能力超 50%，提出更贴近真实交互的评测变换方法；Code in Harmony [22] 专门评测多 agent 编码框架，指出高 token 成本、迭代不稳定和泛化困难是主要瓶颈。在成本维度，Optima [20] 通过 generate-rank-select-train 范式实现了性能提升 2.8 倍且 token 用量不到 10%，为蜂群系统的成本评估提供了参考基线。&lt;/p&gt;
 &lt;p&gt;我认为蜂群能力的评价应包含以下维度：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;任务交付能力&lt;/strong&gt;——最终产出是否满足需求&lt;/li&gt;
@@ -62,6 +63,28 @@
 &lt;li&gt;[13] Mohammadi et al. &lt;em&gt;Evaluation and Benchmarking of LLM Agents: A Survey.&lt;/em&gt; KDD 2025. &lt;a class="link" href="https://arxiv.org/abs/2507.21504" target="_blank" rel="noopener"
 &gt;arXiv&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;[14] He et al. &lt;em&gt;LLM-Based Multi-Agent Systems for Software Engineering: Literature Review, Vision, and the Road Ahead.&lt;/em&gt; ACM TOSEM 2025. &lt;a class="link" href="https://arxiv.org/abs/2404.04834" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[15] &lt;em&gt;Multi-Agent Collaboration via Evolving Orchestration.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2505.19591" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[16] &lt;em&gt;AgentOrchestra: A Hierarchical Multi-Agent Framework for General-Purpose Task Solving.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2506.12508" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[17] Jimenez-Romero et al. &lt;em&gt;Multi-Agent Systems Powered by Large Language Models: Applications in Swarm Intelligence.&lt;/em&gt; Frontiers in AI 2025. &lt;a class="link" href="https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1593017/full" target="_blank" rel="noopener"
+&gt;Frontiers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[18] Deng et al. &lt;em&gt;SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks?&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2509.16941" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[19] Garg et al. &lt;em&gt;Saving SWE-Bench: A Benchmark Mutation Approach for Realistic Agent Evaluation.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2510.08996" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[20] &lt;em&gt;Optima: Optimizing Effectiveness and Efficiency for LLM-Based Multi-Agent System.&lt;/em&gt; ICLR 2025. &lt;a class="link" href="https://openreview.net/forum?id=c4w1TqcSi0" target="_blank" rel="noopener"
+&gt;OpenReview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[21] Wang et al. &lt;em&gt;OpenHands: An Open Platform for AI Software Developers as Generalist Agents.&lt;/em&gt; ICLR 2025. &lt;a class="link" href="https://arxiv.org/abs/2407.16741" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[22] &lt;em&gt;Code in Harmony: Evaluating Multi-Agent Frameworks.&lt;/em&gt; 2025. &lt;a class="link" href="https://openreview.net/pdf?id=URUMBfrHFy" target="_blank" rel="noopener"
+&gt;OpenReview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[23] &lt;em&gt;MOSAIC: Multi-agent Orchestration for Task-Intelligent Scientific Coding.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2510.08804" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[24] &lt;em&gt;A Survey on Code Generation with LLM-based Agents.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2508.00083" target="_blank" rel="noopener"
+&gt;arXiv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[25] Liu et al. &lt;em&gt;Large Language Model-Based Agents for Software Engineering: A Survey.&lt;/em&gt; arXiv 2025. &lt;a class="link" href="https://arxiv.org/abs/2409.02977" target="_blank" rel="noopener"
 &gt;arXiv&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？</title><link>https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/cover.png" alt="Featured image of post 大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？" /&gt;&lt;h2 id="前言"&gt;前言
 &lt;/h2&gt;&lt;p&gt;最近，国内多家大模型厂商纷纷推出面向开发者的 Coding Plan 订阅套餐，主打&amp;quot;低价享受海量用量&amp;quot;，宣称每月仅需几十到几百元，即可获得&amp;quot;数百亿 tokens&amp;quot;的使用额度。&lt;/p&gt;
