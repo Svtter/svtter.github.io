@@ -1,0 +1,231 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="OpenClaw 服务常见问题的排查与解决方法，包括 Telegram 断线、进程冲突、配置错误等场景"><title>OpenClaw 日常问题排查指南</title><link rel=canonical href=https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/><link rel=stylesheet href=/scss/style.min.665d17ce8088ea53e26ad28cba6afb1de8de25ed595adce4055fbf396cad42ba.css><meta property='og:title' content="OpenClaw 日常问题排查指南"><meta property='og:description' content="OpenClaw 服务常见问题的排查与解决方法，包括 Telegram 断线、进程冲突、配置错误等场景"><meta property='og:url' content='https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/'><meta property='og:site_name' content="Svtter's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='OpenClaw'><meta property='article:tag' content='Telegram'><meta property='article:tag' content='DevOps'><meta property='article:tag' content='运维'><meta property='article:published_time' content='2026-03-06T00:00:00+08:00'><meta property='article:modified_time' content='2026-03-06T00:00:00+08:00'><meta property='og:image' content='https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/cover.jpg'><meta name=twitter:title content="OpenClaw 日常问题排查指南"><meta name=twitter:description content="OpenClaw 服务常见问题的排查与解决方法，包括 Telegram 断线、进程冲突、配置错误等场景"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/cover.jpg'><link rel=preconnect href=https://cdn.jsdelivr.net crossorigin><link rel=dns-prefetch href=https://cdn.jsdelivr.net><link rel=preconnect href=https://latest.cactus.chat crossorigin><link rel=dns-prefetch href=https://latest.cactus.chat><link rel=preconnect href=https://fonts.googleapis.com crossorigin><link rel=dns-prefetch href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=dns-prefetch href=https://fonts.gstatic.com><link rel=preconnect href=https://utteranc.es crossorigin><link rel=dns-prefetch href=https://utteranc.es><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebSite","inLanguage":"zh-cn","name":"Svtter's Blog","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://svtter.cn/search/?q={search_term_string}"}},"url":"https://svtter.cn/"}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","logo":"https://svtter.cn/img/avatar.png","name":"Svtter's Blog","url":"https://svtter.cn/"}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","accessMode":"textual,visual","accessibilityFeature":"alternativeText,readingOrder","accessibilitySummary":"The content is accessible for screen readers and keyboard navigation.","articleSection":"DevOps","author":{"@type":"Person","name":"Svtter's Blog","url":"https://svtter.cn/"},"dateModified":"2026-03-06T00:00:00+08:00","datePublished":"2026-03-06T00:00:00+08:00","description":"OpenClaw 服务常见问题的排查与解决方法，包括 Telegram 断线、进程冲突、配置错误等场景","headline":"OpenClaw 日常问题排查指南","image":"https://svtter.cn/cover.jpg","inLanguage":"zh-cn","keywords":["OpenClaw","Telegram","DevOps","运维","DevOps"],"mainEntityOfPage":{"@id":"https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/","@type":"WebPage"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://svtter.cn/img/avatar.png"},"name":"Svtter's Blog"},"timeRequired":"PT3M","wordCount":1003}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://svtter.cn/","name":"Svtter's Blog","position":1},{"@type":"ListItem","item":"https://svtter.cn/post/","name":"Posts","position":2},{"@type":"ListItem","item":"https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/","name":"OpenClaw 日常问题排查指南","position":3}]}</script><link rel="shortcut icon" href=/favicon.png><script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-65DJGXT4VC")}</script></head><body class=article-page><script>(function(){const e="FriedRiceColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="FriedRiceColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><header class=site-header><nav class=site-nav><div class=nav-container><a href=/ class=site-brand><span class=brand-name>Svtter's Blog</span></a><div class=nav-links><a href=/%E5%85%B3%E4%BA%8E/ class=nav-link>关于
+</a><a href=/archives/ class=nav-link>归档
+</a><a href=/search/ class=nav-link>搜索
+</a><a href=/%E6%A8%A1%E5%9E%8B/ class=nav-link>模型
+</a><a href=/%E9%93%BE%E6%8E%A5/ class=nav-link>链接</a></div><div class=nav-actions><div class=nav-social><a href=https://github.com/svtter target=_blank rel="me noopener" title=GitHub class=social-link><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+</a><a href=https://twitter.com/crack_svtter target=_blank rel="me noopener" title=Twitter class=social-link><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></div><a href=/index.xml target=_blank rel=alternate type=application/rss+xml title=RSS class="social-link rss-link"><svg class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="5" cy="19" r="1" fill="currentColor"/><path d="M4 4a16 16 0 0116 16"/><path d="M4 11a9 9 0 019 9"/></svg>
+</a><a href=/en/ class=language-toggle aria-label=切换语言 title=切换语言><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+</a><button id=dark-mode-toggle class=theme-toggle aria-label="Toggle dark mode" title=暗色模式>
+<svg class="icon icon-tabler icon-tabler-sun" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="4"/><path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7-.7.7m0 11.4.7.7m-12.1-.7-.7.7"/></svg>
+<svg class="icon icon-tabler icon-tabler-moon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M12 3c.132.0.263.0.393.0a7.5 7.5.0 007.92 12.446A9 9 0 1112 2.992z"/></svg>
+</button>
+<button class=mobile-menu-toggle id=toggle-menu aria-label="Toggle Menu" aria-expanded=false>
+<span class=hamburger-line></span>
+<span class=hamburger-line></span>
+<span class=hamburger-line></span></button></div></div><div class=mobile-menu id=mobile-menu aria-hidden=true><a href=/%E5%85%B3%E4%BA%8E/ class=mobile-nav-link>关于
+</a><a href=/archives/ class=mobile-nav-link>归档
+</a><a href=/search/ class=mobile-nav-link>搜索
+</a><a href=/%E6%A8%A1%E5%9E%8B/ class=mobile-nav-link>模型
+</a><a href=/%E9%93%BE%E6%8E%A5/ class=mobile-nav-link>链接</a><div class=mobile-social><a href=https://github.com/svtter target=_blank rel="me noopener" title=GitHub class=mobile-social-link><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+<span>GitHub</span>
+</a><a href=https://twitter.com/crack_svtter target=_blank rel="me noopener" title=Twitter class=mobile-social-link><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg>
+<span>Twitter</span>
+</a><a href=/index.xml target=_blank rel=alternate type=application/rss+xml title=RSS class=mobile-social-link><svg class="icon icon-tabler icon-tabler-rss" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="5" cy="19" r="1" fill="currentColor"/><path d="M4 4a16 16 0 0116 16"/><path d="M4 11a9 9 0 019 9"/></svg>
+<span>RSS</span>
+</a><a href=/en/ class="mobile-social-link language-link"><svg class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg>
+<span>切换语言</span></a></div></div></nav></header><div class="main-container has-sidebar"><main class=main-content><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/><img src=/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/cover_hu_627ee540a09e1679.jpg srcset="/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/cover_hu_627ee540a09e1679.jpg 800w, /p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/cover_hu_d8e4f7e610f252eb.jpg 1600w" width=800 height=533 loading=lazy alt="Featured image of post OpenClaw 日常问题排查指南"></a></div><div class=article-details><header class=article-category><a href=/categories/devops/ style=background-color:#2a9d8f;color:#fff>DevOps</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/>OpenClaw 日常问题排查指南</a></h2><h3 class=article-subtitle>OpenClaw 服务常见问题的排查与解决方法，包括 Telegram 断线、进程冲突、配置错误等场景</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-03-06T00:00:00+08:00>Mar 06, 2026</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>阅读时长: 3 分钟</time></div></footer></div></header><section class=article-content><div class=tts-player data-audio-url=/tts/OpenClaw%20%e6%97%a5%e5%b8%b8%e9%97%ae%e9%a2%98%e6%8e%92%e6%9f%a5%e6%8c%87%e5%8d%97.mp3><button class=tts-play>▶ 听文章</button>
+<button class=tts-stop>■ 停止</button>
+<span class=tts-sep></span>
+<span class=tts-rate-group><span class=tts-rate-label>语速</span>
+<select class=tts-rate><option value=0.75>0.75x</option><option value=1 selected>1.0x</option><option value=1.25>1.25x</option><option value=1.5>1.5x</option><option value=2>2.0x</option></select>
+</span><span class=tts-progress></span></div><p>整理了使用 OpenClaw 过程中遇到的常见问题和解决方法，方便日后快速定位和排查。</p><h2 id=常用命令>常用命令</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 查看服务状态</span>
+</span></span><span class=line><span class=cl>systemctl --user status openclaw
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 重启服务</span>
+</span></span><span class=line><span class=cl>systemctl --user restart openclaw
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 停止服务</span>
+</span></span><span class=line><span class=cl>systemctl --user stop openclaw
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 启动服务</span>
+</span></span><span class=line><span class=cl>systemctl --user start openclaw
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 查看实时日志</span>
+</span></span><span class=line><span class=cl>tail -f /tmp/openclaw/openclaw-<span class=k>$(</span>date +%Y-%m-%d<span class=k>)</span>.log
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 查看配置</span>
+</span></span><span class=line><span class=cl>cat ~/.openclaw/openclaw.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 验证配置是否有效</span>
+</span></span><span class=line><span class=cl>openclaw --version
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=问题-1-claw-自己改配置把自己改挂了>问题 1: Claw 自己改配置把自己改挂了</h2><h3 id=现象>现象</h3><ul><li>让 Claw 修改 <code>openclaw.json</code> 配置后服务无法启动</li><li><code>Invalid config</code> 报错</li><li>Gateway 无法启动，Bot 完全无响应</li></ul><h3 id=原因>原因</h3><ul><li>Claw 修改配置时格式错误（JSON 语法、字段类型等）</li><li>写入了不支持的配置项</li><li>配置文件损坏</li></ul><h3 id=解决方法>解决方法</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 1. 检查配置是否有效</span>
+</span></span><span class=line><span class=cl>openclaw --version
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 2. 如果报错，查看具体错误信息</span>
+</span></span><span class=line><span class=cl><span class=c1># 常见错误:</span>
+</span></span><span class=line><span class=cl><span class=c1>#   - Invalid input (不支持的字段值)</span>
+</span></span><span class=line><span class=cl><span class=c1>#   - Required field missing (缺少必要字段)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 3. 从备份恢复</span>
+</span></span><span class=line><span class=cl>ls ~/.openclaw/openclaw.json.bak*
+</span></span><span class=line><span class=cl>cp ~/.openclaw/openclaw.json.bak ~/.openclaw/openclaw.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 4. 如果没有备份，手动修复</span>
+</span></span><span class=line><span class=cl>vim ~/.openclaw/openclaw.json
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 5. 修复后重启</span>
+</span></span><span class=line><span class=cl>systemctl --user restart openclaw
+</span></span></code></pre></td></tr></table></div></div><h3 id=预防措施>预防措施</h3><ol><li><p><strong>改配置前先备份</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cp ~/.openclaw/openclaw.json ~/.openclaw/openclaw.json.bak.<span class=k>$(</span>date +%Y%m%d_%H%M%S<span class=k>)</span>
+</span></span></code></pre></td></tr></table></div></div></li><li><p><strong>让 Claw 改配置后验证</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>openclaw --version  <span class=c1># 如果没报错说明配置有效</span>
+</span></span></code></pre></td></tr></table></div></div></li><li><p><strong>小步修改，逐步验证</strong>: 不要一次性让 Claw 改太多配置项，改一处验证一次</p></li></ol><h3 id=常见配置错误示例>常见配置错误示例</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=c1>// 错误: input 写了不支持的值
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=s2>&#34;input&#34;</span><span class=err>:</span> <span class=p>[</span><span class=s2>&#34;text&#34;</span><span class=p>,</span> <span class=s2>&#34;image&#34;</span><span class=p>,</span> <span class=s2>&#34;video&#34;</span><span class=p>]</span>  <span class=c1>// video 不被支持
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=c1>// 正确:
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=s2>&#34;input&#34;</span><span class=err>:</span> <span class=p>[</span><span class=s2>&#34;text&#34;</span><span class=p>,</span> <span class=s2>&#34;image&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 错误: JSON 语法错误（多了逗号）
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=s2>&#34;models&#34;</span><span class=err>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span><span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;a&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span><span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;b&#34;</span><span class=p>},</span>  <span class=c1>// &lt;- 这里多了逗号
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 错误: 字段类型错误
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=s2>&#34;reasoning&#34;</span><span class=err>:</span> <span class=s2>&#34;true&#34;</span>  <span class=c1>// 应该是 boolean，不是 string
+</span></span></span><span class=line><span class=cl><span class=c1>// 正确:
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=s2>&#34;reasoning&#34;</span><span class=err>:</span> <span class=kc>true</span>
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=问题-2-telegram-网络断开>问题 2: Telegram 网络断开</h2><h3 id=现象-1>现象</h3><ul><li>Bot 不回复消息</li><li>日志显示: <code>Network request for 'getUpdates' failed!</code></li><li>日志显示: <code>Telegram network error</code></li></ul><h3 id=原因-1>原因</h3><p>Telegram API 长连接超时或网络波动导致连接断开</p><h3 id=解决方法-1>解决方法</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 重启服务</span>
+</span></span><span class=line><span class=cl>systemctl --user restart openclaw
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=问题-3-gateway-进程冲突>问题 3: Gateway 进程冲突</h2><h3 id=现象-2>现象</h3><ul><li><code>Gateway already running</code></li><li><code>Port 18789 is already in use</code></li><li><code>lock timeout after 5000ms</code></li></ul><h3 id=原因-2>原因</h3><p>多个 openclaw 实例同时运行，端口被占用</p><h3 id=解决方法-2>解决方法</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 方法1: 使用 openclaw 命令停止</span>
+</span></span><span class=line><span class=cl>openclaw gateway stop
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 方法2: 手动杀掉残留进程</span>
+</span></span><span class=line><span class=cl>ps aux <span class=p>|</span> grep openclaw
+</span></span><span class=line><span class=cl><span class=nb>kill</span> &lt;pid&gt;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 重新启动</span>
+</span></span><span class=line><span class=cl>systemctl --user start openclaw
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=问题-4-配置修改后不生效>问题 4: 配置修改后不生效</h2><h3 id=现象-3>现象</h3><ul><li>修改了 <code>~/.openclaw/openclaw.json</code> 但还是用旧模型</li><li>日志显示旧的模型名称</li></ul><h3 id=原因-3>原因</h3><p>Gateway 需要重启才能加载新配置</p><h3 id=解决方法-3>解决方法</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>systemctl --user restart openclaw
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=问题-5-模型配置错误>问题 5: 模型配置错误</h2><h3 id=现象-4>现象</h3><ul><li><code>Invalid config at /home/svtter/.openclaw/openclaw.json</code></li><li>服务无法启动</li></ul><h3 id=原因-4>原因</h3><p>模型配置字段不正确，如:</p><ul><li><code>input</code> 类型写了不支持的值（如 <code>video</code>）</li><li>缺少必要字段</li></ul><h3 id=解决方法-4>解决方法</h3><p>检查并修正配置文件:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 验证配置</span>
+</span></span><span class=line><span class=cl>openclaw --version
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 如果报错，编辑配置</span>
+</span></span><span class=line><span class=cl>vim ~/.openclaw/openclaw.json
+</span></span></code></pre></td></tr></table></div></div><h3 id=正确的模型配置示例>正确的模型配置示例</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;kimi-k2.5&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;Kimi K2.5&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;reasoning&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;text&#34;</span><span class=p>,</span> <span class=s2>&#34;image&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;cost&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=mi>0</span><span class=p>,</span> <span class=nt>&#34;output&#34;</span><span class=p>:</span> <span class=mi>0</span><span class=p>,</span> <span class=nt>&#34;cacheRead&#34;</span><span class=p>:</span> <span class=mi>0</span><span class=p>,</span> <span class=nt>&#34;cacheWrite&#34;</span><span class=p>:</span> <span class=mi>0</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;contextWindow&#34;</span><span class=p>:</span> <span class=mi>262144</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;maxTokens&#34;</span><span class=p>:</span> <span class=mi>16384</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><h2 id=问题-6-切换模型>问题 6: 切换模型</h2><h3 id=查看可用模型>查看可用模型</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 查询 API 提供的模型列表</span>
+</span></span><span class=line><span class=cl>curl -s https://api.moonshot.cn/v1/models <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -H <span class=s2>&#34;Authorization: Bearer YOUR_API_KEY&#34;</span> <span class=p>|</span> jq <span class=s1>&#39;.data[].id&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=修改默认模型>修改默认模型</h3><p>编辑 <code>~/.openclaw/openclaw.json</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;agents&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;defaults&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;model&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;primary&#34;</span><span class=p>:</span> <span class=s2>&#34;kimi/kimi-k2.5&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后重启: <code>systemctl --user restart openclaw</code></p><hr><h2 id=日志与配置文件位置>日志与配置文件位置</h2><div class=table-wrapper><table><thead><tr><th>路径</th><th>说明</th></tr></thead><tbody><tr><td><code>/tmp/openclaw/openclaw-YYYY-MM-DD.log</code></td><td>日志文件</td></tr><tr><td><code>journalctl --user -u openclaw</code></td><td>systemd 日志</td></tr><tr><td><code>~/.openclaw/openclaw.json</code></td><td>主配置文件</td></tr><tr><td><code>~/.openclaw/workspace/</code></td><td>工作目录</td></tr><tr><td><code>~/.openclaw/workspace/knowledge/</code></td><td>知识库</td></tr></tbody></table></div></section><footer class=article-footer><section class=article-tags><a href=/tags/openclaw/>OpenClaw</a>
+<a href=/tags/telegram/>Telegram</a>
+<a href=/tags/devops/>DevOps</a>
+<a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article class=has-image><a href=/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/><div class=article-image><img src=/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/cover.9115d533fa038bec505e6b70768ead56_hu_7a977c37476ba230.png width=250 height=150 loading=lazy alt="Featured image of post OpenCode 配置优化记录" data-hash="md5-kRXVM/oDi+xQXmtwdo6tVg=="></div><div class=article-details><h2 class=article-title>OpenCode 配置优化记录</h2></div></a></article><article class=has-image><a href=/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/><div class=article-image><img src=/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/cover.0062f6f7b8ee29812aea676914034cbc_hu_7ae38f0be497623d.png width=250 height=150 loading=lazy alt="Featured image of post 使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查" data-hash="md5-AGL297juKYEq6mdpFANMvA=="></div><div class=article-details><h2 class=article-title>使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查</h2></div></a></article><article class=has-image><a href=/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/><div class=article-image><img src=/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.2f947ef3b231659d9f07dbf06c89b74a_hu_2ca40e82e7d636d9.png width=250 height=150 loading=lazy alt="Featured image of post 在虚拟机上运行 Claude Code 实现自动化测试与开发" data-hash="md5-L5R+87IxZZ2fB9vwbIm3Sg=="></div><div class=article-details><h2 class=article-title>在虚拟机上运行 Claude Code 实现自动化测试与开发</h2></div></a></article><article class=has-image><a href=/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/><div class=article-image><img src=/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/featured.de9acc2acc340a348c9c668541aad6da_hu_c5fc609440726bee.png width=250 height=150 loading=lazy alt="Featured image of post Hugo Admin - 轻量级 Hugo 博客管理界面" data-hash="md5-3prMKsw0CjSMnGaFQarW2g=="></div><div class=article-details><h2 class=article-title>Hugo Admin - 轻量级 Hugo 博客管理界面</h2></div></a></article><article class=has-image><a href=/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/><div class=article-image><img src=/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/background.c78ccc0aa3a810878ebc6936e3be8b81_hu_fc26ab695bc0a459.png width=250 height=150 loading=lazy alt="Featured image of post 谨慎使用新兴开源软件" data-hash="md5-x4zMCqOoEIeOvGk2476LgQ=="></div><div class=article-details><h2 class=article-title>谨慎使用新兴开源软件</h2></div></a></article></div></div></aside><script src=https://utteranc.es/client.js repo=Svtter/svtter.github.io issue-term=pathname label=blog crossorigin=anonymous async></script><style>.utterances{max-width:unset}</style><script>let utterancesLoaded=!1;function setUtterancesTheme(e){let t=document.querySelector(".utterances iframe");t&&t.contentWindow.postMessage({type:"set-theme",theme:`github-${e}`},"https://utteranc.es")}addEventListener("message",e=>{if(e.origin!=="https://utteranc.es")return;utterancesLoaded=!0,setUtterancesTheme(document.documentElement.dataset.scheme)}),window.addEventListener("onColorSchemeChange",e=>{if(!utterancesLoaded)return;setUtterancesTheme(e.detail)})</script><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main><aside class="right-sidebar sticky"><section class="widget widget--toc"><h2 class=widget-title><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
+<span>目录</span></h2><div id=TableOfContents><nav id=TableOfContents><ol><li><a href=#常用命令>常用命令</a></li><li><a href=#问题-1-claw-自己改配置把自己改挂了>问题 1: Claw 自己改配置把自己改挂了</a><ol><li><a href=#现象>现象</a></li><li><a href=#原因>原因</a></li><li><a href=#解决方法>解决方法</a></li><li><a href=#预防措施>预防措施</a></li><li><a href=#常见配置错误示例>常见配置错误示例</a></li></ol></li><li><a href=#问题-2-telegram-网络断开>问题 2: Telegram 网络断开</a><ol><li><a href=#现象-1>现象</a></li><li><a href=#原因-1>原因</a></li><li><a href=#解决方法-1>解决方法</a></li></ol></li><li><a href=#问题-3-gateway-进程冲突>问题 3: Gateway 进程冲突</a><ol><li><a href=#现象-2>现象</a></li><li><a href=#原因-2>原因</a></li><li><a href=#解决方法-2>解决方法</a></li></ol></li><li><a href=#问题-4-配置修改后不生效>问题 4: 配置修改后不生效</a><ol><li><a href=#现象-3>现象</a></li><li><a href=#原因-3>原因</a></li><li><a href=#解决方法-3>解决方法</a></li></ol></li><li><a href=#问题-5-模型配置错误>问题 5: 模型配置错误</a><ol><li><a href=#现象-4>现象</a></li><li><a href=#原因-4>原因</a></li><li><a href=#解决方法-4>解决方法</a></li><li><a href=#正确的模型配置示例>正确的模型配置示例</a></li></ol></li><li><a href=#问题-6-切换模型>问题 6: 切换模型</a><ol><li><a href=#查看可用模型>查看可用模型</a></li><li><a href=#修改默认模型>修改默认模型</a></li></ol></li><li><a href=#日志与配置文件位置>日志与配置文件位置</a></li></ol></nav></div></section></aside></div><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 Svtter's Blog</section><section class=powerby>主题 <b>Fried Rice</b> 由 <a href=https://svtter.cn target=_blank rel=noopener>svtter</a> 设计<br>源代码托管于 <a href=https://github.com/Svtter/Fried-Rice target=_blank rel=noopener>GitHub</a></section></footer><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.af11b58120d3dbe11c2657e3b7fc2631cf143b069a81e7e4b146b520cf147d91.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>
