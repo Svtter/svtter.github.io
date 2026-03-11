@@ -1,4 +1,111 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 06 Mar 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>CLI 是更高效的开发工作流</title><link>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</link><pubDate>Fri, 06 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</guid><description>&lt;img src="https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/cover.png" alt="Featured image of post CLI 是更高效的开发工作流" /&gt;&lt;h1 id="cli-是更高效的开发工作流"&gt;CLI 是更高效的开发工作流
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 11 Mar 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>深入理解 claw 家族：OpenClaw / NanoClaw</title><link>https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/</link><pubDate>Wed, 11 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/</guid><description>&lt;img src="https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/cover.png" alt="Featured image of post 深入理解 claw 家族：OpenClaw / NanoClaw" /&gt;&lt;p&gt;2026 年开年，AI 智能体领域最热闹的话题莫过于“养虾” - OpenClaw 的爆火让无数人看到了 AI 从“动嘴”到“动手”的进化。然而，就在大家忙着给这只“龙虾”投喂插件时，另一个名字悄然崛起：NanoClaw。它凭借 Andrej Karpathy 的推荐和极致的安全设计，迅速俘获了另一批开发者的心。&lt;/p&gt;
+&lt;p&gt;这两个名字相似却理念迥异的项目，共同构成了我所说的“claw 家族”。在深度使用和对比之后，我想分享一些关于它们的洞见，希望能帮你理清思路，找到最适合自己的那只“龙虾”。&lt;/p&gt;
+&lt;h2 id="一核心洞察claw-的本质是自托管的-claude-code"&gt;一、核心洞察：claw 的本质是自托管的 Claude Code
+&lt;/h2&gt;&lt;p&gt;理解 claw 家族，首先要明白它们到底在做什么。&lt;/p&gt;
+&lt;p&gt;Anthropic 推出的 Claude Code 是一个命令行工具，能让 Claude 直接操作终端、写代码、执行命令。但它运行在 Anthropic 的云端，你只能通过 API 调用，无法控制执行环境，数据也必须经过对方服务器。&lt;/p&gt;
+&lt;p&gt;而 claw（无论 OpenClaw 还是 NanoClaw），本质上是&lt;strong&gt;把 Claude Code 的能力“搬”到了自己的基础设施上&lt;/strong&gt; - 你可以把它跑在自己的服务器、自己的电脑、自己的容器里。这就是我理解的“自托管的 Claude Code”。&lt;/p&gt;
+&lt;p&gt;“自己可以控制环境”这句话听起来简单，但拆解开来，它意味着四个维度的掌控权：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数据主权&lt;/strong&gt;：所有对话历史、文件访问、操作记录都在自己手里。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;权限边界&lt;/strong&gt;：你可以精确控制 AI 能访问什么、不能访问什么。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;执行沙箱&lt;/strong&gt;：你可以决定 AI 是在裸机上跑、在 Docker 里跑，还是在更严格的隔离环境里跑。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;成本控制&lt;/strong&gt;：自托管意味着你可以用自己的算力，或选择更便宜的 API 提供商。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;claw 家族的成员们，正是在如何实现这种“自托管”上，走出了截然不同的两条路。&lt;/p&gt;
+&lt;h2 id="二openclaw拥抱开放的全能选手"&gt;二、OpenClaw：拥抱开放的“全能选手”
+&lt;/h2&gt;&lt;p&gt;OpenClaw 的设计理念是“Any OS. Any Platform.”，强调跨设备无缝接入 AI 助手。它通过插件化架构，支持 8 个核心通道，并通过扩展插件延伸至 50 多个垂直细分领域。2026 年 1 月的插件化重构（PR #661），将模型提供商从核心代码中解耦，标志着 OpenClaw 从“单一项目”向“开放平台”的转型。&lt;/p&gt;
+&lt;p&gt;这种开放结构带来了强大的扩展能力：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;你可以接入任意 AI 模型（Claude、DeepSeek、GPT 等）&lt;/li&gt;
+&lt;li&gt;你可以为它开发各种插件，从浏览器控制到邮件处理&lt;/li&gt;
+&lt;li&gt;主流云厂商（阿里云、腾讯云、天翼云）纷纷推出“一键部署”服务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;然而，开放的代价是代码的膨胀。OpenClaw 拥有 52 个模块、8 个配置管理文件、45 个以上依赖项，总代码量接近 40 万行。正如 NanoClaw 作者 Gavriel Cohen 所指出的：“一旦代码库膨胀至 50 万行，根本无人能够完成代码审查，这也违背了人们对开源软件的信任本质。”&lt;/p&gt;
+&lt;p&gt;更令人担忧的是安全架构。OpenClaw 的安全机制建立在应用层级（如白名单、配对码），所有程序都在同一个 Node.js 进程中运行，共享内存。一旦攻击者通过提示词注入突破应用层防护，就能直接访问宿主机资源。Meta 超级智能实验室对齐主管 Summer Yue 最近就遭遇了 OpenClaw 运行失控、删除其收件箱的事件。&lt;/p&gt;
+&lt;h2 id="三nanoclaw安全至上的极简主义者"&gt;三、NanoClaw：安全至上的“极简主义者”
+&lt;/h2&gt;&lt;p&gt;如果说 OpenClaw 是瑞士军刀，那 NanoClaw 就是手术刀。它由以色列软件工程师 Gavriel Cohen 开发，专门针对 Claude 模型构建，核心代码仅约 500 行 TypeScript，整个系统可以在十分钟内完成人工或 AI 审计。&lt;/p&gt;
+&lt;p&gt;“我不需要三千个集成。我只需要大约三个东西。”Cohen 这样解释他的设计理念。NanoClaw 目前仅支持 WhatsApp（可通过技能添加 Telegram、Gmail 等），但通过其独特的“技能”（Skills）机制，用户可以按需添加功能，而不是继承几十个闲置模块。&lt;/p&gt;
+&lt;p&gt;但 NanoClaw 最革命性的设计是&lt;strong&gt;操作系统级隔离&lt;/strong&gt;：每个智能体都在独立的 Linux 容器中运行 - 在 macOS 上采用 Apple Containers，在 Linux 上使用 Docker。容器内只有智能体循环和 Anthropic 智能体 SDK，文件系统访问受挂载白名单限制，敏感路径（如 &lt;code&gt;.ssh&lt;/code&gt;、&lt;code&gt;.aws&lt;/code&gt;）被自动屏蔽。&lt;/p&gt;
+&lt;p&gt;这种架构的防护效果立竿见影：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;攻击场景&lt;/th&gt;
+&lt;th&gt;OpenClaw&lt;/th&gt;
+&lt;th&gt;NanoClaw&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;提示词注入&lt;/td&gt;
+&lt;td&gt;突破后可访问宿主机&lt;/td&gt;
+&lt;td&gt;破坏范围限制在容器内&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;恶意插件&lt;/td&gt;
+&lt;td&gt;可能窃取宿主机数据&lt;/td&gt;
+&lt;td&gt;无法访问未挂载的目录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;权限滥用&lt;/td&gt;
+&lt;td&gt;需应用层权限声明&lt;/td&gt;
+&lt;td&gt;默认无权限，需显式挂载&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这正是 Karpathy 推荐 NanoClaw 的原因：“其核心引擎约 4000 行代码（我和 AI 智能体都能理解，感觉可管理、可审计、灵活等），默认在容器中运行一切。”&lt;/p&gt;
+&lt;h2 id="四深入对比两条路径的哲学差异"&gt;四、深入对比：两条路径的哲学差异
+&lt;/h2&gt;&lt;h3 id="41-定位全能平台-vs-专精助手"&gt;4.1 定位：全能平台 vs. 专精助手
+&lt;/h3&gt;&lt;p&gt;OpenClaw 要做 AI 智能体的通用编排层，覆盖所有场景；NanoClaw 则专注于为 Claude 用户提供一个安全、可定制的执行环境。&lt;/p&gt;
+&lt;h3 id="42-代码规模40-万行-vs-500-行核心"&gt;4.2 代码规模：40 万行 vs. 500 行核心
+&lt;/h3&gt;&lt;p&gt;OpenClaw 的复杂架构依赖社区贡献不断丰富生态；NanoClaw 通过极简核心让用户按需定制，保持可审计性。&lt;/p&gt;
+&lt;h3 id="43-安全机制应用层权限-vs-操作系统隔离"&gt;4.3 安全机制：应用层权限 vs. 操作系统隔离
+&lt;/h3&gt;&lt;p&gt;OpenClaw 在 Node.js 进程内模拟沙箱；NanoClaw 用容器实现真正的隔离，默认拒绝一切权限。&lt;/p&gt;
+&lt;h3 id="44-设计理念配置驱动-vs-技能驱动"&gt;4.4 设计理念：配置驱动 vs. 技能驱动
+&lt;/h3&gt;&lt;p&gt;OpenClaw 通过 YAML 配置文件声明功能；NanoClaw 的“技能高于功能”理念鼓励用户通过 AI 修改源码来定制，避免代码臃肿。&lt;/p&gt;
+&lt;h2 id="五实际应用你应该选哪只龙虾"&gt;五、实际应用：你应该选哪只“龙虾”？
+&lt;/h2&gt;&lt;h3 id="如果你需要"&gt;如果你需要：
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;处理多样化的任务、集成多种 AI 模型&lt;/li&gt;
+&lt;li&gt;快速尝试各种插件生态&lt;/li&gt;
+&lt;li&gt;不介意安全风险，或在可控的内网环境使用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenClaw&lt;/strong&gt; 的开放生态更具优势。你可以在腾讯云、阿里云上一键部署，几分钟内拥有一个功能强大的 AI 助手。&lt;/p&gt;
+&lt;h3 id="如果你的核心诉求是"&gt;如果你的核心诉求是：
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数据安全和可审计性&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;深度绑定 Claude 模型，不需要多模型切换&lt;/li&gt;
+&lt;li&gt;希望 AI 能访问公司内部系统，但又担心权限失控&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;NanoClaw&lt;/strong&gt; 的容器化架构更值得信赖。你可以把它部署在自己的服务器上，每个群组独立容器，敏感数据通过挂载白名单严格管控。&lt;/p&gt;
+&lt;h3 id="一个有趣的混合方案"&gt;一个有趣的混合方案
+&lt;/h3&gt;&lt;p&gt;对于企业级部署，或许两者结合才是最佳实践：在 OpenClaw 的生态基础上，借鉴 NanoClaw 的隔离理念 - 用容器包装 OpenClaw 实例，每个客户或每个项目分配独立容器，既享受插件生态，又获得安全隔离。&lt;/p&gt;
+&lt;h2 id="六未来展望两条路同一个方向"&gt;六、未来展望：两条路，同一个方向
+&lt;/h2&gt;&lt;p&gt;OpenClaw 与 NanoClaw 的对比，本质上是 AI 智能体发展中“广度”与“深度”、“开放”与“安全”两种价值观的碰撞。&lt;/p&gt;
+&lt;p&gt;OpenClaw 代表了一条“大而全”的路径：通过开放的插件生态和多模型支持，成为 AI 的通用入口。它的挑战在于如何在保持扩展性的同时，解决代码臃肿带来的安全隐忧。&lt;/p&gt;
+&lt;p&gt;NanoClaw 则展示了“小而精”的可能性：通过容器化隔离和极简核心，在保证安全的前提下提供高效的企业级自动化能力。它的局限在于深度绑定 Claude 模型，缺乏多模型灵活性。&lt;/p&gt;
+&lt;p&gt;但无论哪条路，它们都在朝着同一个方向前进：&lt;strong&gt;让 AI 真正成为能替我们干活的数字员工，同时把控制权牢牢握在自己手中&lt;/strong&gt;。这种“自托管的 Claude Code”模式，正是 AI 从 SaaS 回归私有化部署的典型代表 - 既要云的弹性，又要本地的控制权。&lt;/p&gt;
+&lt;p&gt;当你把数字资产的钥匙交给 AI 时，你更需要的或许不是一个功能繁多但内部复杂的“黑箱助手”，而是一个你能完全理解的“透明管家”。这个选择，将决定你未来与 AI 协作的方式。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="附录关于-nanoclaw-的常见问题解答"&gt;附录：关于 NanoClaw 的常见问题解答
+&lt;/h2&gt;&lt;h3 id="q1nanoclaw-现在支持多个会话吗如果需要同时处理多个对话应该怎么启动"&gt;Q1：NanoClaw 现在支持多个会话吗？如果需要同时处理多个对话，应该怎么启动？
+&lt;/h3&gt;&lt;p&gt;A1：支持，而且是自动的、容器级的隔离。NanoClaw 的设计是：每个群组（或频道）都在独立的容器中运行。你不需要手动“新建会话”，只需把 AI 拉进不同的 Telegram 群组（或 WhatsApp 群组），系统就会自动为每个群组创建一个独立的容器，拥有独立的记忆（&lt;code&gt;CLAUDE.md&lt;/code&gt;）、文件系统和上下文。主控频道（你与机器人的私聊）可用于管理所有活跃群组。&lt;/p&gt;
+&lt;h3 id="q2nanoclaw-可以通过-telegram-使用吗我现在只用了一个机器人对话相当于只有一个会话希望有多个"&gt;Q2：NanoClaw 可以通过 Telegram 使用吗？我现在只用了一个机器人对话，相当于只有一个会话，希望有多个。
+&lt;/h3&gt;&lt;p&gt;A2：可以，有两种主流方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;标准版 NanoClaw + Telegram 技能&lt;/strong&gt;：在 Claude Code 中运行 &lt;code&gt;/add-telegram&lt;/code&gt; 命令，AI 会自动修改代码添加 Telegram 支持。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;直接使用 Venice 分支&lt;/strong&gt;（&lt;code&gt;nanoclaw-venice&lt;/code&gt;）：这个分支原生支持 Telegram 和 WhatsApp 双通道，安装向导会引导你选择接入方式，开箱即用。多会话机制同上 - 把机器人拉进不同群组即可。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="q3venice-分支是怎么回事和原版有什么不同"&gt;Q3：Venice 分支是怎么回事？和原版有什么不同？
+&lt;/h3&gt;&lt;p&gt;A3：Venice 分支是 NanoClaw 的一个定制版本，主要特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;AI 提供商换成 Venice&lt;/strong&gt;：不需要 Anthropic API key 或 Claude 订阅，使用 Venice 的隐私优先 API，按 token 付费。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;原生支持 Telegram 和 WhatsApp&lt;/strong&gt;：安装向导直接可选，免去手动添加技能的步骤。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;保持容器化隔离&lt;/strong&gt;：每个群组独立 Docker 容器，延续 NanoClaw 的核心安全设计。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;代码更精简&lt;/strong&gt;：约 2000 行，易于审计和定制。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="q4nanoclaw-是用-python-实现的吗"&gt;Q4：NanoClaw 是用 Python 实现的吗？
+&lt;/h3&gt;&lt;p&gt;A4：不是，NanoClaw 核心是用 TypeScript/Node.js 编写的。你可能联想到的是 OpenClaw 生态中的一个 Python 轻量级框架 &lt;strong&gt;Nanobot&lt;/strong&gt;（约 4000 行 Python），它提供了类似的自动化能力，但没有 NanoClaw 的容器级隔离。两者是不同的项目。&lt;/p&gt;</description></item><item><title>CLI 是更高效的开发工作流</title><link>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</link><pubDate>Fri, 06 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</guid><description>&lt;img src="https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/cover.png" alt="Featured image of post CLI 是更高效的开发工作流" /&gt;&lt;h1 id="cli-是更高效的开发工作流"&gt;CLI 是更高效的开发工作流
 &lt;/h1&gt;&lt;p&gt;Codex Windows 客户端是一个不错的 AI 编程工具。但用了一段时间后，我开始意识到一件事：每次都要打开窗口、手动建任务、逐条对话，才能推进一个工作流。这不是效率，这是在用鼠标模拟思维。&lt;/p&gt;
 &lt;p&gt;这篇文章不是在批评 Codex，而是想聊一个更根本的问题：对于开发者来说，CLI 在结构上就是比 GUI 更高效的工作方式。&lt;/p&gt;
 &lt;h2 id="gui-的认知负担"&gt;GUI 的认知负担
