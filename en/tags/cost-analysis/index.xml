@@ -3,6 +3,9 @@
 &lt;p&gt;My answer is: &lt;strong&gt;no.&lt;/strong&gt; Self-hosting a model does not mean unlimited freedom. It mostly means that many of the constraints and costs previously absorbed by the platform are now transferred to you.&lt;/p&gt;
 &lt;p&gt;But there is a more useful second question: once usage gets large enough, can self-hosting actually become cheaper?&lt;/p&gt;
 &lt;p&gt;The answer is: &lt;strong&gt;possibly, but under stricter conditions than many people expect.&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In short: self-hosting an LLM does not mean unlimited freedom.&lt;/p&gt;
+&lt;p&gt;It means taking on part of the cost and responsibility that a platform would normally absorb. Self-hosting becomes financially attractive only when load stays high, utilization remains strong, and you can either accept model trade-offs or optimize the stack yourself.&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h2 id="local-deployment-does-not-mean-no-limits"&gt;Local deployment does not mean no limits
 &lt;/h2&gt;&lt;p&gt;Let us clear up the most common misunderstanding first.&lt;/p&gt;
 &lt;p&gt;Many people interpret “the model runs on my own machine” as “I can now use it however I want.” In reality, the limits do not disappear. They simply show up in a different form.&lt;/p&gt;
@@ -33,12 +36,13 @@
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Annual API cost = average daily token usage * price per million tokens * 365
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;That looks simple, but two details are often ignored.&lt;/p&gt;
-&lt;p&gt;First, &lt;strong&gt;self-hosting is not a one-time hardware purchase.&lt;/strong&gt; Electricity, spare parts, hosting conditions, alerting, upgrades, and maintenance all keep happening.&lt;/p&gt;
-&lt;p&gt;Second, &lt;strong&gt;API pricing is not a single fixed number.&lt;/strong&gt; Model choice, input-output ratio, cache hit rate, and tool usage can all change the final bill significantly.&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;That looks simple, but three details are often ignored.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Self-hosting is not a one-time hardware purchase.&lt;/strong&gt; Electricity, spare parts, hosting conditions, alerting, upgrades, and maintenance all keep happening.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;API pricing is not a single fixed number.&lt;/strong&gt; Model choice, input-output ratio, cache hit rate, and tool usage can all change the final bill significantly.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Utilization is easy to underestimate.&lt;/strong&gt; If your machine sits idle most of the time, a low per-inference cost means very little. On the other hand, if the workload is stable and the hardware stays busy, the financial case for self-hosting becomes much stronger.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;So the numbers below should be read as rough order-of-magnitude guidance, not as a procurement quote.&lt;/p&gt;
-&lt;p&gt;There is also one variable that people often underestimate: &lt;strong&gt;utilization.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If your machine sits idle most of the time, a low per-inference cost means very little. On the other hand, if the workload is stable and the hardware stays busy, the financial case for self-hosting becomes much stronger.&lt;/p&gt;
 &lt;h2 id="a-rough-but-useful-breakeven-table"&gt;A rough but useful breakeven table
 &lt;/h2&gt;&lt;p&gt;To keep the discussion simple, let us start with a deliberately rough set of assumptions:&lt;/p&gt;
 &lt;ul&gt;
@@ -100,12 +104,11 @@ data-flex-basis="321px"
 &gt;&lt;/p&gt;
 &lt;p&gt;If you want local quality to get as close as possible to top-tier closed models, this table usually moves upward again, because stronger models, more VRAM, and higher availability targets all push infrastructure and operations costs higher.&lt;/p&gt;
 &lt;p&gt;This table points to three things.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;First, individuals and small teams usually do not save money with self-hosting.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If your workload is only a few hundred thousand tokens per day, APIs are still usually the more economical option. You spend less on hardware and avoid carrying the operations burden.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Second, the real breakeven point tends to appear only in consistently high-usage scenarios.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Not one occasional spike, but a workload that stays high day after day. Only then can hardware cost be spread efficiently enough.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Third, the larger the usage, the more attractive self-hosting becomes financially.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;That is why large companies invest seriously in inference platforms. It is not because they enjoy complexity. It is because once the scale is large enough, the math really changes.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Individuals and small teams usually do not save money with self-hosting.&lt;/strong&gt; If your workload is only a few hundred thousand tokens per day, APIs are still usually the more economical option. You spend less on hardware and avoid carrying the operations burden.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The real breakeven point tends to appear only in consistently high-usage scenarios.&lt;/strong&gt; Not one occasional spike, but a workload that stays high day after day. Only then can hardware cost be spread efficiently enough.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The larger the usage, the more attractive self-hosting becomes financially.&lt;/strong&gt; That is why large companies invest seriously in inference platforms. It is not because they enjoy complexity. It is because once the scale is large enough, the math really changes.&lt;/li&gt;
+&lt;/ol&gt;
 &lt;h2 id="one-critical-condition-you-may-not-be-comparing-the-same-thing"&gt;One critical condition: you may not be comparing the same thing
 &lt;/h2&gt;&lt;p&gt;The biggest problem in many “self-hosting is cheaper than API” discussions is not the arithmetic. It is that the compared products are often not equivalent.&lt;/p&gt;
 &lt;p&gt;On the API side, you may be buying access to a top-tier closed model. On the local side, you may be running a quantized open-weight model. Both are called “LLMs,” but they are not the same product in a strict sense.&lt;/p&gt;
@@ -129,22 +132,19 @@ data-flex-basis="321px"
 &gt;&lt;/p&gt;
 &lt;h2 id="what-self-hosting-gives-you-besides-cost-savings"&gt;What self-hosting gives you besides cost savings
 &lt;/h2&gt;&lt;p&gt;If a company still chooses to self-host after doing the math, it is usually not only about saving API money.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Data control.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Some businesses simply do not want raw data flowing through third-party providers for long-term operational or compliance reasons. Local deployment makes the compliance and audit path easier to manage.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Customization.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You can optimize around your own tasks with quantization, routing, distillation, fine-tuning, and tighter integration into internal systems. Standard APIs usually give you less freedom here.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;A more predictable cost ceiling.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;API pricing scales directly with usage. When the business grows, the bill grows with it. Self-hosting has a large upfront investment, but under high and stable load, the cost curve is often easier to predict.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Offline operation and availability.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If your environment requires internal-only deployment, or if you cannot accept key workflows depending entirely on external services, local deployment may simply fit the engineering requirements better.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Data control.&lt;/strong&gt; Some businesses simply do not want raw data flowing through third-party providers for long-term operational or compliance reasons. Local deployment makes the compliance and audit path easier to manage.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Customization.&lt;/strong&gt; You can optimize around your own tasks with quantization, routing, distillation, fine-tuning, and tighter integration into internal systems. Standard APIs usually give you less freedom here.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;A more predictable cost ceiling.&lt;/strong&gt; API pricing scales directly with usage. When the business grows, the bill grows with it. Self-hosting has a large upfront investment, but under high and stable load, the cost curve is often easier to predict.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Offline operation and availability.&lt;/strong&gt; If your environment requires internal-only deployment, or if you cannot accept key workflows depending entirely on external services, local deployment may simply fit the engineering requirements better.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id="a-more-practical-decision-framework"&gt;A more practical decision framework
 &lt;/h2&gt;&lt;p&gt;If you do not want to model every variable from day one, start with these three questions.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;First, is your workload consistently high over time?&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you only see occasional spikes rather than sustained token usage every day, APIs are often still the better choice because you are not paying for idle hardware.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Second, can you accept the gap between a local model and a closed flagship model?&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If your business depends on best-in-class model quality, a large part of the claimed savings may come from lowering model quality rather than from deployment efficiency alone.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Third, do you actually have the ability to operate an inference service long term?&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;What happens when a GPU fails, drivers conflict, service latency spikes, the model version needs to change, or rate limiting and monitoring need to be built? If nobody owns these questions, the issue is no longer just cost. It becomes a delivery problem.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Is your workload consistently high over time?&lt;/strong&gt; If you only see occasional spikes rather than sustained token usage every day, APIs are often still the better choice because you are not paying for idle hardware.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Can you accept the gap between a local model and a closed flagship model?&lt;/strong&gt; If your business depends on best-in-class model quality, a large part of the claimed savings may come from lowering model quality rather than from deployment efficiency alone.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Do you actually have the ability to operate an inference service long term?&lt;/strong&gt; What happens when a GPU fails, drivers conflict, service latency spikes, the model version needs to change, or rate limiting and monitoring need to be built? If nobody owns these questions, the issue is no longer just cost. It becomes a delivery problem.&lt;/li&gt;
+&lt;/ol&gt;
 &lt;h2 id="conclusion"&gt;Conclusion
 &lt;/h2&gt;&lt;p&gt;Back to the original question: does self-hosting an LLM really let you use it without limits?&lt;/p&gt;
 &lt;p&gt;My answer is still: &lt;strong&gt;no.&lt;/strong&gt;&lt;/p&gt;
