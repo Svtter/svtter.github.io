@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Subscription on Svtter's Blog</title><link>https://svtter.cn/tags/subscription/</link><description>Recent content in Subscription on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 22 Mar 2026 16:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/subscription/index.xml" rel="self" type="application/rss+xml"/><item><title>大模型 Coding Plan 年付，到底值不值？</title><link>https://svtter.cn/p/coding-plan-yearly-worth-it/</link><pubDate>Sun, 22 Mar 2026 16:30:00 +0800</pubDate><guid>https://svtter.cn/p/coding-plan-yearly-worth-it/</guid><description>&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/cover-alt.jpg" alt="Featured image of post 大模型 Coding Plan 年付，到底值不值？" /&gt;&lt;p&gt;前段时间我写过一篇文章：&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;那篇文章讨论的是一个偏“供给侧”的问题：厂商宣传的海量额度，在并发、吞吐和 agent 调用膨胀的现实里，到底能不能兑现。&lt;/p&gt;
+&lt;p&gt;但这还不是全部。&lt;/p&gt;
+&lt;p&gt;对用户来说，另一个同样重要的问题是：&lt;strong&gt;即便套餐的理论承诺很难完全兑现，这种年付制 Coding Plan 到底值不值钱？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;我的结论是：&lt;strong&gt;对轻度用户，未必；对重度用户，往往非常值。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="先把问题拆开"&gt;先把问题拆开
+&lt;/h2&gt;&lt;p&gt;“值不值”其实不是一个问题，而是两个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;这个套餐的&lt;strong&gt;承诺量&lt;/strong&gt;能不能真的给到你？&lt;/li&gt;
+&lt;li&gt;这个套餐的&lt;strong&gt;价格&lt;/strong&gt;，和你按量付费相比，划不划算？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;上一篇文章主要在算第一个问题。&lt;/p&gt;
+&lt;p&gt;这一篇，我只算第二个。&lt;/p&gt;
+&lt;p&gt;因为这两个问题并不矛盾。一个套餐完全可能同时满足下面两点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;它宣传的“海量额度”在工程上很难 100% 打满；&lt;/li&gt;
+&lt;li&gt;但对某些真实重度用户来说，它依然比按量 API 便宜很多。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="以一个供应商的高配年付套餐为例"&gt;以一个供应商的高配年付套餐为例
+&lt;/h2&gt;&lt;p&gt;为了把账算清楚，我还是拿一个具体套餐举例。这里用 &lt;code&gt;GLM-5 Max&lt;/code&gt;，只是因为它的价格、按量定价和套餐规则相对明确，方便计算。&lt;/p&gt;
+&lt;p&gt;更准确地说，&lt;strong&gt;这篇文章复用的是分析框架，不是直接复用结论&lt;/strong&gt;。如果换成别家的 Coding Plan，价格、支持工具、限额窗口和扣减规则都可能不一样，参数必须重新代入。&lt;/p&gt;
+&lt;p&gt;截至 &lt;code&gt;2026-03-22&lt;/code&gt;，我看到的实际价格是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;GLM-5 Max&lt;/code&gt;：&lt;code&gt;4800 元 / 年&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;折合下来：&lt;code&gt;400 元 / 月&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;官方 API 定价则是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;输入：&lt;code&gt;$1 / 1M tokens&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;输出：&lt;code&gt;$3.2 / 1M tokens&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果你只是偶尔用一下，这个年费其实不低。&lt;/p&gt;
+&lt;p&gt;但我最近 30 天的实际 token 用量是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;662,106,588 tokens / 30 天
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这就不是“偶尔用一下”的问题了。&lt;/p&gt;
+&lt;p&gt;不过这里也要先说明：&lt;strong&gt;这是我的个人重度使用样本，不是平均用户画像。&lt;/strong&gt; 这组数字更适合回答“像我这种高负载用户会不会回本”，不适合直接外推成所有人的结论。&lt;/p&gt;
+&lt;h2 id="直接算账"&gt;直接算账
+&lt;/h2&gt;&lt;p&gt;如果这 &lt;code&gt;6.62 亿 tokens&lt;/code&gt; 全部走 &lt;code&gt;GLM-5&lt;/code&gt; 按量 API，那么成本下限是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;662.1 × $1 / 1M = $662
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;也就是说，&lt;strong&gt;哪怕全部按输入 token 计费&lt;/strong&gt;，一个月也已经是 &lt;code&gt;600 多美元&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;而如果考虑更接近真实编码场景的输入输出比例，账单会更高。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="text-align: left"&gt;输入 / 输出占比&lt;/th&gt;
+&lt;th style="text-align: left"&gt;估算单价（每 1M）&lt;/th&gt;
+&lt;th style="text-align: left"&gt;月成本（USD）&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;80% / 20%&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;$1.44&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;$953&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;70% / 30%&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;$1.66&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;$1,099&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;50% / 50%&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;$2.10&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;$1,390&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如果粗略按 &lt;code&gt;1 USD ≈ 6.9 RMB&lt;/code&gt; 来看，大概就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;极保守下限：&lt;code&gt;约 4,500 元 / 月&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;常见编码场景：&lt;code&gt;约 6,500 - 9,600 元 / 月&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而 &lt;code&gt;GLM-5 Max&lt;/code&gt; 的月均成本只有：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4800 / 12 = 400 元 / 月
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;所以从纯价格上看，结论非常直接：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对我这种每月稳定消耗数亿 tokens 的重度样本来说，&lt;code&gt;GLM-5 Max&lt;/code&gt; 不是“省一点”，而是“省很多”。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;但这句话还有一个隐含前提：&lt;strong&gt;这些工作负载必须大部分能落进套餐支持的工具链和额度规则里。&lt;/strong&gt; 如果你的大量 token 消耗其实发生在通用 API、非支持工具，或者持续撞到 5 小时/周限额，那这笔账就要重算。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01.jpg"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01_hu_f901961966842665.jpg 480w, https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01_hu_cd7353837246b27c.jpg 1024w"
+loading="lazy"
+alt="GLM-5 Max 年费订阅与按量 API 账单之间的成本反差示意图"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
+&lt;h2 id="但这里有一个前提省钱不等于一定够用"&gt;但这里有一个前提：省钱，不等于一定够用
+&lt;/h2&gt;&lt;p&gt;这正是上一篇文章想表达的重点。&lt;/p&gt;
+&lt;p&gt;这类高配年付套餐之所以可能非常省钱，不代表它就没有边界。官方文档里依然写了不少限制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;套餐只能在支持的 coding tools 中使用&lt;/li&gt;
+&lt;li&gt;有 &lt;code&gt;5 小时&lt;/code&gt; 的资源窗口限制&lt;/li&gt;
+&lt;li&gt;有 &lt;code&gt;每周&lt;/code&gt; 的额度限制&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GLM-5&lt;/code&gt; 会比历史模型消耗更多套餐配额&lt;/li&gt;
+&lt;li&gt;高峰时段和非高峰时段的扣减效率并不一样&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，&lt;strong&gt;省钱和吞吐，是两个维度。&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从“账单”角度看，重度用户买订阅非常容易回本；&lt;/li&gt;
+&lt;li&gt;从“体验”角度看，你还是可能撞到周限额、窗口限额和并发限制。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这不是数学矛盾，而是两个不同的问题。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02.jpg"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02_hu_21436f73e81e37e3.jpg 480w, https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02_hu_fac3a602665ef2aa.jpg 1024w"
+loading="lazy"
+alt="便宜订阅卡通过狭窄闸机、背后堆满 token 的示意图"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
+&lt;h2 id="什么人适合买这类高配年付套餐"&gt;什么人适合买这类高配年付套餐
+&lt;/h2&gt;&lt;p&gt;我觉得比较适合买这类高配年付 Coding Plan 的，是下面这类用户：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;几乎每天都在 IDE 或终端里跑 coding agent&lt;/li&gt;
+&lt;li&gt;经常做多轮修复、重构、读大仓库、批量改代码&lt;/li&gt;
+&lt;li&gt;token 用量长期稳定，而不是偶尔冲高&lt;/li&gt;
+&lt;li&gt;愿意把套餐主要用在受支持的工具链里&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果你符合这些条件，那么这类高配年付套餐更像一个“压低边际成本”的工具。&lt;/p&gt;
+&lt;p&gt;尤其当你已经进入“每个月稳定烧几亿 tokens”的阶段时，继续按量 API 付费，往往才是更贵的那条路。&lt;/p&gt;
+&lt;h2 id="什么人不适合买这类高配年付套餐"&gt;什么人不适合买这类高配年付套餐
+&lt;/h2&gt;&lt;p&gt;反过来，如果你属于下面几种情况，那这种 &lt;code&gt;4800 / 年&lt;/code&gt; 左右的高配套餐不一定划算：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;只是偶尔写代码时让模型帮一下忙&lt;/li&gt;
+&lt;li&gt;月度用量波动很大，忙的时候很多，不忙的时候几乎不用&lt;/li&gt;
+&lt;li&gt;主要需求不是 coding tool，而是通用 API 集成&lt;/li&gt;
+&lt;li&gt;你真正常用的是更便宜的模型，而不是长期打 &lt;code&gt;GLM-5&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对这些人来说，&lt;code&gt;Pro&lt;/code&gt; 或者干脆按量付费，通常会更稳。&lt;/p&gt;
+&lt;h2 id="所以上一篇文章是不是错了"&gt;所以，上一篇文章是不是错了？
+&lt;/h2&gt;&lt;p&gt;不是。&lt;/p&gt;
+&lt;p&gt;上一篇文章的核心观点依然成立：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;厂商宣传的“海量额度”，并不等于你在现实工作流里可以无摩擦、无上限地把它全部跑出来。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;但这不妨碍这类套餐对重度用户依然有价值。&lt;/p&gt;
+&lt;p&gt;换句话说：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;上一篇文章是在揭穿宣传口径。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;这一篇文章是在计算用户回本。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一个东西可以宣传得夸张，但价格依然可能划算。判断它值不值钱，不能只看厂商文案，也不能只看我上一篇的“吞吐上限”分析，还要看你自己的真实用量。&lt;/p&gt;
+&lt;h2 id="我的结论"&gt;我的结论
+&lt;/h2&gt;&lt;p&gt;如果你每个月的 token 用量只有几百万、几千万，这种高配年付套餐很可能买大了。&lt;/p&gt;
+&lt;p&gt;但如果你已经到了我这种量级，&lt;code&gt;30 天 6.62 亿 tokens&lt;/code&gt;，那 &lt;code&gt;4800 / 年&lt;/code&gt; 的高配 Coding Plan 从价格上看是很值的。这里的 &lt;code&gt;GLM-5 Max&lt;/code&gt; 只是一个算账样本，而且这个结论成立的前提是：你的主要工作负载确实发生在套餐支持的 coding 工具里，没有被窗口限额严重截断。真正需要担心的，不是它会不会回本，而是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;你会不会先撞到窗口限额和周限额；&lt;/li&gt;
+&lt;li&gt;你的工作流是不是主要发生在套餐支持的工具里；&lt;/li&gt;
+&lt;li&gt;你有没有必要全程都用 &lt;code&gt;GLM-5&lt;/code&gt;，还是可以让更便宜的模型承担大部分日常任务。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所以我最后的判断很简单：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对轻度用户，这类高配年付套餐更像预付费焦虑。&lt;/p&gt;
+&lt;p&gt;对重度用户，它更像一张非常便宜、但带限流的通行证。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;最后补一个现实问题。&lt;/p&gt;
+&lt;p&gt;就算这笔账算下来很值，我们最后也未必买得到那个限购的 Coding Plan。&lt;/p&gt;
+&lt;h2 id="参考"&gt;参考
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.z.ai/guides/overview/pricing" target="_blank" rel="noopener"
+&gt;Z.AI Pricing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.z.ai/devpack/faq" target="_blank" rel="noopener"
+&gt;Z.AI GLM Coding Plan FAQ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="相关文章"&gt;相关文章
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
