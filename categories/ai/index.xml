@@ -1,4 +1,130 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/categories/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 22 Mar 2026 16:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>大模型 Coding Plan 年付，到底值不值？</title><link>https://svtter.cn/p/coding-plan-yearly-worth-it/</link><pubDate>Sun, 22 Mar 2026 16:30:00 +0800</pubDate><guid>https://svtter.cn/p/coding-plan-yearly-worth-it/</guid><description>&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/cover-alt.jpg" alt="Featured image of post 大模型 Coding Plan 年付，到底值不值？" /&gt;&lt;p&gt;前段时间我写过一篇文章：&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/categories/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 23 Mar 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>Software Factory：把 PR Review 修复做成一个闭环</title><link>https://svtter.cn/p/software-factory-pr-review-loop/</link><pubDate>Mon, 23 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/software-factory-pr-review-loop/</guid><description>&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/cover.svg" alt="Featured image of post Software Factory：把 PR Review 修复做成一个闭环" /&gt;&lt;p&gt;如果你已经在用 Claude Code、OpenCode、aider 这类工具写代码，真正耗时间的往往不是“第一次生成”，而是 review 之后那几轮重复劳动：看评论、整理问题、切回分支、修代码、跑测试、再回写 PR。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 就是我为这段流程写的一个轻量系统。它不想变成另一个 GitLab，也不准备一上来就做成重型多租户平台；它只专注一件事：把 GitHub PR review 反馈变成一个可追踪、可自动执行、可本地运行的修复闭环。&lt;/p&gt;
+&lt;h2 id="为什么要做这个项目"&gt;为什么要做这个项目
+&lt;/h2&gt;&lt;p&gt;现在很多 AI 编码工具已经能把“写代码”这一步提速很多，但团队协作里的瓶颈并没有消失。&lt;/p&gt;
+&lt;p&gt;一个典型场景是这样的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;开发者提交 PR&lt;/li&gt;
+&lt;li&gt;reviewer 留下 review comment 或 issue comment&lt;/li&gt;
+&lt;li&gt;开发者或 AI 再去手动整理这些意见&lt;/li&gt;
+&lt;li&gt;回到本地修复，再跑测试，再 push&lt;/li&gt;
+&lt;li&gt;如果修得不完整，再重复一轮&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;问题不在于这条链路复杂到无法理解，而在于它太重复了。只要你已经接受“让 AI 参与改代码”，那下一步自然就是把 review 之后的修复过程也纳入自动化。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 的目标，就是把这段重复劳动抽出来，做成一个边界清晰的小系统。&lt;/p&gt;
+&lt;h2 id="它到底在做什么"&gt;它到底在做什么
+&lt;/h2&gt;&lt;p&gt;一句话概括：&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 是一个围绕 GitHub PR 审查反馈闭环构建的轻量编排器。&lt;/p&gt;
+&lt;p&gt;它的核心链路大致是这样：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Hook (Claude Code lifecycle)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Local Orchestrator API
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; State Store / Queue
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; GitHub Webhook Adapter
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Review Normalizer
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Agent Worker
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Thin Web
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这条链路里，每一层都只做一件事：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Hook&lt;/code&gt; 负责记录受管开发会话，确定触发点&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GitHub Webhook&lt;/code&gt; 负责感知 PR review、inline comment、issue comment 的变化&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Review Normalizer&lt;/code&gt; 负责把零散反馈整理成结构化修复输入&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Agent Worker&lt;/code&gt; 负责 checkout、修复、验证、提交、回写&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Thin Web&lt;/code&gt; 负责展示最近任务、状态和错误摘要&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-01.svg"
+loading="lazy"
+alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入，再经过 Normalizer、Worker 和 Thin Web，形成可追踪的修复闭环"
+&gt;&lt;/p&gt;
+&lt;p&gt;我觉得这样实际上实现起来比较敏捷：它不是把所有逻辑塞进一个“大模型万能入口”，而是尽量把触发、归一化、执行、可视化拆开。这样以后你要替换 agent、增加策略或者接入别的触发源，成本会低很多。&lt;/p&gt;
+&lt;h2 id="它到底有多轻"&gt;它到底有多轻
+&lt;/h2&gt;&lt;p&gt;我用最轻量的方式实现了 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;后端就是一个 &lt;code&gt;FastAPI&lt;/code&gt; 服务&lt;/li&gt;
+&lt;li&gt;状态存储先用 &lt;code&gt;SQLite&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;页面就是服务端渲染的 HTML template&lt;/li&gt;
+&lt;li&gt;主链路就围绕 GitHub PR review feedback 展开&lt;/li&gt;
+&lt;li&gt;本地就能把 service、worker 和数据库一起跑起来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;换句话说，它更像一个能逐步扩展的 &lt;code&gt;AI-native PR Autofix Orchestrator&lt;/code&gt;，而不是一个覆盖整个研发流程的大平台。&lt;/p&gt;
+&lt;p&gt;如果你看过我之前写的 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" &gt;使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查&lt;/a&gt;，应该能感觉到这条思路是一脉相承的：先把 runner 和模型跑起来，再把 review 之后的动作继续往前推。&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 只是把这条链路从“自动 review”再往前做了一步，开始处理 review 之后的修复闭环。&lt;/p&gt;
+&lt;h2 id="现在已经做到什么程度"&gt;现在已经做到什么程度
+&lt;/h2&gt;&lt;p&gt;从当前代码和文档来看，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 已经不是一个只有想法的草稿，而是有比较完整主干能力的 MVP，也已经发了 &lt;a class="link" href="https://github.com/sun-praise/software-factory/releases/tag/v0.1.0" target="_blank" rel="noopener"
+&gt;v0.1.0 release&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;目前已经完成的部分包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;最小可跑骨架：FastAPI 服务、健康检查、基础 SSR 页面&lt;/li&gt;
+&lt;li&gt;Hook 和 GitHub Webhook 入库：包括结构化解析、幂等去重、会话与 PR 关联&lt;/li&gt;
+&lt;li&gt;Review Normalizer：把 review/comment 归一化成 &lt;code&gt;must_fix&lt;/code&gt;、&lt;code&gt;should_fix&lt;/code&gt;、&lt;code&gt;ignore&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Agent Worker 执行链路：checkout、跑检查命令、commit、push、回写 PR&lt;/li&gt;
+&lt;li&gt;稳定性模块：PR 锁、重试、最大自动修复次数限制、噪声评论过滤、日志归档&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-02.svg"
+loading="lazy"
+alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补文档、测试和压测"
+&gt;&lt;/p&gt;
+&lt;p&gt;这意味着它已经覆盖了从“收到反馈”到“尝试修复并回写结果”的主路径。&lt;/p&gt;
+&lt;p&gt;我们也通过让 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 自己优化 &lt;a class="link" href="https://github.com/sun-praise/software-factory/pull/59" target="_blank" rel="noopener"
+&gt;PR #59&lt;/a&gt;，验证了这套流程确实能跑通。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这件事最有意思的地方在于，&lt;code&gt;#59&lt;/code&gt; 不只是一个普通 PR，它意味着 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 已经开始参与 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 自己的开发了。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;另外我觉得比较实用的一点，是这个项目并没有把 Web 界面做成纯展示页。除了任务列表和详情，它还在往更可操作的方向走，比如运行详情、operator hints、手动 issue 提交、agent 设置这些入口，说明它的目标不是只做一条后台脚本，而是做一个真正可运维的小系统。&lt;/p&gt;
+&lt;h2 id="这个项目最有意思的地方"&gt;这个项目最有意思的地方
+&lt;/h2&gt;&lt;p&gt;如果只是做一个“收到评论后调用 AI 修代码”的 demo，其实并不难。&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 更有意思的地方，在于它开始认真处理真实系统才会遇到的问题。&lt;/p&gt;
+&lt;h3 id="1-它把触发分成了内部和外部两类"&gt;1. 它把“触发”分成了内部和外部两类
+&lt;/h3&gt;&lt;p&gt;内部触发来自 Claude Code Hook，用来确定性记录开发会话；外部触发来自 GitHub Webhook，用来感知 PR review 的变化。这种拆分让系统知道“什么时候发生了开发动作”，也知道“什么时候出现了新的修复需求”。&lt;/p&gt;
+&lt;h3 id="2-它没有直接把-review-原文丢给-agent"&gt;2. 它没有直接把 review 原文丢给 agent
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Review Normalizer&lt;/code&gt; 的存在非常关键。真实 review 往往很零碎，来源也不统一，里面还混杂噪声、重复评论和优先级差异。先做归一化，再把结构化结果交给 worker，比直接让 agent 消化原始事件稳定得多。&lt;/p&gt;
+&lt;h3 id="3-它开始考虑-agent-运行时的工程问题"&gt;3. 它开始考虑 agent 运行时的工程问题
+&lt;/h3&gt;&lt;p&gt;从 &lt;code&gt;agent_runner&lt;/code&gt; 这条链路里能看到很多现实约束：worktree、校验命令、预先存在的失败用例、重试、日志、取消、不同 agent mode 的切换。这些内容说明这个项目关心的不是“AI 能不能写一段代码”，而是“AI 能不能在工程系统里稳定地完成一次修复任务”。&lt;/p&gt;
+&lt;h3 id="4-它是-local-first-的"&gt;4. 它是 local-first 的
+&lt;/h3&gt;&lt;p&gt;这个项目默认就强调本地运行、共享 &lt;code&gt;DB_PATH&lt;/code&gt;、轻量状态存储和可视化页面。这种 local-first 设计对个人开发者和小团队很友好：你可以先在自己的环境里把闭环跑通，再考虑是否要把它推向更大的部署形态。&lt;/p&gt;
+&lt;h2 id="它适合什么人"&gt;它适合什么人
+&lt;/h2&gt;&lt;p&gt;我觉得 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 现在最适合下面几类场景：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;已经在 GitHub 上做 code review，希望减少 review 后重复修复劳动的个人开发者&lt;/li&gt;
+&lt;li&gt;小团队或内部工具团队，想先把 PR 自动修复闭环跑起来，而不是先上完整平台&lt;/li&gt;
+&lt;li&gt;在尝试把 Claude Code、OpenCode、OpenHands 之类 agent 纳入研发流程的人&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果你的目标是做一个覆盖 CI/CD、权限、审批、租户隔离、复杂报表的企业平台，那它目前显然还不是那个方向。但如果你要解决的问题足够具体：把 review feedback 自动变成下一轮修复动作，那这个项目的切口其实很准。&lt;/p&gt;
+&lt;h2 id="接下来还可以往哪里走"&gt;接下来还可以往哪里走
+&lt;/h2&gt;&lt;p&gt;从文档里的规划看，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 下一步最值得期待的，不是继续堆页面，而是补齐几个真正影响可用性的能力：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更完整的 E2E 和压力测试&lt;/li&gt;
+&lt;li&gt;多仓库支持和更细的策略控制&lt;/li&gt;
+&lt;li&gt;融合 GitHub Actions 之类 CI 信号&lt;/li&gt;
+&lt;li&gt;为不同仓库生成可复用的 runtime image，减少每次 run 的环境准备成本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;尤其是“按仓库构建可复用运行时镜像”这个方向，我觉得很有价值。很多 agent 系统失败并不是因为模型不会修，而是因为运行环境不稳定、依赖不完整、工作目录和真实项目不一致。要让自动修复从 demo 走向日常可用，这一步迟早得做。&lt;/p&gt;
+&lt;h2 id="写在最后"&gt;写在最后
+&lt;/h2&gt;&lt;p&gt;对我来说，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 最重要的不是它用了 FastAPI、SQLite 还是某个具体 agent，而是它试图把一个很真实、很重复、也很容易被忽视的研发环节单独拿出来优化：PR review 之后的修复闭环。&lt;/p&gt;
+&lt;p&gt;如果说很多 AI 编码工具解决的是“怎么更快写出第一版代码”，那 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt; 解决的问题更接近“怎么把代码真正推进到可以合并的状态”。而这一步，恰恰是团队协作里最容易反复消耗人的地方。&lt;/p&gt;
+&lt;p&gt;所以我会把它看成一个很典型的项目：它不是为了证明 AI 会不会写代码，而是想验证 AI 能不能在真实工程流程里，稳定地处理 review 反馈，并把后续修复一步步推进下去。&lt;/p&gt;</description></item><item><title>大模型 Coding Plan 年付，到底值不值？</title><link>https://svtter.cn/p/coding-plan-yearly-worth-it/</link><pubDate>Sun, 22 Mar 2026 16:30:00 +0800</pubDate><guid>https://svtter.cn/p/coding-plan-yearly-worth-it/</guid><description>&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/cover-alt.jpg" alt="Featured image of post 大模型 Coding Plan 年付，到底值不值？" /&gt;&lt;p&gt;前段时间我写过一篇文章：&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;那篇文章讨论的是一个偏“供给侧”的问题：厂商宣传的海量额度，在并发、吞吐和 agent 调用膨胀的现实里，到底能不能兑现。&lt;/p&gt;
 &lt;p&gt;但这还不是全部。&lt;/p&gt;
 &lt;p&gt;对用户来说，另一个同样重要的问题是：&lt;strong&gt;即便套餐的理论承诺很难完全兑现，这种年付制 Coding Plan 到底值不值钱？&lt;/strong&gt;&lt;/p&gt;
