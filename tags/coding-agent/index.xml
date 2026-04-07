@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Agent on Svtter's Blog</title><link>https://svtter.cn/tags/coding-agent/</link><description>Recent content in Coding Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 19 Mar 2026 11:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/coding-agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Codex 的 server-side compaction 挺有意思，也顺便看看 OpenCode 的 compaction</title><link>https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/</link><pubDate>Thu, 19 Mar 2026 11:30:00 +0800</pubDate><guid>https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/</guid><description>&lt;img src="https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/cover.webp" alt="Featured image of post Codex 的 server-side compaction 挺有意思，也顺便看看 OpenCode 的 compaction" /&gt;&lt;p&gt;最近翻 Codex 文档，看到一个点：它明确提到了 &lt;code&gt;server-side compaction&lt;/code&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Agent on Svtter's Blog</title><link>https://svtter.cn/tags/coding-agent/</link><description>Recent content in Coding Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 19 Mar 2026 11:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/coding-agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Codex 和 OpenCode 的上下文压缩</title><link>https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/</link><pubDate>Thu, 19 Mar 2026 11:30:00 +0800</pubDate><guid>https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/</guid><description>&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/cover.webp" alt="Featured image of post Codex 和 OpenCode 的上下文压缩" /&gt;&lt;p&gt;上下文压缩是 coding agent 必备的特性。&lt;/p&gt;
+&lt;p&gt;最近翻 Codex 文档，看到一个点：它明确提到了 &lt;code&gt;server-side compaction&lt;/code&gt;。&lt;/p&gt;
 &lt;p&gt;我觉得这个点挺有意思。不是说&amp;quot;压缩上下文&amp;quot;这件事本身有多新鲜，而是它把这件事放在服务端做，并且写进了文档。也就是说，上下文管理不是用户自己在提示词层面想办法，而是产品本身就内建了一套机制。&lt;/p&gt;
 &lt;p&gt;顺手我又去看了一下 OpenCode 的 compaction。两边都叫 &lt;code&gt;compaction&lt;/code&gt;，但不是一回事。&lt;/p&gt;
 &lt;p&gt;Codex 这边强调的是：服务端在上下文达到阈值时，会把前面的交互压缩成一个更短的表示，后续请求继续带着这个压缩后的状态跑。文档里写得很清楚，&lt;code&gt;server-side compaction&lt;/code&gt; 会用更少的 tokens 携带之前的关键状态。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/compaction-flow.webp"
+&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp"
 width="2752"
 height="1536"
-srcset="https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/compaction-flow_hu_ea963493fd795c1b.webp 480w, https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/compaction-flow_hu_ccf3219a7d9a5a08.webp 1024w"
+srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_ea963493fd795c1b.webp 480w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_ccf3219a7d9a5a08.webp 1024w"
 loading="lazy"
 alt="Codex server-side compaction 示意图"
 class="gallery-image"
@@ -13,10 +14,10 @@ data-flex-grow="179"
 data-flex-basis="430px"
 &gt;&lt;/p&gt;
 &lt;p&gt;OpenCode 这边，我看了一下源码，它也有 compaction，但更像应用层的会话压缩：上下文快满时，调用一个隐藏的 &lt;code&gt;compaction&lt;/code&gt; agent 生成 summary，后续请求不再带完整旧历史，而是保留这段 summary 继续。还有 &lt;code&gt;prune&lt;/code&gt; 会把旧的工具输出清掉，只保留占位文本。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/agent-compaction.webp"
+&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp"
 width="2752"
 height="1536"
-srcset="https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/agent-compaction_hu_9025b7c60e35f796.webp 480w, https://svtter.cn/p/codex-%E7%9A%84-server-side-compaction-%E6%8C%BA%E6%9C%89%E6%84%8F%E6%80%9D%E4%B9%9F%E9%A1%BA%E4%BE%BF%E7%9C%8B%E7%9C%8B-opencode-%E7%9A%84-compaction/agent-compaction_hu_486f6ae6fd4e784b.webp 1024w"
+srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_9025b7c60e35f796.webp 480w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_486f6ae6fd4e784b.webp 1024w"
 loading="lazy"
 alt="OpenCode 应用层 compaction 示意图"
 class="gallery-image"
