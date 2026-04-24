@@ -1,4 +1,122 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/categories/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 23 Mar 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>Software Factory：把 PR Review 修复做成一个闭环</title><link>https://svtter.cn/p/software-factory-pr-review-loop/</link><pubDate>Mon, 23 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/software-factory-pr-review-loop/</guid><description>&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/cover.svg" alt="Featured image of post Software Factory：把 PR Review 修复做成一个闭环" /&gt;&lt;p&gt;如果你已经在用 Claude Code、OpenCode、Codex（不提 Aider 了）这类工具写代码，真正耗时间的往往不是“第一次生成”，而是 review 之后那几轮重复劳动：看评论、整理问题、切回分支、修代码、跑测试、再回写 PR。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/categories/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 24 Apr 2026 12:23:58 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;怎么解决呢？也容易。&lt;/p&gt;
+&lt;h2 id="如何配置"&gt;如何配置
+&lt;/h2&gt;&lt;p&gt;添加 provider 信息到配置中：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.config/opencode/opencode.json&lt;/code&gt; 或者 &lt;code&gt;.config/opencode/opencode.jsonc&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;修改 provider 部分为：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;provider&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;npm&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@ai-sdk/anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;baseURL&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://api.deepseek.com/anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;apiKey&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;lt;apikey&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;models&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek-v4-pro&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek-V4-Pro&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;limit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;context&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1048576&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;262144&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;budgetTokens&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;8192&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek-v4-flash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek-V4-Flash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;limit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;context&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1048576&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;262144&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;budgetTokens&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;8192&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="如何使用"&gt;如何使用
+&lt;/h2&gt;&lt;p&gt;选择 deepseek 模型。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png"
+width="1152"
+height="441"
+srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_674c3ee5c3758d75.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_aaedbc7407592f4f.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="261"
+data-flex-basis="626px"
+&gt;&lt;/p&gt;
+&lt;p&gt;效果。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png"
+width="1361"
+height="510"
+srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_d544c3bb2391e806.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_83c47a71d5603430.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="266"
+data-flex-basis="640px"
+&gt;&lt;/p&gt;</description></item><item><title>Software Factory：把 PR Review 修复做成一个闭环</title><link>https://svtter.cn/p/software-factory-pr-review-loop/</link><pubDate>Mon, 23 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/software-factory-pr-review-loop/</guid><description>&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/cover.svg" alt="Featured image of post Software Factory：把 PR Review 修复做成一个闭环" /&gt;&lt;p&gt;如果你已经在用 Claude Code、OpenCode、Codex（不提 Aider 了）这类工具写代码，真正耗时间的往往不是“第一次生成”，而是 review 之后那几轮重复劳动：看评论、整理问题、切回分支、修代码、跑测试、再回写 PR。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
 &gt;software-factory&lt;/a&gt; 就是我为这段流程写的一个轻量系统。它不想变成另一个 GitLab，也不准备一上来就做成重型多租户平台；它只专注一件事：把 GitHub PR review 反馈变成一个可追踪、可自动执行、可本地运行的修复闭环。&lt;/p&gt;
 &lt;h2 id="为什么要做这个项目"&gt;为什么要做这个项目
