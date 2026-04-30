@@ -1,4 +1,207 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI/人工智能 on Svtter's Blog</title><link>https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</link><description>Recent content in AI/人工智能 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 24 Apr 2026 12:23:58 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/index.xml" rel="self" type="application/rss+xml"/><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI/人工智能 on Svtter's Blog</title><link>https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</link><description>Recent content in AI/人工智能 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;&lt;h2 id="问题描述"&gt;问题描述
+&lt;/h2&gt;&lt;p&gt;在 Claude Code 中直接使用 DeepSeek 模型（如 &lt;code&gt;deepseek-v4-flash&lt;/code&gt;）时，开启 extended thinking 后，多轮对话会触发 400 错误：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="根因分析"&gt;根因分析
+&lt;/h2&gt;&lt;h3 id="调用链"&gt;调用链
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Claude Code → DeepSeek Anthropic 兼容端点 (https://api.deepseek.com/anthropic)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="协议不兼容"&gt;协议不兼容
+&lt;/h3&gt;&lt;p&gt;根据 &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
+&gt;DeepSeek Anthropic API 兼容文档&lt;/a&gt;，兼容情况如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Message 字段&lt;/th&gt;
+&lt;th&gt;支持状态&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✅ Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;❌ Not Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Claude Code 在 extended thinking 模式下的多轮对话中，会忠实地将上一轮返回的所有 thinking blocks（包括 &lt;code&gt;redacted_thinking&lt;/code&gt; 类型）原样回传给 API。DeepSeek 不识别 &lt;code&gt;redacted_thinking&lt;/code&gt;，因此报 400。&lt;/p&gt;
+&lt;p&gt;此外，DeepSeek 的 thinking block 格式与 Anthropic 原生协议存在差异，在 tool_use 场景下的回传逻辑也不完全兼容。&lt;/p&gt;
+&lt;h3 id="核心矛盾"&gt;核心矛盾
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Anthropic API 要求&lt;/strong&gt;：extended thinking 模式下，&lt;code&gt;content[].thinking&lt;/code&gt; 和 &lt;code&gt;content[].redacted_thinking&lt;/code&gt; 必须原封不动回传&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek 兼容层&lt;/strong&gt;：只支持 &lt;code&gt;thinking&lt;/code&gt;，不支持 &lt;code&gt;redacted_thinking&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Claude Code 行为&lt;/strong&gt;：按 Anthropic 协议硬编码，不区分目标端点类型&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="社区反馈"&gt;社区反馈
+&lt;/h2&gt;&lt;p&gt;这是一个&lt;strong&gt;广泛存在的社区问题&lt;/strong&gt;，几乎所有 CC 代理/路由项目都遇到了：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;项目&lt;/th&gt;
+&lt;th&gt;标题&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+&gt;#1&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-use&lt;/td&gt;
+&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+&gt;#878&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;openclaude&lt;/td&gt;
+&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+&gt;#1355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;claude-code-router&lt;/td&gt;
+&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+&gt;#4543&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;new-api&lt;/td&gt;
+&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+&gt;#355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;9router&lt;/td&gt;
+&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+&gt;#16748&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;hermes-agent&lt;/td&gt;
+&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+&gt;#2414&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-switch&lt;/td&gt;
+&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+&gt;#174&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-haha&lt;/td&gt;
+&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="deepseek-官方回应"&gt;DeepSeek 官方回应
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;零回应。&lt;/strong&gt; 也没必要回应。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先，DeepSeek 没有公开的 API issue 仓库，所有反馈均发生在第三方项目中，无 DeepSeek 官方人员参与任何讨论。&lt;/li&gt;
+&lt;li&gt;其次，是否将 Anthropic 作为标准来兼容，我想 DeepSeek 应该是犹豫的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="临时解决方案"&gt;临时解决方案
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;关闭 extended thinking&lt;/strong&gt; — 用 DeepSeek 时在 CC 中关闭 thinking 模式&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;使用代理过滤&lt;/strong&gt; — 在 CC 和 DeepSeek 之间加一层代理，过滤掉 &lt;code&gt;redacted_thinking&lt;/code&gt; blocks&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;换模型&lt;/strong&gt; — 非 thinking 场景使用 DeepSeek，thinking 场景使用 Anthropic 原生模型&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="opencode-为什么没有这个问题"&gt;OpenCode 为什么没有这个问题？
+&lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
+&gt;opencode-ai/opencode&lt;/a&gt;) 在架构上天然规避了这个问题，并非专门&amp;quot;修复&amp;quot;。&lt;/p&gt;
+&lt;p&gt;关键在 &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; 的 &lt;code&gt;convertMessages&lt;/code&gt; 方法（第 60-119 行）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;构建 assistant 消息时，只回传 &lt;code&gt;TextContent&lt;/code&gt;（文本）和 &lt;code&gt;ToolCall&lt;/code&gt;（工具调用）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;完全忽略 &lt;code&gt;ReasoningContent&lt;/code&gt;（thinking 内容）&lt;/strong&gt;，不放入 messages&lt;/li&gt;
+&lt;li&gt;thinking 内容仅通过 stream 的 &lt;code&gt;thinking_delta&lt;/code&gt; 事件在 UI 展示，不会回传给 API&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对比 Claude Code 的行为：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Claude Code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;thinking 回传&lt;/td&gt;
+&lt;td&gt;✅ 忠实回传所有 thinking blocks（含 redacted_thinking）&lt;/td&gt;
+&lt;td&gt;❌ 不回传 thinking blocks&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;架构原因&lt;/td&gt;
+&lt;td&gt;遵循 Anthropic API 规范，要求原样回传&lt;/td&gt;
+&lt;td&gt;自行管理对话状态，thinking 仅用于 UI 展示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DeepSeek 兼容性&lt;/td&gt;
+&lt;td&gt;❌ 触发 400（redacted_thinking 不被识别）&lt;/td&gt;
+&lt;td&gt;✅ 不受影响（根本不传 thinking）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;结论：OpenCode 避开问题的方式是以不遵循 Anthropic extended thinking 规范为代价的。&lt;/strong&gt; 这种做法对 DeepSeek 等第三方兼容端点友好，但如果未来需要 Anthropic 原生的 thinking 上下文保持能力，可能需要重新实现。&lt;/p&gt;
+&lt;h2 id="不回传-thinking-blocks-是否会影响-deepseek-性能"&gt;不回传 thinking blocks 是否会影响 DeepSeek 性能？
+&lt;/h2&gt;&lt;p&gt;基本不会，原因：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;thinking blocks 是模型的内部 scratchpad&lt;/strong&gt;，不是最终输出。对话历史里的文本回复和工具调用已经保留了关键决策和结论&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek 的 reasoning 更接近 OpenAI 的模式&lt;/strong&gt;——每轮独立生成，不像 Anthropic 那样强依赖跨轮回传来保持推理连贯性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OpenCode 的大量实际使用也印证了这一点&lt;/strong&gt;——社区用户在 OpenCode 中用 DeepSeek thinking 模式跑多轮对话，没有反馈过推理质量下降的问题&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;真正可能受影响的极端场景：超长多轮任务中，模型可能重复之前已经推理过的结论。但在大多数实际使用中影响可忽略。&lt;/p&gt;
+&lt;h2 id="相关的-claude-code-原生-issue"&gt;相关的 Claude Code 原生 issue
+&lt;/h2&gt;&lt;p&gt;CC 自身在 Anthropic 模型上也有类似的 thinking block 回传 bug（非 DeepSeek 特有）：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;标题&lt;/th&gt;
+&lt;th&gt;状态&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+&gt;#10199&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+&gt;#51985&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+&gt;#20692&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+&gt;#54482&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -145,4 +348,5 @@ data-flex-basis="640px"
 &lt;h2 id="补充"&gt;补充
 &lt;/h2&gt;&lt;p&gt;这个方式无法解决问题&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;如果你遇到这个问题，还需要等待 opencode 去修复。&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;如果你遇到这个问题，还需要等待 opencode 去修复。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;相关文章&lt;/strong&gt;：&lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block 兼容性问题分析&lt;/a&gt; — 分析了 Claude Code 使用 DeepSeek 时 extended thinking 模式下多轮对话触发 400 错误的根因，以及社区解决方案。&lt;/p&gt;</description></item></channel></rss>
