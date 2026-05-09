@@ -1,4 +1,95 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DevOps on Svtter's Blog</title><link>https://svtter.cn/categories/devops/</link><description>Recent content in DevOps on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 23 Apr 2026 11:36:34 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/devops/index.xml" rel="self" type="application/rss+xml"/><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DevOps on Svtter's Blog</title><link>https://svtter.cn/categories/devops/</link><description>Recent content in DevOps on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 09 May 2026 12:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/devops/index.xml" rel="self" type="application/rss+xml"/><item><title>sth：一个给 AI Agent 用的 HTML 预览服务器</title><link>https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth：一个给 AI Agent 用的 HTML 预览服务器" /&gt;&lt;p&gt;我开源了一个小工具：&lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;static-html&lt;/a&gt;，命令行叫 &lt;code&gt;sth&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;它做的事情很简单：提供一个 HTTP 服务，让你把本地生成的 HTML 文件注册上去，然后在浏览器里预览。&lt;/p&gt;
+&lt;h2 id="为什么需要这个东西"&gt;为什么需要这个东西
+&lt;/h2&gt;&lt;p&gt;问题出在 AI Agent 的输出上。&lt;/p&gt;
+&lt;p&gt;现在我用 Claude Code、OpenCode 这些 agent 干活，它们经常需要输出一些复杂的内容——代码评审汇总、对比分析、报价单、架构设计文档。这些内容用纯文本发到 Telegram 里，格式全乱了，表格看不了，代码高亮也没了。&lt;/p&gt;
+&lt;p&gt;最开始的做法是让 agent 直接在本地生成 HTML 文件，然后用浏览器打开。但问题在于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;agent 跑在服务器上，没有图形界面&lt;/li&gt;
+&lt;li&gt;本地生成的文件路径不确定，管理混乱&lt;/li&gt;
+&lt;li&gt;没有历史记录，发过的东西找不到&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以我需要一个服务：agent 把 HTML 文件&amp;quot;发&amp;quot;上去，然后给一个 URL，在任何设备的浏览器里打开就能看。&lt;/p&gt;
+&lt;h2 id="sth-做了什么"&gt;sth 做了什么
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;sth&lt;/code&gt; 是一个 Go 写的轻量 HTTP 服务，核心就两个命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 启动服务&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth start
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 发送 HTML 文件&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;sth send&lt;/code&gt; 会把目标 HTML 文件和同目录下的资源文件（CSS、JS、图片等）打包上传，然后返回一个 URL。打开这个 URL 就能看到完整的页面效果。&lt;/p&gt;
+&lt;p&gt;实际跑在我的内网开发机上，agent 通过 &lt;code&gt;--server&lt;/code&gt; 参数指定远程地址：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html --server http://dev-1:3939
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="我的实际用法"&gt;我的实际用法
+&lt;/h2&gt;&lt;p&gt;目前 &lt;code&gt;sth&lt;/code&gt; 主要跑在我的开发服务器上，和 Hermes Agent 配合使用。&lt;/p&gt;
+&lt;p&gt;Hermes 是我的日常 AI assistant，跑在 Telegram 上。当它需要输出复杂内容时——比如代码评审结论、技术方案对比、项目报价——会调用 &lt;code&gt;html-report&lt;/code&gt; skill 生成一个格式精美的 HTML 文件，然后通过 &lt;code&gt;sth send&lt;/code&gt; 发到预览服务器，最后把 URL 发给我。&lt;/p&gt;
+&lt;p&gt;整个流程是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;用户提问 -&amp;gt; Hermes Agent 分析
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; 生成 HTML 报告（html-report skill）
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; sth send 发到预览服务器
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; 返回 URL -&amp;gt; 发到 Telegram
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样我在手机上点开链接就能看到排版良好的报告，而不是一坨纯文本。&lt;/p&gt;
+&lt;h2 id="元数据管理"&gt;元数据管理
+&lt;/h2&gt;&lt;p&gt;除了基本的发送和预览，&lt;code&gt;sth&lt;/code&gt; 还支持给 session 打标签、分类、关联项目：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth tag &amp;lt;session-id&amp;gt; code-review pricing
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth categorize &amp;lt;session-id&amp;gt; &lt;span class="s2"&gt;&amp;#34;技术评审&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth project &amp;lt;session-id&amp;gt; hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth list --project hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth search &lt;span class="s2"&gt;&amp;#34;报价&amp;#34;&lt;/span&gt; --tag pricing
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个功能解决了一个实际问题：时间一长，发过的报告会积攒很多。通过标签和项目分类，可以快速找到之前的输出。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;list&lt;/code&gt; 和 &lt;code&gt;search&lt;/code&gt; 的区别在于：&lt;code&gt;list&lt;/code&gt; 是精确匹配元数据字段，&lt;code&gt;search&lt;/code&gt; 是全文搜索。两者可以组合使用。&lt;/p&gt;
+&lt;h2 id="技术细节"&gt;技术细节
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;语言&lt;/strong&gt;：Go 1.24+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;存储&lt;/strong&gt;：SQLite（&lt;code&gt;github.com/mattn/go-sqlite3&lt;/code&gt;，需要 CGO）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;部署&lt;/strong&gt;：单二进制文件，systemd 管理就行&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;构建&lt;/strong&gt;：&lt;code&gt;go build -o dist/sth ./cmd/html-server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;就这么简单，没有多余的依赖。&lt;/p&gt;
+&lt;h2 id="开源"&gt;开源
+&lt;/h2&gt;&lt;p&gt;这个工具之前是 private repo，今天刚改成 public：&lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;sun-praise/static-html&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;如果你也在用 AI Agent 做日常开发工作，并且遇到过&amp;quot;agent 输出的复杂内容在聊天工具里没法看&amp;quot;的问题，可以试试 &lt;code&gt;sth&lt;/code&gt;。它足够轻量，够用就行。&lt;/p&gt;</description></item><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
 &lt;p&gt;目前主要提供两个功能，一个是 review，另一个是借助 runner 来执行 opencode （也就是直接用 runner 跑 opencode 的 prompt），来跑一下其他的功能。例如改代码，创建新的 issue，根据 issue 创建 PR 等。&lt;/p&gt;
 &lt;h2 id="稳定性怎么样"&gt;稳定性怎么样？
 &lt;/h2&gt;&lt;ul&gt;
