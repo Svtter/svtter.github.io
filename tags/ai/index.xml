@@ -1,4 +1,343 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/tags/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 23 Apr 2026 11:36:34 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/tags/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 15 May 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek 技术脉络</title><link>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</link><pubDate>Fri, 15 May 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</guid><description>&lt;img src="https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/cover.png" alt="Featured image of post DeepSeek 技术脉络" /&gt;&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;DeepSeek 技术脉络&lt;/title&gt;
+&lt;style&gt;
+:root { --bg: #0a0a0f; --card: #12121e; --card2: #181830; --accent: #4f8ef7; --accent2: #1a3a6e; --red: #ef4444; --green: #22c55e; --yellow: #f5a623; --purple: #a855f7; --cyan: #06b6d4; --text: #e8e8f0; --muted: #7a7a90; --border: #252540; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', sans-serif; line-height: 1.75; padding: 2rem; max-width: 920px; margin: 0 auto; }
+h1 { font-size: 2.2rem; margin-bottom: 0.2rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+h2 { font-size: 1.35rem; margin: 2.5rem 0 1rem; padding-left: 0.8rem; border-left: 4px solid var(--accent); color: #fff; }
+h3 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.5rem; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content: ''; position: absolute; left: 0.55rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--purple), var(--cyan), var(--green)); }
+.tl-item { position: relative; margin-bottom: 2rem; }
+.tl-dot { position: absolute; left: -1.75rem; top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+.tl-date { font-size: 0.8rem; color: var(--accent); font-weight: 600; margin-bottom: 0.2rem; }
+.tl-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+.tl-title .tag { font-size: 0.7rem; font-weight: 400; color: var(--muted); background: var(--border); padding: 1px 8px; border-radius: 10px; margin-left: 0.5rem; vertical-align: middle; }
+.tl-desc { color: #bbb; font-size: 0.9rem; }
+.tl-desc strong { color: var(--text); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
+.card h4 { font-size: 0.95rem; color: #fff; margin-bottom: 0.4rem; }
+.card p { color: #aaa; font-size: 0.88rem; }
+.tech-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+.tech { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); }
+.tech.blue { border-color: var(--accent); color: var(--accent); }
+.tech.green { border-color: var(--green); color: var(--green); }
+.tech.purple { border-color: var(--purple); color: var(--purple); }
+.tech.yellow { border-color: var(--yellow); color: var(--yellow); }
+.tech.cyan { border-color: var(--cyan); color: var(--cyan); }
+.tech.red { border-color: var(--red); color: var(--red); }
+.highlight { background: linear-gradient(135deg, var(--accent2), #1a1040); border: 1px solid var(--accent); border-radius: 12px; padding: 1.3rem; margin: 1rem 0; }
+.highlight h4 { color: var(--accent); margin-bottom: 0.4rem; }
+.highlight p { color: #ccc; font-size: 0.88rem; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.82rem; }
+th { background: var(--accent2); padding: 0.6rem; text-align: left; font-weight: 600; color: #fff; }
+td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); color: #bbb; }
+tr:hover td { background: rgba(79,142,247,0.05); }
+.mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.8rem; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+@media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } body { padding: 1rem; } h1 { font-size: 1.6rem; } }
+.footer { text-align: center; color: var(--muted); margin-top: 3rem; font-size: 0.78rem; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;img src="cover.png" alt="DeepSeek 技术脉络" style="width:100%;border-radius:12px;margin-bottom:1.5rem;"&gt;
+&lt;h1&gt;DeepSeek 技术脉络&lt;/h1&gt;
+&lt;p class="subtitle"&gt;从量化基金内部实验室到全球 AI 震荡源 · 2023-2026&lt;/p&gt;
+&lt;div class="highlight"&gt;
+&lt;h4&gt;🧠 核心哲学&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;极致的算法效率 &gt; 暴力的算力堆叠&lt;/strong&gt;。在美国芯片禁运限制下，用更弱的芯片（出口版 H800）、更少的 GPU、更低的成本，通过 MoE、MLA、FP8 混合精度等架构创新，达到甚至超越 OpenAI、Meta 的模型性能。全部模型 MIT 开源。&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2&gt;📅 技术演进时间线&lt;/h2&gt;
+&lt;div class="timeline"&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2023 年 11 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-LLM 7B / 67B &lt;span class="tag"&gt;起点&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+架构基本照搬 &lt;a href="https://arxiv.org/abs/2401.02954" target="_blank" rel="noopener" style="color:var(--accent)"&gt;Llama&lt;/a&gt;：pre-norm decoder-only Transformer + RMSNorm + SwiGLU + RoPE + GQA（仅 67B）。
+训练 2T tokens（中英文 Common Crawl 去重），benchmark 超过 Llama 2。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech"&gt;Dense Transformer&lt;/span&gt;
+&lt;span class="tech blue"&gt;GQA（仅 67B）&lt;/span&gt;
+&lt;span class="tech"&gt;RoPE&lt;/span&gt;
+&lt;span class="tech"&gt;SwiGLU&lt;/span&gt;
+&lt;span class="tech"&gt;2T tokens&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2024 年 1 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeekMoE &lt;span class="tag"&gt;MoE 探索&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+16B 参数（每 token 激活 ~2.4B）。引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2401.06066" target="_blank" rel="noopener" style="color:var(--text)"&gt;共享专家（Shared Experts）&lt;/a&gt;&lt;/strong&gt;——始终激活的专家学习通用能力，路由专家（Routed Experts）学习特定能力。解决了标准 MoE 中专家负载不均的问题。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech green"&gt;Shared + Routed Experts&lt;/span&gt;
+&lt;span class="tech"&gt;16B / 2.4B active&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2024 年 2 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-Math &lt;span class="tag"&gt;GRPO 首秀&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+基于 Coder 7B 初始化，用 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2402.03300" target="_blank" rel="noopener" style="color:var(--text)"&gt;GRPO（Group Relative Policy Optimization）&lt;/a&gt;&lt;/strong&gt; 做强化学习。这是 GRPO 的首次应用——用过程奖励模型（PRM）训练，而非传统 PPO。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech purple"&gt;GRPO&lt;/span&gt;
+&lt;span class="tech yellow"&gt;PRM 过程奖励&lt;/span&gt;
+&lt;span class="tech"&gt;144K 数学题&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2024 年 5 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-V2 &lt;span class="tag"&gt;架构大改&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+&lt;strong&gt;里程碑式架构变革。&lt;/strong&gt;引入 &lt;a href="https://arxiv.org/abs/2405.04434" target="_blank" rel="noopener" style="color:var(--text)"&gt;MLA（Multi-head Latent Attention）&lt;/a&gt;替代标准 MHA，通过压缩潜在向量大幅降低 KV cache 显存。MoE + MLA 双创新架构。
+训练 8.1T tokens，两阶段 RL（推理任务 + 通用任务）。
+&lt;strong&gt;价格：每百万输出 token 仅 2 元人民币。&lt;/strong&gt;
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech red"&gt;MLA 多头潜在注意力&lt;/span&gt;
+&lt;span class="tech green"&gt;DeepSeekMoE&lt;/span&gt;
+&lt;span class="tech purple"&gt;GRPO 两阶段 RL&lt;/span&gt;
+&lt;span class="tech"&gt;8.1T tokens&lt;/span&gt;
+&lt;span class="tech"&gt;128K context&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2024 年 12 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-V3 &lt;span class="tag"&gt;效率巅峰&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+&lt;strong&gt;训练成本仅 $600 万&lt;/strong&gt;（GPT-4 为 $1 亿）。14.8T tokens 预训练，引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2412.19437" target="_blank" rel="noopener" style="color:var(--text)"&gt;Multi-token Prediction&lt;/a&gt;&lt;/strong&gt;（可选多 token 解码加速）。
+极致工程优化：FP8 (E4M3) 前向传播、自定义 12-bit float、20/132 SM 专用于通信、动态专家重分配、辅助负载均衡损失。
+Benchmark 超越 Llama 3.1 和 Qwen 2.5，匹敌 GPT-4o 和 Claude 3.5 Sonnet。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech red"&gt;MLA&lt;/span&gt;
+&lt;span class="tech green"&gt;MoE&lt;/span&gt;
+&lt;span class="tech yellow"&gt;Multi-token Prediction&lt;/span&gt;
+&lt;span class="tech cyan"&gt;FP8 (E4M3)&lt;/span&gt;
+&lt;span class="tech"&gt;14.8T tokens&lt;/span&gt;
+&lt;span class="tech purple"&gt;GRPO RL&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot" style="border-color: var(--red);"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2025 年 1 月 20 日&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-R1 💥 &lt;span class="tag"&gt;AI 史普特尼克时刻&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+&lt;strong&gt;引爆全球。&lt;/strong&gt;基于 V3-Base 初始化，纯 RL 驱动的推理模型。
+&lt;br&gt;&lt;strong&gt;&lt;a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener" style="color:var(--text)"&gt;R1-Zero：&lt;/a&gt;&lt;/strong&gt;完全无 SFT，纯 GRPO + 规则奖励（答案正确性 + 格式），自发涌现 Chain-of-Thought 推理。
+&lt;br&gt;&lt;strong&gt;R1：&lt;/strong&gt;在 R1-Zero 基础上加冷启动 SFT（~5K-10K 长链推理示例）→ RL（含语言一致性奖励）→ 合成 800K 数据 → 再 SFT → 再 RL（推理用规则奖励 + 非推理用模型奖励）。
+&lt;br&gt;&lt;strong&gt;蒸馏模型：&lt;/strong&gt;用 R1 合成的 800K 数据直接 SFT 到 LLaMA、Qwen 等开源模型上。
+&lt;br&gt;AIME / MATH benchmark 超越 OpenAI o1。发布后 Nvidia 市值单日蒸发 $6000 亿。论文发表于 &lt;a href="https://www.nature.com/articles/s41586-025-09422-z" target="_blank" rel="noopener" style="color:var(--text)"&gt;Nature&lt;/a&gt;（2025.9）。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech red"&gt;GRPO 纯 RL&lt;/span&gt;
+&lt;span class="tech yellow"&gt;自发 CoT&lt;/span&gt;
+&lt;span class="tech green"&gt;R1-Zero → R1 → Distill&lt;/span&gt;
+&lt;span class="tech purple"&gt;Nature 发表&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2025 年 3 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-V3-0324 &lt;span class="tag"&gt;MIT 开源&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;V3 架构，MIT License 发布。&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2025 年 5 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-R1-0528 &lt;span class="tag"&gt;R2 延期&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+R1 更新版。原计划 R2 早期发布，但梁文锋对性能不满意。传闻原因：数据标注进度慢 + 被鼓励使用华为昇腾芯片但稳定性和互联性能不足。最终选择 Nvidia 训练 + 华为推理。
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2025 年 8 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-V3.1 &lt;span class="tag"&gt;混合架构&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+Thinking / Non-thinking 双模式混合架构。SWE-bench、Terminal-bench 超过 V3 和 R1 超 40%。MIT License。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech blue"&gt;Thinking + Non-thinking&lt;/span&gt;
+&lt;span class="tech green"&gt;SWE-bench +40%&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2025 年 9 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;V3.1-Terminus / V3.2-Exp &lt;span class="tag"&gt;稀疏注意力&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+V3.2-Exp 引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2502.11089" target="_blank" rel="noopener" style="color:var(--text)"&gt;DeepSeek Sparse Attention&lt;/a&gt;&lt;/strong&gt;（NSA），更高效的注意力机制。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech cyan"&gt;Native Sparse Attention&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2025 年 12 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-V3.2 &lt;span class="tag"&gt;稀疏注意力正式版&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;V3.2 + V3.2-Speciale（专注推理的变体）。&lt;a href="https://arxiv.org/abs/2512.02556" target="_blank" rel="noopener" style="color:var(--text)"&gt;DeepSeek Sparse Attention&lt;/a&gt; 正式集成。&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot" style="border-color: var(--yellow);"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2026 年 2 月&lt;/div&gt;
+&lt;div class="tl-title"&gt;Anthropic 指控 &lt;span class="tag"&gt;争议&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a href="https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks" target="_blank" rel="noopener" style="color:var(--text)"&gt;Claude 的对话&lt;/a&gt;，用于训练自己的模型。同时 Moonshot AI 也被指控类似行为。
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot" style="border-color: var(--green);"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2026 年 4 月 24 日&lt;/div&gt;
+&lt;div class="tl-title"&gt;DeepSeek-V4-Pro / V4-Flash &lt;span class="tag"&gt;最新&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+&lt;strong&gt;V4 系列：&lt;/strong&gt;V4-Pro 1.6 万亿参数 + V4-Flash 2840 亿参数。100 万 token 上下文窗口。原生支持文本、图像、视频多模态。MIT License。
+已被华为、寒武纪等芯片制造商采用。融资谈判中，估值或达 $100 亿。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech red"&gt;1.6T params&lt;/span&gt;
+&lt;span class="tech yellow"&gt;1M context&lt;/span&gt;
+&lt;span class="tech green"&gt;MIT License&lt;/span&gt;
+&lt;span class="tech blue"&gt;华为/寒武纪采用&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item"&gt;
+&lt;div class="tl-dot" style="border-color: var(--cyan);"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2026 年 1 月 27 日&lt;/div&gt;
+&lt;div class="tl-title"&gt;&lt;a href="https://arxiv.org/abs/2601.20552" target="_blank" rel="noopener" style="color:#fff"&gt;DeepSeek-OCR 2&lt;/a&gt; &lt;span class="tag"&gt;视觉模型&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+3B 参数视觉语言模型，引入 &lt;strong&gt;Visual Causal Flow&lt;/strong&gt; 架构（DeepEncoder V2），可动态重排视觉 token 模拟人类阅读逻辑。每页仅需 256-1120 个视觉 token，benchmark 91.09%。开源。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech cyan"&gt;Visual Causal Flow&lt;/span&gt;
+&lt;span class="tech"&gt;3B params&lt;/span&gt;
+&lt;span class="tech green"&gt;开源&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tl-item" style="margin-bottom: 0;"&gt;
+&lt;div class="tl-dot" style="border-color: var(--cyan);"&gt;&lt;/div&gt;
+&lt;div class="tl-date"&gt;2026 年 4 月 29 日&lt;/div&gt;
+&lt;div class="tl-title"&gt;识图模式 &lt;span class="tag"&gt;多模态&lt;/span&gt;&lt;/div&gt;
+&lt;div class="tl-desc"&gt;
+基于 V4 原生多模态能力的识图模式灰度上线，5 月 9 日大范围开放。支持上传图片进行内容理解与分析，采用两阶段策略（粗读 + 关键区域精读）。补齐了 DeepSeek 多模态空白。
+&lt;/div&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech cyan"&gt;原生多模态&lt;/span&gt;
+&lt;span class="tech blue"&gt;文本 + 图像 + 视频&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h2&gt;⚡ 核心技术创新&lt;/h2&gt;
+&lt;div class="grid2"&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;MLA — 多头潜在注意力&lt;/h4&gt;
+&lt;p&gt;V2 起引入。将 KV cache 压缩为低秩潜在向量，大幅降低推理显存占用。是 DeepSeek 成本优势的基石之一。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;DeepSeekMoE — 共享专家路由&lt;/h4&gt;
+&lt;p&gt;标准 MoE 的改进：始终激活的 Shared Experts 学通用能力，Routed Experts 学专项能力，解决负载不均问题。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;GRPO — 群组相对策略优化&lt;/h4&gt;
+&lt;p&gt;替代 PPO 的 RL 算法。Math 首秀 → V2 两阶段 RL → R1 纯 RL 推理。R1-Zero 在无 SFT 下自发涌现 CoT。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;FP8 混合精度训练&lt;/h4&gt;
+&lt;p&gt;前向传播用 E4M3（4-bit 指数 + 3-bit 尾数），配合 128×128 块级缩放保证数值稳定性，优化器状态用 BF16。需要特殊 GEMM 累积。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;Multi-token Prediction&lt;/h4&gt;
+&lt;p&gt;V3 起引入。可选的多 token 并行解码，牺牲一定精度换取生成速度提升。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;Native Sparse Attention&lt;/h4&gt;
+&lt;p&gt;V3.2 引入。硬件对齐的原生可训练稀疏注意力，进一步提升长上下文效率。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h2&gt;🏗️ 算力基础设施&lt;/h2&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;&lt;a href="https://arxiv.org/abs/2408.14158" target="_blank" rel="noopener" style="color:#fff"&gt;Fire-Flyer（萤火）集群&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;自建软硬件协同设计算力集群。Fire-Flyer 1（2019，已退役）→ Fire-Flyer 2（2021，仍在运行）。&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;组件&lt;/th&gt;&lt;th&gt;技术&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;硬件&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;Nvidia GPU（A100 → H800），200 Gbps 互联，双 Fat Tree 拓扑&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;3FS&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;分布式并行文件系统，Direct I/O + RDMA Read，专为异步随机读优化&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;hfreduce&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;异步通信库，替代 NCCL，CPU 异步执行避免阻塞 GPU kernel&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;HaiScale DDP&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;并行训练库：DP / PP / TP / EP / FSDP / ZeRO 全支持&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;H800 优化&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;132 SM 中 20 个专用于通信；每 10 分钟动态重分配专家所在机器&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;h2&gt;🔄 模型训练流程演进&lt;/h2&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;V2 / Coder-V2 训练流程&lt;/h4&gt;
+&lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;预训练 → YaRN 上下文扩展 → SFT → GRPO 两阶段 RL&lt;/p&gt;
+&lt;p style="color: #888; font-size: 0.82rem;"&gt;阶段 1 RL：数学/编码（编译器反馈 + 标签）。阶段 2 RL：有用性/安全性（人类偏好 + 规则奖励）。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;V3 训练流程&lt;/h4&gt;
+&lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;14.8T 预训练 → 两次 YaRN 扩展(4K→32K→128K) → SFT(1.5M, 推理+非推理) → GRPO RL(模型奖励+规则奖励)&lt;/p&gt;
+&lt;p style="color: #888; font-size: 0.82rem;"&gt;推理数据由专家模型生成（非 R1 本身，因为 R1 输出"过度思考、格式差、过长"）。非推理数据由 V2.5 + 人工审核。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="card"&gt;
+&lt;h4&gt;R1 训练流程&lt;/h4&gt;
+&lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;R1-Zero: V3-Base → 纯 GRPO RL (无 SFT, 无模型奖励, 规则奖励)&lt;/p&gt;
+&lt;p class="mono" style="color: var(--accent); margin: 0.3rem 0;"&gt;R1: V3-Base → 冷启动 SFT → RL(+语言一致性) → 合成 800K 数据 → SFT → RL(推理规则+非推理模型奖励)&lt;/p&gt;
+&lt;p style="color: #888; font-size: 0.82rem;"&gt;R1-Zero 证明了纯 RL 可以涌现推理能力，但存在可读性和语言混合问题。R1 通过冷启动 + 语言奖励解决。&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2&gt;🔀 R1 蒸馏模型家族&lt;/h2&gt;
+&lt;div class="card"&gt;
+&lt;p&gt;用 R1 合成的 800K 数据直接 SFT 到其他开源基座模型上，无需 RL：&lt;/p&gt;
+&lt;div class="tech-row"&gt;
+&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Qwen-32B&lt;/span&gt;
+&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Qwen-7B&lt;/span&gt;
+&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Llama-70B&lt;/span&gt;
+&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Llama-8B&lt;/span&gt;
+&lt;/div&gt;
+&lt;p style="color: #888; font-size: 0.82rem; margin-top: 0.5rem;"&gt;让任何开源模型都能获得推理能力，无需昂贵的 RL 训练。&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2&gt;🎯 战略定位&lt;/h2&gt;
+&lt;div class="grid2"&gt;
+&lt;div class="highlight" style="border-color: var(--green);"&gt;
+&lt;h4&gt;✅ DeepSeek 做什么&lt;/h4&gt;
+&lt;p&gt;• 语言模型 + 推理 + 视觉（DeepSeek-OCR 2）+ 多模态（V4 识图模式）&lt;br&gt;• 极致成本效率（MoE + MLA + FP8）&lt;br&gt;• 全部 MIT 开源&lt;br&gt;• "专注研究，暂无商业化"&lt;br&gt;• 算法 &gt; 算力的技术路线&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="highlight" style="border-color: var(--red);"&gt;
+&lt;h4&gt;❌ DeepSeek 不做什么&lt;/h4&gt;
+&lt;p&gt;• 不做世界模型&lt;br&gt;• 不追求快速 IPO&lt;br&gt;• 不跟风视频生成&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h2&gt;📊 行业影响&lt;/h2&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;指标&lt;/th&gt;&lt;th&gt;数据&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;V3 训练成本&lt;/td&gt;&lt;td&gt;&lt;strong style="color: var(--green);"&gt;$600 万&lt;/strong&gt;（GPT-4: $1 亿）&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;R1 发布后 Nvidia 单日市值蒸发&lt;/td&gt;&lt;td&gt;&lt;strong style="color: var(--red);"&gt;$6000 亿&lt;/strong&gt;（美股历史最大单股跌幅）&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;R1 发布后超越 ChatGPT&lt;/td&gt;&lt;td&gt;美国 iOS App Store 下载量第一&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;V4-Flash 参数&lt;/td&gt;&lt;td&gt;284B&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;V4-Pro 参数&lt;/td&gt;&lt;td&gt;1.6T&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;V4 上下文窗口&lt;/td&gt;&lt;td&gt;1M tokens&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;最新估值（2026.4 谈判中）&lt;/td&gt;&lt;td&gt;~$100 亿&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;芯片策略&lt;/td&gt;&lt;td&gt;Nvidia 训练 + 华为昇腾推理&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;R2 状态&lt;/td&gt;&lt;td&gt;梁文锋不满意，持续延期中&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;div class="footer"&gt;
+信息来源：Wikipedia · DeepSeek 技术报告 · Nature · Financial Times · Caixin · 2026 年 5 月 15 日整理
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</description></item><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
 &lt;p&gt;目前主要提供两个功能，一个是 review，另一个是借助 runner 来执行 opencode （也就是直接用 runner 跑 opencode 的 prompt），来跑一下其他的功能。例如改代码，创建新的 issue，根据 issue 创建 PR 等。&lt;/p&gt;
 &lt;h2 id="稳定性怎么样"&gt;稳定性怎么样？
 &lt;/h2&gt;&lt;ul&gt;
