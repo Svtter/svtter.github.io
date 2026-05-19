@@ -1,4 +1,197 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/categories/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 15 May 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek 技术脉络</title><link>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</link><pubDate>Fri, 15 May 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</guid><description>&lt;img src="https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/cover.png" alt="Featured image of post DeepSeek 技术脉络" /&gt;&lt;!DOCTYPE html&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on Svtter's Blog</title><link>https://svtter.cn/categories/ai/</link><description>Recent content in AI on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 19 May 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode 配置之外的优化 — 基于插件的优化</title><link>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/</link><pubDate>Tue, 19 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/cover.png" alt="Featured image of post OpenCode 配置之外的优化 — 基于插件的优化" /&gt;&lt;p&gt;OpenCode 的配置（model provider、compaction、MCP server）解决的是&amp;quot;模型怎么跑&amp;quot;的问题。但&amp;quot;流程怎么走&amp;quot;——谁来审查 AI 写的代码、怎么审、审完怎么办——这些配置管不了。这篇文章从我开发 opencode-review 插件的过程出发，聊聊遇到了什么问题、为什么这么做，以及背后有哪些研究支撑。&lt;/p&gt;
+&lt;h2 id="问题ai-写代码很快但谁来审"&gt;问题：AI 写代码很快，但谁来审？
+&lt;/h2&gt;&lt;p&gt;用 OpenCode 写代码之后，我遇到一个明显的问题：&lt;strong&gt;代码产出速度远超审查速度&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;以前一个开发者一天写 200 行代码，review 也许来得及。现在 AI agent 一个 session 就能产出几百行，而且可能涉及多个文件的重构。人肉看 diff 根本跟不上。&lt;/p&gt;
+&lt;p&gt;这不是我一个人的感受。&lt;a class="link" href="https://www.reddit.com/r/LocalLLaMA/comments/1q7hywi/how_do_you_manage_quality_when_ai_agents_write/" target="_blank" rel="noopener"
+&gt;Reddit 上有人讨论过&lt;/a&gt;：AI 10 倍的代码量让人工审查变成了瓶颈，技术债务快速积累。Cloudflare 也在他们的&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+&gt;工程博客&lt;/a&gt;中提到了类似的挑战——他们用 OpenCode 构建了 CI 内置的 AI code reviewer，正是因为工程师们写不过来也审不过来。&lt;/p&gt;
+&lt;p&gt;更具体地说，有三个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;审查覆盖不足&lt;/strong&gt;：AI 生成的代码可能引入安全漏洞、性能问题，但人在快速滚动 diff 时很容易漏掉&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;审查标准不一致&lt;/strong&gt;：不同的 reviewer 关注点不同，有时候关注格式，有时候关注逻辑，没有系统性的框架&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;发现问题后缺乏闭环&lt;/strong&gt;：审出问题之后，还需要手动修复、验证、再提交，流程断裂&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="opencode-review-的设计"&gt;opencode-review 的设计
+&lt;/h2&gt;&lt;p&gt;基于这三个问题，我设计了 opencode-review：一个结构化的代码审查插件。&lt;/p&gt;
+&lt;h3 id="多维度分析"&gt;多维度分析
+&lt;/h3&gt;&lt;p&gt;第一个设计决策是&lt;strong&gt;为什么分五个维度&lt;/strong&gt;，而不是一个笼统的&amp;quot;好不好&amp;quot;的评价。&lt;/p&gt;
+&lt;p&gt;代码质量不是一个单一维度。一段代码可能功能正确、性能优秀，但存在 SQL 注入漏洞；也可能安全无害，但缺少测试覆盖。把它们混在一起评估，结果必然模糊。&lt;/p&gt;
+&lt;p&gt;学术上，&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
+&gt;Modern Code Review (MCR) Survey&lt;/a&gt; 收集了 2013-2025 年间的代码审查研究，提出了一个分类体系，涵盖缺陷检测、安全审查、性能分析、可维护性评估等多个任务维度。Ericsson 的研究团队在 &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+&gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; 中也验证了：按维度拆分的审查比笼统审查在工业场景中更有效。&lt;/p&gt;
+&lt;p&gt;opencode-review 的五个维度——code-quality、security、performance、testing、documentation——对应的就是这些研究中识别出的核心审查维度。每个维度可以独立开关，因为不同项目关注的重点不同：一个内部工具可能不需要文档审查，但一个安全敏感的服务不能跳过 security 维度。&lt;/p&gt;
+&lt;h3 id="严重性分级"&gt;严重性分级
+&lt;/h3&gt;&lt;p&gt;第二个设计决策是&lt;strong&gt;为什么分三级严重性&lt;/strong&gt;（critical / suggestion / highlight）。&lt;/p&gt;
+&lt;p&gt;这来自静态分析工具领域的经验教训。安全工具和 linter 长期面临一个问题：&lt;strong&gt;alert fatigue（告警疲劳）&lt;/strong&gt;。当所有问题都被标记为同等重要时，开发者会开始忽略它们。&lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
+&gt;Veracode 的研究&lt;/a&gt;指出，告警疲劳导致的直接后果是真正的严重问题被淹没在噪音中。&lt;/p&gt;
+&lt;p&gt;分三级的逻辑是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;critical&lt;/strong&gt;：必须修复（安全漏洞、逻辑错误、资源泄漏）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;suggestion&lt;/strong&gt;：建议改进（代码可读性、性能优化、更好的实践）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;highlight&lt;/strong&gt;：值得注意（风格一致性、潜在的改进空间）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这样开发者可以优先处理 critical，而不会在一堆 &amp;ldquo;consider refactoring&amp;rdquo; 中错过一个 SQL 注入。&lt;/p&gt;
+&lt;h3 id="自动修复链"&gt;自动修复链
+&lt;/h3&gt;&lt;p&gt;第三个设计决策是&lt;strong&gt;为什么 critical 问题要自动触发修复&lt;/strong&gt;，而不是仅仅报告。&lt;/p&gt;
+&lt;p&gt;这是一个有争议的设计。传统的审查工具通常是&amp;quot;只报告不修复&amp;quot;，把修复留给开发者。但 opencode-review 的场景不同——它审查的代码本身就是 AI agent 刚写完的，让另一个 agent 去修复合情合理。&lt;/p&gt;
+&lt;p&gt;学术上这属于 &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; 的范畴。&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
+&gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; 综述了 2022-2025 年间的 63 个 LLM-based APR 系统，分为四种范式。其中&amp;quot;分析增强&amp;quot;（analysis-augmented）范式——先用静态分析定位问题，再用 LLM 生成修复——被证明是最有效的。opencode-review 的 auto-fix chain 本质上就是这个范式：reviewer 发现 critical issue → 定位问题位置 → spawn fixer sub-agent → 生成最小化修复。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
+&gt;ICSE 2025 的一篇论文&lt;/a&gt; 也指出，LLM 在 APR 中的关键挑战是目标对齐（objective alignment）——修复的目标不是&amp;quot;生成看起来合理的代码&amp;quot;，而是&amp;quot;精确解决报告的问题&amp;quot;。这也是为什么 opencode-review 的 fixer 被设计为 &lt;strong&gt;minimal fix&lt;/strong&gt;——只做最小的修改来解决问题，不重写、不重构、不&amp;quot;顺手&amp;quot;做其他改动。&lt;/p&gt;
+&lt;h3 id="自动审查的隐性收益代码质量基线的持续提升"&gt;自动审查的隐性收益：代码质量基线的持续提升
+&lt;/h3&gt;&lt;p&gt;上面三个设计解决的是&amp;quot;发现问题&amp;quot;和&amp;quot;修复问题&amp;quot;。但自动审查还有一个容易被忽略的好处：&lt;strong&gt;它在不经意间持续提升了代码质量的基线&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;这个效果来自两个机制：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一，审查反馈对写代码者的塑造。&lt;/strong&gt; &lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
+&gt;FSE 2022 的研究&lt;/a&gt; 在两年的工业实践中发现，当开发者知道自己的代码会被自动审查时，他们会在写代码阶段就更有意识地遵循规范——因为事后被指出来的成本变低了，提前写好的收益变高了。这是一种 &lt;strong&gt;nudge effect（助推效应）&lt;/strong&gt;。在 AI agent 的场景下，这个效应更强：agent 在一个 session 中写了代码、被 review 指出问题、修复、再次被审查——这个循环在同一 session 内就能完成多轮。每一轮反馈都在修正 agent 的输出倾向，相当于一个隐式的 fine-tuning 过程。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第二，自动修复的直接质量累积。&lt;/strong&gt; critical issue 被自动修复意味着每一轮提交的代码质量都比没有审查时更高。这不是一次性的改进，而是持续的。就像代码库中的 lint 规则一样——一开始只是禁止明显错误，但随着规则积累，代码库的整体风格和质量在不知不觉中被拉高了。auto-fix chain 做的事情类似：安全漏洞被自动堵上、资源泄漏被自动修复、缺失的测试被自动补充。时间一长，代码库的质量基线自然高于没有自动审查的情况。&lt;/p&gt;
+&lt;p&gt;简单说：&lt;strong&gt;审查不是目的，质量提升才是。自动审查把&amp;quot;事后检查&amp;quot;变成了&amp;quot;过程中提升&amp;quot;。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="cooldown-机制"&gt;Cooldown 机制
+&lt;/h3&gt;&lt;p&gt;还有一个小的设计细节：&lt;strong&gt;cooldown_seconds&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;auto-review 在 session idle 时触发，但 idle 事件可能频繁触发（比如 agent 在等待用户确认时也会 idle）。没有 cooldown 的话，同一份代码可能被审查好几次，浪费 token。120 秒的默认冷却期是一个经验值——足够让一轮修改完成，又不会等太久。&lt;/p&gt;
+&lt;h2 id="opencode-froggy另一种思路"&gt;opencode-froggy：另一种思路
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/smartfrog/opencode-froggy" target="_blank" rel="noopener"
+&gt;opencode-froggy&lt;/a&gt;（85 Stars，昨天刚发 0.12.0）提供了另一种思路。它不做结构化的多维度审查，而是提供 6 个专用 agent（architect、code-reviewer、code-simplifier、doc-writer、partner、rubber-duck）和一套灵活的 hooks 系统。&lt;/p&gt;
+&lt;p&gt;Froggy 的 code-reviewer 是一个通用的只读审查 agent，不区分维度和严重性。但它的 hooks 系统很强——你可以配置 &lt;code&gt;session.idle&lt;/code&gt; 事件自动跑 lint、自动格式化、甚至在写入敏感文件时拦截：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;event&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;session.idle&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;conditions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;hasCodeChange, isMainSession]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;bash&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npm run lint --fix&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;simplify-changes&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这是一种&amp;quot;开发者自己编排流程&amp;quot;的思路，和 opencode-review 的&amp;quot;开箱即用的结构化审查&amp;quot;形成互补。&lt;/p&gt;
+&lt;h3 id="对比"&gt;对比
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;opencode-review&lt;/th&gt;
+&lt;th&gt;opencode-froggy&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;审查方式&lt;/td&gt;
+&lt;td&gt;结构化多维度分析&lt;/td&gt;
+&lt;td&gt;通用 code-reviewer agent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;严重性分级&lt;/td&gt;
+&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
+&lt;td&gt;无&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;自动修复&lt;/td&gt;
+&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
+&lt;td&gt;code-simplifier，需手动触发&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;触发方式&lt;/td&gt;
+&lt;td&gt;session idle + cooldown&lt;/td&gt;
+&lt;td&gt;hooks 配置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;自定义规则&lt;/td&gt;
+&lt;td&gt;custom_rules 支持项目规范&lt;/td&gt;
+&lt;td&gt;无&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;其他功能&lt;/td&gt;
+&lt;td&gt;无&lt;/td&gt;
+&lt;td&gt;6 agent + hooks + gitingest + 区块链&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;两个不冲突，可以一起装。我的建议是：&lt;strong&gt;opencode-review 做日常自动审查，froggy 的 hooks 做流程编排&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id="插件安装"&gt;插件安装
+&lt;/h2&gt;&lt;p&gt;在 &lt;code&gt;opencode.json&lt;/code&gt; 中加一行就行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;plugin&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;opencode-review&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;opencode-froggy&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;重启后 OpenCode 会通过 Bun 自动安装。opencode-review 还需要创建 &lt;code&gt;.opencode/review.json&lt;/code&gt; 来配置审查行为：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;language&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;dimensions&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;code-quality&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;security&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;performance&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;testing&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;documentation&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;trigger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;auto_on_idle&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;cooldown_seconds&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;120&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;custom_rules&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;All API endpoints must have error handling&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;Database queries must use parameterized statements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="其他值得关注的插件"&gt;其他值得关注的插件
+&lt;/h2&gt;&lt;p&gt;生态已经超过 70 个插件了，再推荐几个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;opencode-worktree&lt;/strong&gt;：零摩擦的 git worktree 管理&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;opencode-notify&lt;/strong&gt;：任务完成时发送系统通知&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;dynamic-context-pruning&lt;/strong&gt;：自动裁剪过时的工具输出，优化 token 使用&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;envsitter-guard&lt;/strong&gt;：阻止 agent 读取 &lt;code&gt;.env&lt;/code&gt; 敏感文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;完整列表见 &lt;a class="link" href="https://github.com/awesome-opencode/awesome-opencode" target="_blank" rel="noopener"
+&gt;awesome-opencode&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="参考文献"&gt;参考文献
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
+&gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 代码审查研究综述&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+&gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — LLM 辅助代码审查的工业实践&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
+&gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM 自动修复综述，覆盖 63 个系统&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
+&gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — LLM 修复的目标对齐问题&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
+&gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — 两年工业环境自动审查的经验总结&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://homes.cs.washington.edu/~rjust/publ/code_review_automation_aiware_2024.pdf" target="_blank" rel="noopener"
+&gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — AutoCommenter 的部署与评估&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2603.23448v2" target="_blank" rel="noopener"
+&gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent 代码审查基准测试&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+&gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare 用 OpenCode 构建大规模 AI 审查&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>DeepSeek 技术脉络</title><link>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</link><pubDate>Fri, 15 May 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</guid><description>&lt;img src="https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/cover.png" alt="Featured image of post DeepSeek 技术脉络" /&gt;&lt;!DOCTYPE html&gt;
 &lt;html lang="zh-CN"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8"&gt;
