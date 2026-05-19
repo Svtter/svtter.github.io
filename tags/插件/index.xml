@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>插件 on Svtter's Blog</title><link>https://svtter.cn/tags/%E6%8F%92%E4%BB%B6/</link><description>Recent content in 插件 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 19 May 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/%E6%8F%92%E4%BB%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode 配置之外的优化 — 基于插件的优化</title><link>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/</link><pubDate>Tue, 19 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/cover.png" alt="Featured image of post OpenCode 配置之外的优化 — 基于插件的优化" /&gt;&lt;p&gt;之前我写过一篇 &lt;a class="link" href="../../2026-01-28-opencode-config-optimization" &gt;OpenCode 配置优化记录&lt;/a&gt;，解决的是 token 消耗和上下文管理的问题。但配置优化管的是&amp;quot;模型怎么跑&amp;quot;，而&amp;quot;代码写到一半质量怎么样&amp;quot;——这件事配置管不了。这篇文章从我开发 opencode-review 插件的过程出发，聊聊 opencode-review 如何在一个 session 内帮助 agent 审查并改进自己的代码，让最终进入 PR 的代码质量更高。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>插件 on Svtter's Blog</title><link>https://svtter.cn/tags/%E6%8F%92%E4%BB%B6/</link><description>Recent content in 插件 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 19 May 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/%E6%8F%92%E4%BB%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode 配置之外的优化 — 基于插件的优化</title><link>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/</link><pubDate>Tue, 19 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/cover.png" alt="Featured image of post OpenCode 配置之外的优化 — 基于插件的优化" /&gt;&lt;p&gt;之前我写过一篇 &lt;a class="link" href="https://svtter.cn/p/opencode-%e9%85%8d%e7%bd%ae%e4%bc%98%e5%8c%96%e8%ae%b0%e5%bd%95/" &gt;OpenCode 配置优化记录&lt;/a&gt;，解决的是 token 消耗和上下文管理的问题。但配置优化管的是&amp;quot;模型怎么跑&amp;quot;，而&amp;quot;代码写到一半质量怎么样&amp;quot;——这件事配置管不了。这篇文章从我开发 opencode-review 插件的过程出发，聊聊 opencode-review 如何在一个 session 内帮助 agent 审查并改进自己的代码，让最终进入 PR 的代码质量更高。&lt;/p&gt;
 &lt;h2 id="问题session-内的代码质量谁来把关"&gt;问题：session 内的代码质量谁来把关？
 &lt;/h2&gt;&lt;p&gt;用 OpenCode 写代码时，一个典型的工作流是：agent 在一个 session 内完成编码，然后我 review diff、创建 PR。但我发现一个反复出现的问题：&lt;strong&gt;agent 写完的代码经常带着&amp;quot;第一次草稿&amp;quot;的质量问题就进入 PR 了&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;这些问题包括：缺少错误处理、安全漏洞、性能不佳的查询、缺失的测试。如果能在 session 内——也就是代码还没提交到 PR 之前——让 agent 自行审查一轮，很多问题在 PR 阶段就不存在了。&lt;/p&gt;
 &lt;p&gt;这和 CI 阶段的 code review 是不同层次的事情。CI 审查我已经通过 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;opencode-actions&lt;/a&gt;（之前写过一篇&lt;a class="link" href="../../2026-04-23-%e6%88%91%e7%9a%84-opencode-actions-" &gt;介绍文章&lt;/a&gt;）实现了——它发生在 PR 创建之后，由 GitHub Actions 触发。后来 Cloudflare 也在&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+&gt;opencode-actions&lt;/a&gt;（之前写过一篇&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;介绍文章&lt;/a&gt;）实现了——它发生在 PR 创建之后，由 GitHub Actions 触发。后来 Cloudflare 也在&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
 &gt;工程博客&lt;/a&gt;中分享了类似思路：用 OpenCode 构建大规模 AI code review。而 opencode-review 要解决的是更早的阶段：&lt;strong&gt;在 session 内、在 PR 之前，让 agent 在写完代码后主动审查并修复问题&lt;/strong&gt;。两者互补：opencode-review 提升进入 PR 的代码质量基线，opencode-actions 则作为最后一道关卡。&lt;/p&gt;
 &lt;p&gt;具体来说，有三个需要解决的子问题：&lt;/p&gt;
 &lt;ol&gt;
@@ -20,6 +20,16 @@
 &gt;Modern Code Review (MCR) Survey&lt;/a&gt; 收集了 2013-2025 年间的代码审查研究，提出了一个分类体系，涵盖缺陷检测、安全审查、性能分析、可维护性评估等多个任务维度。Ericsson 的研究团队在 &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
 &gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; 中也验证了：按维度拆分的审查比笼统审查在工业场景中更有效。&lt;/p&gt;
 &lt;p&gt;opencode-review 的五个维度——code-quality、security、performance、testing、documentation——对应的就是这些研究中识别出的核心审查维度。每个维度可以独立开关，因为不同项目关注的重点不同：一个内部工具可能不需要文档审查，但一个安全敏感的服务不能跳过 security 维度。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_fee8cfb6405a3b52.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_e6cf9edc0381ce9e.png 1024w"
+loading="lazy"
+alt="五个审查维度"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
 &lt;h3 id="严重性分级"&gt;严重性分级
 &lt;/h3&gt;&lt;p&gt;第二个设计决策是&lt;strong&gt;为什么分三级严重性&lt;/strong&gt;（critical / suggestion / highlight）。&lt;/p&gt;
 &lt;p&gt;这来自静态分析工具领域的经验教训。安全工具和 linter 长期面临一个问题：&lt;strong&gt;alert fatigue（告警疲劳）&lt;/strong&gt;。当所有问题都被标记为同等重要时，开发者会开始忽略它们。&lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
@@ -36,6 +46,16 @@
 &lt;p&gt;这是一个有争议的设计。传统的审查工具通常是&amp;quot;只报告不修复&amp;quot;，把修复留给开发者。但 opencode-review 的场景不同——它审查的代码本身就是 AI agent 刚写完的，让另一个 agent 去修复合情合理。&lt;/p&gt;
 &lt;p&gt;学术上这属于 &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; 的范畴。&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
 &gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; 综述了 2022-2025 年间的 63 个 LLM-based APR 系统，分为四种范式。其中&amp;quot;分析增强&amp;quot;（analysis-augmented）范式——先用静态分析定位问题，再用 LLM 生成修复——被证明是最有效的。opencode-review 的 auto-fix chain 本质上就是这个范式：reviewer 发现 critical issue → 定位问题位置 → spawn fixer sub-agent → 生成最小化修复。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_64ea9309fb7c73fb.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_4f63e97b37c322c.png 1024w"
+loading="lazy"
+alt="自动修复链"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
 &gt;ICSE 2025 的一篇论文&lt;/a&gt; 也指出，LLM 在 APR 中的关键挑战是目标对齐（objective alignment）——修复的目标不是&amp;quot;生成看起来合理的代码&amp;quot;，而是&amp;quot;精确解决报告的问题&amp;quot;。这也是为什么 opencode-review 的 fixer 被设计为 &lt;strong&gt;minimal fix&lt;/strong&gt;——只做最小的修改来解决问题，不重写、不重构、不&amp;quot;顺手&amp;quot;做其他改动。&lt;/p&gt;
 &lt;h3 id="自动审查的隐性收益代码质量基线的持续提升"&gt;自动审查的隐性收益：代码质量基线的持续提升
@@ -45,6 +65,16 @@
 &gt;FSE 2022 的研究&lt;/a&gt; 在两年的工业实践中发现，当开发者知道自己的代码会被自动审查时，他们会在写代码阶段就更有意识地遵循规范——因为事后被指出来的成本变低了，提前写好的收益变高了。这是一种 &lt;strong&gt;nudge effect（助推效应）&lt;/strong&gt;。在 AI agent 的场景下，这个效应更强：agent 在一个 session 中写了代码、被 review 指出问题、修复、再次被审查——这个循环在同一 session 内就能完成多轮。每一轮反馈都在修正 agent 的输出倾向，相当于一个隐式的 fine-tuning 过程。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;第二，自动修复的直接质量累积。&lt;/strong&gt; critical issue 被自动修复意味着每一轮提交的代码质量都比没有审查时更高。这不是一次性的改进，而是持续的。就像代码库中的 lint 规则一样——一开始只是禁止明显错误，但随着规则积累，代码库的整体风格和质量在不知不觉中被拉高了。auto-fix chain 做的事情类似：安全漏洞被自动堵上、资源泄漏被自动修复、缺失的测试被自动补充。时间一长，代码库的质量基线自然高于没有自动审查的情况。&lt;/p&gt;
 &lt;p&gt;简单说：&lt;strong&gt;审查不是目的，质量提升才是。自动审查把&amp;quot;事后检查&amp;quot;变成了&amp;quot;过程中提升&amp;quot;。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_7100ce2819f4e267.jpg 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_a67af1e1edd38f95.jpg 1024w"
+loading="lazy"
+alt="代码质量基线提升"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
 &lt;h3 id="cooldown-机制"&gt;Cooldown 机制
 &lt;/h3&gt;&lt;p&gt;还有一个小的设计细节：&lt;strong&gt;cooldown_seconds&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;auto-review 在 session idle 时触发，但 idle 事件可能频繁触发（比如 agent 在等待用户确认时也会 idle）。没有 cooldown 的话，同一份代码可能被审查好几次，浪费 token。120 秒的默认冷却期是一个经验值——足够让一轮修改完成，又不会等太久。&lt;/p&gt;
@@ -215,7 +245,7 @@
 &gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — AutoCommenter 的部署与评估&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2603.23448v2" target="_blank" rel="noopener"
 &gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent 代码审查基准测试&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="../../2026-04-23-%e6%88%91%e7%9a%84-opencode-actions-" &gt;opencode-actions - 一个 coding review agent&lt;/a&gt; — 基于 OpenCode 构建的 GitHub Action，CI 阶段的 code review&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - 一个 coding review agent&lt;/a&gt; — 基于 OpenCode 构建的 GitHub Action，CI 阶段的 code review&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
 &gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare 用 OpenCode 构建大规模 AI 审查&lt;/li&gt;
 &lt;/ul&gt;</description></item></channel></rss>
