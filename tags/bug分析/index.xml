@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bug分析 on Svtter's Blog</title><link>https://svtter.cn/tags/bug%E5%88%86%E6%9E%90/</link><description>Recent content in Bug分析 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 23 May 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/bug%E5%88%86%E6%9E%90/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失</title><link>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</guid><description>&lt;img src="https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/cover.jpg" alt="Featured image of post OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失" /&gt;&lt;p&gt;16 万 star 的 opencode 项目最近连续合并了三个 LLM provider 层的 bug 修复 PR，都是核心维护者 kitlangton 提交的。这三个 bug 不是某次重构引入的回归问题，而是从协议层初始设计就存在的缺陷——只是在最近使用量增长后才暴露出来。&lt;/p&gt;
+&lt;p&gt;这篇文章分析这三个 bug 的根因、修复方式，以及对开发 AI 工具的启示。&lt;/p&gt;
+&lt;h2 id="背景opencode-的-llm-协议层"&gt;背景：opencode 的 LLM 协议层
+&lt;/h2&gt;&lt;p&gt;opencode 支持多个 LLM provider（OpenAI、Anthropic 等），每个 provider 有自己的协议实现文件，负责把统一的内部格式转换成各 provider 的 API 格式。比如 &lt;code&gt;openai-responses.ts&lt;/code&gt; 处理 OpenAI Responses API，&lt;code&gt;anthropic-messages.ts&lt;/code&gt; 处理 Anthropic Messages API。&lt;/p&gt;
+&lt;p&gt;这些协议层有两个核心工作：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;下行（lowering）&lt;/strong&gt;：把 opencode 内部的消息格式转成 provider 的请求格式&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;上行（parsing）&lt;/strong&gt;：把 provider 返回的流式响应解析成 opencode 内部的消息格式&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;三个 bug 分别出在这两个方向上。&lt;/p&gt;
+&lt;h2 id="bug-1tool-result-中的图片被字符串化"&gt;Bug 1：Tool Result 中的图片被字符串化
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28754" target="_blank" rel="noopener"
+&gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
+&gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
+&gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
+&gt;#28861&lt;/a&gt;）&lt;/p&gt;
+&lt;h3 id="问题"&gt;问题
+&lt;/h3&gt;&lt;p&gt;当 LLM 调用一个工具（比如截图工具），工具返回的结果可能包含图片（base64 编码）。opencode 的协议层在处理这种 tool result 时，统一调用了 &lt;code&gt;ProviderShared.toolResultText(part)&lt;/code&gt;，这个函数把整个 tool result——包括图片——JSON.stringify 成一个字符串。&lt;/p&gt;
+&lt;p&gt;对于 OpenAI Responses API，这意味着：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前：所有 tool result 都变成字符串
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;一个包含 base64 图片的 tool result 被序列化成字符串塞进了 &lt;code&gt;function_call_output.output&lt;/code&gt;。对于 Anthropic Messages API 同样：图片被 JSON.stringify 后塞进了 &lt;code&gt;tool_result.content&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id="修复"&gt;修复
+&lt;/h3&gt;&lt;p&gt;OpenAI 端：新增 &lt;code&gt;lowerToolResultOutput&lt;/code&gt; 函数，判断 tool result 的类型：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文本/json/error → 保持原来的字符串行为（向后兼容）&lt;/li&gt;
+&lt;li&gt;图片 → 以 &lt;code&gt;input_image&lt;/code&gt; 结构化块发送&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复后：图片以结构化格式发送
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;input_image&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;image_url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;data:image/png;base64,...&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Anthropic 端做了类似的处理，图片以 Anthropic 原生的 &lt;code&gt;image&lt;/code&gt; 块发送。同时 &lt;code&gt;function_call_output.output&lt;/code&gt; 的 schema 从 &lt;code&gt;Schema.String&lt;/code&gt; 改成了 &lt;code&gt;Schema.Union([Schema.String, Schema.Array(...)])&lt;/code&gt;，既支持旧的字符串格式，也支持新的结构化数组。&lt;/p&gt;
+&lt;h3 id="根因"&gt;根因
+&lt;/h3&gt;&lt;p&gt;这不是某次重构搞坏的，而是初始设计就没考虑到 tool result 会返回非文本内容。&lt;code&gt;toolResultText()&lt;/code&gt; 作为一个通用函数，把所有内容都当文本处理——在只有文本 tool result 的世界里这是对的，但世界变了。&lt;/p&gt;
+&lt;h2 id="bug-2stream-error-信息被吞掉"&gt;Bug 2：Stream Error 信息被吞掉
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28757" target="_blank" rel="noopener"
+&gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
+&gt;#28860&lt;/a&gt;）&lt;/p&gt;
+&lt;h3 id="问题-1"&gt;问题
+&lt;/h3&gt;&lt;p&gt;LLM provider 的流式响应可能在中途出错（rate limit、context overflow、model overload 等）。opencode 的错误处理代码把这些错误全部压成了通用字符串：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;所有错误都变成了 &lt;code&gt;&amp;quot;OpenAI Responses stream error&amp;quot;&lt;/code&gt; 这一句话。维护者在 PR 描述里提到，这使得某个 session 的诊断变得极其痛苦——底层原因（base64 图片过大）完全不可见。&lt;/p&gt;
+&lt;p&gt;OpenAI 的 &lt;code&gt;response.failed&lt;/code&gt; 事件更惨：错误信息在 &lt;code&gt;response.error&lt;/code&gt; 下面，但代码读的是 &lt;code&gt;event.message&lt;/code&gt; 和 &lt;code&gt;event.code&lt;/code&gt;（顶层字段），永远是 undefined。&lt;/p&gt;
+&lt;h3 id="修复-1"&gt;修复
+&lt;/h3&gt;&lt;p&gt;OpenAI 端：先读顶层 &lt;code&gt;event.{code, message, param}&lt;/code&gt;，再回退到嵌套的 &lt;code&gt;event.response.error.{code, message, param}&lt;/code&gt;。当 code 和 message 同时存在时，用 code 做前缀：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;rate_limit_exceeded: Slow down
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;server_error: Upstream model unavailable
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Anthropic 端：用 &lt;code&gt;error.type&lt;/code&gt; 做前缀：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;overloaded_error&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Overloaded&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="根因-1"&gt;根因
+&lt;/h3&gt;&lt;p&gt;错误处理的代码写得太&amp;quot;乐观&amp;quot;了——假设错误信息总在预期的位置。但 OpenAI 的 API 在不同错误场景下把信息放在不同的嵌套层级，代码没有覆盖所有情况。&lt;/p&gt;
+&lt;h2 id="bug-3anthropic-tool-result-类型检查不稳定"&gt;Bug 3：Anthropic Tool Result 类型检查不稳定
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28909" target="_blank" rel="noopener"
+&gt;#28909&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="问题-2"&gt;问题
+&lt;/h3&gt;&lt;p&gt;这个 PR 在前两个修复合并后才出现。修复了图片 tool result 的结构化发送后，Anthropic 端的类型检查变得不稳定——某些边缘情况下 tool result 的类型推断会失败。&lt;/p&gt;
+&lt;p&gt;具体来说，&lt;code&gt;tool_result.content&lt;/code&gt; 的类型从 &lt;code&gt;string&lt;/code&gt; 扩展成了 &lt;code&gt;string | ContentItem[]&lt;/code&gt;，但下游代码没有完全适配这个联合类型。&lt;/p&gt;
+&lt;h3 id="修复-2"&gt;修复
+&lt;/h3&gt;&lt;p&gt;稳定了 Anthropic tool result 的类型检查逻辑，确保联合类型的所有分支都被正确处理。&lt;/p&gt;
+&lt;h3 id="根因-2"&gt;根因
+&lt;/h3&gt;&lt;p&gt;这是 Bug 1 修复的连锁反应。把 schema 从 &lt;code&gt;Schema.String&lt;/code&gt; 改成 &lt;code&gt;Schema.Union&lt;/code&gt; 后，类型系统变复杂了，之前不需要处理的分支现在必须处理。&lt;/p&gt;
+&lt;h2 id="三个-bug-的关系"&gt;三个 Bug 的关系
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;初始设计缺陷&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="err"&gt;只考虑文本场景&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;Bug&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;OpenAI&lt;/span&gt; &lt;span class="err"&gt;图片被字符串化&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="c1"&gt;#28754)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;Bug&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Anthropic&lt;/span&gt; &lt;span class="err"&gt;图片被字符串化&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="c1"&gt;#28755)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="n"&gt;handler&lt;/span&gt; &lt;span class="err"&gt;只覆盖理想情况&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;Bug&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;stream&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="err"&gt;信息丢失&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="c1"&gt;#28757)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;Bug&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="err"&gt;修复后类型变复杂&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;Bug&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="err"&gt;类型检查不稳定&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="c1"&gt;#28909)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Bug 1 和 Bug 2 是独立的初始设计缺陷。Bug 3 是 Bug 1 修复的副作用。&lt;/p&gt;
+&lt;h2 id="对-ai-工具开发的启示"&gt;对 AI 工具开发的启示
+&lt;/h2&gt;&lt;h3 id="1-协议层的够用就行是最危险的"&gt;1. 协议层的&amp;quot;够用就行&amp;quot;是最危险的
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;toolResultText()&lt;/code&gt; 在只有文本 tool result 的时候完全够用。但协议层的抽象一旦固定下来，后续扩展就很难——因为所有调用方都依赖当前行为。opencode 的修复保持了向后兼容（文本场景仍然用字符串），但代价是类型变复杂了（Bug 3）。&lt;/p&gt;
+&lt;p&gt;如果初始设计就把 tool result 分成文本/结构化两条路径，就不会有后面的问题。当然，这是事后诸葛亮——没有人能在第一天就预见到 tool result 会包含图片。&lt;/p&gt;
+&lt;h3 id="2-错误处理要假设最坏情况"&gt;2. 错误处理要假设最坏情况
+&lt;/h3&gt;&lt;p&gt;&amp;ldquo;错误信息总在预期位置&amp;quot;这个假设在 LLM API 上尤其不成立。各家 provider 的错误格式不一致，同一家 provider 的不同错误类型格式也不一致。写错误处理代码时，应该假设错误信息可能在任何嵌套层级，甚至完全缺失。&lt;/p&gt;
+&lt;h3 id="3-修一个-bug-可能暴露下一个"&gt;3. 修一个 bug 可能暴露下一个
+&lt;/h3&gt;&lt;p&gt;opencode 的三个 PR 形成了一条修复链。修了图片序列化后，类型变复杂了，暴露了类型检查的漏洞。在提交修复时应该考虑到类型变更的下游影响。&lt;/p&gt;
+&lt;h3 id="4-观察-bug-的方式决定了修复速度"&gt;4. 观察 bug 的方式决定了修复速度
+&lt;/h3&gt;&lt;p&gt;kitlangton 在 #28757 的 PR 描述里提到，stream error 信息丢失使得某个 session 极其难诊断。如果错误信息是可见的，可能早就发现了。&lt;strong&gt;让错误可见&lt;/strong&gt;是基础设施类代码的重要原则——宁可多输出一点，也不要吞掉信息。&lt;/p&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;opencode 的这三个 LLM provider bug 都源自初始设计对复杂场景的简化处理。随着 AI 工具能力边界的扩展（从纯文本到多模态），早期&amp;quot;够用就行&amp;quot;的抽象开始出现裂缝。修复的方式是务实的：保持向后兼容的同时扩展新能力。对 AI 工具开发者来说，这是一个提醒——协议层的设计要为未知的变化留余地，错误处理要假设最坏的情况。&lt;/p&gt;</description></item></channel></rss>
