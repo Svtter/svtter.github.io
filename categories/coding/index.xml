@@ -1,4 +1,93 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding on Svtter's Blog</title><link>https://svtter.cn/categories/coding/</link><description>Recent content in Coding on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 23 May 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/coding/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失</title><link>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</guid><description>&lt;img src="https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/cover.jpg" alt="Featured image of post OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失" /&gt;&lt;p&gt;16 万 star 的 opencode 项目最近连续合并了三个 LLM provider 层的 bug 修复 PR，都是核心维护者 kitlangton 提交的。这三个 bug 不是某次重构引入的回归问题，而是从协议层初始设计就存在的缺陷——只是在最近使用量增长后才暴露出来。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding on Svtter's Blog</title><link>https://svtter.cn/categories/coding/</link><description>Recent content in Coding on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 23 May 2026 18:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/coding/index.xml" rel="self" type="application/rss+xml"/><item><title>我在 GitHub 上遇到一个 AI bot——它读了我的 issue，理解了问题，然后自己提了个 PR</title><link>https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/</link><pubDate>Sat, 23 May 2026 18:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/cover.jpg" alt="Featured image of post 我在 GitHub 上遇到一个 AI bot——它读了我的 issue，理解了问题，然后自己提了个 PR" /&gt;&lt;p&gt;昨天在 Oh My Pi（OMP）仓库经历了一件让我震惊的事：一个 AI bot 不只是回复了我的 issue，它在理解了问题之后，&lt;strong&gt;自己去翻了源码，开了一个精准的 PR 来修复 bug&lt;/strong&gt;。整个过程不到 5 分钟。&lt;/p&gt;
+&lt;h2 id="起因"&gt;起因
+&lt;/h2&gt;&lt;p&gt;我在用 OMP（一个终端 AI coding agent）的时候发现一个体验问题：&lt;code&gt;Ctrl+T&lt;/code&gt; 可以隐藏 thinking blocks，但隐藏的同时会把 extended thinking 整个关掉——不只是不显示，而是模型不再思考。用户以为只是&amp;quot;关了显示&amp;quot;，实际效果是&amp;quot;关了大脑&amp;quot;。&lt;/p&gt;
+&lt;p&gt;于是我去了 &lt;a class="link" href="https://github.com/can1357/oh-my-pi" target="_blank" rel="noopener"
+&gt;OMP 的 GitHub 仓库&lt;/a&gt;，开了一个 feature request：&lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/1313" target="_blank" rel="noopener"
+&gt;#1313&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="roboomp-的第一次回复"&gt;roboomp 的第一次回复
+&lt;/h2&gt;&lt;p&gt;Issue 发出去几秒钟后，一个叫 &lt;a class="link" href="https://github.com/roboomp" target="_blank" rel="noopener"
+&gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;这个功能大部分已经存在了——&lt;code&gt;hideThinkingBlock&lt;/code&gt; 设置、&lt;code&gt;Ctrl+T&lt;/code&gt; 快捷键、渲染路径&lt;/li&gt;
+&lt;li&gt;缺的只是 CLI 启动参数&lt;/li&gt;
+&lt;li&gt;有一个设计决策需要 maintainer 定夺：&lt;code&gt;hideThinkingBlock&lt;/code&gt; 和 &lt;code&gt;hideThinkingSummary&lt;/code&gt; 的耦合&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;而且它给出了&lt;strong&gt;精确的文件名和行号&lt;/strong&gt;：&lt;code&gt;settings-schema.ts:663&lt;/code&gt;、&lt;code&gt;input-controller.ts:755&lt;/code&gt;、&lt;code&gt;stream.ts:583,697&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这不是搜索拼出来的，它真的读了代码。&lt;/p&gt;
+&lt;h2 id="我指出设计缺陷"&gt;我指出设计缺陷
+&lt;/h2&gt;&lt;p&gt;我回复了一条评论，说这个耦合是个 footgun：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用户按 &lt;code&gt;Ctrl+T&lt;/code&gt; 本意是减少视觉噪音，结果不知不觉关掉了 extended thinking，模型输出质量下降&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;不想看推理过程&amp;quot;和&amp;quot;不想让模型推理&amp;quot;是两件不同的事，不应该绑在一起&lt;/li&gt;
+&lt;li&gt;对不同 provider 效果还不一样（MiniMax 关不掉，Anthropic/OpenAI 能关），同一个快捷键行为不一致&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我还补充了引入这个耦合的 commit 历史，方便追溯。&lt;/p&gt;
+&lt;h2 id="它自己开了个-pr"&gt;它自己开了个 PR
+&lt;/h2&gt;&lt;p&gt;然后发生了让我难以置信的事——roboomp 连续回复了两条评论，并直接开了一个 PR：&lt;a class="link" href="https://github.com/can1357/oh-my-pi/pull/1314" target="_blank" rel="noopener"
+&gt;#1314&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;PR 的改动：&lt;strong&gt;0 addition, 3 deletion&lt;/strong&gt;。只删了三行：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;sdk.ts:1860&lt;/code&gt; — agent 初始化时不再把 &lt;code&gt;hideThinkingBlock&lt;/code&gt; 赋给 &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;input-controller.ts:758&lt;/code&gt; — Ctrl+T handler 里不再联动&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;selector-controller.ts:273&lt;/code&gt; — 设置 UI 同理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;PR 描述里完整写了 repro 步骤、根因分析、修复方案。它还确认了我提供的 commit archaeology——&lt;code&gt;45bd444&lt;/code&gt; 就是引入这个 bug 的那个 commit。&lt;/p&gt;
+&lt;h2 id="为什么这件事让我震惊"&gt;为什么这件事让我震惊
+&lt;/h2&gt;&lt;p&gt;&amp;ldquo;AI 能写代码&amp;quot;不是新闻。Copilot、Claude Code、Cursor 都能写代码。但这次不一样的地方在于：&lt;/p&gt;
+&lt;h3 id="完整的闭环"&gt;完整的闭环
+&lt;/h3&gt;&lt;p&gt;整个流程是零人工的：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;我开 issue → bot 读代码库，给出现有实现状态&lt;/li&gt;
+&lt;li&gt;我指出设计缺陷 → bot 理解了我的观点&lt;/li&gt;
+&lt;li&gt;它自己定位到 bug 引入的 commit，开了一个只删 3 行的 PR&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;从 issue 到 PR，没有人类在中间做任何事。&lt;/p&gt;
+&lt;h3 id="它知道该等"&gt;它知道该等
+&lt;/h3&gt;&lt;p&gt;第一条回复里它说&amp;quot;Holding on implementation until a maintainer weighs in on the coupling question&amp;rdquo;——它知道这是一个需要判断的设计决策，不应该擅自行动。但当我把耦合问题讲清楚后，它判断不再需要等，直接开 PR。&lt;/p&gt;
+&lt;h3 id="修复是最小化的"&gt;修复是最小化的
+&lt;/h3&gt;&lt;p&gt;0 addition / 3 deletion。它理解了最小修复是什么，没有重构、没有加抽象、没有画蛇添足。很多人类开发者都做不到这一点。&lt;/p&gt;
+&lt;h2 id="roboomp-是什么"&gt;roboomp 是什么
+&lt;/h2&gt;&lt;p&gt;roboomp 是 OMP 仓库维护者 can1357 部署的一个 AI bot。它不是 GitHub Actions workflow（我翻了 CI 配置确认了），而是一个独立的服务端 agent：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;监听 GitHub Webhook 事件（issue 创建、评论等）&lt;/li&gt;
+&lt;li&gt;通过 GitHub API 读源码，理解代码结构&lt;/li&gt;
+&lt;li&gt;用 LLM 分析上下文，自主决策下一步——评论、打 label、开 PR&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;从 can1357 的 GitHub profile 看，这人做 hypervisor / 逆向工程出身（ByePg、NoVmp、NtRays），现在在做 AI agent 平台（agentx、hindsight）。roboomp 大概率是他把代码理解能力做得特别深的产物。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;这个项目没有开源。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="有类似的开源项目吗"&gt;有类似的开源项目吗
+&lt;/h2&gt;&lt;p&gt;找了一圈，目前最接近的有：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;项目&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
+&gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
+&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
+&gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;但说实话，没有一个做到 roboomp 这个水准。大部分还停留在&amp;quot;接 webhook → 调 LLM → 贴评论&amp;quot;的阶段。能自主读源码、理解代码结构、参与设计讨论、做精准修复的，roboomp 是我看到的第一个。&lt;/p&gt;
+&lt;h2 id="意味着什么"&gt;意味着什么
+&lt;/h2&gt;&lt;p&gt;这件事让我意识到，AI coding agent 的能力边界正在快速扩张。一年前我们在讨论&amp;quot;AI 能不能写正确的代码&amp;rdquo;，现在的问题是&amp;quot;AI 能不能在开源社区里当 maintainer&amp;quot;。&lt;/p&gt;
+&lt;p&gt;roboomp 展示的能力——读代码、理解上下文、参与讨论、做最小修复——本质上就是一个 junior maintainer 在做的事。如果这个能力继续提升，开源项目的维护模式可能会发生根本性的变化。&lt;/p&gt;
+&lt;p&gt;想想看：一个开源项目维护者每天花最多时间的事情是什么？回复 issue、triage bug、写小修复。这些恰恰是 roboomp 最擅长的事。如果每个开源项目都能部署一个这样的 bot，maintainer 就能把时间集中在架构决策和社区建设上。&lt;/p&gt;
+&lt;p&gt;当然，目前的局限性也很明显——它只能处理边界清晰、定位明确的问题。但这次体验让我相信，&amp;ldquo;AI maintainer&amp;quot;不是一个遥远的未来场景，而是正在发生的事情。&lt;/p&gt;</description></item><item><title>OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失</title><link>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</guid><description>&lt;img src="https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/cover.jpg" alt="Featured image of post OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失" /&gt;&lt;p&gt;16 万 star 的 opencode 项目最近连续合并了三个 LLM provider 层的 bug 修复 PR，都是核心维护者 kitlangton 提交的。这三个 bug 不是某次重构引入的回归问题，而是从协议层初始设计就存在的缺陷——只是在最近使用量增长后才暴露出来。&lt;/p&gt;
 &lt;p&gt;这篇文章分析这三个 bug 的根因、修复方式，以及对开发 AI 工具的启示。&lt;/p&gt;
 &lt;h2 id="背景opencode-的-llm-协议层"&gt;背景：opencode 的 LLM 协议层
 &lt;/h2&gt;&lt;p&gt;opencode 支持多个 LLM provider（OpenAI、Anthropic 等），每个 provider 有自己的协议实现文件，负责把统一的内部格式转换成各 provider 的 API 格式。比如 &lt;code&gt;openai-responses.ts&lt;/code&gt; 处理 OpenAI Responses API，&lt;code&gt;anthropic-messages.ts&lt;/code&gt; 处理 Anthropic Messages API。&lt;/p&gt;
