@@ -1,4 +1,1364 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/en/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 19 Mar 2026 12:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Does Self-Hosting an LLM Really Let You Use It Without Limits?</title><link>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</link><pubDate>Thu, 19 Mar 2026 12:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/cover.jpg" alt="Featured image of post Does Self-Hosting an LLM Really Let You Use It Without Limits?" /&gt;&lt;p&gt;Many people start thinking seriously about self-hosting an LLM not because of technical romance, but because API bills, rate limits, or compliance requirements have started to collide with real business constraints.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/en/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 27 May 2026 10:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/post/index.xml" rel="self" type="application/rss+xml"/><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
+&lt;p&gt;Based on my review of the &lt;strong&gt;kimi-code&lt;/strong&gt; source code (particularly &lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;, &lt;code&gt;kimi-schema.ts&lt;/code&gt;, &lt;code&gt;kimi-files.ts&lt;/code&gt;, etc.) and relevant OpenCode compatibility issues, here are the kimi-k2.6-specific optimizations in kimi-code and how they differ from OpenCode.&lt;/p&gt;
+&lt;h2 id="1-native-kimi-provider-not-a-generic-openai-compatible-layer"&gt;1. Native Kimi Provider (Not a Generic OpenAI-compatible Layer)
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; does not treat Kimi as &amp;ldquo;just another OpenAI-compatible endpoint.&amp;rdquo; Instead, it implements a dedicated &lt;code&gt;kimi&lt;/code&gt; provider type:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Feature&lt;/th&gt;
+&lt;th&gt;kimi-code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Provider Type&lt;/td&gt;
+&lt;td&gt;Dedicated &lt;code&gt;'kimi'&lt;/code&gt; type with independent adapter&lt;/td&gt;
+&lt;td&gt;Accessed via generic OpenAI/Anthropic bridge&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Proprietary Fields&lt;/td&gt;
+&lt;td&gt;Native handling of &lt;code&gt;reasoning_content&lt;/code&gt;, &lt;code&gt;thinking&lt;/code&gt;, &lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;reasoning_content&lt;/code&gt; often lost in the bridge layer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Auth Headers&lt;/td&gt;
+&lt;td&gt;Supports &lt;code&gt;kimiRequestHeaders&lt;/code&gt;, &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt;, and other Moonshot-specific headers&lt;/td&gt;
+&lt;td&gt;Generic header forwarding&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="2-full-lifecycle-handling-of-reasoning_content"&gt;2. Full Lifecycle Handling of &lt;code&gt;reasoning_content&lt;/code&gt;
+&lt;/h2&gt;&lt;p&gt;kimi-k2.6 has thinking enabled by default and &lt;strong&gt;requires &lt;code&gt;reasoning_content&lt;/code&gt; to be preserved across multi-turn conversation history&lt;/strong&gt;. Otherwise, tool calls will result in a 400 error.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How kimi-code handles it:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;convertMessage&lt;/code&gt;&lt;/strong&gt;: Extracts internal &lt;code&gt;think&lt;/code&gt; content parts and serializes them into the &lt;code&gt;reasoning_content&lt;/code&gt; field, ensuring thinking content is never lost in message history&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Streaming Parser&lt;/strong&gt;: Explicitly extracts &lt;code&gt;delta.reasoning_content&lt;/code&gt; / &lt;code&gt;message.reasoning_content&lt;/code&gt; in both &lt;code&gt;_convertStreamResponse&lt;/code&gt; and &lt;code&gt;_convertNonStreamResponse&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TUI Rendering&lt;/strong&gt;: A dedicated &lt;code&gt;ThinkingComponent&lt;/code&gt; renders thinking content in real time, with expand/collapse support and a spinner animation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode&amp;rsquo;s Problem:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The OpenCode Go bridge &lt;strong&gt;drops &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/strong&gt; on the second turn, causing the Moonshot API to return:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;thinking&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;enabled&lt;/span&gt; &lt;span class="n"&gt;but&lt;/span&gt; &lt;span class="n"&gt;reasoning_content&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;missing&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;assistant&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="3-json-schema-normalization-kimi-schemats"&gt;3. JSON Schema Normalization (&lt;code&gt;kimi-schema.ts&lt;/code&gt;)
+&lt;/h2&gt;&lt;p&gt;Moonshot&amp;rsquo;s tool parameter validator has strict and unique requirements for JSON Schema. This is one of the primary sources of incompatibility between OpenCode and kimi-k2.6.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What kimi-code&amp;rsquo;s &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; does:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dereferences &lt;code&gt;$ref&lt;/code&gt;&lt;/strong&gt;: Inlines definitions from &lt;code&gt;$defs&lt;/code&gt; / &lt;code&gt;definitions&lt;/code&gt;, eliminating external references&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fills in missing &lt;code&gt;type&lt;/code&gt;&lt;/strong&gt;: The Kimi validator rejects nested property schemas that omit &lt;code&gt;type&lt;/code&gt; (e.g., MCP-generated enum-only schemas). kimi-code infers and backfills &lt;code&gt;type: string/object/array&lt;/code&gt;, etc.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Circular reference detection&lt;/strong&gt;: Preserves the original &lt;code&gt;$ref&lt;/code&gt; when a circular reference is detected, avoiding infinite recursion&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode&amp;rsquo;s Problem:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Generated schemas use &lt;code&gt;#/definitions/&lt;/code&gt; instead of the &lt;code&gt;#/$defs/&lt;/code&gt; format required by Moonshot, and lack schema type inference and backfilling for Kimi, causing complex tool calls to fail with 400.&lt;/p&gt;
+&lt;h2 id="4-native-thinking-mode-configuration-system"&gt;4. Native Thinking Mode Configuration System
+&lt;/h2&gt;&lt;p&gt;kimi-code has built-in support for Kimi&amp;rsquo;s thinking mode from the configuration layer all the way to the UI:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Config Parsing&lt;/strong&gt;: &lt;code&gt;ThinkingConfigSchema&lt;/code&gt; supports &lt;code&gt;mode: auto/on/off&lt;/code&gt; and &lt;code&gt;effort: low/medium/high/xhigh/max&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Model Capability Tags&lt;/strong&gt;: &lt;code&gt;ModelAlias&lt;/code&gt; supports &lt;code&gt;capabilities: ['thinking', 'always_thinking']&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Model Selector UI&lt;/strong&gt;: Press &lt;code&gt;←→&lt;/code&gt; to toggle thinking on/off; &lt;code&gt;always-on&lt;/code&gt; models cannot be turned off&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Provider Method&lt;/strong&gt;: &lt;code&gt;withThinking(effort)&lt;/code&gt; correctly generates:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;reasoning_effort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;high&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;extra_body&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Token Budget&lt;/strong&gt;: Automatically normalizes legacy &lt;code&gt;max_tokens&lt;/code&gt; to Kimi&amp;rsquo;s preferred &lt;code&gt;max_completion_tokens&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode&amp;rsquo;s Problem:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When using the Anthropic bridge, it hardcodes &lt;code&gt;thinking&lt;/code&gt; content blocks, but the Kimi API only supports &lt;code&gt;text/image_url/video_url/video&lt;/code&gt;, resulting in:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Invalid value: thinking. Supported values are: &amp;#39;text&amp;#39;,&amp;#39;image_url&amp;#39;,&amp;#39;video_url&amp;#39; and &amp;#39;video&amp;#39;.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="5-native-moonshot-service-integration"&gt;5. Native Moonshot Service Integration
+&lt;/h2&gt;&lt;p&gt;kimi-code includes Moonshot-exclusive services instead of relying on generic local implementations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;MoonshotFetchURLProvider&lt;/code&gt;&lt;/strong&gt;: Prioritizes Moonshot&amp;rsquo;s &lt;code&gt;coding-fetch&lt;/code&gt; service (with built-in page text extraction), falling back to local fetch only on failure&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;MoonshotWebSearchProvider&lt;/code&gt;&lt;/strong&gt;: Calls the Moonshot search API directly, supporting &lt;code&gt;enable_page_crawling&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;KimiFiles&lt;/code&gt;&lt;/strong&gt;: Uploads videos to the Moonshot file service, returning &lt;code&gt;video_url&lt;/code&gt; in the &lt;code&gt;ms://&amp;lt;file-id&amp;gt;&lt;/code&gt; format&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="6-tool-call-layer-details"&gt;6. Tool Call Layer Details
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Built-in Functions&lt;/strong&gt;: Tool names starting with &lt;code&gt;$&lt;/code&gt; are recognized as Kimi builtin functions and serialized as &lt;code&gt;type: 'builtin_function'&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Usage Extraction&lt;/strong&gt;: Supports Moonshot&amp;rsquo;s proprietary &lt;code&gt;choices[0].usage&lt;/code&gt; placement, as well as &lt;code&gt;cached_tokens&lt;/code&gt; and other fields&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Finish Reason Mapping&lt;/strong&gt;: Maps OpenAI-style &lt;code&gt;stop&lt;/code&gt;/&lt;code&gt;tool_calls&lt;/code&gt;/&lt;code&gt;length&lt;/code&gt; values to an internal unified enum&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="7-cli-core-and-llm-sdk-architectural-isolation"&gt;7. CLI Core and LLM SDK Architectural Isolation
+&lt;/h2&gt;&lt;p&gt;This is an easily overlooked but important architectural difference.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The core CLI of kimi-code (&lt;code&gt;apps/kimi-code&lt;/code&gt;) does not directly depend on any OpenAI or Anthropic TypeScript SDK.&lt;/strong&gt; Looking at its &lt;code&gt;package.json&lt;/code&gt;, the core dependencies are only generic libraries like TUI rendering (&lt;code&gt;pi-tui&lt;/code&gt;), CLI parsing (&lt;code&gt;commander&lt;/code&gt;), and syntax highlighting (&lt;code&gt;cli-highlight&lt;/code&gt;). All LLM provider interactions are isolated within the self-developed &lt;code&gt;kosong&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;While &lt;code&gt;packages/kosong&lt;/code&gt; internally uses &lt;code&gt;openai&lt;/code&gt; and &lt;code&gt;@anthropic-ai/sdk&lt;/code&gt; as implementation details (since the Kimi API is OpenAI-compatible), it exposes a unified LLM abstraction interface to the outside. The CLI core only depends on &lt;code&gt;kosong&lt;/code&gt; and has no awareness of underlying vendor SDKs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode is different.&lt;/strong&gt; Its &lt;code&gt;packages/opencode&lt;/code&gt; core package directly depends on a large number of vendor SDKs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/openai&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/anthropic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/google&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/azure&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@openrouter/ai-sdk-provider&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&amp;hellip; (more than a dozen provider-specific packages in total)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This means OpenCode&amp;rsquo;s core code is deeply coupled with each vendor&amp;rsquo;s SDK, while kimi-code&amp;rsquo;s core CLI stays clean, with all model interactions fully isolated through a self-developed abstraction layer.&lt;/p&gt;
+&lt;h2 id="8-what-commit-history-reveals-about-evolution-paths"&gt;8. What Commit History Reveals About Evolution Paths
+&lt;/h2&gt;&lt;p&gt;The structural code differences above are just a static snapshot. What&amp;rsquo;s more interesting is comparing the commit histories of the two projects—their &lt;strong&gt;dynamic evolution directions are completely different&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="kimi-code-native-design-continuously-reducing-configuration-burden"&gt;kimi-code: Native Design, Continuously Reducing Configuration Burden
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;842e699&lt;/code&gt; — &amp;ldquo;Kimi For Coding&amp;rdquo; (Initial Commit)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This was the starting point of the entire project. The initial code already included:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;: Dedicated Kimi provider&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;packages/kosong/src/providers/kimi-schema.ts&lt;/code&gt;: Dedicated JSON Schema normalizer&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;packages/kosong/src/providers/kimi-files.ts&lt;/code&gt;: Dedicated file upload service&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion: kimi-code treated the Kimi API as a first-class citizen from day one, not as a later patch.&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;d95b013&lt;/code&gt; fix(catalog): preserve reasoning fields in custom model (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+&gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This commit fixed a very subtle issue. models.dev uses the &lt;code&gt;interleaved&lt;/code&gt; field to mark reasoning support, but early code treated &lt;code&gt;interleaved=true&lt;/code&gt; as undefined, causing models selected via &lt;code&gt;/connect&lt;/code&gt; to silently lose their reasoning capability.&lt;/p&gt;
+&lt;p&gt;Fixes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;interleaved=true&lt;/code&gt; is mapped to the default &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;interleaved&lt;/code&gt; is added to the &lt;code&gt;update-catalog.mjs&lt;/code&gt; allowlist; otherwise the offline catalog in release builds would silently drop the field again&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;61f7d0e&lt;/code&gt; fix(kosong): make openai-compatible thinking work without reasoning_key (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+&gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is the core commit for reasoning handling&lt;/strong&gt;, showcasing kimi-code&amp;rsquo;s deep thinking on compatibility. The diff reveals a three-layer design:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Inbound Auto-Scan&lt;/strong&gt; (response parsing)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;KNOWN_REASONING_KEYS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;reasoning_content&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;reasoning_details&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;reasoning&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="kr"&gt;as&lt;/span&gt; &lt;span class="kr"&gt;const&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Auto-scan three fields; first string value wins
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Outbound Default Write-Back&lt;/strong&gt; (request serialization)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;DEFAULT_OUTBOUND_REASONING_KEY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;KNOWN_REASONING_KEYS&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="c1"&gt;// &amp;#39;reasoning_content&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Defaults to writing back as reasoning_content, no user config needed
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Auto-Inject &lt;code&gt;reasoning_effort&lt;/code&gt;&lt;/strong&gt; (historical continuity)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// When history contains ThinkPart but caller hasn&amp;#39;t explicitly set reasoning_effort,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// auto-inject &amp;#39;medium&amp;#39; to prevent strict gateways like One API / DeepSeek from returning 400
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Edge cases are handled meticulously: blank &lt;code&gt;reasoning_key&lt;/code&gt; (&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;) is normalized to &lt;code&gt;undefined&lt;/code&gt;; values explicitly set by the caller via &lt;code&gt;withGenerationKwargs&lt;/code&gt; &lt;strong&gt;are not silently overwritten by auto-injection&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The verification goal explicitly states:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id="opencode-generic-layer-design-openai-centric"&gt;OpenCode: Generic Layer Design, OpenAI-centric
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;eb84f46&lt;/code&gt; fix(llm): split OpenAI reasoning summary blocks (#29000)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This commit demonstrates OpenCode&amp;rsquo;s completely different approach to reasoning—designed around the &lt;strong&gt;OpenAI Responses API&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maintains a state machine for &lt;code&gt;encrypted_content&lt;/code&gt; and &lt;code&gt;item_reference&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Folds multiple summary parts by &lt;code&gt;item_id&lt;/code&gt; + &lt;code&gt;summary_index&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When &lt;code&gt;store:false&lt;/code&gt;, filters out reasoning items lacking &lt;code&gt;encrypted_content&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;This is completely different from Kimi&amp;rsquo;s &lt;code&gt;reasoning_content&lt;/code&gt; mechanism.&lt;/strong&gt; Kimi does not need &lt;code&gt;encrypted_content&lt;/code&gt; or &lt;code&gt;item_reference&lt;/code&gt;; it simply attaches a &lt;code&gt;reasoning_content&lt;/code&gt; field to the message.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="a-hard-fact"&gt;A Hard Fact
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+&gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;Status: still open&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/27054" target="_blank" rel="noopener"
+&gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;Status: closed, but the resolution was to disable MCP (a workaround)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The last comment on #27054:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;That&amp;rsquo;s not a fix. That&amp;rsquo;s avoiding the problem.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="commit-history-comparison-summary"&gt;Commit History Comparison Summary
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Dimension&lt;/th&gt;
+&lt;th&gt;kimi-code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Initial Design&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Initial commit includes full Kimi provider + schema normalizer + file service&lt;/td&gt;
+&lt;td&gt;Generic multi-model architecture, adapted later via bridge&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Reasoning Mechanism&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Designed around &lt;code&gt;reasoning_content&lt;/code&gt; field, with auto-scan / write-back / effort injection&lt;/td&gt;
+&lt;td&gt;Designed around OpenAI Responses&amp;rsquo; &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Schema Handling&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;, dereferences &lt;code&gt;$ref&lt;/code&gt; + backfills &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Generic schema validation, focused on friendly error messages&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Config Philosophy&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Makes OpenAI-compatible gateways &amp;ldquo;zero-config&amp;rdquo; by auto-inferring all fields&lt;/td&gt;
+&lt;td&gt;Relies on users manually adapting via bridge/config&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Issue Status&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Continuously shipping reasoning-related patches (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+&gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+&gt;#78&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;kimi-k2.6 compatibility issue &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+&gt;#26331&lt;/a&gt; still open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="summary-core-differences"&gt;Summary: Core Differences
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Dimension&lt;/th&gt;
+&lt;th&gt;kimi-code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Architecture Positioning&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Native design for Kimi/Moonshot, dedicated provider&lt;/td&gt;
+&lt;td&gt;Generic multi-model agent, adapted via bridge&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Native support, full lifecycle preservation of &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Easily lost in bridge layer, causing 400 errors&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; for dereferencing and type backfilling&lt;/td&gt;
+&lt;td&gt;Generic schema generation, does not meet Kimi validator requirements&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;API Format&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Directly generates Moonshot-native format (including &lt;code&gt;thinking&lt;/code&gt; config, &lt;code&gt;$defs&lt;/code&gt; normalization, etc.)&lt;/td&gt;
+&lt;td&gt;Transformed through OpenAI/Anthropic protocol conversion, causing format mismatches&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Service Integration&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Built-in Moonshot fetch/search/file services&lt;/td&gt;
+&lt;td&gt;Uses generic local tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Core Dependencies&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;CLI core does not directly depend on vendor SDKs; isolated via self-developed &lt;code&gt;kosong&lt;/code&gt; package&lt;/td&gt;
+&lt;td&gt;Core package directly coupled with &lt;code&gt;@ai-sdk/openai&lt;/code&gt; and more than a dozen other vendor SDKs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Looking at commit history, kimi-code&amp;rsquo;s evolution is directed at &lt;strong&gt;continuously eliminating user configuration burden&lt;/strong&gt; (&lt;code&gt;reasoning_key&lt;/code&gt; went from required → optional override → auto-inferred; &lt;code&gt;interleaved&lt;/code&gt; went from filtered → correctly mapped), while OpenCode&amp;rsquo;s evolution is directed at &lt;strong&gt;deepening OpenAI ecosystem integration&lt;/strong&gt; (Responses API, encrypted reasoning, item reference), leaving Kimi adaptation stuck at the generic bridge layer.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;That&amp;rsquo;s the truth at the commit level: one is native evolution, the other is a bridge gap.&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>RoboOmp: An AI Bot That Creates Its Own Pull Requests</title><link>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</link><pubDate>Sat, 23 May 2026 18:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/cover.jpg" alt="Featured image of post RoboOmp: An AI Bot That Creates Its Own Pull Requests" /&gt;&lt;p&gt;Yesterday at the Oh My Pi (OMP) repository, I experienced something shocking: an AI bot didn&amp;rsquo;t just reply to my issue—it understood the problem, &lt;strong&gt;dug through the source code on its own, and opened a precise PR to fix the bug&lt;/strong&gt;. The entire process took less than 5 minutes.&lt;/p&gt;
+&lt;h2 id="the-origin"&gt;The Origin
+&lt;/h2&gt;&lt;p&gt;When using OMP (a terminal AI coding agent), I discovered a UX issue: &lt;code&gt;Ctrl+T&lt;/code&gt; can hide thinking blocks, but hiding them simultaneously turns off extended thinking entirely—not just hiding the display, but the model stops thinking altogether. Users assume they&amp;rsquo;re just &amp;ldquo;turning off the display,&amp;rdquo; but the actual effect is &amp;ldquo;turning off the brain.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;So I went to the &lt;a class="link" href="https://github.com/can1357/oh-my-pi" target="_blank" rel="noopener"
+&gt;OMP GitHub repository&lt;/a&gt; and opened a feature request: &lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/1313" target="_blank" rel="noopener"
+&gt;#1313&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="roboomps-first-response"&gt;RoboOmp&amp;rsquo;s First Response
+&lt;/h2&gt;&lt;p&gt;Seconds after I submitted the issue, a bot called &lt;a class="link" href="https://github.com/roboomp" target="_blank" rel="noopener"
+&gt;roboomp&lt;/a&gt; automatically replied. Not with template nonsense like &amp;ldquo;thanks for your feedback, forwarded to the product team.&amp;rdquo; It directly told me:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Most of this feature already exists—the &lt;code&gt;hideThinkingBlock&lt;/code&gt; setting, &lt;code&gt;Ctrl+T&lt;/code&gt; shortcut, and rendering path&lt;/li&gt;
+&lt;li&gt;The only missing piece is a CLI startup parameter&lt;/li&gt;
+&lt;li&gt;There&amp;rsquo;s a design decision that requires maintainer input: the coupling between &lt;code&gt;hideThinkingBlock&lt;/code&gt; and &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And it provided &lt;strong&gt;exact filenames and line numbers&lt;/strong&gt;: &lt;code&gt;settings-schema.ts:663&lt;/code&gt;, &lt;code&gt;input-controller.ts:755&lt;/code&gt;, &lt;code&gt;stream.ts:583,697&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This wasn&amp;rsquo;t cobbled together from search results—it actually read the code.&lt;/p&gt;
+&lt;h2 id="i-pointed-out-the-design-flaw"&gt;I Pointed Out the Design Flaw
+&lt;/h2&gt;&lt;p&gt;I replied with a comment explaining that this coupling is a footgun:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Users press &lt;code&gt;Ctrl+T&lt;/code&gt; intending to reduce visual noise, but unknowingly turn off extended thinking, degrading model output quality&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Don&amp;rsquo;t want to see the reasoning process&amp;rdquo; and &amp;ldquo;don&amp;rsquo;t want the model to reason&amp;rdquo; are two different things that shouldn&amp;rsquo;t be tied together&lt;/li&gt;
+&lt;li&gt;The behavior varies across providers (MiniMax can&amp;rsquo;t turn it off, Anthropic/OpenAI can), so the same shortcut has inconsistent behavior&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also included the commit history that introduced this coupling for easier tracing.&lt;/p&gt;
+&lt;h2 id="it-opened-a-pr-itself"&gt;It Opened a PR Itself
+&lt;/h2&gt;&lt;p&gt;Then something unbelievable happened—roboomp replied with two consecutive comments and directly opened a PR: &lt;a class="link" href="https://github.com/can1357/oh-my-pi/pull/1314" target="_blank" rel="noopener"
+&gt;#1314&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The PR changes: &lt;strong&gt;0 addition, 3 deletion&lt;/strong&gt;. It only deleted three lines:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;sdk.ts:1860&lt;/code&gt; — agent initialization no longer assigns &lt;code&gt;hideThinkingBlock&lt;/code&gt; to &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;input-controller.ts:758&lt;/code&gt; — Ctrl+T handler no longer links them&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;selector-controller.ts:273&lt;/code&gt; — settings UI follows the same logic&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The PR description included complete repro steps, root cause analysis, and fix approach. It even confirmed the commit archaeology I provided—&lt;code&gt;45bd444&lt;/code&gt; was indeed the commit that introduced this bug.&lt;/p&gt;
+&lt;h2 id="why-this-shocked-me"&gt;Why This Shocked Me
+&lt;/h2&gt;&lt;p&gt;&amp;ldquo;AI can write code&amp;rdquo; isn&amp;rsquo;t news. Copilot, Claude Code, Cursor can all write code. But what&amp;rsquo;s different this time:&lt;/p&gt;
+&lt;h3 id="complete-closed-loop"&gt;Complete Closed Loop
+&lt;/h3&gt;&lt;p&gt;The entire process was zero-human:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;I opened an issue → bot read the codebase, provided existing implementation status&lt;/li&gt;
+&lt;li&gt;I pointed out the design flaw → bot understood my point&lt;/li&gt;
+&lt;li&gt;It located the commit that introduced the bug itself, opened a PR that deletes just 3 lines&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;From issue to PR, no human did anything in between.&lt;/p&gt;
+&lt;h3 id="it-knows-when-to-wait"&gt;It Knows When to Wait
+&lt;/h3&gt;&lt;p&gt;In its first reply, it said &amp;ldquo;Holding on implementation until a maintainer weighs in on the coupling question&amp;rdquo;—it knew this was a design decision requiring judgment and shouldn&amp;rsquo;t act autonomously. But when I clarified the coupling problem, it determined that waiting was no longer necessary and opened a PR directly.&lt;/p&gt;
+&lt;h3 id="the-fix-was-minimal"&gt;The Fix Was Minimal
+&lt;/h3&gt;&lt;p&gt;0 addition / 3 deletion. It understood what the minimal fix was—no refactoring, no abstraction, no gold-plating. Many human developers can&amp;rsquo;t do this.&lt;/p&gt;
+&lt;h2 id="what-is-roboomp"&gt;What Is RoboOmp
+&lt;/h2&gt;&lt;p&gt;RoboOmp is an AI bot deployed by can1357, the OMP repository maintainer. It&amp;rsquo;s not a GitHub Actions workflow (I checked the CI config to confirm), but an independent server-side agent:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Listens to GitHub Webhook events (issue creation, comments, etc.)&lt;/li&gt;
+&lt;li&gt;Reads source code through GitHub API, understands code structure&lt;/li&gt;
+&lt;li&gt;Uses LLM to analyze context, autonomously decides next steps—comment, label, open PR&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From can1357&amp;rsquo;s GitHub profile, this person comes from a hypervisor/reverse engineering background (ByePg, NoVmp, NtRays), now working on AI agent platforms (agentx, hindsight). RoboOmp is likely the result of building exceptionally deep code understanding capabilities.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This project is not open source.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="are-there-similar-open-source-projects"&gt;Are There Similar Open Source Projects
+&lt;/h2&gt;&lt;p&gt;I looked around, and currently the closest ones are:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Project&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
+&gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
+&lt;td&gt;AI coding agent workflow orchestration, task → merged PR&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
+&gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Hooks 40+ GitHub events, auto triage/review/fix, architecture most similar to roboomp&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Issue/PR-driven automatic development system&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;But honestly, none reach roboomp&amp;rsquo;s level. Most are still at the &amp;ldquo;receive webhook → call LLM → post comment&amp;rdquo; stage. RoboOmp is the first I&amp;rsquo;ve seen that can autonomously read source code, understand code structure, participate in design discussions, and make precise fixes.&lt;/p&gt;
+&lt;h2 id="what-this-means"&gt;What This Means
+&lt;/h2&gt;&lt;p&gt;This made me realize that the capability boundaries of AI coding agents are expanding rapidly. A year ago we were discussing &amp;ldquo;can AI write correct code,&amp;rdquo; now the question is &amp;ldquo;can AI be a maintainer in open source communities.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;The capabilities roboomp demonstrated—reading code, understanding context, participating in discussions, making minimal fixes—are essentially what a junior maintainer does. If this capability continues to improve, the maintenance model of open source projects could undergo fundamental changes.&lt;/p&gt;
+&lt;p&gt;Think about it: what does an open source maintainer spend the most time on every day? Replying to issues, triaging bugs, writing small fixes. These are exactly what roboomp excels at. If every open source project could deploy such a bot, maintainers could focus their time on architectural decisions and community building.&lt;/p&gt;
+&lt;p&gt;Of course, current limitations are obvious—it can only handle problems with clear boundaries and well-defined scope. But this experience makes me believe that &amp;ldquo;AI maintainer&amp;rdquo; is not a distant future scenario, but something happening right now.&lt;/p&gt;</description></item><item><title>OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows</title><link>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</link><pubDate>Fri, 22 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/cover.jpg" alt="Featured image of post OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows" /&gt;&lt;p&gt;opencode is a 160k-star AI coding tool with 27 workflow files in its &lt;code&gt;.github/workflows/&lt;/code&gt; directory. This number is not uncommon for open source projects, but what&amp;rsquo;s truly interesting is not the quantity, but the scope these workflows cover: from conventional CI/CD to AI-driven community governance, they&amp;rsquo;ve done almost everything GitHub Actions can do.&lt;/p&gt;
+&lt;p&gt;This article analyzes the design of these workflows by category, discusses the pros and cons of this level of automation, and shares insights for our own projects.&lt;/p&gt;
+&lt;h2 id="overview"&gt;Overview
+&lt;/h2&gt;&lt;p&gt;The 27 workflows can be divided into four categories:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Category&lt;/th&gt;
+&lt;th&gt;Count&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;CI/Testing&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Release/Delivery&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Automation/Bot&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Docs/Other&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;16 automation workflows account for 60% of the total. opencode doesn&amp;rsquo;t just use Actions to run tests and releases—it also entrusts community governance and code quality review to the automation system.&lt;/p&gt;
+&lt;h2 id="citesting-solid-but-restrained"&gt;CI/Testing: Solid but Restrained
+&lt;/h2&gt;&lt;p&gt;Four testing-related workflows:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;typecheck.yml&lt;/strong&gt; — Runs &lt;code&gt;bun typecheck&lt;/code&gt; on PR and push to dev. Simple and direct, no unnecessary actions.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;test.yml&lt;/strong&gt; — Cross-platform test matrix (Linux + Windows), runs unit tests and Playwright e2e. Has concurrency control where new commits in the same PR cancel old runs. Test results generate JUnit reports uploaded as artifacts.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;nix-eval.yml&lt;/strong&gt; — Verifies Nix flake builds on four architectures (x86_64-linux, aarch64-linux, x86_64-darwin, aarch64-darwin). Mandatory package failures block the build, optional package failures are just warnings.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;storybook.yml&lt;/strong&gt; — Storybook builds for UI components, only triggered when storybook/ui-related files change. Path triggering avoids unnecessary runs.&lt;/p&gt;
+&lt;p&gt;Several noteworthy design choices:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;: Multiple workflows use this pattern so the same PR doesn&amp;rsquo;t stack multiple runs. For a project receiving lots of community PRs, this saves significant CI resources.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Path triggering&lt;/strong&gt;: containers.yml only runs when container files change, storybook.yml only runs when UI changes. Not everything runs on all commits.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mixed Runner Strategy&lt;/strong&gt;: Most workflows use &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
+&gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="releasedelivery-full-platform-coverage"&gt;Release/Delivery: Full Platform Coverage
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; is the most complex workflow, handling the complete release process in a single file:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Version number calculation&lt;/li&gt;
+&lt;li&gt;CLI build matrix (multi-platform, multi-architecture)&lt;/li&gt;
+&lt;li&gt;Windows code signing (Azure Signing)&lt;/li&gt;
+&lt;li&gt;macOS code signing (Apple Developer)&lt;/li&gt;
+&lt;li&gt;Electron app builds&lt;/li&gt;
+&lt;li&gt;npm publishing&lt;/li&gt;
+&lt;li&gt;GitHub Release creation&lt;/li&gt;
+&lt;li&gt;AUR (Arch Linux) publishing&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;One workflow covers distribution for CLI, desktop apps, npm packages, and Linux packages. This &amp;ldquo;release everywhere at once&amp;rdquo; pattern is user-friendly—regardless of platform, everyone gets the new version on the same day.&lt;/p&gt;
+&lt;p&gt;Other release workflows are split by artifact type:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;publish-github-action.yml&lt;/strong&gt; — Listens for &lt;code&gt;github-v*&lt;/code&gt; tags, publishes GitHub Action to Marketplace&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;publish-vscode.yml&lt;/strong&gt; — Listens for &lt;code&gt;vscode-v*&lt;/code&gt; tags, publishes to both VS Code Marketplace and Open VSX&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;containers.yml&lt;/strong&gt; — Multi-architecture container image builds, pushes to GHCR&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;release-github-action.yml&lt;/strong&gt; — Creates pre-releases when github directory changes on dev branch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Tag triggering is a good practice: releases are explicit actions, not triggered by accidental code pushes. &lt;code&gt;publish.yml&lt;/code&gt; automatically builds snapshots when pushing to &lt;code&gt;ci/dev/beta/fix&lt;/code&gt; branches, but official releases require manual dispatch or tags.&lt;/p&gt;
+&lt;h2 id="automationbot-ai-driven-community-governance"&gt;Automation/Bot: AI-Driven Community Governance
+&lt;/h2&gt;&lt;p&gt;This is opencode&amp;rsquo;s most distinctive feature. Among the 16 automation workflows, multiple directly call upon opencode&amp;rsquo;s own AI capabilities to handle community affairs.&lt;/p&gt;
+&lt;h3 id="issue-management"&gt;Issue Management
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;triage.yml&lt;/strong&gt; — When a new issue is created, opencode AI automatically triages it, adding labels and categories.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;duplicate-issues.yml&lt;/strong&gt; — When a new issue is created/edited, opencode AI analyzes whether it duplicates existing issues. Also checks whether it follows one of three issue templates and whether it contains AI-generated content. Non-compliant issues get a &lt;code&gt;needs:compliance&lt;/code&gt; label.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;compliance-close.yml&lt;/strong&gt; — Every 30 minutes, checks issues/PRs with &lt;code&gt;needs:compliance&lt;/code&gt; label and auto-closes if not fixed within 2 hours. Different prompt messages are given for issues vs PRs when closing.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;close-issues.yml&lt;/strong&gt; — Closes stale issues daily at 2 AM UTC.&lt;/p&gt;
+&lt;p&gt;These four layers form complete issue lifecycle management:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;New issue → AI triage → duplicate/compliance check → compliance grace period → stale cleanup
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="pr-management"&gt;PR Management
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;pr-standards.yml&lt;/strong&gt; is one of the longest workflows, doing two things:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Title format check&lt;/strong&gt;: Enforces conventional commits format (feat/fix/refactor/&amp;hellip;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Template compliance check&lt;/strong&gt;: PR description must include required sections like issue references, change type, verification method&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Non-compliant PRs get a &lt;code&gt;needs:compliance&lt;/code&gt; label and auto-close after 2 hours. Team members and bots are exempt.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;pr-management.yml&lt;/strong&gt; — Checks for duplicates when PR is created, adds labels for community contributors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;close-prs.yml&lt;/strong&gt; — Closes PRs older than 1 month with insufficient reactions daily at 10 PM UTC. Default threshold is 2 reactions, configurable.&lt;/p&gt;
+&lt;h3 id="ai-code-review"&gt;AI Code Review
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;review.yml&lt;/strong&gt; — Input &lt;code&gt;/review&lt;/code&gt; in PR comments, opencode AI analyzes code and leaves review comments on specific lines. Only available to repo owner/members.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;opencode.yml&lt;/strong&gt; — Input &lt;code&gt;/oc&lt;/code&gt; or &lt;code&gt;/opencode&lt;/code&gt; in issue or PR comments to trigger opencode AI for more general interactions.&lt;/p&gt;
+&lt;p&gt;These two workflows demonstrate the &amp;ldquo;AI as collaborator&amp;rdquo; approach: not fully automatic code review, but on-demand triggering with humans making final decisions in the loop.&lt;/p&gt;
+&lt;h3 id="documentation--maintenance"&gt;Documentation &amp;amp; Maintenance
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;docs-update.yml&lt;/strong&gt; — Every 12 hours, checks recent commits and uses opencode AI to determine if documentation needs updates.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;generate.yml&lt;/strong&gt; — Runs code generation scripts when pushing to dev, auto-commits changes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;beta.yml&lt;/strong&gt; — Syncs beta branch hourly.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;stats.yml&lt;/strong&gt; — Updates download statistics to STATS.md daily.&lt;/p&gt;
+&lt;h2 id="design-patterns-worth-adopting"&gt;Design Patterns Worth Adopting
+&lt;/h2&gt;&lt;h3 id="1-layered-governance"&gt;1. Layered Governance
+&lt;/h3&gt;&lt;p&gt;opencode doesn&amp;rsquo;t stuff all automation into one workflow, but splits it by responsibility. An issue goes through four workflows in relay from creation to closure. Each workflow does one thing, combining to form a complete governance chain.&lt;/p&gt;
+&lt;p&gt;Benefits of this design:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Individual workflows can be modified or disabled independently without affecting other steps&lt;/li&gt;
+&lt;li&gt;Each workflow&amp;rsquo;s trigger conditions and permission scope are minimized&lt;/li&gt;
+&lt;li&gt;Easy to locate which step has problems when they occur&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-compliance-grace-period"&gt;2. Compliance Grace Period
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;compliance-close.yml&lt;/code&gt; doesn&amp;rsquo;t close immediately upon detecting non-compliance, but gives a 2-hour grace period. This is reasonable for global contributors in different time zones—you might submit an issue while sleeping, and wake up with time to fix it.&lt;/p&gt;
+&lt;h3 id="3-ai-at-decision-points-not-execution-points"&gt;3. AI at Decision Points, Not Execution Points
+&lt;/h3&gt;&lt;p&gt;triage, duplicate detection, and code review all have AI make initial assessments, with humans making final decisions. But execution-level tasks like code builds and releases don&amp;rsquo;t use AI at all. This is a pragmatic division: AI excels at pattern recognition and initial classification, but not precise execution.&lt;/p&gt;
+&lt;h3 id="4-explicit-vs-automatic-triggers"&gt;4. Explicit vs Automatic Triggers
+&lt;/h3&gt;&lt;p&gt;Releases use tag triggers, maintenance uses schedule triggers, governance uses event triggers. Three trigger types correspond to three different automation trust levels: releases need human confirmation, maintenance can be scheduled automatic, governance needs immediate response.&lt;/p&gt;
+&lt;h2 id="risks-of-over-automation"&gt;Risks of Over-Automation
+&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s automation system is comprehensive, but there are points to watch:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Community barrier&lt;/strong&gt;: New contributors submitting issues must follow specific templates, PRs must conform to conventional commits, otherwise auto-closed after 2 hours. For a 160k-star project, this strictness is reasonable—it filters out many low-quality contributions. But for small projects, this level of automation would scare away potential contributors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Maintenance cost&lt;/strong&gt;: 27 workflows means 27 automation scripts to maintain. opencode has custom runners and dedicated scripts. If a workflow&amp;rsquo;s logic needs adjustment, maintainers need to switch between GitHub Actions YAML and custom scripts.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AI uncertainty&lt;/strong&gt;: duplicate-issues and triage use AI for judgment, but AI can misjudge. A reasonable issue marked as duplicate and closed creates a negative experience for contributors. opencode uses grace periods and manual review to mitigate this, but the risk remains.&lt;/p&gt;
+&lt;h2 id="insights-for-our-projects"&gt;Insights for Our Projects
+&lt;/h2&gt;&lt;p&gt;Not every project needs 27 workflows. But opencode&amp;rsquo;s layered governance and &amp;ldquo;AI at decision points&amp;rdquo; approach are worth referencing:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Start with issue templates&lt;/strong&gt;: If the project starts receiving lots of duplicate or low-quality issues, add templates and duplicate checking first, rather than manually handling each one.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use grace periods for compliance checks&lt;/strong&gt;: Always give a grace period when auto-closing non-compliant contributions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use AI for classification, not execution&lt;/strong&gt;: Let AI help triage issues and check PR formats, but don&amp;rsquo;t let AI auto-merge code or publish releases.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use tag triggers for releases&lt;/strong&gt;: This is the safest approach. Automatic snapshot releases are acceptable, official versions need human confirmation.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Add on demand&lt;/strong&gt;: Add automation only when you have pain points. opencode&amp;rsquo;s 27 workflows weren&amp;rsquo;t built in a day, but gradually added as community scale grew.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="summary"&gt;Summary
+&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>OpenCode Optimization Beyond Configuration — Plugin-Based Optimization</title><link>https://svtter.cn/en/p/opencode-optimization-beyond-configuration-plugin-based-optimization/</link><pubDate>Tue, 19 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-optimization-beyond-configuration-plugin-based-optimization/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/cover.png" alt="Featured image of post OpenCode Optimization Beyond Configuration — Plugin-Based Optimization" /&gt;&lt;p&gt;I previously wrote an article &lt;a class="link" href="https://svtter.cn/p/opencode-%e9%85%8d%e7%bd%ae%e4%bc%98%e5%8c%96%e8%ae%b0%e5%bd%95/" &gt;OpenCode Configuration Optimization Record&lt;/a&gt;, which addressed token consumption and context management issues. However, configuration optimization handles &amp;ldquo;how the model runs,&amp;rdquo; while &amp;ldquo;the quality of code when it&amp;rsquo;s half-written&amp;rdquo; is something configuration cannot manage. This article starts from my development process of the opencode-review plugin, discussing how opencode-review helps an agent review and improve its own code within a session, resulting in higher quality code entering the PR.&lt;/p&gt;
+&lt;h2 id="problem-who-guards-code-quality-within-a-session"&gt;Problem: Who Guards Code Quality Within a Session?
+&lt;/h2&gt;&lt;p&gt;When using OpenCode to write code, a typical workflow is: the agent completes coding within a session, then I review the diff and create a PR. But I discovered a recurring problem: &lt;strong&gt;code written by agents often enters PRs with &amp;ldquo;first draft&amp;rdquo; quality issues&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;These issues include: missing error handling, security vulnerabilities, poorly performing queries, and missing tests. If the agent could perform a self-review within the session—before the code is committed to the PR—many problems wouldn&amp;rsquo;t exist at the PR stage.&lt;/p&gt;
+&lt;p&gt;This is different from code review at the CI stage. I&amp;rsquo;ve already implemented CI review through &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
+&gt;opencode-actions&lt;/a&gt; (I previously wrote an &lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;introductory article&lt;/a&gt;)—it happens after PR creation, triggered by GitHub Actions. Later, Cloudflare also shared similar ideas in their &lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+&gt;engineering blog&lt;/a&gt;: using OpenCode to build large-scale AI code review. opencode-review aims to solve an earlier stage: &lt;strong&gt;within the session, before the PR, enabling the agent to proactively review and fix issues after writing code&lt;/strong&gt;. The two complement each other: opencode-review raises the quality baseline of code entering the PR, while opencode-actions serves as the final checkpoint.&lt;/p&gt;
+&lt;p&gt;Specifically, there are three sub-problems to address:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Incomplete review coverage&lt;/strong&gt;: Code generated by agents may introduce security vulnerabilities and performance issues, but they won&amp;rsquo;t proactively check for these&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lack of systematic review framework&lt;/strong&gt;: Without structured dimensions to evaluate code, it&amp;rsquo;s easy to focus only on functional correctness while ignoring security and performance&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lack of closed loop between issue discovery and fixes&lt;/strong&gt;: Even when the agent discovers problems, a mechanism is needed to automatically fix them rather than waiting for someone to point them out&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="design-of-opencode-review"&gt;Design of opencode-review
+&lt;/h2&gt;&lt;p&gt;Based on these three problems, I designed opencode-review: a structured code review plugin.&lt;/p&gt;
+&lt;h3 id="multi-dimensional-analysis"&gt;Multi-Dimensional Analysis
+&lt;/h3&gt;&lt;p&gt;The first design decision is &lt;strong&gt;why divide into five dimensions&lt;/strong&gt; rather than a general &amp;ldquo;good or bad&amp;rdquo; evaluation.&lt;/p&gt;
+&lt;p&gt;Code quality is not a single dimension. A piece of code may be functionally correct and performant, but contain SQL injection vulnerabilities; or it may be secure and harmless, but lack test coverage. Evaluating them together inevitably leads to vague results.&lt;/p&gt;
+&lt;p&gt;Academically, the &lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
+&gt;Modern Code Review (MCR) Survey&lt;/a&gt; collected code review research from 2013-2025, proposing a classification system covering multiple task dimensions including defect detection, security review, performance analysis, and maintainability assessment. Ericsson&amp;rsquo;s research team also verified in &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+&gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; that dimension-specific review is more effective in industrial scenarios than general review.&lt;/p&gt;
+&lt;p&gt;opencode-review&amp;rsquo;s five dimensions—code-quality, security, performance, testing, documentation—correspond to the core review dimensions identified in these studies. Each dimension can be independently toggled because different projects focus on different priorities: an internal tool may not need documentation review, but a security-sensitive service cannot skip the security dimension.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_7330a01d3840e4a9.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_fceacab38c67aa8b.png 1024w"
+loading="lazy"
+alt="Five review dimensions"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
+&lt;h3 id="severity-grading"&gt;Severity Grading
+&lt;/h3&gt;&lt;p&gt;The second design decision is &lt;strong&gt;why divide into three severity levels&lt;/strong&gt; (critical / suggestion / highlight).&lt;/p&gt;
+&lt;p&gt;This comes from lessons learned in the static analysis tool domain. Security tools and linters have long faced a problem: &lt;strong&gt;alert fatigue&lt;/strong&gt;. When all issues are marked as equally important, developers start ignoring them. &lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
+&gt;Veracode&amp;rsquo;s research&lt;/a&gt; points out that the direct consequence of alert fatigue is that truly serious issues get drowned out in noise.&lt;/p&gt;
+&lt;p&gt;The logic of three levels is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;critical&lt;/strong&gt;: Must fix (security vulnerabilities, logic errors, resource leaks)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;suggestion&lt;/strong&gt;: Suggested improvements (code readability, performance optimization, better practices)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;highlight&lt;/strong&gt;: Worth noting (style consistency, potential improvement space)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This way developers can prioritize handling critical issues without missing a SQL injection among a bunch of &amp;ldquo;consider refactoring&amp;rdquo; suggestions.&lt;/p&gt;
+&lt;h3 id="auto-fix-chain"&gt;Auto-Fix Chain
+&lt;/h3&gt;&lt;p&gt;The third design decision is &lt;strong&gt;why critical issues should automatically trigger fixes&lt;/strong&gt; rather than just being reported.&lt;/p&gt;
+&lt;p&gt;This is a controversial design. Traditional review tools typically &amp;ldquo;report but don&amp;rsquo;t fix,&amp;rdquo; leaving fixes to developers. But opencode-review&amp;rsquo;s scenario is different—the code it reviews is itself just written by an AI agent, so having another agent fix it is reasonable.&lt;/p&gt;
+&lt;p&gt;Academically, this belongs to the &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; domain. &lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
+&gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; reviewed 63 LLM-based APR systems from 2022-2025, divided into four paradigms. Among them, the &amp;ldquo;analysis-augmented&amp;rdquo; paradigm—using static analysis to locate problems first, then using LLMs to generate fixes—was proven most effective. opencode-review&amp;rsquo;s auto-fix chain is essentially this paradigm: reviewer discovers critical issue → locates problem position → spawns fixer sub-agent → generates minimal fix.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_67450c93ac3d843a.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_261b6e10779b8b33.png 1024w"
+loading="lazy"
+alt="Auto-fix chain"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
+&gt;An ICSE 2025 paper&lt;/a&gt; also points out that a key challenge for LLMs in APR is objective alignment—the goal of fixing is not &amp;ldquo;generate code that looks reasonable,&amp;rdquo; but &amp;ldquo;precisely solve the reported problem.&amp;rdquo; This is why opencode-review&amp;rsquo;s fixer is designed as &lt;strong&gt;minimal fix&lt;/strong&gt;—making only the minimal modifications to solve the problem, no rewriting, no refactoring, no &amp;ldquo;convenient&amp;rdquo; other changes.&lt;/p&gt;
+&lt;h3 id="hidden-benefit-of-auto-review-continuous-improvement-of-code-quality-baseline"&gt;Hidden Benefit of Auto-Review: Continuous Improvement of Code Quality Baseline
+&lt;/h3&gt;&lt;p&gt;The three designs above solve &amp;ldquo;discovering problems&amp;rdquo; and &amp;ldquo;fixing problems.&amp;rdquo; But auto-review has an easily overlooked benefit: &lt;strong&gt;it continuously raises the baseline of code quality inadvertently&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This effect comes from two mechanisms:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;First, the shaping of code writers by review feedback.&lt;/strong&gt; &lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
+&gt;FSE 2022 research&lt;/a&gt; found in two years of industrial practice that when developers know their code will be automatically reviewed, they consciously follow standards more during the coding phase—because the cost of being pointed out afterward becomes lower, and the benefit of writing well upfront becomes higher. This is a &lt;strong&gt;nudge effect&lt;/strong&gt;. In the AI agent scenario, this effect is stronger: the agent writes code in a session, gets reviewed and pointed out issues, fixes them, gets reviewed again—this cycle can complete multiple rounds within the same session. Each round of feedback corrects the agent&amp;rsquo;s output tendency, equivalent to an implicit fine-tuning process.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Second, direct quality accumulation from automatic fixes.&lt;/strong&gt; Critical issues being automatically fixed means the code quality of each commit is higher than without review. This isn&amp;rsquo;t a one-time improvement, but continuous. Like lint rules in a codebase—at first they only prohibit obvious errors, but as rules accumulate, the overall style and quality of the codebase is unconsciously raised. The auto-fix chain does something similar: security vulnerabilities are automatically patched, resource leaks are automatically fixed, missing tests are automatically added. Over time, the codebase&amp;rsquo;s quality baseline naturally becomes higher than without auto-review.&lt;/p&gt;
+&lt;p&gt;Simply put: &lt;strong&gt;review is not the goal, quality improvement is. Auto-review turns &amp;ldquo;post-hoc inspection&amp;rdquo; into &amp;ldquo;in-process improvement.&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg"
+width="1376"
+height="768"
+srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_45c08f85532cd10c.jpg 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_f97e789531211c0b.jpg 1024w"
+loading="lazy"
+alt="Code quality baseline improvement"
+class="gallery-image"
+data-flex-grow="179"
+data-flex-basis="430px"
+&gt;&lt;/p&gt;
+&lt;h3 id="cooldown-mechanism"&gt;Cooldown Mechanism
+&lt;/h3&gt;&lt;p&gt;There&amp;rsquo;s one more design detail: &lt;strong&gt;cooldown_seconds&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;auto-review triggers when the session is idle, but idle events can trigger frequently (for example, when the agent is waiting for user confirmation, it also idles). Without cooldown, the same code might be reviewed several times, wasting tokens. The default 120-second cooldown period is an empirical value—enough for one round of modifications to complete, without waiting too long.&lt;/p&gt;
+&lt;h2 id="opencode-froggy-another-approach"&gt;opencode-froggy: Another Approach
+&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/smartfrog/opencode-froggy" target="_blank" rel="noopener"
+&gt;opencode-froggy&lt;/a&gt; (85 Stars, just released 0.12.0 yesterday) provides another approach. It doesn&amp;rsquo;t do structured multi-dimensional review, but instead provides 6 specialized agents (architect, code-reviewer, code-simplifier, doc-writer, partner, rubber-duck) and a flexible hooks system.&lt;/p&gt;
+&lt;p&gt;Froggy&amp;rsquo;s code-reviewer is a general read-only review agent that doesn&amp;rsquo;t distinguish dimensions or severity. But its hooks system is strong—you can configure &lt;code&gt;session.idle&lt;/code&gt; events to automatically run lint, auto-format, or even intercept when writing sensitive files:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;event&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;session.idle&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;conditions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;hasCodeChange, isMainSession]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;bash&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npm run lint --fix&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;simplify-changes&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This is a &amp;ldquo;developer orchestrates the workflow&amp;rdquo; approach, complementing opencode-review&amp;rsquo;s &amp;ldquo;out-of-the-box structured review.&amp;rdquo;&lt;/p&gt;
+&lt;h3 id="comparison"&gt;Comparison
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;opencode-review&lt;/th&gt;
+&lt;th&gt;opencode-froggy&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Review method&lt;/td&gt;
+&lt;td&gt;Structured multi-dimensional analysis&lt;/td&gt;
+&lt;td&gt;General code-reviewer agent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Severity grading&lt;/td&gt;
+&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Auto-fix&lt;/td&gt;
+&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
+&lt;td&gt;code-simplifier, manual trigger&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Trigger method&lt;/td&gt;
+&lt;td&gt;session idle + cooldown&lt;/td&gt;
+&lt;td&gt;hooks configuration&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Custom rules&lt;/td&gt;
+&lt;td&gt;custom_rules supports project norms&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Other features&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;6 agents + hooks + gitingest + blockchain&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The two don&amp;rsquo;t conflict and can be installed together. My suggestion is: &lt;strong&gt;opencode-review for daily auto-review, froggy&amp;rsquo;s hooks for workflow orchestration&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id="plugin-installation"&gt;Plugin Installation
+&lt;/h2&gt;&lt;p&gt;The two plugins have different installation methods.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;opencode-froggy&lt;/strong&gt; supports direct installation via npm, just add to &lt;code&gt;opencode.json&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;plugin&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;opencode-froggy&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;opencode-review&lt;/strong&gt; currently doesn&amp;rsquo;t have npm installation available yet, requires cloning and local linking:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Clone to any location&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/sun-praise/opencode-review.git /path/to/opencode-review
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Project-level installation (recommended)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir -p .opencode/plugins
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ln -s /path/to/opencode-review/src/index.ts .opencode/plugins/opencode-review.ts
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Or global installation&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ln -s /path/to/opencode-review/src/index.ts ~/.config/opencode/plugins/opencode-review.ts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;opencode-review also needs to create &lt;code&gt;.opencode/review.json&lt;/code&gt; to configure review behavior:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;language&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;zh&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;dimensions&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;code-quality&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;security&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;performance&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;testing&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;documentation&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;trigger&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;auto_on_idle&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;cooldown_seconds&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;120&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;custom_rules&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;All API endpoints must have error handling&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;Database queries must use parameterized statements&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="other-notable-plugins"&gt;Other Notable Plugins
+&lt;/h2&gt;&lt;p&gt;The ecosystem already has over 70 plugins, here are a few more recommendations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;opencode-worktree&lt;/strong&gt;: Zero-friction git worktree management&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;opencode-notify&lt;/strong&gt;: Send system notifications when tasks complete&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;dynamic-context-pruning&lt;/strong&gt;: Automatically prune outdated tool outputs, optimizing token usage&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;envsitter-guard&lt;/strong&gt;: Prevent agents from reading &lt;code&gt;.env&lt;/code&gt; sensitive files&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;See the complete list at &lt;a class="link" href="https://github.com/awesome-opencode/awesome-opencode" target="_blank" rel="noopener"
+&gt;awesome-opencode&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="references"&gt;References
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
+&gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 code review research survey&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+&gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — Industrial practice of LLM-assisted code review&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
+&gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM auto-fix survey, covering 63 systems&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
+&gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — Objective alignment issues in LLM fixing&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
+&gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — Two years of industrial environment auto-review experience&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://homes.cs.washington.edu/~rjust/publ/code_review_automation_aiware_2024.pdf" target="_blank" rel="noopener"
+&gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — Deployment and evaluation of AutoCommenter&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2603.23448v2" target="_blank" rel="noopener"
+&gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent code review benchmark&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - a coding review agent&lt;/a&gt; — GitHub Action built on OpenCode, code review at CI stage&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+&gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare using OpenCode to build large-scale AI review&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>A New Blog Format</title><link>https://svtter.cn/en/p/a-new-blog-format/</link><pubDate>Fri, 15 May 2026 15:59:17 +0800</pubDate><guid>https://svtter.cn/en/p/a-new-blog-format/</guid><description>&lt;p&gt;Recently, I explored the development trajectory of DeepSeek and compiled a &lt;a class="link" href="https://svtter.cn/p/deepseek-technical-evolution/" &gt;DeepSeek Technical Evolution&lt;/a&gt;. After reviewing it, I found it to be a valuable document worth publishing. However, converting it directly to markdown would result in the loss of much information and detail. Therefore, I tried Hugo&amp;rsquo;s &lt;code&gt;{{ .raw }}&lt;/code&gt; mode and was pleasantly surprised to find that it works well while still supporting SEO.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ll be publishing more articles like this in the future. These articles are co-created with AI, and the reading experience is somewhat better than plain text.&lt;/p&gt;
+&lt;p&gt;I typically store HTML files in &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;static-html&lt;/a&gt; for unified management. I recommend you give it a try. The introduction article is here &lt;a class="link" href="https://svtter.cn/p/sth-an-html-preview-server-for-ai-agents/" target="_blank" rel="noopener"
+&gt;sth: An HTML Preview Server for AI Agents&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;What it does is simple: it provides an HTTP service that lets you register locally generated HTML files and preview them in a browser.&lt;/p&gt;
+&lt;h2 id="why-this-tool-is-needed"&gt;Why This Tool Is Needed
+&lt;/h2&gt;&lt;p&gt;The problem stems from AI Agent output.&lt;/p&gt;
+&lt;p&gt;Nowadays I use agents like Claude Code and OpenCode for my work, and they often need to output complex content—code review summaries, comparative analyses, quotations, architecture design documents. When this content is sent to Telegram as plain text, the formatting gets completely messed up, tables become unreadable, and code syntax highlighting is lost.&lt;/p&gt;
+&lt;p&gt;In short, it&amp;rsquo;s just a big mess.&lt;/p&gt;
+&lt;p&gt;The initial approach was to have agents directly generate HTML files locally and open them in a browser. But the problems were:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The agent runs on a server without a graphical interface&lt;/li&gt;
+&lt;li&gt;Locally generated file paths are unpredictable and management is chaotic&lt;/li&gt;
+&lt;li&gt;No history—previously sent content can&amp;rsquo;t be found&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So I needed a service where an agent could &amp;ldquo;send&amp;rdquo; an HTML file and get back a URL that could be opened in any device&amp;rsquo;s browser. The agent would handle mobile and PC compatibility.&lt;/p&gt;
+&lt;h2 id="what-sth-does"&gt;What sth Does
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;sth&lt;/code&gt; is a lightweight HTTP service written in Go with just two core commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Start the service&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth start
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Send an HTML file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;sth send&lt;/code&gt; packages the target HTML file along with resource files from the same directory (CSS, JS, images, etc.) and uploads them, then returns a URL. Opening this URL displays the complete page effect.&lt;/p&gt;
+&lt;p&gt;In practice, it runs on my intranet development machine, and agents specify the remote address via the &lt;code&gt;--server&lt;/code&gt; parameter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html --server http://dev-1:3939
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="my-actual-usage"&gt;My Actual Usage
+&lt;/h2&gt;&lt;p&gt;Currently &lt;code&gt;sth&lt;/code&gt; mainly runs on my development server, working in tandem with the Hermes Agent.&lt;/p&gt;
+&lt;p&gt;Hermes is my daily AI assistant running on Telegram. When it needs to output complex content—such as code review conclusions, technical solution comparisons, project quotations—it calls the &lt;code&gt;html-report&lt;/code&gt; skill to generate a beautifully formatted HTML file, then sends it to the preview server via &lt;code&gt;sth send&lt;/code&gt;, and finally sends me the URL.&lt;/p&gt;
+&lt;p&gt;The entire workflow is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;User question -&amp;gt; Hermes Agent analysis
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Generate HTML report (html-report skill)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; sth send to preview server
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Return URL -&amp;gt; Send to Telegram
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This way I can tap the link on my phone and see a well-formatted report instead of a blob of plain text.&lt;/p&gt;
+&lt;h2 id="metadata-management"&gt;Metadata Management
+&lt;/h2&gt;&lt;p&gt;Beyond basic sending and previewing, &lt;code&gt;sth&lt;/code&gt; also supports tagging, categorizing, and associating sessions with projects:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth tag &amp;lt;session-id&amp;gt; code-review pricing
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth categorize &amp;lt;session-id&amp;gt; &lt;span class="s2"&gt;&amp;#34;Technical Review&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth project &amp;lt;session-id&amp;gt; hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth list --project hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth search &lt;span class="s2"&gt;&amp;#34;quotation&amp;#34;&lt;/span&gt; --tag pricing
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This feature solves a practical problem: over time, sent reports accumulate. Through tags and project categorization, you can quickly find previous outputs.&lt;/p&gt;
+&lt;p&gt;The difference between &lt;code&gt;list&lt;/code&gt; and &lt;code&gt;search&lt;/code&gt; is: &lt;code&gt;list&lt;/code&gt; matches metadata fields exactly, while &lt;code&gt;search&lt;/code&gt; performs full-text search. They can be used in combination.&lt;/p&gt;
+&lt;h2 id="technical-details"&gt;Technical Details
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Language&lt;/strong&gt;: Go 1.24+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: SQLite (&lt;code&gt;github.com/mattn/go-sqlite3&lt;/code&gt;, requires CGO)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deployment&lt;/strong&gt;: Single binary file, just manage with systemd&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Build&lt;/strong&gt;: &lt;code&gt;go build -o dist/sth ./cmd/html-server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s just that simple, no unnecessary dependencies.&lt;/p&gt;
+&lt;h2 id="open-source"&gt;Open Source
+&lt;/h2&gt;&lt;p&gt;This tool was previously a private repo, but I just made it public today: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
+&lt;/h2&gt;&lt;p&gt;When using DeepSeek models (such as &lt;code&gt;deepseek-v4-flash&lt;/code&gt;) directly in Claude Code with extended thinking enabled, multi-turn conversations trigger a 400 error:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="root-cause-analysis"&gt;Root Cause Analysis
+&lt;/h2&gt;&lt;h3 id="call-chain"&gt;Call Chain
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Claude Code → DeepSeek Anthropic Compatible Endpoint (https://api.deepseek.com/anthropic)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="protocol-incompatibility"&gt;Protocol Incompatibility
+&lt;/h3&gt;&lt;p&gt;According to the &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
+&gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Message Field&lt;/th&gt;
+&lt;th&gt;Support Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✅ Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;❌ Not Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In extended thinking mode during multi-turn conversations, Claude Code faithfully passes back all thinking blocks from the previous round (including &lt;code&gt;redacted_thinking&lt;/code&gt; types) to the API as-is. DeepSeek does not recognize &lt;code&gt;redacted_thinking&lt;/code&gt;, hence the 400 error.&lt;/p&gt;
+&lt;p&gt;Additionally, DeepSeek&amp;rsquo;s thinking block format differs from Anthropic&amp;rsquo;s native protocol, and the replay logic in tool_use scenarios is not fully compatible either.&lt;/p&gt;
+&lt;h3 id="core-conflict"&gt;Core Conflict
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Anthropic API requirement&lt;/strong&gt;: In extended thinking mode, &lt;code&gt;content[].thinking&lt;/code&gt; and &lt;code&gt;content[].redacted_thinking&lt;/code&gt; must be passed back unchanged&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek compatibility layer&lt;/strong&gt;: Only supports &lt;code&gt;thinking&lt;/code&gt;, does not support &lt;code&gt;redacted_thinking&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Claude Code behavior&lt;/strong&gt;: Hard-coded according to Anthropic protocol, does not distinguish between target endpoint types&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="community-feedback"&gt;Community Feedback
+&lt;/h2&gt;&lt;p&gt;This is a &lt;strong&gt;widespread community issue&lt;/strong&gt; that almost all CC agent/router projects have encountered:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;Project&lt;/th&gt;
+&lt;th&gt;Title&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+&gt;#1&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-use&lt;/td&gt;
+&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+&gt;#878&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;openclaude&lt;/td&gt;
+&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+&gt;#1355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;claude-code-router&lt;/td&gt;
+&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+&gt;#4543&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;new-api&lt;/td&gt;
+&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+&gt;#355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;9router&lt;/td&gt;
+&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+&gt;#16748&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;hermes-agent&lt;/td&gt;
+&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+&gt;#2414&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-switch&lt;/td&gt;
+&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+&gt;#174&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-haha&lt;/td&gt;
+&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="deepseek-official-response"&gt;DeepSeek Official Response
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zero response.&lt;/strong&gt; Nor is there any need to respond.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First, DeepSeek has no public API issue repository. All feedback occurs in third-party projects without any DeepSeek official personnel participating in any discussions.&lt;/li&gt;
+&lt;li&gt;Second, whether to use Anthropic as a compatibility standard, I think DeepSeek should be hesitant.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="temporary-workarounds"&gt;Temporary Workarounds
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Disable extended thinking&lt;/strong&gt; — When using DeepSeek in CC, turn off thinking mode&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use proxy filtering&lt;/strong&gt; — Add a proxy layer between CC and DeepSeek to filter out &lt;code&gt;redacted_thinking&lt;/code&gt; blocks&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Switch models&lt;/strong&gt; — Use DeepSeek for non-thinking scenarios and Anthropic native models for thinking scenarios&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="why-doesnt-opencode-have-this-problem"&gt;Why Doesn&amp;rsquo;t OpenCode Have This Problem?
+&lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
+&gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;The key lies in the &lt;code&gt;convertMessages&lt;/code&gt; method in &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; (lines 60-119):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When building assistant messages, it only passes back &lt;code&gt;TextContent&lt;/code&gt; (text) and &lt;code&gt;ToolCall&lt;/code&gt; (tool calls)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Completely ignores &lt;code&gt;ReasoningContent&lt;/code&gt; (thinking content)&lt;/strong&gt;, not putting it in messages&lt;/li&gt;
+&lt;li&gt;thinking content is only displayed in the UI through stream &lt;code&gt;thinking_delta&lt;/code&gt; events and is not passed back to the API&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Comparison with Claude Code&amp;rsquo;s behavior:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Claude Code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;thinking replay&lt;/td&gt;
+&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
+&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;architectural reason&lt;/td&gt;
+&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
+&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
+&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
+&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion: OpenCode avoids the problem at the cost of not following Anthropic&amp;rsquo;s extended thinking specification.&lt;/strong&gt; This approach is friendly to third-party compatible endpoints like DeepSeek, but if Anthropic native thinking context retention capability is needed in the future, re-implementation may be necessary.&lt;/p&gt;
+&lt;h2 id="does-not-replay-thinking-blocks-affect-deepseek-performance"&gt;Does Not Replay Thinking Blocks Affect DeepSeek Performance?
+&lt;/h2&gt;&lt;p&gt;Basically no, reasons:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;thinking blocks are the model&amp;rsquo;s internal scratchpad&lt;/strong&gt;, not final output. The text replies and tool calls in the conversation history already retain key decisions and conclusions&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek&amp;rsquo;s reasoning is closer to OpenAI&amp;rsquo;s mode&lt;/strong&gt; — each round is generated independently, unlike Anthropic&amp;rsquo;s strong reliance on cross-round replay to maintain reasoning coherence&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OpenCode&amp;rsquo;s extensive actual use also confirms this&lt;/strong&gt; — community users run multi-turn conversations using DeepSeek thinking mode in OpenCode without feedback about reasoning quality degradation&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The truly potentially affected extreme scenario: in ultra-long multi-turn tasks, the model may repeat conclusions it has already reasoned through. However, in most actual use, the impact is negligible.&lt;/p&gt;
+&lt;h2 id="related-claude-code-native-issues"&gt;Related Claude Code Native Issues
+&lt;/h2&gt;&lt;p&gt;CC itself has similar thinking block replay bugs on Anthropic models (not DeepSeek-specific):&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;Title&lt;/th&gt;
+&lt;th&gt;Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+&gt;#10199&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+&gt;#51985&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+&gt;#20692&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+&gt;#54482&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>How to Fix DeepSeek Model Reasoning Issues in OpenCode</title><link>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post How to Fix DeepSeek Model Reasoning Issues in OpenCode" /&gt;&lt;p&gt;When using deepseek-reasoner, we often encounter this problem:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="update"&gt;Update
+&lt;/h2&gt;&lt;p&gt;Both issues have now been officially resolved by opencode. Users only need to install the latest version of opencode and use it through the deepseek provider, without additional configuration.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Issue 1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Issue 2
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Both issues have been officially resolved. Install version 1.14.29 or above.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;The old solution follows:&lt;/p&gt;
+&lt;p&gt;How to solve it? It&amp;rsquo;s straightforward.&lt;/p&gt;
+&lt;h2 id="how-to-configure"&gt;How to Configure
+&lt;/h2&gt;&lt;p&gt;Add provider information to your configuration:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.config/opencode/opencode.json&lt;/code&gt; or &lt;code&gt;.config/opencode/opencode.jsonc&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Modify the provider section to:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;provider&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;npm&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@ai-sdk/anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;baseURL&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://api.deepseek.com/anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;apiKey&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;lt;apikey&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;models&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek-v4-pro&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek-V4-Pro&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;limit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;context&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1048576&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;262144&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;budgetTokens&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;8192&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek-v4-flash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek-V4-Flash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;limit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;context&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1048576&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;262144&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;budgetTokens&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;8192&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="how-to-use"&gt;How to Use
+&lt;/h2&gt;&lt;p&gt;Select the deepseek model.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png"
+width="1152"
+height="441"
+srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_90da77582546fc32.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_7b7f08ffd58455a8.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="261"
+data-flex-basis="626px"
+&gt;&lt;/p&gt;
+&lt;p&gt;The result.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png"
+width="1361"
+height="510"
+srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_b83fabfded18efdc.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_c24f8389856c64c.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="266"
+data-flex-basis="640px"
+&gt;&lt;/p&gt;
+&lt;h2 id="supplement"&gt;Supplement
+&lt;/h2&gt;&lt;p&gt;This method cannot solve this problem&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If you encounter this problem, you need to wait for opencode to fix it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Related article&lt;/strong&gt;: &lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block Compatibility Issue Analysis&lt;/a&gt; — Analyzes the root cause of 400 errors triggered by multi-turn conversations in extended thinking mode when using DeepSeek with Claude Code, along with community solutions.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
+&lt;p&gt;Currently, it provides two main features: one is review, and the other is using the runner to execute opencode (directly running opencode&amp;rsquo;s prompts on the runner) to handle other functionalities. For example, modifying code, creating new issues, creating PRs based on issues, etc.&lt;/p&gt;
+&lt;h2 id="how-stable-is-it"&gt;How stable is it?
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;This repository has been validated across multiple projects, and the release version is reliable.&lt;/li&gt;
+&lt;li&gt;However, note that the main branch version is a rapidly iterating version.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="how-to-integrate"&gt;How to integrate?
+&lt;/h2&gt;&lt;p&gt;Add the following to your &lt;code&gt;.github/workflows/opencode-review.yml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yml" data-lang="yml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Run OpenCode review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;sun-praise/opencode-actions/review@v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;github-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# only one is enough.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;zhipu-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.ZHIPU_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;opencode-go-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.OPENCODE_GO_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Currently, this action mainly supports Z.AI, ZHIPU, and OPENCODE GO subscriptions. Therefore, if using ZHIPU, simply add your ZHIPU_API_KEY to the project&amp;rsquo;s secrets. If using the opencode go subscription, you need to add OPENCODE_GO_API_KEY.&lt;/p&gt;
+&lt;p&gt;Everything else can use the default configuration. The default model is &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;. For more configuration requirements, I recommend checking the original repository&amp;rsquo;s &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
+&gt;README&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I previously covered this quick review script in my &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
+&gt;code review article&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="differences"&gt;Differences
+&lt;/h2&gt;&lt;p&gt;Actually, opencode has its own actions, so why did I build another one?&lt;/p&gt;
+&lt;p&gt;The differences from the official version are mainly reflected in several aspects:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Feature&lt;/th&gt;
+&lt;th&gt;Upstream Status&lt;/th&gt;
+&lt;th&gt;This Repository&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Model default fallback&lt;/td&gt;
+&lt;td&gt;Only required input&lt;/td&gt;
+&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Provider convenience fields&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Review prompt template&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Retry logic&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Execution timeout&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;timeout-seconds&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Version check&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Installation retry&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;install-attempts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;XDG cache caching&lt;/td&gt;
+&lt;td&gt;Only caches bin&lt;/td&gt;
+&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Detailed explanations are available in &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
+&gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="review-effectiveness"&gt;Review effectiveness
+&lt;/h2&gt;&lt;p&gt;You can see the results from the repo&amp;rsquo;s own PR at &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
+&gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The effect looks like this:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png"
+width="1407"
+height="1208"
+srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_2bf58faf91a7a9d.png 480w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_6740bc1877d53b60.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="116"
+data-flex-basis="279px"
+&gt;&lt;/p&gt;
+&lt;h2 id="future"&gt;Future
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Try integrating gemini cli. Google&amp;rsquo;s GEM 3.1 PRO model currently offers great value for money, with the highest intelligence per unit.&lt;/li&gt;
+&lt;li&gt;Integrate MCP plugin functionality. If MCP is available during opencode review, it may bring better review results.&lt;/li&gt;
+&lt;li&gt;Integration of commercial plugin features&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>I'm Writing Articles Myself Again, and Some Thoughts on GPT-5.4</title><link>https://svtter.cn/en/p/im-writing-articles-myself-again-and-some-thoughts-on-gpt-5.4/</link><pubDate>Mon, 06 Apr 2026 21:49:34 +0800</pubDate><guid>https://svtter.cn/en/p/im-writing-articles-myself-again-and-some-thoughts-on-gpt-5.4/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E8%BF%98%E6%98%AF%E8%87%AA%E5%B7%B1%E5%86%99%E6%96%87%E7%AB%A0%E4%BB%A5%E5%8F%8A%E5%AF%B9-gpt-5.4-%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/cover.jpg" alt="Featured image of post I'm Writing Articles Myself Again, and Some Thoughts on GPT-5.4" /&gt;&lt;p&gt;I&amp;rsquo;ve gone back to writing articles &amp;ldquo;myself&amp;rdquo; again. The reason I say &amp;ldquo;myself&amp;rdquo; is:&lt;/p&gt;
+&lt;p&gt;Actually, my recent articles were all written through conversations with DeepSeek, where I had DeepSeek generate the output.&lt;/p&gt;
+&lt;p&gt;After generating the articles, I&amp;rsquo;d have Codex polish them. (But Codex&amp;rsquo;s polishing was absolute crap.)&lt;/p&gt;
+&lt;p&gt;In between, I also tried having GPT-5.4 generate output—that is, communicate with me + write the first draft.&lt;/p&gt;
+&lt;h2 id="the-problem"&gt;The Problem
+&lt;/h2&gt;&lt;p&gt;The reason I stopped using GPT-5.4, despite looking like an incredibly powerful large model, is that its output was truly garbage. It had an overwhelmingly heavy AI flavor, read with a strong translation tone that was genuinely uncomfortable. Beyond the translation tone, another major issue was that it couldn&amp;rsquo;t express what I meant. In my view, Chinese is a language with rich semantics and nuance, so this kind of expression easily deviates from my own thoughts and intentions. I believe Chinese emphasizes subtle expression, not blunt straightforwardness. GPT-5.4 had a lot of blunt straightforwardness. It was very uncomfortable. I think readers would feel uncomfortable reading it too.&lt;/p&gt;
+&lt;p&gt;But fundamentally, the main problem is the AI flavor. AI-generated articles universally have this AI flavor problem, and GPT-5.4 is the most obvious.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Recently, it&amp;rsquo;s probably because Codex has a 2x discount, so everyone wants to try it. Plus, Simple Codex&amp;rsquo;s Terminal Benchmark certification score has given people a lot more confidence.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;The issue of not sounding human isn&amp;rsquo;t just my perspective. This is everyone&amp;rsquo;s complaint.&lt;/p&gt;
+&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="zh" dir="ltr"&gt;先什么时候能让gpt讲人话，而不是叽里咕噜讲一堆车轱辘废话，难绷。&lt;/p&gt;&amp;mdash; 竹筒Tom (@0xAzathoth_) &lt;a href="https://twitter.com/0xAzAzathoth_/status/2040752766860329461?ref_src=twsrc%5Etfw"&gt;April 5, 2026&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;p&gt;In recent articles, when I explained in conversation &amp;ldquo;don&amp;rsquo;t be aggressive toward vendors,&amp;rdquo; it would write &amp;ldquo;this article isn&amp;rsquo;t targeting anyone.&amp;rdquo; A typical example is the later articles discussing LLM pricing.&lt;/p&gt;
+&lt;p&gt;If it knew about the Chinese meme &amp;ldquo;I&amp;rsquo;m not targeting anyone, I&amp;rsquo;m saying everyone here is xx&amp;rdquo; (from a Stephen Chow movie). I don&amp;rsquo;t think it would express itself that way.&lt;/p&gt;
+&lt;p&gt;So I&amp;rsquo;ve decided to write articles myself—I&amp;rsquo;ll take responsibility for the results.&lt;/p&gt;
+&lt;h2 id="further-analysis---let-me-talk-about-other-things"&gt;Further Analysis - Let Me Talk About Other Things
+&lt;/h2&gt;&lt;p&gt;GPT-5.4 has another obvious problem: I said not to do something, but it still does it. Or it outputs content saying it will do something, then doesn&amp;rsquo;t do it in the next step. If this appears in a longer multi-round conversation, I think it&amp;rsquo;s acceptable. But in the current situation, having just said it would do something in the previous sentence, then not doing it in the next step—this performance, I feel, isn&amp;rsquo;t good enough.&lt;/p&gt;
+&lt;p&gt;ASI cares about not just &amp;ldquo;safety,&amp;rdquo; but actually &amp;ldquo;alignment.&amp;rdquo; SAM doesn&amp;rsquo;t understand this. Actually &amp;ldquo;not listening when told&amp;rdquo; is a failure of &amp;ldquo;alignment.&amp;rdquo; I don&amp;rsquo;t like Sam. This problem is actually a management problem. The safety team doesn&amp;rsquo;t get the promised 20% compute. So naturally alignment can&amp;rsquo;t be achieved.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ll add some supporting materials later. Or open a new blog to discuss this.&lt;/p&gt;
+&lt;p&gt;Regarding collaboration with OpenCode, rather than being more open, it&amp;rsquo;s actually targeted opposition. We users benefit from this. The harder vendors fight, the more users benefit.&lt;/p&gt;
+&lt;p&gt;When Opus quotas were reduced, Codex immediately switched to token-based billing.&lt;/p&gt;
+&lt;h2 id="a-few-words-about-doubao"&gt;A Few Words About Doubao
+&lt;/h2&gt;&lt;p&gt;Also, Doubao is a typical passive-aggressive master. Whether in group chat or voice, it&amp;rsquo;s the same. I don&amp;rsquo;t know where the training data went wrong.&lt;/p&gt;
+&lt;p&gt;Also, I didn&amp;rsquo;t expect the group chat assistant to get into arguments with people in the group 🤣&lt;/p&gt;
+&lt;h2 id="supplement"&gt;Supplement
+&lt;/h2&gt;&lt;p&gt;Happened to see Old Feng from Cloud Numbers also discussing this problem. &lt;a class="link" href="https://mp.weixin.qq.com/s/TINtWWri5ghccVnJ9BIEPw" target="_blank" rel="noopener"
+&gt;&lt;em&gt;Yes, I Use AI to Write Articles&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;His articles don&amp;rsquo;t look as heavily AI-flavored. Maybe Opus is more suitable for writing.&lt;/p&gt;
+&lt;p&gt;Additionally, if you include your own writing style in the prompt, it might further reduce the AI feeling.&lt;/p&gt;</description></item><item><title>Does Self-Hosting an LLM Really Let You Use It Without Limits?</title><link>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</link><pubDate>Thu, 19 Mar 2026 12:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/cover.jpg" alt="Featured image of post Does Self-Hosting an LLM Really Let You Use It Without Limits?" /&gt;&lt;p&gt;Many people start thinking seriously about self-hosting an LLM not because of technical romance, but because API bills, rate limits, or compliance requirements have started to collide with real business constraints.&lt;/p&gt;
 &lt;p&gt;So a very natural question shows up: if the model runs on your own machine, does that mean you can finally use it without limits?&lt;/p&gt;
 &lt;p&gt;My answer is: &lt;strong&gt;no.&lt;/strong&gt; Self-hosting a model does not mean unlimited freedom. It mostly means that many of the constraints and costs previously absorbed by the platform are now transferred to you.&lt;/p&gt;
 &lt;p&gt;But there is a more useful second question: once usage gets large enough, can self-hosting actually become cheaper?&lt;/p&gt;
@@ -95,7 +1455,7 @@
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg"
 width="4800"
 height="3584"
-srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_dcef6b97d91e6fa8.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_838ea2ffd6657359.jpg 1024w"
+srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_e538165957f7c9a8.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_c17af6e4e0b01ddc.jpg 1024w"
 loading="lazy"
 alt="An illustration showing how the balance shifts from API costs to local hardware investment as LLM usage grows from light to heavy"
 class="gallery-image"
@@ -123,7 +1483,7 @@ data-flex-basis="321px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg"
 width="4800"
 height="3584"
-srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_10c1720ef45476fc.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_40c1373b24f923ac.jpg 1024w"
+srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_3afbc14068dd055d.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_7f9cead440467875.jpg 1024w"
 loading="lazy"
 alt="An illustration showing that a closed cloud model and a local open-weight model are not fully equivalent in capability, cost, and operational burden"
 class="gallery-image"
@@ -443,7 +1803,7 @@ data-flex-basis="321px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775.png"
 width="1334"
 height="912"
-srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_ea5271b88cf5fdd3.png 480w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_af3c2b424aaf9fbf.png 1024w"
+srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_b155e9a0704846e8.png 480w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_6be93dbe8b55aece.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="146"
@@ -452,7 +1812,7 @@ data-flex-basis="351px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438.png"
 width="2072"
 height="666"
-srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_e1b2d879ddaa9203.png 480w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_dca7e45aa1325c10.png 1024w"
+srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_e0c53bbc336dfd8b.png 480w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_27427247ea9a3567.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="311"
@@ -560,7 +1920,7 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png"
 width="1023"
 height="930"
-srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c015f16c1d892d52.png 480w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_474d285f9e3620e9.png 1024w"
+srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_175ada8cb4120ce2.png 480w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c7107e2757a481d7.png 1024w"
 loading="lazy"
 alt="GPT-5.2 Response Tone"
 class="gallery-image"
@@ -1154,7 +2514,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
 width="2892"
 height="1848"
-srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_d68a3d99150ce2f4.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_3fce0f19d2ec6146.png 1024w"
+srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_25ead07efadeb176.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_a8ec1f00bb2f829d.png 1024w"
 loading="lazy"
 alt="VM remote desktop running Claude Code"
 class="gallery-image"
@@ -1194,7 +2554,7 @@ data-flex-basis="375px"
 &lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png"
 width="1920"
 height="1080"
-srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_697dcf96fa965294.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_3a55396d5d5e0712.png 1024w"
+srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_eb1747e0ec7106ec.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_f1b2609be5f2d5a2.png 1024w"
 loading="lazy"
 alt="hugo-admin interface"
 class="gallery-image"
@@ -1312,7 +2672,7 @@ data-flex-basis="426px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png"
 width="2153"
 height="1761"
-srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_6219c7eb2eab8af9.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_896f53042df2250e.png 1024w"
+srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_9e208084f399dd3b.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_ddc5a242949e5593.png 1024w"
 loading="lazy"
 alt="Fried Rice Theme Preview"
 class="gallery-image"
@@ -1362,7 +2722,7 @@ data-flex-basis="293px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png"
 width="2442"
 height="1268"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_d89f0ae8f1603602.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_f0b93cbeb72d32d8.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_5bb5ee36b6e10e41.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_70c54c437868eb9.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="192"
@@ -1393,7 +2753,7 @@ data-flex-basis="462px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png"
 width="2709"
 height="1491"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_42122bb2380063cf.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f408b3e25518dc04.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_4f423a1898a3c4be.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f0b3717c50b18ca0.png 1024w"
 loading="lazy"
 alt="local-cloud/sync-async limitations"
 class="gallery-image"
@@ -1404,7 +2764,7 @@ data-flex-basis="436px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png"
 width="2730"
 height="1428"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_c029280737f11b12.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_50944036a3cee364.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_888ea075db809469.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_aad727e671ca1c8d.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="191"
@@ -1415,7 +2775,7 @@ data-flex-basis="458px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png"
 width="2730"
 height="1596"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_a90cae31e67954aa.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8b772c218c201c5f.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8737468dad94135f.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7975af118f4c1c9b.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="171"
@@ -1429,7 +2789,7 @@ data-flex-basis="410px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png"
 width="2843"
 height="1514"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_5882d2934e05ccb5.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_24f37714fba8fc91.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dff75fbff84f0862.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_9ea6b729a07f56bc.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="187"
@@ -1460,7 +2820,7 @@ data-flex-basis="450px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png"
 width="2613"
 height="1149"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_787eee0c4ac0c32e.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6dc3ac369f50f862.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6f1f8b4de9bcdaad.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_bd247f1e483fdf39.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="227"
@@ -1474,7 +2834,7 @@ data-flex-basis="545px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png"
 width="2850"
 height="1659"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8c91fdb3b66afcb.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_df24bef214ac4e82.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_970bdc1680b37577.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e272c05700bf0f37.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="171"
@@ -1502,7 +2862,7 @@ data-flex-basis="412px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png"
 width="2553"
 height="462"
-srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_dbeb3947f178aac9.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_2c824746f741f4ac.png 1024w"
+srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_6b9d32fdd11c794d.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_1cc30a9f8660048.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="552"
@@ -1615,7 +2975,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ.png"
 width="1200"
 height="832"
-srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ_hu_b24caa1450c981f6.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ_hu_c39dd9490283c1be.png 1024w"
+srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ_hu_644beddb6c493bdd.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ_hu_b499e0f22dabe05a.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="144"
@@ -1626,7 +2986,7 @@ data-flex-basis="346px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032.png"
 width="2091"
 height="1587"
-srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032_hu_7db667b7f9d9df7b.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032_hu_88d3f5743cb65223.png 1024w"
+srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032_hu_fa430333a9b46287.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032_hu_ce1c8d07e057ac48.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="131"
@@ -1637,7 +2997,7 @@ data-flex-basis="316px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940.png"
 width="2163"
 height="1911"
-srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940_hu_c84b877eeaffa92d.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940_hu_434f4701e97c5241.png 1024w"
+srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940_hu_556a68f07306dba.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940_hu_3ff5c0eb4ecb44e5.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="113"
@@ -1649,7 +3009,7 @@ data-flex-basis="271px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc.png"
 width="2001"
 height="1509"
-srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc_hu_4b496410369e3b3a.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc_hu_e711c6410482af7e.png 1024w"
+srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc_hu_b6f304521e91652e.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc_hu_1b7a5093b549396.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="132"
@@ -1660,7 +3020,7 @@ data-flex-basis="318px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds.png"
 width="1260"
 height="1538"
-srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds_hu_449973d3bc8fb8ab.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds_hu_a4b89e87924b34eb.png 1024w"
+srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds_hu_520dc23733853495.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds_hu_694da5f223dde2dc.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="81"
@@ -1673,7 +3033,7 @@ data-flex-basis="196px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131.png"
 width="1275"
 height="1616"
-srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131_hu_479ab0fea5b53f5f.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131_hu_33adf58eab061c65.png 1024w"
+srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131_hu_33038f4abee22920.png 480w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131_hu_81540202970b4134.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="78"
@@ -1696,7 +3056,7 @@ data-flex-basis="189px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit.png"
 width="2118"
 height="126"
-srcset="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_d5a32301f7e47a36.png 480w, https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_5d241018e40f9047.png 1024w"
+srcset="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_5db449d2dc02deb2.png 480w, https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_9964d513d07b6656.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="1680"
@@ -1880,15 +3240,9 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;h2 id="cline"&gt;Cline
 &lt;/h2&gt;&lt;p&gt;In cline, there are roughly a few problems.&lt;/p&gt;
 &lt;p&gt;Problem One: Simple diff tool calls fail to output correctly.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1.png"
-width="588"
-height="243"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1_hu_40678bb4e4c7a0c1.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1_hu_2c04225f983576c5.png 1024w"
+&lt;p&gt;&lt;img src="https://svtter.cn/img/prob1.png"
 loading="lazy"
 alt="diff prob"
-class="gallery-image"
-data-flex-grow="241"
-data-flex-basis="580px"
 &gt;&lt;/p&gt;
 &lt;p&gt;Problem Two: The task list tool is unusable.&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://svtter.cn/img/prob.png"
@@ -1906,15 +3260,9 @@ alt="tasklist prob"
 &lt;p&gt;There&amp;rsquo;s also a common issue: obsequiousness.&lt;/p&gt;
 &lt;h3 id="stopped-responding"&gt;Stopped Responding
 &lt;/h3&gt;&lt;p&gt;A new problem encountered on 2025-10-03: it stopped providing feedback while answering a question and terminated the process.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3.png"
-width="878"
-height="684"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3_hu_345d49e45a084c07.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3_hu_e06bae55fc0c46df.png 1024w"
+&lt;p&gt;&lt;img src="https://svtter.cn/img/bug-3.png"
 loading="lazy"
 alt="stop responsing"
-class="gallery-image"
-data-flex-grow="128"
-data-flex-basis="308px"
 &gt;&lt;/p&gt;
 &lt;p&gt;The most likely cause of this problem is a lack of adaptation to the thinking interface, resulting in it thinking but not displaying the content.&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
@@ -1957,7 +3305,7 @@ data-flex-basis="308px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/try-cline/pics/cline-clip.png"
 width="552"
 height="465"
-srcset="https://svtter.cn/p/try-cline/pics/cline-clip_hu_eaaa7125a04d835d.png 480w, https://svtter.cn/p/try-cline/pics/cline-clip_hu_c54a7197038a58e6.png 1024w"
+srcset="https://svtter.cn/p/try-cline/pics/cline-clip_hu_36e88020f5bb97ee.png 480w, https://svtter.cn/p/try-cline/pics/cline-clip_hu_3e6f4db04b69845b.png 1024w"
 loading="lazy"
 alt="Cline Interface"
 class="gallery-image"
@@ -1979,7 +3327,7 @@ data-flex-basis="284px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/try-cline/pics/interactive.png"
 width="523"
 height="1780"
-srcset="https://svtter.cn/p/try-cline/pics/interactive_hu_448c51fd8829035d.png 480w, https://svtter.cn/p/try-cline/pics/interactive_hu_26ce6c43bfd5c969.png 1024w"
+srcset="https://svtter.cn/p/try-cline/pics/interactive_hu_9e49e49c1ac928c3.png 480w, https://svtter.cn/p/try-cline/pics/interactive_hu_e0447e8a31a81b42.png 1024w"
 loading="lazy"
 alt="Interactive Session"
 class="gallery-image"
@@ -2007,7 +3355,7 @@ data-flex-basis="70px"
 &lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2.jpg"
 width="1280"
 height="1707"
-srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2_hu_c88be12cb06d2945.jpg 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2_hu_791a35b85a8e04bb.jpg 1024w"
+srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2_hu_771f0f2490b85ed1.jpg 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2_hu_8848c0cff3902819.jpg 1024w"
 loading="lazy"
 alt="Original Meter"
 class="gallery-image"
@@ -2020,7 +3368,7 @@ data-flex-basis="179px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image.png"
 width="1280"
 height="1707"
-srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_hu_21b7440b53011ad6.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_hu_e002cc344d0e25da.png 1024w"
+srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_hu_41dee455ef817364.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_hu_4c0f4ae31905bed5.png 1024w"
 loading="lazy"
 alt="Overall Test Results"
 class="gallery-image"
@@ -2032,7 +3380,7 @@ data-flex-basis="179px"
 &lt;/h4&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_anthropic_claude-3.5-sonnet.png"
 width="187"
 height="56"
-srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_anthropic_claude-3.5-sonnet_hu_21e838496ec13e0c.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_anthropic_claude-3.5-sonnet_hu_98d3433b78049bde.png 1024w"
+srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_anthropic_claude-3.5-sonnet_hu_fef09b134291fdf1.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_anthropic_claude-3.5-sonnet_hu_d1e74a2cb60d339a.png 1024w"
 loading="lazy"
 alt="Claude 3.5 Sonnet Test Results"
 class="gallery-image"
@@ -2043,7 +3391,7 @@ data-flex-basis="801px"
 &lt;/h4&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_google_gemini-2.5-pro.png"
 width="690"
 height="142"
-srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_google_gemini-2.5-pro_hu_eb7a36a86550fa2e.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_google_gemini-2.5-pro_hu_c6c68f3c0be13424.png 1024w"
+srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_google_gemini-2.5-pro_hu_75fca6815db4fee4.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_google_gemini-2.5-pro_hu_50b7c46ce946b5fc.png 1024w"
 loading="lazy"
 alt="Gemini 2.5 Pro Test Results"
 class="gallery-image"
@@ -2054,7 +3402,7 @@ data-flex-basis="1166px"
 &lt;/h4&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_openai_gpt-4o.png"
 width="120"
 height="60"
-srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_openai_gpt-4o_hu_66da02220ce9dd8e.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_openai_gpt-4o_hu_895477318e72aaf7.png 1024w"
+srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_openai_gpt-4o_hu_e7a4998fc04bc3f0.png 480w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_openai_gpt-4o_hu_3305e7a6fcb0125a.png 1024w"
 loading="lazy"
 alt="GPT-4o Test Results"
 class="gallery-image"
@@ -3146,7 +4494,7 @@ Therefore, the main code for CLIP is located at &lt;a class="link" href="https:/
 &lt;p&gt;&lt;img src="https://svtter.cn/p/openrouter-usage.md/pics/image.png"
 width="799"
 height="211"
-srcset="https://svtter.cn/p/openrouter-usage.md/pics/image_hu_57d5ac83c17b591e.png 480w, https://svtter.cn/p/openrouter-usage.md/pics/image_hu_ea2692bffb369dc7.png 1024w"
+srcset="https://svtter.cn/p/openrouter-usage.md/pics/image_hu_e040aaf2cd29925d.png 480w, https://svtter.cn/p/openrouter-usage.md/pics/image_hu_2c07899be2c56269.png 1024w"
 loading="lazy"
 alt="prof"
 class="gallery-image"

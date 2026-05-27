@@ -1,4 +1,340 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DevOps on Svtter's Blog</title><link>https://svtter.cn/en/categories/devops/</link><description>Recent content in DevOps on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Dec 2025 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/devops/index.xml" rel="self" type="application/rss+xml"/><item><title>Running Claude Code in a VM for Automated Testing and Development</title><link>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</guid><description>&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.png" alt="Featured image of post Running Claude Code in a VM for Automated Testing and Development" /&gt;&lt;p&gt;Recently, I verified an effective AI development method that doesn&amp;rsquo;t affect the existing workflow. Here&amp;rsquo;s a summary.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DevOps on Svtter's Blog</title><link>https://svtter.cn/en/categories/devops/</link><description>Recent content in DevOps on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 22 May 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/devops/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows</title><link>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</link><pubDate>Fri, 22 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/cover.jpg" alt="Featured image of post OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows" /&gt;&lt;p&gt;opencode is a 160k-star AI coding tool with 27 workflow files in its &lt;code&gt;.github/workflows/&lt;/code&gt; directory. This number is not uncommon for open source projects, but what&amp;rsquo;s truly interesting is not the quantity, but the scope these workflows cover: from conventional CI/CD to AI-driven community governance, they&amp;rsquo;ve done almost everything GitHub Actions can do.&lt;/p&gt;
+&lt;p&gt;This article analyzes the design of these workflows by category, discusses the pros and cons of this level of automation, and shares insights for our own projects.&lt;/p&gt;
+&lt;h2 id="overview"&gt;Overview
+&lt;/h2&gt;&lt;p&gt;The 27 workflows can be divided into four categories:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Category&lt;/th&gt;
+&lt;th&gt;Count&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;CI/Testing&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Release/Delivery&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Automation/Bot&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Docs/Other&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;16 automation workflows account for 60% of the total. opencode doesn&amp;rsquo;t just use Actions to run tests and releases—it also entrusts community governance and code quality review to the automation system.&lt;/p&gt;
+&lt;h2 id="citesting-solid-but-restrained"&gt;CI/Testing: Solid but Restrained
+&lt;/h2&gt;&lt;p&gt;Four testing-related workflows:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;typecheck.yml&lt;/strong&gt; — Runs &lt;code&gt;bun typecheck&lt;/code&gt; on PR and push to dev. Simple and direct, no unnecessary actions.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;test.yml&lt;/strong&gt; — Cross-platform test matrix (Linux + Windows), runs unit tests and Playwright e2e. Has concurrency control where new commits in the same PR cancel old runs. Test results generate JUnit reports uploaded as artifacts.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;nix-eval.yml&lt;/strong&gt; — Verifies Nix flake builds on four architectures (x86_64-linux, aarch64-linux, x86_64-darwin, aarch64-darwin). Mandatory package failures block the build, optional package failures are just warnings.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;storybook.yml&lt;/strong&gt; — Storybook builds for UI components, only triggered when storybook/ui-related files change. Path triggering avoids unnecessary runs.&lt;/p&gt;
+&lt;p&gt;Several noteworthy design choices:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;: Multiple workflows use this pattern so the same PR doesn&amp;rsquo;t stack multiple runs. For a project receiving lots of community PRs, this saves significant CI resources.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Path triggering&lt;/strong&gt;: containers.yml only runs when container files change, storybook.yml only runs when UI changes. Not everything runs on all commits.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mixed Runner Strategy&lt;/strong&gt;: Most workflows use &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
+&gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="releasedelivery-full-platform-coverage"&gt;Release/Delivery: Full Platform Coverage
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; is the most complex workflow, handling the complete release process in a single file:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Version number calculation&lt;/li&gt;
+&lt;li&gt;CLI build matrix (multi-platform, multi-architecture)&lt;/li&gt;
+&lt;li&gt;Windows code signing (Azure Signing)&lt;/li&gt;
+&lt;li&gt;macOS code signing (Apple Developer)&lt;/li&gt;
+&lt;li&gt;Electron app builds&lt;/li&gt;
+&lt;li&gt;npm publishing&lt;/li&gt;
+&lt;li&gt;GitHub Release creation&lt;/li&gt;
+&lt;li&gt;AUR (Arch Linux) publishing&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;One workflow covers distribution for CLI, desktop apps, npm packages, and Linux packages. This &amp;ldquo;release everywhere at once&amp;rdquo; pattern is user-friendly—regardless of platform, everyone gets the new version on the same day.&lt;/p&gt;
+&lt;p&gt;Other release workflows are split by artifact type:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;publish-github-action.yml&lt;/strong&gt; — Listens for &lt;code&gt;github-v*&lt;/code&gt; tags, publishes GitHub Action to Marketplace&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;publish-vscode.yml&lt;/strong&gt; — Listens for &lt;code&gt;vscode-v*&lt;/code&gt; tags, publishes to both VS Code Marketplace and Open VSX&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;containers.yml&lt;/strong&gt; — Multi-architecture container image builds, pushes to GHCR&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;release-github-action.yml&lt;/strong&gt; — Creates pre-releases when github directory changes on dev branch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Tag triggering is a good practice: releases are explicit actions, not triggered by accidental code pushes. &lt;code&gt;publish.yml&lt;/code&gt; automatically builds snapshots when pushing to &lt;code&gt;ci/dev/beta/fix&lt;/code&gt; branches, but official releases require manual dispatch or tags.&lt;/p&gt;
+&lt;h2 id="automationbot-ai-driven-community-governance"&gt;Automation/Bot: AI-Driven Community Governance
+&lt;/h2&gt;&lt;p&gt;This is opencode&amp;rsquo;s most distinctive feature. Among the 16 automation workflows, multiple directly call upon opencode&amp;rsquo;s own AI capabilities to handle community affairs.&lt;/p&gt;
+&lt;h3 id="issue-management"&gt;Issue Management
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;triage.yml&lt;/strong&gt; — When a new issue is created, opencode AI automatically triages it, adding labels and categories.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;duplicate-issues.yml&lt;/strong&gt; — When a new issue is created/edited, opencode AI analyzes whether it duplicates existing issues. Also checks whether it follows one of three issue templates and whether it contains AI-generated content. Non-compliant issues get a &lt;code&gt;needs:compliance&lt;/code&gt; label.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;compliance-close.yml&lt;/strong&gt; — Every 30 minutes, checks issues/PRs with &lt;code&gt;needs:compliance&lt;/code&gt; label and auto-closes if not fixed within 2 hours. Different prompt messages are given for issues vs PRs when closing.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;close-issues.yml&lt;/strong&gt; — Closes stale issues daily at 2 AM UTC.&lt;/p&gt;
+&lt;p&gt;These four layers form complete issue lifecycle management:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;New issue → AI triage → duplicate/compliance check → compliance grace period → stale cleanup
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="pr-management"&gt;PR Management
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;pr-standards.yml&lt;/strong&gt; is one of the longest workflows, doing two things:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Title format check&lt;/strong&gt;: Enforces conventional commits format (feat/fix/refactor/&amp;hellip;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Template compliance check&lt;/strong&gt;: PR description must include required sections like issue references, change type, verification method&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Non-compliant PRs get a &lt;code&gt;needs:compliance&lt;/code&gt; label and auto-close after 2 hours. Team members and bots are exempt.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;pr-management.yml&lt;/strong&gt; — Checks for duplicates when PR is created, adds labels for community contributors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;close-prs.yml&lt;/strong&gt; — Closes PRs older than 1 month with insufficient reactions daily at 10 PM UTC. Default threshold is 2 reactions, configurable.&lt;/p&gt;
+&lt;h3 id="ai-code-review"&gt;AI Code Review
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;review.yml&lt;/strong&gt; — Input &lt;code&gt;/review&lt;/code&gt; in PR comments, opencode AI analyzes code and leaves review comments on specific lines. Only available to repo owner/members.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;opencode.yml&lt;/strong&gt; — Input &lt;code&gt;/oc&lt;/code&gt; or &lt;code&gt;/opencode&lt;/code&gt; in issue or PR comments to trigger opencode AI for more general interactions.&lt;/p&gt;
+&lt;p&gt;These two workflows demonstrate the &amp;ldquo;AI as collaborator&amp;rdquo; approach: not fully automatic code review, but on-demand triggering with humans making final decisions in the loop.&lt;/p&gt;
+&lt;h3 id="documentation--maintenance"&gt;Documentation &amp;amp; Maintenance
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;docs-update.yml&lt;/strong&gt; — Every 12 hours, checks recent commits and uses opencode AI to determine if documentation needs updates.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;generate.yml&lt;/strong&gt; — Runs code generation scripts when pushing to dev, auto-commits changes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;beta.yml&lt;/strong&gt; — Syncs beta branch hourly.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;stats.yml&lt;/strong&gt; — Updates download statistics to STATS.md daily.&lt;/p&gt;
+&lt;h2 id="design-patterns-worth-adopting"&gt;Design Patterns Worth Adopting
+&lt;/h2&gt;&lt;h3 id="1-layered-governance"&gt;1. Layered Governance
+&lt;/h3&gt;&lt;p&gt;opencode doesn&amp;rsquo;t stuff all automation into one workflow, but splits it by responsibility. An issue goes through four workflows in relay from creation to closure. Each workflow does one thing, combining to form a complete governance chain.&lt;/p&gt;
+&lt;p&gt;Benefits of this design:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Individual workflows can be modified or disabled independently without affecting other steps&lt;/li&gt;
+&lt;li&gt;Each workflow&amp;rsquo;s trigger conditions and permission scope are minimized&lt;/li&gt;
+&lt;li&gt;Easy to locate which step has problems when they occur&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-compliance-grace-period"&gt;2. Compliance Grace Period
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;compliance-close.yml&lt;/code&gt; doesn&amp;rsquo;t close immediately upon detecting non-compliance, but gives a 2-hour grace period. This is reasonable for global contributors in different time zones—you might submit an issue while sleeping, and wake up with time to fix it.&lt;/p&gt;
+&lt;h3 id="3-ai-at-decision-points-not-execution-points"&gt;3. AI at Decision Points, Not Execution Points
+&lt;/h3&gt;&lt;p&gt;triage, duplicate detection, and code review all have AI make initial assessments, with humans making final decisions. But execution-level tasks like code builds and releases don&amp;rsquo;t use AI at all. This is a pragmatic division: AI excels at pattern recognition and initial classification, but not precise execution.&lt;/p&gt;
+&lt;h3 id="4-explicit-vs-automatic-triggers"&gt;4. Explicit vs Automatic Triggers
+&lt;/h3&gt;&lt;p&gt;Releases use tag triggers, maintenance uses schedule triggers, governance uses event triggers. Three trigger types correspond to three different automation trust levels: releases need human confirmation, maintenance can be scheduled automatic, governance needs immediate response.&lt;/p&gt;
+&lt;h2 id="risks-of-over-automation"&gt;Risks of Over-Automation
+&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s automation system is comprehensive, but there are points to watch:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Community barrier&lt;/strong&gt;: New contributors submitting issues must follow specific templates, PRs must conform to conventional commits, otherwise auto-closed after 2 hours. For a 160k-star project, this strictness is reasonable—it filters out many low-quality contributions. But for small projects, this level of automation would scare away potential contributors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Maintenance cost&lt;/strong&gt;: 27 workflows means 27 automation scripts to maintain. opencode has custom runners and dedicated scripts. If a workflow&amp;rsquo;s logic needs adjustment, maintainers need to switch between GitHub Actions YAML and custom scripts.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AI uncertainty&lt;/strong&gt;: duplicate-issues and triage use AI for judgment, but AI can misjudge. A reasonable issue marked as duplicate and closed creates a negative experience for contributors. opencode uses grace periods and manual review to mitigate this, but the risk remains.&lt;/p&gt;
+&lt;h2 id="insights-for-our-projects"&gt;Insights for Our Projects
+&lt;/h2&gt;&lt;p&gt;Not every project needs 27 workflows. But opencode&amp;rsquo;s layered governance and &amp;ldquo;AI at decision points&amp;rdquo; approach are worth referencing:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Start with issue templates&lt;/strong&gt;: If the project starts receiving lots of duplicate or low-quality issues, add templates and duplicate checking first, rather than manually handling each one.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use grace periods for compliance checks&lt;/strong&gt;: Always give a grace period when auto-closing non-compliant contributions.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use AI for classification, not execution&lt;/strong&gt;: Let AI help triage issues and check PR formats, but don&amp;rsquo;t let AI auto-merge code or publish releases.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use tag triggers for releases&lt;/strong&gt;: This is the safest approach. Automatic snapshot releases are acceptable, official versions need human confirmation.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Add on demand&lt;/strong&gt;: Add automation only when you have pain points. opencode&amp;rsquo;s 27 workflows weren&amp;rsquo;t built in a day, but gradually added as community scale grew.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="summary"&gt;Summary
+&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;What it does is simple: it provides an HTTP service that lets you register locally generated HTML files and preview them in a browser.&lt;/p&gt;
+&lt;h2 id="why-this-tool-is-needed"&gt;Why This Tool Is Needed
+&lt;/h2&gt;&lt;p&gt;The problem stems from AI Agent output.&lt;/p&gt;
+&lt;p&gt;Nowadays I use agents like Claude Code and OpenCode for my work, and they often need to output complex content—code review summaries, comparative analyses, quotations, architecture design documents. When this content is sent to Telegram as plain text, the formatting gets completely messed up, tables become unreadable, and code syntax highlighting is lost.&lt;/p&gt;
+&lt;p&gt;In short, it&amp;rsquo;s just a big mess.&lt;/p&gt;
+&lt;p&gt;The initial approach was to have agents directly generate HTML files locally and open them in a browser. But the problems were:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The agent runs on a server without a graphical interface&lt;/li&gt;
+&lt;li&gt;Locally generated file paths are unpredictable and management is chaotic&lt;/li&gt;
+&lt;li&gt;No history—previously sent content can&amp;rsquo;t be found&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So I needed a service where an agent could &amp;ldquo;send&amp;rdquo; an HTML file and get back a URL that could be opened in any device&amp;rsquo;s browser. The agent would handle mobile and PC compatibility.&lt;/p&gt;
+&lt;h2 id="what-sth-does"&gt;What sth Does
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;sth&lt;/code&gt; is a lightweight HTTP service written in Go with just two core commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Start the service&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth start
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Send an HTML file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;sth send&lt;/code&gt; packages the target HTML file along with resource files from the same directory (CSS, JS, images, etc.) and uploads them, then returns a URL. Opening this URL displays the complete page effect.&lt;/p&gt;
+&lt;p&gt;In practice, it runs on my intranet development machine, and agents specify the remote address via the &lt;code&gt;--server&lt;/code&gt; parameter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html --server http://dev-1:3939
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="my-actual-usage"&gt;My Actual Usage
+&lt;/h2&gt;&lt;p&gt;Currently &lt;code&gt;sth&lt;/code&gt; mainly runs on my development server, working in tandem with the Hermes Agent.&lt;/p&gt;
+&lt;p&gt;Hermes is my daily AI assistant running on Telegram. When it needs to output complex content—such as code review conclusions, technical solution comparisons, project quotations—it calls the &lt;code&gt;html-report&lt;/code&gt; skill to generate a beautifully formatted HTML file, then sends it to the preview server via &lt;code&gt;sth send&lt;/code&gt;, and finally sends me the URL.&lt;/p&gt;
+&lt;p&gt;The entire workflow is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;User question -&amp;gt; Hermes Agent analysis
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Generate HTML report (html-report skill)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; sth send to preview server
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Return URL -&amp;gt; Send to Telegram
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This way I can tap the link on my phone and see a well-formatted report instead of a blob of plain text.&lt;/p&gt;
+&lt;h2 id="metadata-management"&gt;Metadata Management
+&lt;/h2&gt;&lt;p&gt;Beyond basic sending and previewing, &lt;code&gt;sth&lt;/code&gt; also supports tagging, categorizing, and associating sessions with projects:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth tag &amp;lt;session-id&amp;gt; code-review pricing
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth categorize &amp;lt;session-id&amp;gt; &lt;span class="s2"&gt;&amp;#34;Technical Review&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth project &amp;lt;session-id&amp;gt; hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth list --project hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth search &lt;span class="s2"&gt;&amp;#34;quotation&amp;#34;&lt;/span&gt; --tag pricing
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This feature solves a practical problem: over time, sent reports accumulate. Through tags and project categorization, you can quickly find previous outputs.&lt;/p&gt;
+&lt;p&gt;The difference between &lt;code&gt;list&lt;/code&gt; and &lt;code&gt;search&lt;/code&gt; is: &lt;code&gt;list&lt;/code&gt; matches metadata fields exactly, while &lt;code&gt;search&lt;/code&gt; performs full-text search. They can be used in combination.&lt;/p&gt;
+&lt;h2 id="technical-details"&gt;Technical Details
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Language&lt;/strong&gt;: Go 1.24+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: SQLite (&lt;code&gt;github.com/mattn/go-sqlite3&lt;/code&gt;, requires CGO)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deployment&lt;/strong&gt;: Single binary file, just manage with systemd&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Build&lt;/strong&gt;: &lt;code&gt;go build -o dist/sth ./cmd/html-server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s just that simple, no unnecessary dependencies.&lt;/p&gt;
+&lt;h2 id="open-source"&gt;Open Source
+&lt;/h2&gt;&lt;p&gt;This tool was previously a private repo, but I just made it public today: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
+&lt;p&gt;Currently, it provides two main features: one is review, and the other is using the runner to execute opencode (directly running opencode&amp;rsquo;s prompts on the runner) to handle other functionalities. For example, modifying code, creating new issues, creating PRs based on issues, etc.&lt;/p&gt;
+&lt;h2 id="how-stable-is-it"&gt;How stable is it?
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;This repository has been validated across multiple projects, and the release version is reliable.&lt;/li&gt;
+&lt;li&gt;However, note that the main branch version is a rapidly iterating version.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="how-to-integrate"&gt;How to integrate?
+&lt;/h2&gt;&lt;p&gt;Add the following to your &lt;code&gt;.github/workflows/opencode-review.yml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yml" data-lang="yml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Run OpenCode review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;sun-praise/opencode-actions/review@v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;github-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# only one is enough.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;zhipu-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.ZHIPU_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;opencode-go-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.OPENCODE_GO_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Currently, this action mainly supports Z.AI, ZHIPU, and OPENCODE GO subscriptions. Therefore, if using ZHIPU, simply add your ZHIPU_API_KEY to the project&amp;rsquo;s secrets. If using the opencode go subscription, you need to add OPENCODE_GO_API_KEY.&lt;/p&gt;
+&lt;p&gt;Everything else can use the default configuration. The default model is &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;. For more configuration requirements, I recommend checking the original repository&amp;rsquo;s &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
+&gt;README&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I previously covered this quick review script in my &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
+&gt;code review article&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="differences"&gt;Differences
+&lt;/h2&gt;&lt;p&gt;Actually, opencode has its own actions, so why did I build another one?&lt;/p&gt;
+&lt;p&gt;The differences from the official version are mainly reflected in several aspects:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Feature&lt;/th&gt;
+&lt;th&gt;Upstream Status&lt;/th&gt;
+&lt;th&gt;This Repository&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Model default fallback&lt;/td&gt;
+&lt;td&gt;Only required input&lt;/td&gt;
+&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Provider convenience fields&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Review prompt template&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Retry logic&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Execution timeout&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;timeout-seconds&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Version check&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Installation retry&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;install-attempts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;XDG cache caching&lt;/td&gt;
+&lt;td&gt;Only caches bin&lt;/td&gt;
+&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Detailed explanations are available in &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
+&gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="review-effectiveness"&gt;Review effectiveness
+&lt;/h2&gt;&lt;p&gt;You can see the results from the repo&amp;rsquo;s own PR at &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
+&gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The effect looks like this:&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png"
+width="1407"
+height="1208"
+srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_2bf58faf91a7a9d.png 480w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_6740bc1877d53b60.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="116"
+data-flex-basis="279px"
+&gt;&lt;/p&gt;
+&lt;h2 id="future"&gt;Future
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Try integrating gemini cli. Google&amp;rsquo;s GEM 3.1 PRO model currently offers great value for money, with the highest intelligence per unit.&lt;/li&gt;
+&lt;li&gt;Integrate MCP plugin functionality. If MCP is available during opencode review, it may bring better review results.&lt;/li&gt;
+&lt;li&gt;Integration of commercial plugin features&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Running Claude Code in a VM for Automated Testing and Development</title><link>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</guid><description>&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.png" alt="Featured image of post Running Claude Code in a VM for Automated Testing and Development" /&gt;&lt;p&gt;Recently, I verified an effective AI development method that doesn&amp;rsquo;t affect the existing workflow. Here&amp;rsquo;s a summary.&lt;/p&gt;
 &lt;h2 id="why-choose-vm--claude-code"&gt;Why Choose VM + Claude Code
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Isolation&lt;/strong&gt;: Avoid polluting the main system, can snapshot and rollback&lt;/li&gt;
@@ -281,7 +617,7 @@
 &lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
 width="2892"
 height="1848"
-srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_d68a3d99150ce2f4.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_3fce0f19d2ec6146.png 1024w"
+srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_25ead07efadeb176.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_a8ec1f00bb2f829d.png 1024w"
 loading="lazy"
 alt="VM remote desktop running Claude Code"
 class="gallery-image"
@@ -321,7 +657,7 @@ data-flex-basis="375px"
 &lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png"
 width="1920"
 height="1080"
-srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_697dcf96fa965294.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_3a55396d5d5e0712.png 1024w"
+srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_eb1747e0ec7106ec.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_f1b2609be5f2d5a2.png 1024w"
 loading="lazy"
 alt="hugo-admin interface"
 class="gallery-image"
@@ -429,7 +765,7 @@ data-flex-basis="426px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png"
 width="2553"
 height="462"
-srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_dbeb3947f178aac9.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_2c824746f741f4ac.png 1024w"
+srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_6b9d32fdd11c794d.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_1cc30a9f8660048.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="552"

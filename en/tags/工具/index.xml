@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工具 on Svtter's Blog</title><link>https://svtter.cn/en/tags/%E5%B7%A5%E5%85%B7/</link><description>Recent content in 工具 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 09 May 2026 12:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml"/><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;What it does is simple: it provides an HTTP service that lets you register locally generated HTML files and preview them in a browser.&lt;/p&gt;
+&lt;h2 id="why-this-tool-is-needed"&gt;Why This Tool Is Needed
+&lt;/h2&gt;&lt;p&gt;The problem stems from AI Agent output.&lt;/p&gt;
+&lt;p&gt;Nowadays I use agents like Claude Code and OpenCode for my work, and they often need to output complex content—code review summaries, comparative analyses, quotations, architecture design documents. When this content is sent to Telegram as plain text, the formatting gets completely messed up, tables become unreadable, and code syntax highlighting is lost.&lt;/p&gt;
+&lt;p&gt;In short, it&amp;rsquo;s just a big mess.&lt;/p&gt;
+&lt;p&gt;The initial approach was to have agents directly generate HTML files locally and open them in a browser. But the problems were:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The agent runs on a server without a graphical interface&lt;/li&gt;
+&lt;li&gt;Locally generated file paths are unpredictable and management is chaotic&lt;/li&gt;
+&lt;li&gt;No history—previously sent content can&amp;rsquo;t be found&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So I needed a service where an agent could &amp;ldquo;send&amp;rdquo; an HTML file and get back a URL that could be opened in any device&amp;rsquo;s browser. The agent would handle mobile and PC compatibility.&lt;/p&gt;
+&lt;h2 id="what-sth-does"&gt;What sth Does
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;sth&lt;/code&gt; is a lightweight HTTP service written in Go with just two core commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Start the service&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth start
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Send an HTML file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;sth send&lt;/code&gt; packages the target HTML file along with resource files from the same directory (CSS, JS, images, etc.) and uploads them, then returns a URL. Opening this URL displays the complete page effect.&lt;/p&gt;
+&lt;p&gt;In practice, it runs on my intranet development machine, and agents specify the remote address via the &lt;code&gt;--server&lt;/code&gt; parameter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html --server http://dev-1:3939
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="my-actual-usage"&gt;My Actual Usage
+&lt;/h2&gt;&lt;p&gt;Currently &lt;code&gt;sth&lt;/code&gt; mainly runs on my development server, working in tandem with the Hermes Agent.&lt;/p&gt;
+&lt;p&gt;Hermes is my daily AI assistant running on Telegram. When it needs to output complex content—such as code review conclusions, technical solution comparisons, project quotations—it calls the &lt;code&gt;html-report&lt;/code&gt; skill to generate a beautifully formatted HTML file, then sends it to the preview server via &lt;code&gt;sth send&lt;/code&gt;, and finally sends me the URL.&lt;/p&gt;
+&lt;p&gt;The entire workflow is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;User question -&amp;gt; Hermes Agent analysis
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Generate HTML report (html-report skill)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; sth send to preview server
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Return URL -&amp;gt; Send to Telegram
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This way I can tap the link on my phone and see a well-formatted report instead of a blob of plain text.&lt;/p&gt;
+&lt;h2 id="metadata-management"&gt;Metadata Management
+&lt;/h2&gt;&lt;p&gt;Beyond basic sending and previewing, &lt;code&gt;sth&lt;/code&gt; also supports tagging, categorizing, and associating sessions with projects:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth tag &amp;lt;session-id&amp;gt; code-review pricing
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth categorize &amp;lt;session-id&amp;gt; &lt;span class="s2"&gt;&amp;#34;Technical Review&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth project &amp;lt;session-id&amp;gt; hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth list --project hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth search &lt;span class="s2"&gt;&amp;#34;quotation&amp;#34;&lt;/span&gt; --tag pricing
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This feature solves a practical problem: over time, sent reports accumulate. Through tags and project categorization, you can quickly find previous outputs.&lt;/p&gt;
+&lt;p&gt;The difference between &lt;code&gt;list&lt;/code&gt; and &lt;code&gt;search&lt;/code&gt; is: &lt;code&gt;list&lt;/code&gt; matches metadata fields exactly, while &lt;code&gt;search&lt;/code&gt; performs full-text search. They can be used in combination.&lt;/p&gt;
+&lt;h2 id="technical-details"&gt;Technical Details
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Language&lt;/strong&gt;: Go 1.24+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: SQLite (&lt;code&gt;github.com/mattn/go-sqlite3&lt;/code&gt;, requires CGO)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deployment&lt;/strong&gt;: Single binary file, just manage with systemd&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Build&lt;/strong&gt;: &lt;code&gt;go build -o dist/sth ./cmd/html-server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s just that simple, no unnecessary dependencies.&lt;/p&gt;
+&lt;h2 id="open-source"&gt;Open Source
+&lt;/h2&gt;&lt;p&gt;This tool was previously a private repo, but I just made it public today: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item></channel></rss>

@@ -1,4 +1,447 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI/人工智能 on Svtter's Blog</title><link>https://svtter.cn/en/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</link><description>Recent content in AI/人工智能 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 19 Mar 2026 12:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/index.xml" rel="self" type="application/rss+xml"/><item><title>Does Self-Hosting an LLM Really Let You Use It Without Limits?</title><link>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</link><pubDate>Thu, 19 Mar 2026 12:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/cover.jpg" alt="Featured image of post Does Self-Hosting an LLM Really Let You Use It Without Limits?" /&gt;&lt;p&gt;Many people start thinking seriously about self-hosting an LLM not because of technical romance, but because API bills, rate limits, or compliance requirements have started to collide with real business constraints.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI/人工智能 on Svtter's Blog</title><link>https://svtter.cn/en/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</link><description>Recent content in AI/人工智能 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 09 May 2026 12:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/index.xml" rel="self" type="application/rss+xml"/><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;What it does is simple: it provides an HTTP service that lets you register locally generated HTML files and preview them in a browser.&lt;/p&gt;
+&lt;h2 id="why-this-tool-is-needed"&gt;Why This Tool Is Needed
+&lt;/h2&gt;&lt;p&gt;The problem stems from AI Agent output.&lt;/p&gt;
+&lt;p&gt;Nowadays I use agents like Claude Code and OpenCode for my work, and they often need to output complex content—code review summaries, comparative analyses, quotations, architecture design documents. When this content is sent to Telegram as plain text, the formatting gets completely messed up, tables become unreadable, and code syntax highlighting is lost.&lt;/p&gt;
+&lt;p&gt;In short, it&amp;rsquo;s just a big mess.&lt;/p&gt;
+&lt;p&gt;The initial approach was to have agents directly generate HTML files locally and open them in a browser. But the problems were:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The agent runs on a server without a graphical interface&lt;/li&gt;
+&lt;li&gt;Locally generated file paths are unpredictable and management is chaotic&lt;/li&gt;
+&lt;li&gt;No history—previously sent content can&amp;rsquo;t be found&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So I needed a service where an agent could &amp;ldquo;send&amp;rdquo; an HTML file and get back a URL that could be opened in any device&amp;rsquo;s browser. The agent would handle mobile and PC compatibility.&lt;/p&gt;
+&lt;h2 id="what-sth-does"&gt;What sth Does
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;sth&lt;/code&gt; is a lightweight HTTP service written in Go with just two core commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Start the service&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth start
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Send an HTML file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;sth send&lt;/code&gt; packages the target HTML file along with resource files from the same directory (CSS, JS, images, etc.) and uploads them, then returns a URL. Opening this URL displays the complete page effect.&lt;/p&gt;
+&lt;p&gt;In practice, it runs on my intranet development machine, and agents specify the remote address via the &lt;code&gt;--server&lt;/code&gt; parameter:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth send ./report.html --server http://dev-1:3939
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="my-actual-usage"&gt;My Actual Usage
+&lt;/h2&gt;&lt;p&gt;Currently &lt;code&gt;sth&lt;/code&gt; mainly runs on my development server, working in tandem with the Hermes Agent.&lt;/p&gt;
+&lt;p&gt;Hermes is my daily AI assistant running on Telegram. When it needs to output complex content—such as code review conclusions, technical solution comparisons, project quotations—it calls the &lt;code&gt;html-report&lt;/code&gt; skill to generate a beautifully formatted HTML file, then sends it to the preview server via &lt;code&gt;sth send&lt;/code&gt;, and finally sends me the URL.&lt;/p&gt;
+&lt;p&gt;The entire workflow is:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;User question -&amp;gt; Hermes Agent analysis
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Generate HTML report (html-report skill)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; sth send to preview server
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -&amp;gt; Return URL -&amp;gt; Send to Telegram
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This way I can tap the link on my phone and see a well-formatted report instead of a blob of plain text.&lt;/p&gt;
+&lt;h2 id="metadata-management"&gt;Metadata Management
+&lt;/h2&gt;&lt;p&gt;Beyond basic sending and previewing, &lt;code&gt;sth&lt;/code&gt; also supports tagging, categorizing, and associating sessions with projects:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth tag &amp;lt;session-id&amp;gt; code-review pricing
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth categorize &amp;lt;session-id&amp;gt; &lt;span class="s2"&gt;&amp;#34;Technical Review&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth project &amp;lt;session-id&amp;gt; hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth list --project hydrogen-permeation
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sth search &lt;span class="s2"&gt;&amp;#34;quotation&amp;#34;&lt;/span&gt; --tag pricing
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This feature solves a practical problem: over time, sent reports accumulate. Through tags and project categorization, you can quickly find previous outputs.&lt;/p&gt;
+&lt;p&gt;The difference between &lt;code&gt;list&lt;/code&gt; and &lt;code&gt;search&lt;/code&gt; is: &lt;code&gt;list&lt;/code&gt; matches metadata fields exactly, while &lt;code&gt;search&lt;/code&gt; performs full-text search. They can be used in combination.&lt;/p&gt;
+&lt;h2 id="technical-details"&gt;Technical Details
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Language&lt;/strong&gt;: Go 1.24+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: SQLite (&lt;code&gt;github.com/mattn/go-sqlite3&lt;/code&gt;, requires CGO)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Deployment&lt;/strong&gt;: Single binary file, just manage with systemd&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Build&lt;/strong&gt;: &lt;code&gt;go build -o dist/sth ./cmd/html-server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s just that simple, no unnecessary dependencies.&lt;/p&gt;
+&lt;h2 id="open-source"&gt;Open Source
+&lt;/h2&gt;&lt;p&gt;This tool was previously a private repo, but I just made it public today: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+&gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
+&lt;/h2&gt;&lt;p&gt;When using DeepSeek models (such as &lt;code&gt;deepseek-v4-flash&lt;/code&gt;) directly in Claude Code with extended thinking enabled, multi-turn conversations trigger a 400 error:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="root-cause-analysis"&gt;Root Cause Analysis
+&lt;/h2&gt;&lt;h3 id="call-chain"&gt;Call Chain
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Claude Code → DeepSeek Anthropic Compatible Endpoint (https://api.deepseek.com/anthropic)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="protocol-incompatibility"&gt;Protocol Incompatibility
+&lt;/h3&gt;&lt;p&gt;According to the &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
+&gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Message Field&lt;/th&gt;
+&lt;th&gt;Support Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✅ Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;❌ Not Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In extended thinking mode during multi-turn conversations, Claude Code faithfully passes back all thinking blocks from the previous round (including &lt;code&gt;redacted_thinking&lt;/code&gt; types) to the API as-is. DeepSeek does not recognize &lt;code&gt;redacted_thinking&lt;/code&gt;, hence the 400 error.&lt;/p&gt;
+&lt;p&gt;Additionally, DeepSeek&amp;rsquo;s thinking block format differs from Anthropic&amp;rsquo;s native protocol, and the replay logic in tool_use scenarios is not fully compatible either.&lt;/p&gt;
+&lt;h3 id="core-conflict"&gt;Core Conflict
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Anthropic API requirement&lt;/strong&gt;: In extended thinking mode, &lt;code&gt;content[].thinking&lt;/code&gt; and &lt;code&gt;content[].redacted_thinking&lt;/code&gt; must be passed back unchanged&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek compatibility layer&lt;/strong&gt;: Only supports &lt;code&gt;thinking&lt;/code&gt;, does not support &lt;code&gt;redacted_thinking&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Claude Code behavior&lt;/strong&gt;: Hard-coded according to Anthropic protocol, does not distinguish between target endpoint types&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="community-feedback"&gt;Community Feedback
+&lt;/h2&gt;&lt;p&gt;This is a &lt;strong&gt;widespread community issue&lt;/strong&gt; that almost all CC agent/router projects have encountered:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;Project&lt;/th&gt;
+&lt;th&gt;Title&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+&gt;#1&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-use&lt;/td&gt;
+&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+&gt;#878&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;openclaude&lt;/td&gt;
+&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+&gt;#1355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;claude-code-router&lt;/td&gt;
+&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+&gt;#4543&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;new-api&lt;/td&gt;
+&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+&gt;#355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;9router&lt;/td&gt;
+&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+&gt;#16748&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;hermes-agent&lt;/td&gt;
+&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+&gt;#2414&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-switch&lt;/td&gt;
+&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+&gt;#174&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-haha&lt;/td&gt;
+&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="deepseek-official-response"&gt;DeepSeek Official Response
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zero response.&lt;/strong&gt; Nor is there any need to respond.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First, DeepSeek has no public API issue repository. All feedback occurs in third-party projects without any DeepSeek official personnel participating in any discussions.&lt;/li&gt;
+&lt;li&gt;Second, whether to use Anthropic as a compatibility standard, I think DeepSeek should be hesitant.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="temporary-workarounds"&gt;Temporary Workarounds
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Disable extended thinking&lt;/strong&gt; — When using DeepSeek in CC, turn off thinking mode&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use proxy filtering&lt;/strong&gt; — Add a proxy layer between CC and DeepSeek to filter out &lt;code&gt;redacted_thinking&lt;/code&gt; blocks&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Switch models&lt;/strong&gt; — Use DeepSeek for non-thinking scenarios and Anthropic native models for thinking scenarios&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="why-doesnt-opencode-have-this-problem"&gt;Why Doesn&amp;rsquo;t OpenCode Have This Problem?
+&lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
+&gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;The key lies in the &lt;code&gt;convertMessages&lt;/code&gt; method in &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; (lines 60-119):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When building assistant messages, it only passes back &lt;code&gt;TextContent&lt;/code&gt; (text) and &lt;code&gt;ToolCall&lt;/code&gt; (tool calls)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Completely ignores &lt;code&gt;ReasoningContent&lt;/code&gt; (thinking content)&lt;/strong&gt;, not putting it in messages&lt;/li&gt;
+&lt;li&gt;thinking content is only displayed in the UI through stream &lt;code&gt;thinking_delta&lt;/code&gt; events and is not passed back to the API&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Comparison with Claude Code&amp;rsquo;s behavior:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Claude Code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;thinking replay&lt;/td&gt;
+&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
+&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;architectural reason&lt;/td&gt;
+&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
+&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
+&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
+&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion: OpenCode avoids the problem at the cost of not following Anthropic&amp;rsquo;s extended thinking specification.&lt;/strong&gt; This approach is friendly to third-party compatible endpoints like DeepSeek, but if Anthropic native thinking context retention capability is needed in the future, re-implementation may be necessary.&lt;/p&gt;
+&lt;h2 id="does-not-replay-thinking-blocks-affect-deepseek-performance"&gt;Does Not Replay Thinking Blocks Affect DeepSeek Performance?
+&lt;/h2&gt;&lt;p&gt;Basically no, reasons:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;thinking blocks are the model&amp;rsquo;s internal scratchpad&lt;/strong&gt;, not final output. The text replies and tool calls in the conversation history already retain key decisions and conclusions&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek&amp;rsquo;s reasoning is closer to OpenAI&amp;rsquo;s mode&lt;/strong&gt; — each round is generated independently, unlike Anthropic&amp;rsquo;s strong reliance on cross-round replay to maintain reasoning coherence&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OpenCode&amp;rsquo;s extensive actual use also confirms this&lt;/strong&gt; — community users run multi-turn conversations using DeepSeek thinking mode in OpenCode without feedback about reasoning quality degradation&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The truly potentially affected extreme scenario: in ultra-long multi-turn tasks, the model may repeat conclusions it has already reasoned through. However, in most actual use, the impact is negligible.&lt;/p&gt;
+&lt;h2 id="related-claude-code-native-issues"&gt;Related Claude Code Native Issues
+&lt;/h2&gt;&lt;p&gt;CC itself has similar thinking block replay bugs on Anthropic models (not DeepSeek-specific):&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;Title&lt;/th&gt;
+&lt;th&gt;Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+&gt;#10199&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+&gt;#51985&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+&gt;#20692&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+&gt;#54482&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>How to Fix DeepSeek Model Reasoning Issues in OpenCode</title><link>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post How to Fix DeepSeek Model Reasoning Issues in OpenCode" /&gt;&lt;p&gt;When using deepseek-reasoner, we often encounter this problem:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="update"&gt;Update
+&lt;/h2&gt;&lt;p&gt;Both issues have now been officially resolved by opencode. Users only need to install the latest version of opencode and use it through the deepseek provider, without additional configuration.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Issue 1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Issue 2
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Both issues have been officially resolved. Install version 1.14.29 or above.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;The old solution follows:&lt;/p&gt;
+&lt;p&gt;How to solve it? It&amp;rsquo;s straightforward.&lt;/p&gt;
+&lt;h2 id="how-to-configure"&gt;How to Configure
+&lt;/h2&gt;&lt;p&gt;Add provider information to your configuration:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.config/opencode/opencode.json&lt;/code&gt; or &lt;code&gt;.config/opencode/opencode.jsonc&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Modify the provider section to:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;provider&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;npm&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;@ai-sdk/anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;baseURL&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://api.deepseek.com/anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;apiKey&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;lt;apikey&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;models&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek-v4-pro&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek-V4-Pro&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;limit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;context&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1048576&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;262144&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;budgetTokens&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;8192&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;deepseek-v4-flash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;DeepSeek-V4-Flash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;limit&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;context&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1048576&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;262144&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;budgetTokens&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;8192&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="how-to-use"&gt;How to Use
+&lt;/h2&gt;&lt;p&gt;Select the deepseek model.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png"
+width="1152"
+height="441"
+srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_90da77582546fc32.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_7b7f08ffd58455a8.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="261"
+data-flex-basis="626px"
+&gt;&lt;/p&gt;
+&lt;p&gt;The result.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png"
+width="1361"
+height="510"
+srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_b83fabfded18efdc.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_c24f8389856c64c.png 1024w"
+loading="lazy"
+class="gallery-image"
+data-flex-grow="266"
+data-flex-basis="640px"
+&gt;&lt;/p&gt;
+&lt;h2 id="supplement"&gt;Supplement
+&lt;/h2&gt;&lt;p&gt;This method cannot solve this problem&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If you encounter this problem, you need to wait for opencode to fix it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Related article&lt;/strong&gt;: &lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block Compatibility Issue Analysis&lt;/a&gt; — Analyzes the root cause of 400 errors triggered by multi-turn conversations in extended thinking mode when using DeepSeek with Claude Code, along with community solutions.&lt;/p&gt;</description></item><item><title>Does Self-Hosting an LLM Really Let You Use It Without Limits?</title><link>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</link><pubDate>Thu, 19 Mar 2026 12:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/cover.jpg" alt="Featured image of post Does Self-Hosting an LLM Really Let You Use It Without Limits?" /&gt;&lt;p&gt;Many people start thinking seriously about self-hosting an LLM not because of technical romance, but because API bills, rate limits, or compliance requirements have started to collide with real business constraints.&lt;/p&gt;
 &lt;p&gt;So a very natural question shows up: if the model runs on your own machine, does that mean you can finally use it without limits?&lt;/p&gt;
 &lt;p&gt;My answer is: &lt;strong&gt;no.&lt;/strong&gt; Self-hosting a model does not mean unlimited freedom. It mostly means that many of the constraints and costs previously absorbed by the platform are now transferred to you.&lt;/p&gt;
 &lt;p&gt;But there is a more useful second question: once usage gets large enough, can self-hosting actually become cheaper?&lt;/p&gt;
@@ -95,7 +538,7 @@
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg"
 width="4800"
 height="3584"
-srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_dcef6b97d91e6fa8.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_838ea2ffd6657359.jpg 1024w"
+srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_e538165957f7c9a8.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_c17af6e4e0b01ddc.jpg 1024w"
 loading="lazy"
 alt="An illustration showing how the balance shifts from API costs to local hardware investment as LLM usage grows from light to heavy"
 class="gallery-image"
@@ -123,7 +566,7 @@ data-flex-basis="321px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg"
 width="4800"
 height="3584"
-srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_10c1720ef45476fc.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_40c1373b24f923ac.jpg 1024w"
+srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_3afbc14068dd055d.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_7f9cead440467875.jpg 1024w"
 loading="lazy"
 alt="An illustration showing that a closed cloud model and a local open-weight model are not fully equivalent in capability, cost, and operational burden"
 class="gallery-image"

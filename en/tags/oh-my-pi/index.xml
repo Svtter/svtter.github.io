@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Oh My Pi on Svtter's Blog</title><link>https://svtter.cn/en/tags/oh-my-pi/</link><description>Recent content in Oh My Pi on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 23 May 2026 18:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/oh-my-pi/index.xml" rel="self" type="application/rss+xml"/><item><title>RoboOmp: An AI Bot That Creates Its Own Pull Requests</title><link>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</link><pubDate>Sat, 23 May 2026 18:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/cover.jpg" alt="Featured image of post RoboOmp: An AI Bot That Creates Its Own Pull Requests" /&gt;&lt;p&gt;Yesterday at the Oh My Pi (OMP) repository, I experienced something shocking: an AI bot didn&amp;rsquo;t just reply to my issue—it understood the problem, &lt;strong&gt;dug through the source code on its own, and opened a precise PR to fix the bug&lt;/strong&gt;. The entire process took less than 5 minutes.&lt;/p&gt;
+&lt;h2 id="the-origin"&gt;The Origin
+&lt;/h2&gt;&lt;p&gt;When using OMP (a terminal AI coding agent), I discovered a UX issue: &lt;code&gt;Ctrl+T&lt;/code&gt; can hide thinking blocks, but hiding them simultaneously turns off extended thinking entirely—not just hiding the display, but the model stops thinking altogether. Users assume they&amp;rsquo;re just &amp;ldquo;turning off the display,&amp;rdquo; but the actual effect is &amp;ldquo;turning off the brain.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;So I went to the &lt;a class="link" href="https://github.com/can1357/oh-my-pi" target="_blank" rel="noopener"
+&gt;OMP GitHub repository&lt;/a&gt; and opened a feature request: &lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/1313" target="_blank" rel="noopener"
+&gt;#1313&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="roboomps-first-response"&gt;RoboOmp&amp;rsquo;s First Response
+&lt;/h2&gt;&lt;p&gt;Seconds after I submitted the issue, a bot called &lt;a class="link" href="https://github.com/roboomp" target="_blank" rel="noopener"
+&gt;roboomp&lt;/a&gt; automatically replied. Not with template nonsense like &amp;ldquo;thanks for your feedback, forwarded to the product team.&amp;rdquo; It directly told me:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Most of this feature already exists—the &lt;code&gt;hideThinkingBlock&lt;/code&gt; setting, &lt;code&gt;Ctrl+T&lt;/code&gt; shortcut, and rendering path&lt;/li&gt;
+&lt;li&gt;The only missing piece is a CLI startup parameter&lt;/li&gt;
+&lt;li&gt;There&amp;rsquo;s a design decision that requires maintainer input: the coupling between &lt;code&gt;hideThinkingBlock&lt;/code&gt; and &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And it provided &lt;strong&gt;exact filenames and line numbers&lt;/strong&gt;: &lt;code&gt;settings-schema.ts:663&lt;/code&gt;, &lt;code&gt;input-controller.ts:755&lt;/code&gt;, &lt;code&gt;stream.ts:583,697&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This wasn&amp;rsquo;t cobbled together from search results—it actually read the code.&lt;/p&gt;
+&lt;h2 id="i-pointed-out-the-design-flaw"&gt;I Pointed Out the Design Flaw
+&lt;/h2&gt;&lt;p&gt;I replied with a comment explaining that this coupling is a footgun:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Users press &lt;code&gt;Ctrl+T&lt;/code&gt; intending to reduce visual noise, but unknowingly turn off extended thinking, degrading model output quality&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;Don&amp;rsquo;t want to see the reasoning process&amp;rdquo; and &amp;ldquo;don&amp;rsquo;t want the model to reason&amp;rdquo; are two different things that shouldn&amp;rsquo;t be tied together&lt;/li&gt;
+&lt;li&gt;The behavior varies across providers (MiniMax can&amp;rsquo;t turn it off, Anthropic/OpenAI can), so the same shortcut has inconsistent behavior&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also included the commit history that introduced this coupling for easier tracing.&lt;/p&gt;
+&lt;h2 id="it-opened-a-pr-itself"&gt;It Opened a PR Itself
+&lt;/h2&gt;&lt;p&gt;Then something unbelievable happened—roboomp replied with two consecutive comments and directly opened a PR: &lt;a class="link" href="https://github.com/can1357/oh-my-pi/pull/1314" target="_blank" rel="noopener"
+&gt;#1314&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The PR changes: &lt;strong&gt;0 addition, 3 deletion&lt;/strong&gt;. It only deleted three lines:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;sdk.ts:1860&lt;/code&gt; — agent initialization no longer assigns &lt;code&gt;hideThinkingBlock&lt;/code&gt; to &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;input-controller.ts:758&lt;/code&gt; — Ctrl+T handler no longer links them&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;selector-controller.ts:273&lt;/code&gt; — settings UI follows the same logic&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The PR description included complete repro steps, root cause analysis, and fix approach. It even confirmed the commit archaeology I provided—&lt;code&gt;45bd444&lt;/code&gt; was indeed the commit that introduced this bug.&lt;/p&gt;
+&lt;h2 id="why-this-shocked-me"&gt;Why This Shocked Me
+&lt;/h2&gt;&lt;p&gt;&amp;ldquo;AI can write code&amp;rdquo; isn&amp;rsquo;t news. Copilot, Claude Code, Cursor can all write code. But what&amp;rsquo;s different this time:&lt;/p&gt;
+&lt;h3 id="complete-closed-loop"&gt;Complete Closed Loop
+&lt;/h3&gt;&lt;p&gt;The entire process was zero-human:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;I opened an issue → bot read the codebase, provided existing implementation status&lt;/li&gt;
+&lt;li&gt;I pointed out the design flaw → bot understood my point&lt;/li&gt;
+&lt;li&gt;It located the commit that introduced the bug itself, opened a PR that deletes just 3 lines&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;From issue to PR, no human did anything in between.&lt;/p&gt;
+&lt;h3 id="it-knows-when-to-wait"&gt;It Knows When to Wait
+&lt;/h3&gt;&lt;p&gt;In its first reply, it said &amp;ldquo;Holding on implementation until a maintainer weighs in on the coupling question&amp;rdquo;—it knew this was a design decision requiring judgment and shouldn&amp;rsquo;t act autonomously. But when I clarified the coupling problem, it determined that waiting was no longer necessary and opened a PR directly.&lt;/p&gt;
+&lt;h3 id="the-fix-was-minimal"&gt;The Fix Was Minimal
+&lt;/h3&gt;&lt;p&gt;0 addition / 3 deletion. It understood what the minimal fix was—no refactoring, no abstraction, no gold-plating. Many human developers can&amp;rsquo;t do this.&lt;/p&gt;
+&lt;h2 id="what-is-roboomp"&gt;What Is RoboOmp
+&lt;/h2&gt;&lt;p&gt;RoboOmp is an AI bot deployed by can1357, the OMP repository maintainer. It&amp;rsquo;s not a GitHub Actions workflow (I checked the CI config to confirm), but an independent server-side agent:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Listens to GitHub Webhook events (issue creation, comments, etc.)&lt;/li&gt;
+&lt;li&gt;Reads source code through GitHub API, understands code structure&lt;/li&gt;
+&lt;li&gt;Uses LLM to analyze context, autonomously decides next steps—comment, label, open PR&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From can1357&amp;rsquo;s GitHub profile, this person comes from a hypervisor/reverse engineering background (ByePg, NoVmp, NtRays), now working on AI agent platforms (agentx, hindsight). RoboOmp is likely the result of building exceptionally deep code understanding capabilities.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This project is not open source.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="are-there-similar-open-source-projects"&gt;Are There Similar Open Source Projects
+&lt;/h2&gt;&lt;p&gt;I looked around, and currently the closest ones are:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Project&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
+&gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
+&lt;td&gt;AI coding agent workflow orchestration, task → merged PR&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
+&gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Hooks 40+ GitHub events, auto triage/review/fix, architecture most similar to roboomp&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+&gt;software-factory&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Issue/PR-driven automatic development system&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;But honestly, none reach roboomp&amp;rsquo;s level. Most are still at the &amp;ldquo;receive webhook → call LLM → post comment&amp;rdquo; stage. RoboOmp is the first I&amp;rsquo;ve seen that can autonomously read source code, understand code structure, participate in design discussions, and make precise fixes.&lt;/p&gt;
+&lt;h2 id="what-this-means"&gt;What This Means
+&lt;/h2&gt;&lt;p&gt;This made me realize that the capability boundaries of AI coding agents are expanding rapidly. A year ago we were discussing &amp;ldquo;can AI write correct code,&amp;rdquo; now the question is &amp;ldquo;can AI be a maintainer in open source communities.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;The capabilities roboomp demonstrated—reading code, understanding context, participating in discussions, making minimal fixes—are essentially what a junior maintainer does. If this capability continues to improve, the maintenance model of open source projects could undergo fundamental changes.&lt;/p&gt;
+&lt;p&gt;Think about it: what does an open source maintainer spend the most time on every day? Replying to issues, triaging bugs, writing small fixes. These are exactly what roboomp excels at. If every open source project could deploy such a bot, maintainers could focus their time on architectural decisions and community building.&lt;/p&gt;
+&lt;p&gt;Of course, current limitations are obvious—it can only handle problems with clear boundaries and well-defined scope. But this experience makes me believe that &amp;ldquo;AI maintainer&amp;rdquo; is not a distant future scenario, but something happening right now.&lt;/p&gt;</description></item></channel></rss>

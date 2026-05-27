@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Neural Network on Svtter's Blog</title><link>https://svtter.cn/tags/neural-network/</link><description>Recent content in Neural Network on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 23 Nov 2018 01:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/neural-network/index.xml" rel="self" type="application/rss+xml"/><item><title>beam search – 一个搜索策略</title><link>https://svtter.cn/p/beam-search-%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%AD%96%E7%95%A5/</link><pubDate>Fri, 23 Nov 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/beam-search-%E4%B8%80%E4%B8%AA%E6%90%9C%E7%B4%A2%E7%AD%96%E7%95%A5/</guid><description>&lt;p&gt;这篇文章不建议读，2018年写的，不知所云。&lt;/p&gt;
 &lt;p&gt;beam search 是一个近似搜索策略，用于在候选可能中选择最好的结果。&lt;a class="link" href="https://hackernoon.com/beam-search-a-search-strategy-5d92fb7817f" target="_blank" rel="noopener"
 &gt;原文链接&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i2.wp.com/cdn-images-1.medium.com/max/1760/1*HmPwWf0VJV3TeaGKoly4Xw.png?w=625&amp;amp;#038;ssl=1"
+&lt;p&gt;&lt;img src="https://svtter.cn/pics/1_HmPwWf0VJV3TeaGKoly4Xw.png"
 loading="lazy"
 alt="img"
 &gt;&lt;/p&gt;
@@ -25,7 +25,7 @@ alt="img"
 &lt;/ol&gt;
 &lt;p&gt;两个任务可以同时被 CTC 操作完成。对于手写数字系统的描述，可以参见图像 1.&lt;/p&gt;
 &lt;p&gt;我们更进一步看看 CTC 操作，并且讨论一下它如完成的，以及它背后的公式是如此巧妙。最后，我将会指点你来找到 Python 代码以及不复杂的公式，如果你感兴趣的话。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i0.wp.com/cdn-images-1.medium.com/max/1760/1*i2OG4hu9EjsyWcVMc4OOvA.png?w=625&amp;amp;#038;ssl=1"
+&lt;p&gt;&lt;img src="https://svtter.cn/pics/1_i2OG4hu9EjsyWcVMc4OOvA.png"
 loading="lazy"
 alt="img"
 &gt;&lt;/p&gt;
@@ -40,7 +40,7 @@ alt="img"
 &lt;li&gt;我们只需要告诉 CTC loss function，文本在图像中出现了，因此我们忽略位置和宽度文中在图像中。&lt;/li&gt;
 &lt;li&gt;不需要更多的文本识别处理&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src="https://i0.wp.com/cdn-images-1.medium.com/max/1760/1*rfeNj9aNfUSqA-SXB_i4Bw.png"
+&lt;p&gt;&lt;img src="https://svtter.cn/pics/1_rfeNj9aNfUSqA-SXB_i4Bw.png"
 loading="lazy"
 alt="img"
 &gt;&lt;/p&gt;
@@ -53,7 +53,7 @@ alt="img"
 &lt;p&gt;正如你所见，这些模式也允许我们简单的创建一些相同文本串的不同对取，比如 “t-o”, 以及 “too”，以及 “-to”，所有的表示都是同一个文本 “to”，但是通过对图片不同对其获得的。神经网络被训练于输出一个编码的文本（在神经网络的矩阵中编码）。&lt;/p&gt;
 &lt;h2 id="损失计算"&gt;损失计算
 &lt;/h2&gt;&lt;p&gt;我们需要计算每一个损失值，这个损失值是由图像核真实文本给出来训练 NN 的。你已经知道 NN 输出一个矩阵，包含一个得分，为每个文本在每个时间步上。一个小矩阵在图三中展示：有许多的时间步（t0, t1），以及三个字符（”a”, “b”, 以及 blank “-“).&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i1.wp.com/cdn-images-1.medium.com/max/1760/1*BFQYgGofh6HOxnGdkJnO-w.png?w=625&amp;amp;#038;ssl=1"
+&lt;p&gt;&lt;img src="https://svtter.cn/pics/1_BFQYgGofh6HOxnGdkJnO-w.png"
 loading="lazy"
 alt="img"
 &gt;&lt;/p&gt;
@@ -68,7 +68,7 @@ alt="img"
 &lt;li&gt;首先删除重复的字符，然后删除 path 里面所有的空。这仍然表示了识别的文本。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;正如 FIG4 所展示的，字符是 “a”，“b” 以及 “-”（空），一共有 5 个时间步。让我们应用最佳 path decoder 来处理这个矩阵。在 t0，最可能的是“a”，同样应用于 t1，t2. 空字符在 t3 是最可能的。最后，“b” 是 t4 时刻最可能的。这将给出我们一个 path“aaa-b”，我们删除了重复的字符，这将会返回“a-b”，然后我们删除 path 中的空，这给我们一个“ab”，作为我们输出的识别结果。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i0.wp.com/cdn-images-1.medium.com/max/1600/1*1_5KnLvaTkGUFoyat2jHcQ.png?w=625&amp;amp;#038;ssl=1"
+&lt;p&gt;&lt;img src="https://svtter.cn/pics/1_1_5KnLvaTkGUFoyat2jHcQ.png"
 loading="lazy"
 alt="img"
 &gt;&lt;/p&gt;

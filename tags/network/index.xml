@@ -286,7 +286,7 @@
 &lt;h2 id="第一部分"&gt;第一部分
 &lt;/h2&gt;&lt;h3 id="主动学习是如何工作的"&gt;主动学习是如何工作的
 &lt;/h3&gt;&lt;p&gt;让我们通过一个很简单的概览，来看看机器学习是如何工作地。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd3awts2j218g0j4wj2.jpg?w=625" alt="Repeat thousands of times and you get a trained model!" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdd3awts2j218g0j4wj2.jpg" alt="Repeat thousands of times and you get a trained model!" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;许多机器学习模型是巨大的猜疑机器——他们看了许多数据，计算出一个猜测的结果，检查他们的答案，微调一下，然后再试试。在许多数据之后，模型将会变得十分准确。&lt;/p&gt;
 &lt;h3 id="标记数据"&gt;标记数据
 &lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;
@@ -299,7 +299,7 @@
 &lt;/h3&gt;&lt;p&gt;让我们看一下实际的主动学习样本。&lt;/p&gt;
 &lt;p&gt;使用文档良好的 MNIST 数据集，以及经典的 Tensorflow 卷积神经完了过。一个聪明的模型和架构可以做的更好，但是我们想要直接使用这个模型。&lt;/p&gt;
 &lt;p&gt;MNIST 数据集是公开可获取得的数据集，包含了大量的手写数字，以及数值标签。它经常被使用于机器学习入门教程，因为他的标记数据质量很高，并且简单地模型也可以表现的不错。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i1.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd4dewm6j20ho04fq38.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdd4dewm6j20ho04fq38.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;h3 id="设计"&gt;设计
 &lt;/h3&gt;&lt;p&gt;这个工程包含两个部分：&lt;/p&gt;
 &lt;ol&gt;
@@ -309,26 +309,26 @@
 &lt;h3 id="训练一个模型"&gt;训练一个模型
 &lt;/h3&gt;&lt;p&gt;我们使用 mini-batch 训练。这个模型仅仅在训练集中，看一个小数量样本，通过小数量样本进行学习。&lt;/p&gt;
 &lt;p&gt;这里，我们可以看到一个正常的（非 – 主动学习）的训练过程，模型在一个随机结合的小批次上进行训练。每在小 – 批次训练中的迭代，都在测试记上运行模型（不作为训练集的一部分）来追踪模型是怎样增长的。我提供了准确率以及 cross-entropy 损失（就像是平均误差一样）。在这里，每一个小批次有个 10 个例子，我运行了 2000 批次（20000 个标注）。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i1.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd4pv3b2j218g0fhjtx.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdd4pv3b2j218g0fhjtx.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;对于这个分类任务，我们试图把 0~9 的数字进行分类，意味着随机猜测仅有 10% 的准确率。简单的神经网络已经做的不错了。&lt;/p&gt;
 &lt;h3 id="模拟主动学习"&gt;模拟主动学习
 &lt;/h3&gt;&lt;p&gt;获得主动学习结果有一点小技巧。我们不在数据集中的随机选择数据，相反，模型将会评估许多在训练集中的例子，然后将置信度最小的数据作为小 – 批次（在这个工程中，我查看了 1000 个在训练集中的随机样本，来确定置信度至少为 10）。在那里，模型将会像处理小 – 批次数据一样处理进行训练过程，它将会重复这个过程来更新模型。就像是在 “非 – 主动学习” 样例中，每经过一些迭代，我将会在测试记上运行模型，追踪模型的训练过程。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd5z4a18j218g0ljjwd.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdd5z4a18j218g0ljjwd.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;有许多很好的文章来说明如何实现 主动学习。在这里，我仅仅想要把事情做的简单一些。这个模型使用一个 “softmax” 来生成概率——在这个例子中，是数字 0~9。” 置信度” 通过选择” 最大的概率减去最小的概率 “。模型越自信，这个差值越大。（置信度不意味着准确率）。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i0.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdd96i561j218g0ejte0.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdd96i561j218g0ejte0.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;主动学习过程，使用了那些置信度比较低的数据，并且在上面进行训练。并且当然的，当模型改变了，它的置信度也一样会改变。&lt;/p&gt;
 &lt;p&gt;MNIST 数据集已经有了我们需要的标签，但是这个过程，在 mini-batch 中，模拟询问了专家，来获取标签。在通常情况下，专家会随机被提问，来获取数据。在主动学习的例子中，模型会选择那些数据，希望专家进行标注。&lt;/p&gt;
 &lt;p&gt;让我们来看一下主动学习结果 VS 一般的结果。注意 y-axis。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i1.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxddharrn6j218g0h378k.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxddharrn6j218g0h378k.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;通过 mini-batch（8000 标签），主动学习的方法匹配了 2000 mini-batch（20000label）数据的准确率。所以，使用一接近一半的数据，主动学习可以达到同样地准确率。&lt;/p&gt;
 &lt;h3 id="倾斜数据的二分类任务"&gt;倾斜数据的二分类任务
 &lt;/h3&gt;&lt;p&gt;主动学习可以大施拳脚的地方是，数据的强烈偏差。&lt;/p&gt;
 &lt;p&gt;训练一个模型的时候，重要的不仅仅是标记的数据，还有不同数据的，合理的不同表示。如果我们尝试在 MNIST 上训练一个模型，而没有任何包含 3 的数据，收集多少数据并不重要，重要的是我们的模型不可能区分 3。如果我们仅仅含有一小部分 3，我们仍然会面临一个问题，就是模型仅仅会准确的区分其他数字，也就是那些有更好表达的数据。&lt;/p&gt;
 &lt;p&gt;数据的偏差，不均衡对于 MNIST 数据集中不存在，但是它的确是一个真实世界的问题。如果我们训练一个模型来识别 CT 中的脑瘤，大多数 CT 图像不会含有肿瘤图像，所以标注 “肿瘤” 的数据将会远不均衡于 “非肿瘤” 的样本数据。因为主动学习优先考虑的例子不那么自信，因此主动学习可能有助于识别 “异常 “或代表性不足的数据并且确定优先级。&lt;/p&gt;
 &lt;p&gt;我们在 MNIST 上模拟一下 skew 的问题。重新定义 MNIST 的问题，定义成 3 或者非 3，然后，非 3 的数据有 90%，而 3 的数据仅有 10%。所以愚蠢的策略将会在” 非 3“上达到 90% 的准确率，让我们看一下主动学习是如何做的：&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdf9177f8j218g0hdwkb.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdf9177f8j218g0hdwkb.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;在使用主动学习的时候，在 500mini-batch（5000labels）我们就达到，甚至更好地准确率。相比之下，cross-entropy 算法，通过 2000 mini-batch。主动学习减少了 4 倍的数据量。主动学习是如何做到的？看下图。&lt;figure class="wp-block-image"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://i2.wp.com/ww1.sinaimg.cn/large/c53b1907ly1fxdfe5ahvnj20ua0nkjv0.jpg?w=625" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="pics/c53b1907ly1fxdfe5ahvnj20ua0nkjv0.jpg" alt="" data-recalc-dims="1" /&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;h2 id="后续"&gt;后续
 &lt;/h2&gt;&lt;p&gt;未完，后面翻不翻看心情。。也不知道工业界玩 active learning 的多不多。&lt;/p&gt;</description></item><item><title>pipenv入门指南</title><link>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</link><pubDate>Tue, 26 Dec 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/pipenv%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/</guid><description>&lt;h2 id="前言"&gt;前言
 &lt;/h2&gt;&lt;p&gt;pipenv是书写flask的大神kennethreitz的新作；pipenv集成了virtualenv和pip等工具，让你从&lt;code&gt;requirements.pip&lt;/code&gt;以及&lt;code&gt;virtualenv&lt;/code&gt;的环境中解放出来。并且他还集成了&lt;code&gt;pyenv&lt;/code&gt;的选择&lt;code&gt;python&lt;/code&gt;版本，可以说是所向披靡了。&lt;/p&gt;

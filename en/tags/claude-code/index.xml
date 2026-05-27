@@ -1,4 +1,207 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/en/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 23 Jan 2026 11:52:52 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?</title><link>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/cover.png" alt="Featured image of post The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?" /&gt;&lt;h2 id="preface"&gt;Preface
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/en/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
+&lt;/h2&gt;&lt;p&gt;When using DeepSeek models (such as &lt;code&gt;deepseek-v4-flash&lt;/code&gt;) directly in Claude Code with extended thinking enabled, multi-turn conversations trigger a 400 error:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="root-cause-analysis"&gt;Root Cause Analysis
+&lt;/h2&gt;&lt;h3 id="call-chain"&gt;Call Chain
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Claude Code → DeepSeek Anthropic Compatible Endpoint (https://api.deepseek.com/anthropic)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="protocol-incompatibility"&gt;Protocol Incompatibility
+&lt;/h3&gt;&lt;p&gt;According to the &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
+&gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Message Field&lt;/th&gt;
+&lt;th&gt;Support Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;✅ Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;❌ Not Supported&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In extended thinking mode during multi-turn conversations, Claude Code faithfully passes back all thinking blocks from the previous round (including &lt;code&gt;redacted_thinking&lt;/code&gt; types) to the API as-is. DeepSeek does not recognize &lt;code&gt;redacted_thinking&lt;/code&gt;, hence the 400 error.&lt;/p&gt;
+&lt;p&gt;Additionally, DeepSeek&amp;rsquo;s thinking block format differs from Anthropic&amp;rsquo;s native protocol, and the replay logic in tool_use scenarios is not fully compatible either.&lt;/p&gt;
+&lt;h3 id="core-conflict"&gt;Core Conflict
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Anthropic API requirement&lt;/strong&gt;: In extended thinking mode, &lt;code&gt;content[].thinking&lt;/code&gt; and &lt;code&gt;content[].redacted_thinking&lt;/code&gt; must be passed back unchanged&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek compatibility layer&lt;/strong&gt;: Only supports &lt;code&gt;thinking&lt;/code&gt;, does not support &lt;code&gt;redacted_thinking&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Claude Code behavior&lt;/strong&gt;: Hard-coded according to Anthropic protocol, does not distinguish between target endpoint types&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="community-feedback"&gt;Community Feedback
+&lt;/h2&gt;&lt;p&gt;This is a &lt;strong&gt;widespread community issue&lt;/strong&gt; that almost all CC agent/router projects have encountered:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;Project&lt;/th&gt;
+&lt;th&gt;Title&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+&gt;#1&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-use&lt;/td&gt;
+&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+&gt;#878&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;openclaude&lt;/td&gt;
+&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+&gt;#1355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;claude-code-router&lt;/td&gt;
+&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+&gt;#4543&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;new-api&lt;/td&gt;
+&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+&gt;#355&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;9router&lt;/td&gt;
+&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+&gt;#16748&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;hermes-agent&lt;/td&gt;
+&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+&gt;#2414&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-switch&lt;/td&gt;
+&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+&gt;#174&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;cc-haha&lt;/td&gt;
+&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="deepseek-official-response"&gt;DeepSeek Official Response
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zero response.&lt;/strong&gt; Nor is there any need to respond.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First, DeepSeek has no public API issue repository. All feedback occurs in third-party projects without any DeepSeek official personnel participating in any discussions.&lt;/li&gt;
+&lt;li&gt;Second, whether to use Anthropic as a compatibility standard, I think DeepSeek should be hesitant.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="temporary-workarounds"&gt;Temporary Workarounds
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Disable extended thinking&lt;/strong&gt; — When using DeepSeek in CC, turn off thinking mode&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Use proxy filtering&lt;/strong&gt; — Add a proxy layer between CC and DeepSeek to filter out &lt;code&gt;redacted_thinking&lt;/code&gt; blocks&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Switch models&lt;/strong&gt; — Use DeepSeek for non-thinking scenarios and Anthropic native models for thinking scenarios&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="why-doesnt-opencode-have-this-problem"&gt;Why Doesn&amp;rsquo;t OpenCode Have This Problem?
+&lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
+&gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;The key lies in the &lt;code&gt;convertMessages&lt;/code&gt; method in &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; (lines 60-119):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When building assistant messages, it only passes back &lt;code&gt;TextContent&lt;/code&gt; (text) and &lt;code&gt;ToolCall&lt;/code&gt; (tool calls)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Completely ignores &lt;code&gt;ReasoningContent&lt;/code&gt; (thinking content)&lt;/strong&gt;, not putting it in messages&lt;/li&gt;
+&lt;li&gt;thinking content is only displayed in the UI through stream &lt;code&gt;thinking_delta&lt;/code&gt; events and is not passed back to the API&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Comparison with Claude Code&amp;rsquo;s behavior:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Claude Code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;thinking replay&lt;/td&gt;
+&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
+&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;architectural reason&lt;/td&gt;
+&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
+&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
+&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
+&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion: OpenCode avoids the problem at the cost of not following Anthropic&amp;rsquo;s extended thinking specification.&lt;/strong&gt; This approach is friendly to third-party compatible endpoints like DeepSeek, but if Anthropic native thinking context retention capability is needed in the future, re-implementation may be necessary.&lt;/p&gt;
+&lt;h2 id="does-not-replay-thinking-blocks-affect-deepseek-performance"&gt;Does Not Replay Thinking Blocks Affect DeepSeek Performance?
+&lt;/h2&gt;&lt;p&gt;Basically no, reasons:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;thinking blocks are the model&amp;rsquo;s internal scratchpad&lt;/strong&gt;, not final output. The text replies and tool calls in the conversation history already retain key decisions and conclusions&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DeepSeek&amp;rsquo;s reasoning is closer to OpenAI&amp;rsquo;s mode&lt;/strong&gt; — each round is generated independently, unlike Anthropic&amp;rsquo;s strong reliance on cross-round replay to maintain reasoning coherence&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OpenCode&amp;rsquo;s extensive actual use also confirms this&lt;/strong&gt; — community users run multi-turn conversations using DeepSeek thinking mode in OpenCode without feedback about reasoning quality degradation&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The truly potentially affected extreme scenario: in ultra-long multi-turn tasks, the model may repeat conclusions it has already reasoned through. However, in most actual use, the impact is negligible.&lt;/p&gt;
+&lt;h2 id="related-claude-code-native-issues"&gt;Related Claude Code Native Issues
+&lt;/h2&gt;&lt;p&gt;CC itself has similar thinking block replay bugs on Anthropic models (not DeepSeek-specific):&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Issue&lt;/th&gt;
+&lt;th&gt;Title&lt;/th&gt;
+&lt;th&gt;Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+&gt;#10199&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+&gt;#51985&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+&gt;#20692&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+&lt;td&gt;Open (oncall)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+&gt;#54482&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+&lt;td&gt;Open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?</title><link>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/cover.png" alt="Featured image of post The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?" /&gt;&lt;h2 id="preface"&gt;Preface
 &lt;/h2&gt;&lt;p&gt;Recently, several domestic big model manufacturers have launched Coding Plan subscription packages for developers, promoting &amp;ldquo;low prices for massive usage,&amp;rdquo; claiming that for just tens to hundreds of RMB per month, you can get &amp;ldquo;hundreds of billions of tokens&amp;rdquo; of usage quota.&lt;/p&gt;
 &lt;p&gt;It sounds wonderful, but as a developer accustomed to speaking with data, I decided to do some calculations: &lt;strong&gt;Under concurrency limits, can these promised usage amounts really be consumed?&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="typical-package-structure"&gt;Typical Package Structure
@@ -870,7 +1073,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
 width="2892"
 height="1848"
-srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_d68a3d99150ce2f4.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_3fce0f19d2ec6146.png 1024w"
+srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_25ead07efadeb176.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_a8ec1f00bb2f829d.png 1024w"
 loading="lazy"
 alt="VM remote desktop running Claude Code"
 class="gallery-image"
@@ -901,7 +1104,7 @@ data-flex-basis="375px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png"
 width="2153"
 height="1761"
-srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_6219c7eb2eab8af9.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_896f53042df2250e.png 1024w"
+srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_9e208084f399dd3b.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_ddc5a242949e5593.png 1024w"
 loading="lazy"
 alt="Fried Rice Theme Preview"
 class="gallery-image"
@@ -951,7 +1154,7 @@ data-flex-basis="293px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png"
 width="2442"
 height="1268"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_d89f0ae8f1603602.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_f0b93cbeb72d32d8.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_5bb5ee36b6e10e41.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_70c54c437868eb9.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="192"
@@ -982,7 +1185,7 @@ data-flex-basis="462px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png"
 width="2709"
 height="1491"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_42122bb2380063cf.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f408b3e25518dc04.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_4f423a1898a3c4be.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f0b3717c50b18ca0.png 1024w"
 loading="lazy"
 alt="local-cloud/sync-async limitations"
 class="gallery-image"
@@ -993,7 +1196,7 @@ data-flex-basis="436px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png"
 width="2730"
 height="1428"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_c029280737f11b12.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_50944036a3cee364.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_888ea075db809469.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_aad727e671ca1c8d.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="191"
@@ -1004,7 +1207,7 @@ data-flex-basis="458px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png"
 width="2730"
 height="1596"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_a90cae31e67954aa.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8b772c218c201c5f.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8737468dad94135f.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7975af118f4c1c9b.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="171"
@@ -1018,7 +1221,7 @@ data-flex-basis="410px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png"
 width="2843"
 height="1514"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_5882d2934e05ccb5.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_24f37714fba8fc91.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dff75fbff84f0862.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_9ea6b729a07f56bc.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="187"
@@ -1049,7 +1252,7 @@ data-flex-basis="450px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png"
 width="2613"
 height="1149"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_787eee0c4ac0c32e.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6dc3ac369f50f862.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6f1f8b4de9bcdaad.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_bd247f1e483fdf39.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="227"
@@ -1063,7 +1266,7 @@ data-flex-basis="545px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png"
 width="2850"
 height="1659"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8c91fdb3b66afcb.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_df24bef214ac4e82.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_970bdc1680b37577.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e272c05700bf0f37.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="171"
@@ -1106,15 +1309,9 @@ data-flex-basis="412px"
 &lt;h2 id="cline"&gt;Cline
 &lt;/h2&gt;&lt;p&gt;In cline, there are roughly a few problems.&lt;/p&gt;
 &lt;p&gt;Problem One: Simple diff tool calls fail to output correctly.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1.png"
-width="588"
-height="243"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1_hu_40678bb4e4c7a0c1.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/prob1_hu_2c04225f983576c5.png 1024w"
+&lt;p&gt;&lt;img src="https://svtter.cn/img/prob1.png"
 loading="lazy"
 alt="diff prob"
-class="gallery-image"
-data-flex-grow="241"
-data-flex-basis="580px"
 &gt;&lt;/p&gt;
 &lt;p&gt;Problem Two: The task list tool is unusable.&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://svtter.cn/img/prob.png"
@@ -1132,15 +1329,9 @@ alt="tasklist prob"
 &lt;p&gt;There&amp;rsquo;s also a common issue: obsequiousness.&lt;/p&gt;
 &lt;h3 id="stopped-responding"&gt;Stopped Responding
 &lt;/h3&gt;&lt;p&gt;A new problem encountered on 2025-10-03: it stopped providing feedback while answering a question and terminated the process.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3.png"
-width="878"
-height="684"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3_hu_345d49e45a084c07.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/img/bug-3_hu_e06bae55fc0c46df.png 1024w"
+&lt;p&gt;&lt;img src="https://svtter.cn/img/bug-3.png"
 loading="lazy"
 alt="stop responsing"
-class="gallery-image"
-data-flex-grow="128"
-data-flex-basis="308px"
 &gt;&lt;/p&gt;
 &lt;p&gt;The most likely cause of this problem is a lack of adaptation to the thinking interface, resulting in it thinking but not displaying the content.&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary

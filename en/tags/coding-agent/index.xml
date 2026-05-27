@@ -1,4 +1,307 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Agent on Svtter's Blog</title><link>https://svtter.cn/en/tags/coding-agent/</link><description>Recent content in Coding Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 17 Jan 2026 22:18:33 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/coding-agent/index.xml" rel="self" type="application/rss+xml"/><item><title>Recently Discovered Useful MCP Tools</title><link>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</guid><description>&lt;img src="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/bg.png" alt="Featured image of post Recently Discovered Useful MCP Tools" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve been extensively using the opencode/claude code combination for development and have explored three particularly useful tools.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding-Agent on Svtter's Blog</title><link>https://svtter.cn/en/tags/coding-agent/</link><description>Recent content in Coding-Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 27 May 2026 10:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/coding-agent/index.xml" rel="self" type="application/rss+xml"/><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
+&lt;p&gt;Based on my review of the &lt;strong&gt;kimi-code&lt;/strong&gt; source code (particularly &lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;, &lt;code&gt;kimi-schema.ts&lt;/code&gt;, &lt;code&gt;kimi-files.ts&lt;/code&gt;, etc.) and relevant OpenCode compatibility issues, here are the kimi-k2.6-specific optimizations in kimi-code and how they differ from OpenCode.&lt;/p&gt;
+&lt;h2 id="1-native-kimi-provider-not-a-generic-openai-compatible-layer"&gt;1. Native Kimi Provider (Not a Generic OpenAI-compatible Layer)
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; does not treat Kimi as &amp;ldquo;just another OpenAI-compatible endpoint.&amp;rdquo; Instead, it implements a dedicated &lt;code&gt;kimi&lt;/code&gt; provider type:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Feature&lt;/th&gt;
+&lt;th&gt;kimi-code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Provider Type&lt;/td&gt;
+&lt;td&gt;Dedicated &lt;code&gt;'kimi'&lt;/code&gt; type with independent adapter&lt;/td&gt;
+&lt;td&gt;Accessed via generic OpenAI/Anthropic bridge&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Proprietary Fields&lt;/td&gt;
+&lt;td&gt;Native handling of &lt;code&gt;reasoning_content&lt;/code&gt;, &lt;code&gt;thinking&lt;/code&gt;, &lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;reasoning_content&lt;/code&gt; often lost in the bridge layer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Auth Headers&lt;/td&gt;
+&lt;td&gt;Supports &lt;code&gt;kimiRequestHeaders&lt;/code&gt;, &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt;, and other Moonshot-specific headers&lt;/td&gt;
+&lt;td&gt;Generic header forwarding&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="2-full-lifecycle-handling-of-reasoning_content"&gt;2. Full Lifecycle Handling of &lt;code&gt;reasoning_content&lt;/code&gt;
+&lt;/h2&gt;&lt;p&gt;kimi-k2.6 has thinking enabled by default and &lt;strong&gt;requires &lt;code&gt;reasoning_content&lt;/code&gt; to be preserved across multi-turn conversation history&lt;/strong&gt;. Otherwise, tool calls will result in a 400 error.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How kimi-code handles it:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;convertMessage&lt;/code&gt;&lt;/strong&gt;: Extracts internal &lt;code&gt;think&lt;/code&gt; content parts and serializes them into the &lt;code&gt;reasoning_content&lt;/code&gt; field, ensuring thinking content is never lost in message history&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Streaming Parser&lt;/strong&gt;: Explicitly extracts &lt;code&gt;delta.reasoning_content&lt;/code&gt; / &lt;code&gt;message.reasoning_content&lt;/code&gt; in both &lt;code&gt;_convertStreamResponse&lt;/code&gt; and &lt;code&gt;_convertNonStreamResponse&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TUI Rendering&lt;/strong&gt;: A dedicated &lt;code&gt;ThinkingComponent&lt;/code&gt; renders thinking content in real time, with expand/collapse support and a spinner animation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode&amp;rsquo;s Problem:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The OpenCode Go bridge &lt;strong&gt;drops &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/strong&gt; on the second turn, causing the Moonshot API to return:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;thinking&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;enabled&lt;/span&gt; &lt;span class="n"&gt;but&lt;/span&gt; &lt;span class="n"&gt;reasoning_content&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;missing&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;assistant&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="3-json-schema-normalization-kimi-schemats"&gt;3. JSON Schema Normalization (&lt;code&gt;kimi-schema.ts&lt;/code&gt;)
+&lt;/h2&gt;&lt;p&gt;Moonshot&amp;rsquo;s tool parameter validator has strict and unique requirements for JSON Schema. This is one of the primary sources of incompatibility between OpenCode and kimi-k2.6.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What kimi-code&amp;rsquo;s &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; does:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dereferences &lt;code&gt;$ref&lt;/code&gt;&lt;/strong&gt;: Inlines definitions from &lt;code&gt;$defs&lt;/code&gt; / &lt;code&gt;definitions&lt;/code&gt;, eliminating external references&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fills in missing &lt;code&gt;type&lt;/code&gt;&lt;/strong&gt;: The Kimi validator rejects nested property schemas that omit &lt;code&gt;type&lt;/code&gt; (e.g., MCP-generated enum-only schemas). kimi-code infers and backfills &lt;code&gt;type: string/object/array&lt;/code&gt;, etc.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Circular reference detection&lt;/strong&gt;: Preserves the original &lt;code&gt;$ref&lt;/code&gt; when a circular reference is detected, avoiding infinite recursion&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode&amp;rsquo;s Problem:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Generated schemas use &lt;code&gt;#/definitions/&lt;/code&gt; instead of the &lt;code&gt;#/$defs/&lt;/code&gt; format required by Moonshot, and lack schema type inference and backfilling for Kimi, causing complex tool calls to fail with 400.&lt;/p&gt;
+&lt;h2 id="4-native-thinking-mode-configuration-system"&gt;4. Native Thinking Mode Configuration System
+&lt;/h2&gt;&lt;p&gt;kimi-code has built-in support for Kimi&amp;rsquo;s thinking mode from the configuration layer all the way to the UI:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Config Parsing&lt;/strong&gt;: &lt;code&gt;ThinkingConfigSchema&lt;/code&gt; supports &lt;code&gt;mode: auto/on/off&lt;/code&gt; and &lt;code&gt;effort: low/medium/high/xhigh/max&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Model Capability Tags&lt;/strong&gt;: &lt;code&gt;ModelAlias&lt;/code&gt; supports &lt;code&gt;capabilities: ['thinking', 'always_thinking']&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Model Selector UI&lt;/strong&gt;: Press &lt;code&gt;←→&lt;/code&gt; to toggle thinking on/off; &lt;code&gt;always-on&lt;/code&gt; models cannot be turned off&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Provider Method&lt;/strong&gt;: &lt;code&gt;withThinking(effort)&lt;/code&gt; correctly generates:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;reasoning_effort&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;high&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;extra_body&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;thinking&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Token Budget&lt;/strong&gt;: Automatically normalizes legacy &lt;code&gt;max_tokens&lt;/code&gt; to Kimi&amp;rsquo;s preferred &lt;code&gt;max_completion_tokens&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode&amp;rsquo;s Problem:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When using the Anthropic bridge, it hardcodes &lt;code&gt;thinking&lt;/code&gt; content blocks, but the Kimi API only supports &lt;code&gt;text/image_url/video_url/video&lt;/code&gt;, resulting in:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Invalid value: thinking. Supported values are: &amp;#39;text&amp;#39;,&amp;#39;image_url&amp;#39;,&amp;#39;video_url&amp;#39; and &amp;#39;video&amp;#39;.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="5-native-moonshot-service-integration"&gt;5. Native Moonshot Service Integration
+&lt;/h2&gt;&lt;p&gt;kimi-code includes Moonshot-exclusive services instead of relying on generic local implementations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;MoonshotFetchURLProvider&lt;/code&gt;&lt;/strong&gt;: Prioritizes Moonshot&amp;rsquo;s &lt;code&gt;coding-fetch&lt;/code&gt; service (with built-in page text extraction), falling back to local fetch only on failure&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;MoonshotWebSearchProvider&lt;/code&gt;&lt;/strong&gt;: Calls the Moonshot search API directly, supporting &lt;code&gt;enable_page_crawling&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;KimiFiles&lt;/code&gt;&lt;/strong&gt;: Uploads videos to the Moonshot file service, returning &lt;code&gt;video_url&lt;/code&gt; in the &lt;code&gt;ms://&amp;lt;file-id&amp;gt;&lt;/code&gt; format&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="6-tool-call-layer-details"&gt;6. Tool Call Layer Details
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Built-in Functions&lt;/strong&gt;: Tool names starting with &lt;code&gt;$&lt;/code&gt; are recognized as Kimi builtin functions and serialized as &lt;code&gt;type: 'builtin_function'&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Usage Extraction&lt;/strong&gt;: Supports Moonshot&amp;rsquo;s proprietary &lt;code&gt;choices[0].usage&lt;/code&gt; placement, as well as &lt;code&gt;cached_tokens&lt;/code&gt; and other fields&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Finish Reason Mapping&lt;/strong&gt;: Maps OpenAI-style &lt;code&gt;stop&lt;/code&gt;/&lt;code&gt;tool_calls&lt;/code&gt;/&lt;code&gt;length&lt;/code&gt; values to an internal unified enum&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="7-cli-core-and-llm-sdk-architectural-isolation"&gt;7. CLI Core and LLM SDK Architectural Isolation
+&lt;/h2&gt;&lt;p&gt;This is an easily overlooked but important architectural difference.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The core CLI of kimi-code (&lt;code&gt;apps/kimi-code&lt;/code&gt;) does not directly depend on any OpenAI or Anthropic TypeScript SDK.&lt;/strong&gt; Looking at its &lt;code&gt;package.json&lt;/code&gt;, the core dependencies are only generic libraries like TUI rendering (&lt;code&gt;pi-tui&lt;/code&gt;), CLI parsing (&lt;code&gt;commander&lt;/code&gt;), and syntax highlighting (&lt;code&gt;cli-highlight&lt;/code&gt;). All LLM provider interactions are isolated within the self-developed &lt;code&gt;kosong&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;While &lt;code&gt;packages/kosong&lt;/code&gt; internally uses &lt;code&gt;openai&lt;/code&gt; and &lt;code&gt;@anthropic-ai/sdk&lt;/code&gt; as implementation details (since the Kimi API is OpenAI-compatible), it exposes a unified LLM abstraction interface to the outside. The CLI core only depends on &lt;code&gt;kosong&lt;/code&gt; and has no awareness of underlying vendor SDKs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;OpenCode is different.&lt;/strong&gt; Its &lt;code&gt;packages/opencode&lt;/code&gt; core package directly depends on a large number of vendor SDKs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/openai&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/anthropic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/google&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@ai-sdk/azure&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@openrouter/ai-sdk-provider&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&amp;hellip; (more than a dozen provider-specific packages in total)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This means OpenCode&amp;rsquo;s core code is deeply coupled with each vendor&amp;rsquo;s SDK, while kimi-code&amp;rsquo;s core CLI stays clean, with all model interactions fully isolated through a self-developed abstraction layer.&lt;/p&gt;
+&lt;h2 id="8-what-commit-history-reveals-about-evolution-paths"&gt;8. What Commit History Reveals About Evolution Paths
+&lt;/h2&gt;&lt;p&gt;The structural code differences above are just a static snapshot. What&amp;rsquo;s more interesting is comparing the commit histories of the two projects—their &lt;strong&gt;dynamic evolution directions are completely different&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="kimi-code-native-design-continuously-reducing-configuration-burden"&gt;kimi-code: Native Design, Continuously Reducing Configuration Burden
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;842e699&lt;/code&gt; — &amp;ldquo;Kimi For Coding&amp;rdquo; (Initial Commit)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This was the starting point of the entire project. The initial code already included:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;: Dedicated Kimi provider&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;packages/kosong/src/providers/kimi-schema.ts&lt;/code&gt;: Dedicated JSON Schema normalizer&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;packages/kosong/src/providers/kimi-files.ts&lt;/code&gt;: Dedicated file upload service&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion: kimi-code treated the Kimi API as a first-class citizen from day one, not as a later patch.&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;d95b013&lt;/code&gt; fix(catalog): preserve reasoning fields in custom model (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+&gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This commit fixed a very subtle issue. models.dev uses the &lt;code&gt;interleaved&lt;/code&gt; field to mark reasoning support, but early code treated &lt;code&gt;interleaved=true&lt;/code&gt; as undefined, causing models selected via &lt;code&gt;/connect&lt;/code&gt; to silently lose their reasoning capability.&lt;/p&gt;
+&lt;p&gt;Fixes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;interleaved=true&lt;/code&gt; is mapped to the default &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;interleaved&lt;/code&gt; is added to the &lt;code&gt;update-catalog.mjs&lt;/code&gt; allowlist; otherwise the offline catalog in release builds would silently drop the field again&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;61f7d0e&lt;/code&gt; fix(kosong): make openai-compatible thinking work without reasoning_key (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+&gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is the core commit for reasoning handling&lt;/strong&gt;, showcasing kimi-code&amp;rsquo;s deep thinking on compatibility. The diff reveals a three-layer design:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Inbound Auto-Scan&lt;/strong&gt; (response parsing)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;KNOWN_REASONING_KEYS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;reasoning_content&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;reasoning_details&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;reasoning&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="kr"&gt;as&lt;/span&gt; &lt;span class="kr"&gt;const&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Auto-scan three fields; first string value wins
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Outbound Default Write-Back&lt;/strong&gt; (request serialization)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;DEFAULT_OUTBOUND_REASONING_KEY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;KNOWN_REASONING_KEYS&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="c1"&gt;// &amp;#39;reasoning_content&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Defaults to writing back as reasoning_content, no user config needed
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Auto-Inject &lt;code&gt;reasoning_effort&lt;/code&gt;&lt;/strong&gt; (historical continuity)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// When history contains ThinkPart but caller hasn&amp;#39;t explicitly set reasoning_effort,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// auto-inject &amp;#39;medium&amp;#39; to prevent strict gateways like One API / DeepSeek from returning 400
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Edge cases are handled meticulously: blank &lt;code&gt;reasoning_key&lt;/code&gt; (&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;) is normalized to &lt;code&gt;undefined&lt;/code&gt;; values explicitly set by the caller via &lt;code&gt;withGenerationKwargs&lt;/code&gt; &lt;strong&gt;are not silently overwritten by auto-injection&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The verification goal explicitly states:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id="opencode-generic-layer-design-openai-centric"&gt;OpenCode: Generic Layer Design, OpenAI-centric
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;eb84f46&lt;/code&gt; fix(llm): split OpenAI reasoning summary blocks (#29000)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This commit demonstrates OpenCode&amp;rsquo;s completely different approach to reasoning—designed around the &lt;strong&gt;OpenAI Responses API&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maintains a state machine for &lt;code&gt;encrypted_content&lt;/code&gt; and &lt;code&gt;item_reference&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Folds multiple summary parts by &lt;code&gt;item_id&lt;/code&gt; + &lt;code&gt;summary_index&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;When &lt;code&gt;store:false&lt;/code&gt;, filters out reasoning items lacking &lt;code&gt;encrypted_content&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;This is completely different from Kimi&amp;rsquo;s &lt;code&gt;reasoning_content&lt;/code&gt; mechanism.&lt;/strong&gt; Kimi does not need &lt;code&gt;encrypted_content&lt;/code&gt; or &lt;code&gt;item_reference&lt;/code&gt;; it simply attaches a &lt;code&gt;reasoning_content&lt;/code&gt; field to the message.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="a-hard-fact"&gt;A Hard Fact
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+&gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;Status: still open&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/27054" target="_blank" rel="noopener"
+&gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;Status: closed, but the resolution was to disable MCP (a workaround)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The last comment on #27054:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;That&amp;rsquo;s not a fix. That&amp;rsquo;s avoiding the problem.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="commit-history-comparison-summary"&gt;Commit History Comparison Summary
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Dimension&lt;/th&gt;
+&lt;th&gt;kimi-code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Initial Design&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Initial commit includes full Kimi provider + schema normalizer + file service&lt;/td&gt;
+&lt;td&gt;Generic multi-model architecture, adapted later via bridge&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Reasoning Mechanism&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Designed around &lt;code&gt;reasoning_content&lt;/code&gt; field, with auto-scan / write-back / effort injection&lt;/td&gt;
+&lt;td&gt;Designed around OpenAI Responses&amp;rsquo; &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Schema Handling&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;, dereferences &lt;code&gt;$ref&lt;/code&gt; + backfills &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Generic schema validation, focused on friendly error messages&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Config Philosophy&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Makes OpenAI-compatible gateways &amp;ldquo;zero-config&amp;rdquo; by auto-inferring all fields&lt;/td&gt;
+&lt;td&gt;Relies on users manually adapting via bridge/config&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Issue Status&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Continuously shipping reasoning-related patches (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+&gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+&gt;#78&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;kimi-k2.6 compatibility issue &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+&gt;#26331&lt;/a&gt; still open&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="summary-core-differences"&gt;Summary: Core Differences
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Dimension&lt;/th&gt;
+&lt;th&gt;kimi-code&lt;/th&gt;
+&lt;th&gt;OpenCode&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Architecture Positioning&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Native design for Kimi/Moonshot, dedicated provider&lt;/td&gt;
+&lt;td&gt;Generic multi-model agent, adapted via bridge&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Native support, full lifecycle preservation of &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Easily lost in bridge layer, causing 400 errors&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; for dereferencing and type backfilling&lt;/td&gt;
+&lt;td&gt;Generic schema generation, does not meet Kimi validator requirements&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;API Format&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Directly generates Moonshot-native format (including &lt;code&gt;thinking&lt;/code&gt; config, &lt;code&gt;$defs&lt;/code&gt; normalization, etc.)&lt;/td&gt;
+&lt;td&gt;Transformed through OpenAI/Anthropic protocol conversion, causing format mismatches&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Service Integration&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Built-in Moonshot fetch/search/file services&lt;/td&gt;
+&lt;td&gt;Uses generic local tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Core Dependencies&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;CLI core does not directly depend on vendor SDKs; isolated via self-developed &lt;code&gt;kosong&lt;/code&gt; package&lt;/td&gt;
+&lt;td&gt;Core package directly coupled with &lt;code&gt;@ai-sdk/openai&lt;/code&gt; and more than a dozen other vendor SDKs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Looking at commit history, kimi-code&amp;rsquo;s evolution is directed at &lt;strong&gt;continuously eliminating user configuration burden&lt;/strong&gt; (&lt;code&gt;reasoning_key&lt;/code&gt; went from required → optional override → auto-inferred; &lt;code&gt;interleaved&lt;/code&gt; went from filtered → correctly mapped), while OpenCode&amp;rsquo;s evolution is directed at &lt;strong&gt;deepening OpenAI ecosystem integration&lt;/strong&gt; (Responses API, encrypted reasoning, item reference), leaving Kimi adaptation stuck at the generic bridge layer.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;That&amp;rsquo;s the truth at the commit level: one is native evolution, the other is a bridge gap.&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>Recently Discovered Useful MCP Tools</title><link>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</guid><description>&lt;img src="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/bg.png" alt="Featured image of post Recently Discovered Useful MCP Tools" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve been extensively using the opencode/claude code combination for development and have explored three particularly useful tools.&lt;/p&gt;
 &lt;p&gt;They address several issues:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Parallel development on a single server; controlling tmux: &lt;code&gt;tmux&lt;/code&gt; and &lt;code&gt;tmux-mcp&lt;/code&gt;&lt;/li&gt;
@@ -67,7 +370,7 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png"
 width="1023"
 height="930"
-srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c015f16c1d892d52.png 480w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_474d285f9e3620e9.png 1024w"
+srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_175ada8cb4120ce2.png 480w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c7107e2757a481d7.png 1024w"
 loading="lazy"
 alt="GPT-5.2 Response Tone"
 class="gallery-image"
@@ -124,7 +427,7 @@ data-flex-basis="264px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png"
 width="2153"
 height="1761"
-srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_6219c7eb2eab8af9.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_896f53042df2250e.png 1024w"
+srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_9e208084f399dd3b.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_ddc5a242949e5593.png 1024w"
 loading="lazy"
 alt="Fried Rice Theme Preview"
 class="gallery-image"
@@ -174,7 +477,7 @@ data-flex-basis="293px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png"
 width="2442"
 height="1268"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_d89f0ae8f1603602.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_f0b93cbeb72d32d8.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_5bb5ee36b6e10e41.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_70c54c437868eb9.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="192"
@@ -205,7 +508,7 @@ data-flex-basis="462px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png"
 width="2709"
 height="1491"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_42122bb2380063cf.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f408b3e25518dc04.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_4f423a1898a3c4be.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f0b3717c50b18ca0.png 1024w"
 loading="lazy"
 alt="local-cloud/sync-async limitations"
 class="gallery-image"
@@ -216,7 +519,7 @@ data-flex-basis="436px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png"
 width="2730"
 height="1428"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_c029280737f11b12.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_50944036a3cee364.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_888ea075db809469.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_aad727e671ca1c8d.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="191"
@@ -227,7 +530,7 @@ data-flex-basis="458px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png"
 width="2730"
 height="1596"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_a90cae31e67954aa.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8b772c218c201c5f.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8737468dad94135f.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7975af118f4c1c9b.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="171"
@@ -241,7 +544,7 @@ data-flex-basis="410px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png"
 width="2843"
 height="1514"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_5882d2934e05ccb5.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_24f37714fba8fc91.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dff75fbff84f0862.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_9ea6b729a07f56bc.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="187"
@@ -272,7 +575,7 @@ data-flex-basis="450px"
 &lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png"
 width="2613"
 height="1149"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_787eee0c4ac0c32e.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6dc3ac369f50f862.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6f1f8b4de9bcdaad.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_bd247f1e483fdf39.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="227"
@@ -286,7 +589,7 @@ data-flex-basis="545px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png"
 width="2850"
 height="1659"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8c91fdb3b66afcb.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_df24bef214ac4e82.png 1024w"
+srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_970bdc1680b37577.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e272c05700bf0f37.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="171"
@@ -316,7 +619,7 @@ data-flex-basis="412px"
 &lt;p&gt;&lt;img src="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit.png"
 width="2118"
 height="126"
-srcset="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_d5a32301f7e47a36.png 480w, https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_5d241018e40f9047.png 1024w"
+srcset="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_5db449d2dc02deb2.png 480w, https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_9964d513d07b6656.png 1024w"
 loading="lazy"
 class="gallery-image"
 data-flex-grow="1680"
