@@ -203,7 +203,7 @@
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;最核心的差异在&lt;strong&gt;弹性&lt;/strong&gt;上。Cloudflare 的 circuit breaker 和 failback chain 是为生产环境设计的——7 个并发 AI 调用，provider 限频和宕机是必然事件。multi-review 的规模小得多，4 个并发的失败概率可控，用超时 + fallback comment 就够了。&lt;/p&gt;
-&lt;p&gt;另一个差异是 &lt;strong&gt;token 优化&lt;/strong&gt;。Cloudflare 把 MR 上下文写到一个共享文件，7 个 reviewer 读同一个文件而不是各拷一份。这个优化在 7 个 reviewer 的情况下能省 85% 的重复 token。multi-review 目前每个 reviewer 都接收完整 diff，在 4 个 reviewer 的规模下重复还能接受，但如果 team 配置到 7+ 就需要考虑类似优化了。&lt;/p&gt;
+&lt;p&gt;另一个差异是 &lt;strong&gt;token 优化&lt;/strong&gt;。Cloudflare 把 MR diff 写到一个共享文件，7 个 reviewer 读同一个文件而不是各拷一份。注意这里共享的是&lt;strong&gt;原始 diff（输入数据）&lt;/strong&gt;，而不是 reviewer 之间的审查结论。每个 reviewer 的审查过程仍然是完全独立的。这个优化在 7 个 reviewer 的情况下能省 85% 的重复 token。multi-review 目前每个 reviewer 都接收完整 diff，在 4 个 reviewer 的规模下重复还能接受，但如果 team 配置到 7+ 就需要考虑类似优化了。&lt;/p&gt;
 &lt;h2 id="reasoning-effort-和-thinking"&gt;Reasoning Effort 和 Thinking
 &lt;/h2&gt;&lt;p&gt;multi-review 支持 &lt;code&gt;reasoning-effort&lt;/code&gt; 和 &lt;code&gt;enable-thinking&lt;/code&gt; 两个参数，直接传递给 OpenCode SDK 的 agent 配置：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -445,7 +445,7 @@
 &lt;/h2&gt;&lt;p&gt;参考 Cloudflare 的经验和当前实现的局限，有几个明确的优化方向：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;自动风险分层&lt;/strong&gt;：根据 diff 行数和文件类型自动决定跑几个 reviewer。typo 修改变动不需要 4 个 agent 并发审查。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;共享上下文&lt;/strong&gt;：把 diff 写到文件而不是每个 reviewer 都拷贝一份，减少 token 消耗。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;共享上下文&lt;/strong&gt;：把 diff 写到文件而不是每个 reviewer 都拷贝一份，减少 token 消耗。但需要注意一个微妙的问题：&lt;strong&gt;共享的边界在哪里？&lt;/strong&gt; 共享原始 diff（输入数据）是安全的，但如果过早共享 reviewer 之间的中间结论，会导致严重的偏差问题——确认偏差、锚定效应、同质化审查。正确的设计是：reviewer 阶段完全隔离，只共享输入；coordinator 阶段才汇总结论。这不仅是 token 优化的问题，更是一个审查独立性的架构决策。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;模型路由&lt;/strong&gt;：coordinator 用强模型，文档审查用轻量模型，按角色分配不同 provider。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;增量审查&lt;/strong&gt;：push 新 commit 后，只审查变更的部分，不从头开始。&lt;/li&gt;
 &lt;/ol&gt;
