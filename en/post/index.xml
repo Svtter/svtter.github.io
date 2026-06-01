@@ -1,4 +1,59 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/en/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 27 May 2026 10:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/post/index.xml" rel="self" type="application/rss+xml"/><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/en/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 01 Jun 2026 12:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/post/index.xml" rel="self" type="application/rss+xml"/><item><title>OMP M3 Model Patch: Adding MiniMax M3 to pi-ai</title><link>https://svtter.cn/en/p/omp-m3-model-patch-adding-minimax-m3-to-pi-ai/</link><pubDate>Mon, 01 Jun 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/omp-m3-model-patch-adding-minimax-m3-to-pi-ai/</guid><description>&lt;img src="https://svtter.cn/p/omp-m3-%E6%A8%A1%E5%9E%8B%E8%A1%A5%E4%B8%81%E4%B8%BA-pi-ai-%E6%B7%BB%E5%8A%A0-minimax-m3-%E6%94%AF%E6%8C%81/cover.png" alt="Featured image of post OMP M3 Model Patch: Adding MiniMax M3 to pi-ai" /&gt;&lt;p&gt;MiniMax released M3 on 2026-06-01 (&lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt; on OpenRouter), but the upstream &lt;code&gt;models.json&lt;/code&gt; shipped by &lt;code&gt;@oh-my-pi/pi-ai@15.7.3&lt;/code&gt; hadn&amp;rsquo;t been updated to include it. This post documents the patch I applied to add M3 support across all five provider endpoints.&lt;/p&gt;
+&lt;h2 id="target-file"&gt;Target File
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;~/.bun/install/global/node_modules/@oh-my-pi/pi-ai/src/models.json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="provider-entries-added-5"&gt;Provider Entries Added (5)
+&lt;/h2&gt;&lt;p&gt;All entries are appended at the end of their respective provider object, mirroring the structure of the existing &lt;code&gt;MiniMax-M2.7&lt;/code&gt; entry.&lt;/p&gt;
+&lt;h3 id="1-minimax-official-anthropic-compatible-api"&gt;1. &lt;code&gt;minimax&lt;/code&gt; (Official Anthropic-compatible API)
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;MiniMax-M3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;anthropic-messages&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://api.minimax.io/anthropic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;contextWindow&lt;/strong&gt;: 204800, &lt;strong&gt;maxTokens&lt;/strong&gt;: 131072&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;cost&lt;/strong&gt;: input 0.3, output 1.2, cacheRead 0.06, cacheWrite 0.375&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;thinking&lt;/strong&gt;: budget mode, minimal..xhigh&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-minimax-cn-official-anthropic-compatible-api-china"&gt;2. &lt;code&gt;minimax-cn&lt;/code&gt; (Official Anthropic-compatible API, China)
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;MiniMax-M3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;anthropic-messages&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://api.minimaxi.com/anthropic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Same context/cost/thinking as &lt;code&gt;minimax&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="3-minimax-code-coding-plan-openai-compatible"&gt;3. &lt;code&gt;minimax-code&lt;/code&gt; (Coding Plan, OpenAI-compatible)
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;MiniMax-M3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;openai-completions&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://api.minimax.io/v1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;cost&lt;/strong&gt;: all 0 (Coding Plan flat-rate)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;compat&lt;/strong&gt;: &lt;code&gt;supportsStore=false&lt;/code&gt;, &lt;code&gt;supportsDeveloperRole=false&lt;/code&gt;, &lt;code&gt;supportsReasoningEffort=false&lt;/code&gt;, &lt;code&gt;reasoningContentField=reasoning_content&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;thinking&lt;/strong&gt;: effort mode, minimal..high&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-minimax-code-cn-coding-plan-cn"&gt;4. &lt;code&gt;minimax-code-cn&lt;/code&gt; (Coding Plan CN)
+&lt;/h3&gt;&lt;p&gt;Mirror of &lt;code&gt;minimax-code&lt;/code&gt; with &lt;code&gt;baseUrl: https://api.minimaxi.com/v1&lt;/code&gt; and provider &lt;code&gt;minimax-code-cn&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="5-openrouter-openrouter-passthrough"&gt;5. &lt;code&gt;openrouter&lt;/code&gt; (OpenRouter Passthrough)
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;openai-completions&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://openrouter.ai/api/v1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;cost&lt;/strong&gt;: input 0.3, output 1.2, cacheRead 0.05, cacheWrite 0&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;thinking&lt;/strong&gt;: effort mode, minimal..high&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="verification"&gt;Verification
+&lt;/h2&gt;&lt;p&gt;Searching for &lt;code&gt;&amp;quot;MiniMax-M3|minimax-m3&amp;quot;&lt;/code&gt; in the patched file returns exactly 5 hits — one per provider block.&lt;/p&gt;
+&lt;h2 id="caveats"&gt;Caveats
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;omp update&lt;/code&gt; will overwrite the patch&lt;/strong&gt;. Re-apply after updates, or pin the package version.&lt;/li&gt;
+&lt;li&gt;If upstream later ships an official M3 entry, our local copy may diverge (custom pricing/context) until the next update.&lt;/li&gt;
+&lt;li&gt;Pricing values for M3 were inferred from the M2.7 template and the OpenRouter listing ($0.30 / $1.20). Confirm against the official MiniMax pricing page if cost accuracy matters.&lt;/li&gt;
+&lt;li&gt;Context window (204800) and maxTokens (131072) mirror M2.7 — adjust if M3 differs at GA.&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
 &lt;p&gt;Based on my review of the &lt;strong&gt;kimi-code&lt;/strong&gt; source code (particularly &lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;, &lt;code&gt;kimi-schema.ts&lt;/code&gt;, &lt;code&gt;kimi-files.ts&lt;/code&gt;, etc.) and relevant OpenCode compatibility issues, here are the kimi-k2.6-specific optimizations in kimi-code and how they differ from OpenCode.&lt;/p&gt;
 &lt;h2 id="1-native-kimi-provider-not-a-generic-openai-compatible-layer"&gt;1. Native Kimi Provider (Not a Generic OpenAI-compatible Layer)
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; does not treat Kimi as &amp;ldquo;just another OpenAI-compatible endpoint.&amp;rdquo; Instead, it implements a dedicated &lt;code&gt;kimi&lt;/code&gt; provider type:&lt;/p&gt;

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>M3 on Svtter's Blog</title><link>https://svtter.cn/tags/m3/</link><description>Recent content in M3 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 01 Jun 2026 12:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/m3/index.xml" rel="self" type="application/rss+xml"/><item><title>OMP M3 模型补丁：为 pi-ai 添加 MiniMax M3 支持</title><link>https://svtter.cn/p/omp-m3-%E6%A8%A1%E5%9E%8B%E8%A1%A5%E4%B8%81%E4%B8%BA-pi-ai-%E6%B7%BB%E5%8A%A0-minimax-m3-%E6%94%AF%E6%8C%81/</link><pubDate>Mon, 01 Jun 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/p/omp-m3-%E6%A8%A1%E5%9E%8B%E8%A1%A5%E4%B8%81%E4%B8%BA-pi-ai-%E6%B7%BB%E5%8A%A0-minimax-m3-%E6%94%AF%E6%8C%81/</guid><description>&lt;img src="https://svtter.cn/p/omp-m3-%E6%A8%A1%E5%9E%8B%E8%A1%A5%E4%B8%81%E4%B8%BA-pi-ai-%E6%B7%BB%E5%8A%A0-minimax-m3-%E6%94%AF%E6%8C%81/cover.png" alt="Featured image of post OMP M3 模型补丁：为 pi-ai 添加 MiniMax M3 支持" /&gt;&lt;p&gt;MiniMax 在 2026-06-01 发布了 M3 模型（OpenRouter 上的 ID 是 &lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt;），但 &lt;code&gt;@oh-my-pi/pi-ai@15.7.3&lt;/code&gt; 自带的 &lt;code&gt;models.json&lt;/code&gt; 还没来得及更新。这篇文章记录了我手动给 M3 加支持的过程——给全部 5 个 provider 端点都加上了对应的模型条目。&lt;/p&gt;
+&lt;h2 id="目标文件"&gt;目标文件
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;~/.bun/install/global/node_modules/@oh-my-pi/pi-ai/src/models.json
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="添加的-provider-条目5-个"&gt;添加的 Provider 条目（5 个）
+&lt;/h2&gt;&lt;p&gt;所有条目都追加在各自 provider 对象的末尾，结构完全参照已有的 &lt;code&gt;MiniMax-M2.7&lt;/code&gt; 条目。&lt;/p&gt;
+&lt;h3 id="1-minimax官方-anthropic-兼容-api"&gt;1. &lt;code&gt;minimax&lt;/code&gt;（官方 Anthropic 兼容 API）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;MiniMax-M3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;anthropic-messages&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://api.minimax.io/anthropic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;contextWindow&lt;/strong&gt;: 204800, &lt;strong&gt;maxTokens&lt;/strong&gt;: 131072&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;费用&lt;/strong&gt;: input 0.3, output 1.2, cacheRead 0.06, cacheWrite 0.375&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;thinking&lt;/strong&gt;: budget 模式, minimal..xhigh&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-minimax-cn官方-anthropic-兼容-api国内"&gt;2. &lt;code&gt;minimax-cn&lt;/code&gt;（官方 Anthropic 兼容 API，国内）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;MiniMax-M3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;anthropic-messages&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://api.minimaxi.com/anthropic&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;上下文窗口、费用和 thinking 配置与 &lt;code&gt;minimax&lt;/code&gt; 相同&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="3-minimax-codecoding-计划openai-兼容"&gt;3. &lt;code&gt;minimax-code&lt;/code&gt;（Coding 计划，OpenAI 兼容）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;MiniMax-M3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;openai-completions&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://api.minimax.io/v1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;费用&lt;/strong&gt;: 全部为 0（Coding 计划包月制）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;兼容性&lt;/strong&gt;: &lt;code&gt;supportsStore=false&lt;/code&gt;, &lt;code&gt;supportsDeveloperRole=false&lt;/code&gt;, &lt;code&gt;supportsReasoningEffort=false&lt;/code&gt;, &lt;code&gt;reasoningContentField=reasoning_content&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;thinking&lt;/strong&gt;: effort 模式, minimal..high&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="4-minimax-code-cn国内-coding-计划"&gt;4. &lt;code&gt;minimax-code-cn&lt;/code&gt;（国内 Coding 计划）
+&lt;/h3&gt;&lt;p&gt;与 &lt;code&gt;minimax-code&lt;/code&gt; 镜像，&lt;code&gt;baseUrl&lt;/code&gt; 改为 &lt;code&gt;https://api.minimaxi.com/v1&lt;/code&gt;，provider 为 &lt;code&gt;minimax-code-cn&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id="5-openrouteropenrouter-中转"&gt;5. &lt;code&gt;openrouter&lt;/code&gt;（OpenRouter 中转）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;key&lt;/strong&gt;: &lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;api&lt;/strong&gt;: &lt;code&gt;openai-completions&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;baseUrl&lt;/strong&gt;: &lt;code&gt;https://openrouter.ai/api/v1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;费用&lt;/strong&gt;: input 0.3, output 1.2, cacheRead 0.05, cacheWrite 0&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;thinking&lt;/strong&gt;: effort 模式, minimal..high&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="验证"&gt;验证
+&lt;/h2&gt;&lt;p&gt;在补丁文件中搜索 &lt;code&gt;&amp;quot;MiniMax-M3|minimax-m3&amp;quot;&lt;/code&gt; 恰好返回 5 个匹配——每个 provider 块一个。&lt;/p&gt;
+&lt;h2 id="注意事项"&gt;注意事项
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;omp update&lt;/code&gt; 会覆盖这个补丁&lt;/strong&gt;。更新后需要重新打补丁，或者锁定包版本。&lt;/li&gt;
+&lt;li&gt;如果上游后续发布了官方 M3 条目，本地副本可能会与官方版本产生差异（定价/上下文窗口不同），直到下次更新。&lt;/li&gt;
+&lt;li&gt;M3 的定价数据是根据 M2.7 模板和 OpenRouter 列表（$0.30 / $1.20）推断的。如果对成本准确性有要求，请以 MiniMax 官方定价页面为准。&lt;/li&gt;
+&lt;li&gt;上下文窗口（204800）和 maxTokens（131072）沿用了 M2.7 的参数——如果 M3 正式版有调整，请相应修改。&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
