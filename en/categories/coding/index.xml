@@ -53,7 +53,133 @@
 &lt;li&gt;If upstream later ships an official M3 entry, our local copy may diverge (custom pricing/context) until the next update.&lt;/li&gt;
 &lt;li&gt;Pricing values for M3 were inferred from the M2.7 template and the OpenRouter listing ($0.30 / $1.20). Confirm against the official MiniMax pricing page if cost accuracy matters.&lt;/li&gt;
 &lt;li&gt;Context window (204800) and maxTokens (131072) mirror M2.7 — adjust if M3 differs at GA.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
+&lt;/ul&gt;
+&lt;h2 id="addendum-2026-06-02-the-proper-route-via-omp-user-config"&gt;Addendum (2026-06-02): The proper route via OMP user config
+&lt;/h2&gt;&lt;p&gt;The pi-ai patch above is a hack — any &lt;code&gt;omp update&lt;/code&gt; re-pulls the package and the patch is gone.
+The proper OMP way is &lt;code&gt;~/.omp/agent/models.yml&lt;/code&gt;: a user-level file that OMP merges on top
+of the built-in catalog, with no bun-global dependency, and which &lt;code&gt;omp update&lt;/code&gt; leaves alone.&lt;/p&gt;
+&lt;h3 id="final-config"&gt;Final config
+&lt;/h3&gt;&lt;p&gt;Append to &lt;code&gt;~/.omp/agent/models.yml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# MiniMax M3 Code Plan&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Set MINIMAX_API_KEY in ~/.zshenv first&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;minimax&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;baseUrl&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://api.minimaxi.com/anthropic&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;apiKey&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;MINIMAX_API_KEY&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;api&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;anthropic-messages&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;authHeader&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;disableStrictTools&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;models&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;id&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;MiniMax-M3&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;MiniMax M3&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;reasoning&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;input&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;text, image]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;contextWindow&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1000000&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;maxTokens&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;16384&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cost&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;input&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;output&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cacheRead&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cacheWrite&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;apiKey: MINIMAX_API_KEY&lt;/code&gt; follows OMP&amp;rsquo;s resolution rule: try the value as an env-var name
+first, then fall back to a literal. I &lt;code&gt;export MINIMAX_API_KEY=$MINIMAX_CODE_PLAN_KEY&lt;/code&gt; in
+&lt;code&gt;~/.zshenv&lt;/code&gt;, so the key is sourced at runtime and the dotfile stays clean for git.&lt;/p&gt;
+&lt;h3 id="key-choices"&gt;Key choices
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Why &lt;code&gt;anthropic-messages&lt;/code&gt;, not &lt;code&gt;openai-completions&lt;/code&gt;:&lt;/strong&gt;
+M3 speaks both protocols. The &lt;code&gt;openai-completions&lt;/code&gt; route had two friction points:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OMP&amp;rsquo;s &lt;code&gt;openai-completions&lt;/code&gt; transport emits &lt;code&gt;developer&lt;/code&gt; role + &lt;code&gt;reasoning_effort&lt;/code&gt; for reasoning models. MiniMax&amp;rsquo;s schema check is stricter than OpenAI&amp;rsquo;s, and an empty &lt;code&gt;reasoning&lt;/code&gt; field occasionally 400s&lt;/li&gt;
+&lt;li&gt;After switching to &lt;code&gt;anthropic-messages&lt;/code&gt;, tool calls and streaming reasoning go through the Anthropic SDK normalization path — same as kimi and claude&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Why &lt;code&gt;disableStrictTools: true&lt;/code&gt;:&lt;/strong&gt;
+The Anthropic SDK sends &lt;code&gt;strict: true&lt;/code&gt; on every tool definition by default. Third-party
+Anthropic-fronted gateways (MiniMax, kimi, etc.) usually don&amp;rsquo;t recognize the field and 400.
+The kimi provider in the same file already sets this flag. The trade-off is that tool
+schemas are not server-side validated, so prompts have to carry the schema discipline.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Context 1M / maxTokens 16K:&lt;/strong&gt;
+&lt;code&gt;contextWindow: 1000000&lt;/code&gt; matches OpenRouter&amp;rsquo;s spec for &lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt;
+(M2.7 was 204800, M3 is 5× that). &lt;code&gt;maxTokens: 16384&lt;/code&gt; carries over from M2.7 — I couldn&amp;rsquo;t
+find an official M3 number. &lt;code&gt;cost&lt;/code&gt; is all zero because the Code Plan is flat-rate.&lt;/p&gt;
+&lt;h3 id="switching-to-it"&gt;Switching to it
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# At launch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;omp --model minimax/MiniMax-M3
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Or in the TUI&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;/model minimax/MiniMax-M3
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After the switch, &lt;code&gt;/status&lt;/code&gt; should show &lt;code&gt;ANTHROPIC_BASE_URL&lt;/code&gt; pointing at &lt;code&gt;api.minimaxi.com/anthropic&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id="how-the-two-routes-compose"&gt;How the two routes compose
+&lt;/h3&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Dimension&lt;/th&gt;
+&lt;th&gt;pi-ai bundled &lt;code&gt;models.json&lt;/code&gt; patch&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;models.yml&lt;/code&gt; custom provider&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Persistence&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;omp update&lt;/code&gt; wipes it&lt;/td&gt;
+&lt;td&gt;Persistent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Cross-machine sync&lt;/td&gt;
+&lt;td&gt;No (bun-global path)&lt;/td&gt;
+&lt;td&gt;Yes (dotfile in git)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Upgrade cost&lt;/td&gt;
+&lt;td&gt;Re-apply patch&lt;/td&gt;
+&lt;td&gt;OMP merges automatically&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Merge with built-in&lt;/td&gt;
+&lt;td&gt;Yes&lt;/td&gt;
+&lt;td&gt;Yes, last-write-wins&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The two compose. &lt;code&gt;models.yml&lt;/code&gt; providers enter through OMP&amp;rsquo;s &amp;ldquo;custom&amp;rdquo; channel; whatever
+pi-ai later ships in its bundled list (if M3 lands upstream) enters through the &amp;ldquo;built-in&amp;rdquo;
+channel. When both define the same &lt;code&gt;provider/model&lt;/code&gt; with different &lt;code&gt;baseUrl&lt;/code&gt;, OMP&amp;rsquo;s
+last-write-wins rule means &lt;code&gt;models.yml&lt;/code&gt; always wins — which is exactly what you want
+for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
 &lt;p&gt;Based on my review of the &lt;strong&gt;kimi-code&lt;/strong&gt; source code (particularly &lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;, &lt;code&gt;kimi-schema.ts&lt;/code&gt;, &lt;code&gt;kimi-files.ts&lt;/code&gt;, etc.) and relevant OpenCode compatibility issues, here are the kimi-k2.6-specific optimizations in kimi-code and how they differ from OpenCode.&lt;/p&gt;
 &lt;h2 id="1-native-kimi-provider-not-a-generic-openai-compatible-layer"&gt;1. Native Kimi Provider (Not a Generic OpenAI-compatible Layer)
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; does not treat Kimi as &amp;ldquo;just another OpenAI-compatible endpoint.&amp;rdquo; Instead, it implements a dedicated &lt;code&gt;kimi&lt;/code&gt; provider type:&lt;/p&gt;
