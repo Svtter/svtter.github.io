@@ -14,16 +14,16 @@
 &lt;/ul&gt;
 &lt;h2 id="omp"&gt;omp
 &lt;/h2&gt;&lt;p&gt;但是我现在更加推荐 &lt;a class="link" href="https://github.com/can1357/oh-my-pi" target="_blank" rel="noopener"
-&gt;omp&lt;/a&gt;。&lt;/p&gt;
+ &gt;omp&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;omp 对于 &lt;a class="link" href="https://github.com/can1357/oh-my-pi/commit/933058a24156e219ce2dc9916ebaeeb7a8d2e665" target="_blank" rel="noopener"
-&gt;/goal&lt;/a&gt;、&lt;a class="link" href="https://github.com/can1357/oh-my-pi/commit/4f45cf1fb4a9ab41481421fa8acb7162a90cac09" target="_blank" rel="noopener"
-&gt;/loop&lt;/a&gt; 以及 &lt;a class="link" href="https://github.com/can1357/oh-my-pi/commit/5fae08d2b734c00359f129728ddd61a248d25102" target="_blank" rel="noopener"
-&gt;workflow&lt;/a&gt; 的支持都非常快速。&lt;/p&gt;
+ &gt;/goal&lt;/a&gt;、&lt;a class="link" href="https://github.com/can1357/oh-my-pi/commit/4f45cf1fb4a9ab41481421fa8acb7162a90cac09" target="_blank" rel="noopener"
+ &gt;/loop&lt;/a&gt; 以及 &lt;a class="link" href="https://github.com/can1357/oh-my-pi/commit/5fae08d2b734c00359f129728ddd61a248d25102" target="_blank" rel="noopener"
+ &gt;workflow&lt;/a&gt; 的支持都非常快速。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/can1357/oh-my-pi/commits/main" target="_blank" rel="noopener"
-&gt;omp commit&lt;/a&gt; 的迭代频率非常高，基本每天都在更新。&lt;/p&gt;</description></item><item><title>Multi-Review：多 Agent 并发代码审查的工程实践</title><link>https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link><pubDate>Fri, 29 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</guid><description>&lt;img src="https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/cover.png" alt="Featured image of post Multi-Review：多 Agent 并发代码审查的工程实践" /&gt;&lt;p&gt;在&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;上一篇文章&lt;/a&gt;中，我介绍了 opencode-actions——一个基于 OpenCode 构建的 GitHub Action，用来做自动化的 PR 代码审查。那个版本的 review action 用的是一个模型、一个 prompt，针对整个 PR diff 做一次综合审查。&lt;/p&gt;
+ &gt;omp commit&lt;/a&gt; 的迭代频率非常高，基本每天都在更新。&lt;/p&gt;</description></item><item><title>Multi-Review：多 Agent 并发代码审查的工程实践</title><link>https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link><pubDate>Fri, 29 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</guid><description>&lt;img src="https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/cover.png" alt="Featured image of post Multi-Review：多 Agent 并发代码审查的工程实践" /&gt;&lt;p&gt;在&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;上一篇文章&lt;/a&gt;中，我介绍了 opencode-actions——一个基于 OpenCode 构建的 GitHub Action，用来做自动化的 PR 代码审查。那个版本的 review action 用的是一个模型、一个 prompt，针对整个 PR diff 做一次综合审查。&lt;/p&gt;
 &lt;p&gt;这个方案能用，但有个明显的问题：&lt;strong&gt;一个 prompt 要同时关注代码质量、安全漏洞、性能问题和架构设计，每一项都不够深入。&lt;/strong&gt; 就像让一个工程师同时扮演 QA、安全审计、DBA 和架构师——每个角色都能说两句，但都不专业。&lt;/p&gt;
 &lt;p&gt;Cloudflare 在今年四月发了一篇&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;博客&lt;/a&gt;，详细介绍了他们用 OpenCode 构建的多 Agent 并发代码审查系统。他们用了 7 个专业 reviewer 加 1 个 coordinator，在 5169 个仓库上跑了 13 万次审查。核心思路是：&lt;strong&gt;不要让一个模型什么都看，而是让多个专业模型各看各的，最后用一个 coordinator 统一汇总。&lt;/strong&gt;&lt;/p&gt;
+ &gt;博客&lt;/a&gt;，详细介绍了他们用 OpenCode 构建的多 Agent 并发代码审查系统。他们用了 7 个专业 reviewer 加 1 个 coordinator，在 5169 个仓库上跑了 13 万次审查。核心思路是：&lt;strong&gt;不要让一个模型什么都看，而是让多个专业模型各看各的，最后用一个 coordinator 统一汇总。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;看完这篇文章，我决定在 opencode-actions 中实现类似的能力。这篇文章就是 multi-review action 的设计记录。&lt;/p&gt;
 &lt;h2 id="为什么需要多-agent-并发审查"&gt;为什么需要多 Agent 并发审查？
 &lt;/h2&gt;&lt;p&gt;单模型审查的问题不只是&amp;quot;不够深入&amp;quot;。实际使用中有几个具体的痛点：&lt;/p&gt;
@@ -79,35 +79,35 @@
 &lt;h2 id="四个专业-reviewer"&gt;四个专业 Reviewer
 &lt;/h2&gt;&lt;p&gt;默认启动四个 reviewer，每个有独立的 YAML 定义：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Reviewer&lt;/th&gt;
-&lt;th&gt;关注领域&lt;/th&gt;
-&lt;th&gt;决策标签&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Quality&lt;/td&gt;
-&lt;td&gt;代码质量、bug、逻辑错误、风格一致性、错误处理&lt;/td&gt;
-&lt;td&gt;可合并 / 有条件合并 / 不可合并&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Security&lt;/td&gt;
-&lt;td&gt;输入验证、认证授权、注入漏洞、数据暴露、OWASP Top 10&lt;/td&gt;
-&lt;td&gt;安全无虞 / 存在风险 / 高危漏洞&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Performance&lt;/td&gt;
-&lt;td&gt;算法复杂度、内存模式、N+1 查询、缓存、并发&lt;/td&gt;
-&lt;td&gt;性能良好 / 性能有疑虑 / 性能问题严重&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Architecture&lt;/td&gt;
-&lt;td&gt;耦合度、模块划分、分层、接口设计、霰弹式修改&lt;/td&gt;
-&lt;td&gt;架构合理 / 架构有疑虑 / 架构有问题&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Reviewer&lt;/th&gt;
+					&lt;th&gt;关注领域&lt;/th&gt;
+					&lt;th&gt;决策标签&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Quality&lt;/td&gt;
+					&lt;td&gt;代码质量、bug、逻辑错误、风格一致性、错误处理&lt;/td&gt;
+					&lt;td&gt;可合并 / 有条件合并 / 不可合并&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Security&lt;/td&gt;
+					&lt;td&gt;输入验证、认证授权、注入漏洞、数据暴露、OWASP Top 10&lt;/td&gt;
+					&lt;td&gt;安全无虞 / 存在风险 / 高危漏洞&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Performance&lt;/td&gt;
+					&lt;td&gt;算法复杂度、内存模式、N+1 查询、缓存、并发&lt;/td&gt;
+					&lt;td&gt;性能良好 / 性能有疑虑 / 性能问题严重&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Architecture&lt;/td&gt;
+					&lt;td&gt;耦合度、模块划分、分层、接口设计、霰弹式修改&lt;/td&gt;
+					&lt;td&gt;架构合理 / 架构有疑虑 / 架构有问题&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;每个 reviewer 的 prompt 都遵循同一个约束：&lt;strong&gt;第一行必须是决策标签&lt;/strong&gt;，然后是总结、阻塞项和建议项。这让 coordinator 能结构化地解析每个 reviewer 的输出。&lt;/p&gt;
 &lt;p&gt;和 Cloudflare 的做法一样，每个 reviewer 的 prompt 都明确告诉它&lt;strong&gt;只看当前代码中存在的问题&lt;/strong&gt;，不要重复早期版本的问题，不要建议修改未变更的代码。&lt;/p&gt;
@@ -126,13 +126,13 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 默认：每种角色各一个&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1,performance:1,architecture:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1,performance:1,architecture:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# 自定义：加强安全审查&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:2,performance:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 自定义：加强安全审查&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:2,performance:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# 极简：只看质量和安全&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 极简：只看质量和安全&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;当 count &amp;gt; 1 时，同角色的 reviewer 会带上编号（如 &lt;code&gt;security-1&lt;/code&gt;、&lt;code&gt;security-2&lt;/code&gt;），用同一个 prompt 但独立运行。相同 prompt 的多次运行可以起到交叉验证的效果——如果两个 security reviewer 都发现了同一个漏洞，可信度自然更高。&lt;/p&gt;
@@ -174,55 +174,55 @@
 &lt;h2 id="和-cloudflare-方案的对比"&gt;和 Cloudflare 方案的对比
 &lt;/h2&gt;&lt;p&gt;两者使用了相同的思路——多 Agent 并发 + Coordinator 汇总——但在规模和复杂度上有明显差异：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;维度&lt;/th&gt;
-&lt;th&gt;Cloudflare&lt;/th&gt;
-&lt;th&gt;multi-review&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Agent 数量&lt;/td&gt;
-&lt;td&gt;7 个专业 agent + coordinator&lt;/td&gt;
-&lt;td&gt;4 个（可配置） + coordinator&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;并发模型&lt;/td&gt;
-&lt;td&gt;SDK 多 session，circuit breaker + failback&lt;/td&gt;
-&lt;td&gt;SDK 多 session，Promise.all + 全局超时&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;模型路由&lt;/td&gt;
-&lt;td&gt;按任务复杂度分配不同模型（Opus/Sonnet/Kimi）&lt;/td&gt;
-&lt;td&gt;单一模型，通过 &lt;code&gt;model&lt;/code&gt; 参数指定&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;弹性&lt;/td&gt;
-&lt;td&gt;三级 circuit breaker，provider 级别的 failback chain&lt;/td&gt;
-&lt;td&gt;超时 + fallback comment（coordinator 失败时直接展示原始结果）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;风险分层&lt;/td&gt;
-&lt;td&gt;自动（trivial/lite/full）&lt;/td&gt;
-&lt;td&gt;手动配置 team&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;扩展性&lt;/td&gt;
-&lt;td&gt;插件架构，7 个 plugin 组合&lt;/td&gt;
-&lt;td&gt;YAML persona 定义，内置 4 种&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Token 优化&lt;/td&gt;
-&lt;td&gt;共享 context file，7x 的 MR 上下文不重复&lt;/td&gt;
-&lt;td&gt;每个 reviewer 独立接收完整 diff&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;适用场景&lt;/td&gt;
-&lt;td&gt;内部 GitLab，5169 仓库，企业级&lt;/td&gt;
-&lt;td&gt;GitHub/Gitea，开源项目，开箱即用&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;Cloudflare&lt;/th&gt;
+					&lt;th&gt;multi-review&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Agent 数量&lt;/td&gt;
+					&lt;td&gt;7 个专业 agent + coordinator&lt;/td&gt;
+					&lt;td&gt;4 个（可配置） + coordinator&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;并发模型&lt;/td&gt;
+					&lt;td&gt;SDK 多 session，circuit breaker + failback&lt;/td&gt;
+					&lt;td&gt;SDK 多 session，Promise.all + 全局超时&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;模型路由&lt;/td&gt;
+					&lt;td&gt;按任务复杂度分配不同模型（Opus/Sonnet/Kimi）&lt;/td&gt;
+					&lt;td&gt;单一模型，通过 &lt;code&gt;model&lt;/code&gt; 参数指定&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;弹性&lt;/td&gt;
+					&lt;td&gt;三级 circuit breaker，provider 级别的 failback chain&lt;/td&gt;
+					&lt;td&gt;超时 + fallback comment（coordinator 失败时直接展示原始结果）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;风险分层&lt;/td&gt;
+					&lt;td&gt;自动（trivial/lite/full）&lt;/td&gt;
+					&lt;td&gt;手动配置 team&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;扩展性&lt;/td&gt;
+					&lt;td&gt;插件架构，7 个 plugin 组合&lt;/td&gt;
+					&lt;td&gt;YAML persona 定义，内置 4 种&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Token 优化&lt;/td&gt;
+					&lt;td&gt;共享 context file，7x 的 MR 上下文不重复&lt;/td&gt;
+					&lt;td&gt;每个 reviewer 独立接收完整 diff&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;适用场景&lt;/td&gt;
+					&lt;td&gt;内部 GitLab，5169 仓库，企业级&lt;/td&gt;
+					&lt;td&gt;GitHub/Gitea，开源项目，开箱即用&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;最核心的差异在&lt;strong&gt;弹性&lt;/strong&gt;上。Cloudflare 的 circuit breaker 和 failback chain 是为生产环境设计的——7 个并发 AI 调用，provider 限频和宕机是必然事件。multi-review 的规模小得多，4 个并发的失败概率可控，用超时 + fallback comment 就够了。&lt;/p&gt;
 &lt;p&gt;另一个差异是 &lt;strong&gt;token 优化&lt;/strong&gt;。Cloudflare 把 MR diff 写到一个共享文件，7 个 reviewer 读同一个文件而不是各拷一份。注意这里共享的是&lt;strong&gt;原始 diff（输入数据）&lt;/strong&gt;，而不是 reviewer 之间的审查结论。每个 reviewer 的审查过程仍然是完全独立的。这个优化在 7 个 reviewer 的情况下能省 85% 的重复 token。multi-review 目前每个 reviewer 都接收完整 diff，在 4 个 reviewer 的规模下重复还能接受，但如果 team 配置到 7+ 就需要考虑类似优化了。&lt;/p&gt;
@@ -275,11 +275,11 @@
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Multi Review&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;issue_comment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;types&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;created]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;multi-review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;if&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; github.event.issue.pull_request &amp;amp;&amp;amp;
@@ -348,14 +348,14 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;Math&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="nx"&gt;_000&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;deadline&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nb"&gt;Date&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;now&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 1. 创建独立 session
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;sessionResult&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;sessionResult&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;create&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;throwOnError&lt;/span&gt;: &lt;span class="kt"&gt;true&lt;/span&gt; &lt;span class="p"&gt;}),&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;sessionId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;sessionResult&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 2. 发送 persona + diff
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -366,7 +366,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 3. 提取结果
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;}),&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
@@ -375,7 +375,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;: &lt;span class="kt"&gt;reviewer.name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;success&lt;/span&gt;: &lt;span class="kt"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;error&lt;/span&gt;: &lt;span class="kt"&gt;err.message&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;finally&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 4. 清理 session
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;sessionId&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;sessionId&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -395,7 +395,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-typescript" data-lang="typescript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 把各 reviewer 的结果拼接成 {{REVIEWS}}
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;reviewsText&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;reviews&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;reviewsText&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;reviews&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="sb"&gt;`## &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="sb"&gt;n&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;success&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;content&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="sb"&gt;`（失败: &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;error&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;）`&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n\n---\n\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
@@ -414,7 +414,7 @@
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-typescript" data-lang="typescript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;buildFallbackComment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reviews&lt;/span&gt;: &lt;span class="kt"&gt;ReviewResult&lt;/span&gt;&lt;span class="p"&gt;[])&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;string&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// coordinator 挂了，直接把各 reviewer 的原始输出拼起来
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;**Multi-Review (fallback — coordinator failed)**\n\n&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;parts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n\n---\n\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;**Multi-Review (fallback — coordinator failed)**\n\n&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;parts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n\n---\n\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -422,45 +422,45 @@
 &lt;h2 id="和单模型-review-的关系"&gt;和单模型 Review 的关系
 &lt;/h2&gt;&lt;p&gt;multi-review 和之前&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;单模型 review action&lt;/a&gt; 不是替代关系，而是互补：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;review&lt;/th&gt;
-&lt;th&gt;multi-review&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;定位&lt;/td&gt;
-&lt;td&gt;快速审查，适合每次 PR 都跑&lt;/td&gt;
-&lt;td&gt;深度审查，适合关键 PR 或手动触发&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;模型数&lt;/td&gt;
-&lt;td&gt;1 个&lt;/td&gt;
-&lt;td&gt;4+ 个（可配置）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;耗时&lt;/td&gt;
-&lt;td&gt;1-3 分钟&lt;/td&gt;
-&lt;td&gt;3-8 分钟&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Token 消耗&lt;/td&gt;
-&lt;td&gt;低&lt;/td&gt;
-&lt;td&gt;中（N 倍于单模型）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;触发方式&lt;/td&gt;
-&lt;td&gt;PR 创建/更新自动触发&lt;/td&gt;
-&lt;td&gt;手动评论触发&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;适合场景&lt;/td&gt;
-&lt;td&gt;日常迭代，快速反馈&lt;/td&gt;
-&lt;td&gt;重要功能、安全相关、大型重构&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;review&lt;/th&gt;
+					&lt;th&gt;multi-review&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;定位&lt;/td&gt;
+					&lt;td&gt;快速审查，适合每次 PR 都跑&lt;/td&gt;
+					&lt;td&gt;深度审查，适合关键 PR 或手动触发&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;模型数&lt;/td&gt;
+					&lt;td&gt;1 个&lt;/td&gt;
+					&lt;td&gt;4+ 个（可配置）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;耗时&lt;/td&gt;
+					&lt;td&gt;1-3 分钟&lt;/td&gt;
+					&lt;td&gt;3-8 分钟&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Token 消耗&lt;/td&gt;
+					&lt;td&gt;低&lt;/td&gt;
+					&lt;td&gt;中（N 倍于单模型）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;触发方式&lt;/td&gt;
+					&lt;td&gt;PR 创建/更新自动触发&lt;/td&gt;
+					&lt;td&gt;手动评论触发&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;适合场景&lt;/td&gt;
+					&lt;td&gt;日常迭代，快速反馈&lt;/td&gt;
+					&lt;td&gt;重要功能、安全相关、大型重构&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;日常开发用 review 做快速检查，关键 PR 用 multi-review 做深度审查。两个 action 可以共存于同一个仓库。&lt;/p&gt;
 &lt;h2 id="未来优化方向"&gt;未来优化方向
@@ -477,9 +477,9 @@
 &lt;hr&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;opencode-actions&lt;/a&gt; — GitHub Action 仓库&lt;/li&gt;
+ &gt;opencode-actions&lt;/a&gt; — GitHub Action 仓库&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — 设计灵感的来源&lt;/li&gt;
+ &gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — 设计灵感的来源&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - 一个 coding review agent&lt;/a&gt; — 单模型 review action 的介绍&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-%e6%8f%92%e4%bb%b6%e4%bc%98%e5%8c%96/" &gt;OpenCode 配置之外的优化&lt;/a&gt; — opencode-review 插件的设计，session 内的代码审查&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Kimi Code 对 kimi-k2.6 的专用处理：与 OpenCode 的对比</title><link>https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post Kimi Code 对 kimi-k2.6 的专用处理：与 OpenCode 的对比" /&gt;&lt;p&gt;最近 kimi code 从 python 迁移到了 ts 版本。于是做了个简单的分析。&lt;/p&gt;
@@ -487,30 +487,30 @@
 &lt;h2 id="1-原生-kimi-provider非通用-openai-兼容层"&gt;1. 原生 Kimi Provider（非通用 OpenAI 兼容层）
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; 没有直接把 Kimi 当&amp;quot;又一个 OpenAI 兼容接口&amp;quot;处理，而是实现了专门的 &lt;code&gt;kimi&lt;/code&gt; provider 类型：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;特性&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider 类型&lt;/td&gt;
-&lt;td&gt;专门的 &lt;code&gt;'kimi'&lt;/code&gt; 类型，独立适配&lt;/td&gt;
-&lt;td&gt;通过 OpenAI/Anthropic 通用 bridge 访问&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;专有字段&lt;/td&gt;
-&lt;td&gt;原生处理 &lt;code&gt;reasoning_content&lt;/code&gt;、&lt;code&gt;thinking&lt;/code&gt;、&lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;bridge 层常丢失 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;认证头&lt;/td&gt;
-&lt;td&gt;支持 &lt;code&gt;kimiRequestHeaders&lt;/code&gt; 和 &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt; 等 Moonshot 专有 header&lt;/td&gt;
-&lt;td&gt;通用 header 转发&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;特性&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider 类型&lt;/td&gt;
+					&lt;td&gt;专门的 &lt;code&gt;'kimi'&lt;/code&gt; 类型，独立适配&lt;/td&gt;
+					&lt;td&gt;通过 OpenAI/Anthropic 通用 bridge 访问&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;专有字段&lt;/td&gt;
+					&lt;td&gt;原生处理 &lt;code&gt;reasoning_content&lt;/code&gt;、&lt;code&gt;thinking&lt;/code&gt;、&lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;bridge 层常丢失 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;认证头&lt;/td&gt;
+					&lt;td&gt;支持 &lt;code&gt;kimiRequestHeaders&lt;/code&gt; 和 &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt; 等 Moonshot 专有 header&lt;/td&gt;
+					&lt;td&gt;通用 header 转发&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="2-reasoning_content-的全生命周期处理"&gt;2. &lt;code&gt;reasoning_content&lt;/code&gt; 的全生命周期处理
 &lt;/h2&gt;&lt;p&gt;kimi-k2.6 默认开启 thinking，且&lt;strong&gt;要求多轮对话历史中保留 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/strong&gt;，否则工具调用后会报 400 错误。&lt;/p&gt;
@@ -623,7 +623,7 @@
 &lt;p&gt;&lt;strong&gt;结论：kimi-code 从一开始就把 Kimi API 当作一等公民设计，不是后期打补丁适配。&lt;/strong&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;d95b013&lt;/code&gt; fix(catalog): preserve reasoning fields in custom model (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
-&gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+ &gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;这个 commit 修复了一个很隐蔽的问题。models.dev 用 &lt;code&gt;interleaved&lt;/code&gt; 字段标记 reasoning 支持，但早期代码把 &lt;code&gt;interleaved=true&lt;/code&gt; 当作 undefined 处理，导致通过 &lt;code&gt;/connect&lt;/code&gt; 选择的模型静默丢失 reasoning 能力。&lt;/p&gt;
 &lt;p&gt;修复内容：&lt;/p&gt;
 &lt;ul&gt;
@@ -632,7 +632,7 @@
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;61f7d0e&lt;/code&gt; fix(kosong): make openai-compatible thinking work without reasoning_key (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
-&gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+ &gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;这是 reasoning 处理的核心 commit&lt;/strong&gt;，展示了 kimi-code 对兼容性的深层思考。diff 显示了三层关键设计：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -677,8 +677,11 @@
 &lt;/ol&gt;
 &lt;p&gt;边界情况也处理得很细：blank &lt;code&gt;reasoning_key&lt;/code&gt;（&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;）被 normalize 为 &lt;code&gt;undefined&lt;/code&gt;；caller 通过 &lt;code&gt;withGenerationKwargs&lt;/code&gt; 显式设置的值&lt;strong&gt;不会被自动注入覆盖&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;验证目标明确写的是：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;hr&gt;
 &lt;h3 id="opencode通用层设计openai-centric"&gt;OpenCode：通用层设计，OpenAI-centric
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;eb84f46&lt;/code&gt; fix(llm): split OpenAI reasoning summary blocks (#29000)&lt;/strong&gt;&lt;/p&gt;
@@ -693,96 +696,99 @@
 &lt;h3 id="一个残酷的事实"&gt;一个残酷的事实
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
-&gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;状态：至今仍是 open&lt;/strong&gt;&lt;/li&gt;
+ &gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;状态：至今仍是 open&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/27054" target="_blank" rel="noopener"
-&gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;状态：closed，但关闭方式是禁用 MCP（workaround）&lt;/strong&gt;&lt;/li&gt;
+ &gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;状态：closed，但关闭方式是禁用 MCP（workaround）&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;#27054 的最后一个 comment：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;这不是修复，这是回避问题。&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id="commit-历史对比总结"&gt;Commit 历史对比总结
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;维度&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;初始设计&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;初始提交即包含完整 Kimi provider + schema 规范化 + 文件服务&lt;/td&gt;
-&lt;td&gt;通用多模型架构，后期通过 bridge 适配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;reasoning 机制&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;围绕 &lt;code&gt;reasoning_content&lt;/code&gt; 字段设计，自动扫描/回写/注入 effort&lt;/td&gt;
-&lt;td&gt;围绕 OpenAI Responses 的 &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt; 设计&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;schema 处理&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;，解引用 &lt;code&gt;$ref&lt;/code&gt; + 补全 &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;通用 schema 验证，友好错误提示为主&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;配置哲学&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;让 OpenAI-compatible 网关&amp;quot;零配置工作&amp;quot;，自动推断所有字段&lt;/td&gt;
-&lt;td&gt;依赖用户通过 bridge/config 手动适配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;issue 状态&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;持续发布 reasoning 相关 patch（&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
-&gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
-&gt;#78&lt;/a&gt;）&lt;/td&gt;
-&lt;td&gt;kimi-k2.6 兼容性问题 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
-&gt;#26331&lt;/a&gt; 至今 open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;初始设计&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;初始提交即包含完整 Kimi provider + schema 规范化 + 文件服务&lt;/td&gt;
+					&lt;td&gt;通用多模型架构，后期通过 bridge 适配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;reasoning 机制&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;围绕 &lt;code&gt;reasoning_content&lt;/code&gt; 字段设计，自动扫描/回写/注入 effort&lt;/td&gt;
+					&lt;td&gt;围绕 OpenAI Responses 的 &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt; 设计&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;schema 处理&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;，解引用 &lt;code&gt;$ref&lt;/code&gt; + 补全 &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;通用 schema 验证，友好错误提示为主&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;配置哲学&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;让 OpenAI-compatible 网关&amp;quot;零配置工作&amp;quot;，自动推断所有字段&lt;/td&gt;
+					&lt;td&gt;依赖用户通过 bridge/config 手动适配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;issue 状态&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;持续发布 reasoning 相关 patch（&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+ &gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+ &gt;#78&lt;/a&gt;）&lt;/td&gt;
+					&lt;td&gt;kimi-k2.6 兼容性问题 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+ &gt;#26331&lt;/a&gt; 至今 open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="总结核心差异"&gt;总结：核心差异
 &lt;/h2&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;维度&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;架构定位&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;原生为 Kimi/Moonshot 设计，专用 provider&lt;/td&gt;
-&lt;td&gt;通用多模型代理，通过 bridge 适配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;原生支持，全链路保留 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;bridge 层易丢失，导致 400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; 做解引用和类型补全&lt;/td&gt;
-&lt;td&gt;通用 schema 生成，不符合 Kimi 验证器要求&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;API 格式&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;直接生成 Moonshot 原生格式（含 &lt;code&gt;thinking&lt;/code&gt; 配置、&lt;code&gt;$defs&lt;/code&gt; 规范等）&lt;/td&gt;
-&lt;td&gt;经 OpenAI/Anthropic 协议转换，产生格式不匹配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;服务集成&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;内置 Moonshot fetch/search/file 服务&lt;/td&gt;
-&lt;td&gt;使用通用本地工具&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;核心依赖&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;CLI 核心不直接依赖 vendor SDK，通过自研 kosong 包隔离&lt;/td&gt;
-&lt;td&gt;核心包直接耦合 &lt;code&gt;@ai-sdk/openai&lt;/code&gt; 等十余个 vendor SDK&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;架构定位&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;原生为 Kimi/Moonshot 设计，专用 provider&lt;/td&gt;
+					&lt;td&gt;通用多模型代理，通过 bridge 适配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;原生支持，全链路保留 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;bridge 层易丢失，导致 400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; 做解引用和类型补全&lt;/td&gt;
+					&lt;td&gt;通用 schema 生成，不符合 Kimi 验证器要求&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;API 格式&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;直接生成 Moonshot 原生格式（含 &lt;code&gt;thinking&lt;/code&gt; 配置、&lt;code&gt;$defs&lt;/code&gt; 规范等）&lt;/td&gt;
+					&lt;td&gt;经 OpenAI/Anthropic 协议转换，产生格式不匹配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;服务集成&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;内置 Moonshot fetch/search/file 服务&lt;/td&gt;
+					&lt;td&gt;使用通用本地工具&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;核心依赖&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;CLI 核心不直接依赖 vendor SDK，通过自研 kosong 包隔离&lt;/td&gt;
+					&lt;td&gt;核心包直接耦合 &lt;code&gt;@ai-sdk/openai&lt;/code&gt; 等十余个 vendor SDK&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;从 commit 历史看，kimi-code 的演进方向是&lt;strong&gt;持续消除用户配置负担&lt;/strong&gt;（&lt;code&gt;reasoning_key&lt;/code&gt; 从必填 → 可选覆盖 → 自动推断；&lt;code&gt;interleaved&lt;/code&gt; 从被过滤 → 正确映射），而 OpenCode 的演进方向是&lt;strong&gt;持续深化 OpenAI 生态集成&lt;/strong&gt;（Responses API、encrypted reasoning、item reference），对 Kimi 的适配停留在通用 bridge 层。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;这就是 commit 层面的真相：一个是原生演进，一个是 bridge 间隙。&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失</title><link>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/</guid><description>&lt;img src="https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/cover.jpg" alt="Featured image of post OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失" /&gt;&lt;p&gt;16 万 star 的 opencode 项目最近连续合并了三个 LLM provider 层的 bug 修复 PR，都是核心维护者 kitlangton 提交的。这三个 bug 不是某次重构引入的回归问题，而是从协议层初始设计就存在的缺陷——只是在最近使用量增长后才暴露出来。&lt;/p&gt;
@@ -797,10 +803,10 @@
 &lt;p&gt;三个 bug 分别出在这两个方向上。&lt;/p&gt;
 &lt;h2 id="bug-1tool-result-中的图片被字符串化"&gt;Bug 1：Tool Result 中的图片被字符串化
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28754" target="_blank" rel="noopener"
-&gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
-&gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
-&gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
-&gt;#28861&lt;/a&gt;）&lt;/p&gt;
+ &gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
+ &gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
+ &gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
+ &gt;#28861&lt;/a&gt;）&lt;/p&gt;
 &lt;h3 id="问题"&gt;问题
 &lt;/h3&gt;&lt;p&gt;当 LLM 调用一个工具（比如截图工具），工具返回的结果可能包含图片（base64 编码）。opencode 的协议层在处理这种 tool result 时，统一调用了 &lt;code&gt;ProviderShared.toolResultText(part)&lt;/code&gt;，这个函数把整个 tool result——包括图片——JSON.stringify 成一个字符串。&lt;/p&gt;
 &lt;p&gt;对于 OpenAI Responses API，这意味着：&lt;/p&gt;
@@ -811,7 +817,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前：所有 tool result 都变成字符串
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;一个包含 base64 图片的 tool result 被序列化成字符串塞进了 &lt;code&gt;function_call_output.output&lt;/code&gt;。对于 Anthropic Messages API 同样：图片被 JSON.stringify 后塞进了 &lt;code&gt;tool_result.content&lt;/code&gt;。&lt;/p&gt;
@@ -830,7 +836,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复后：图片以结构化格式发送
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;input_image&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;image_url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;data:image/png;base64,...&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
@@ -840,8 +846,8 @@
 &lt;/h3&gt;&lt;p&gt;这不是某次重构搞坏的，而是初始设计就没考虑到 tool result 会返回非文本内容。&lt;code&gt;toolResultText()&lt;/code&gt; 作为一个通用函数，把所有内容都当文本处理——在只有文本 tool result 的世界里这是对的，但世界变了。&lt;/p&gt;
 &lt;h2 id="bug-2stream-error-信息被吞掉"&gt;Bug 2：Stream Error 信息被吞掉
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28757" target="_blank" rel="noopener"
-&gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
-&gt;#28860&lt;/a&gt;）&lt;/p&gt;
+ &gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
+ &gt;#28860&lt;/a&gt;）&lt;/p&gt;
 &lt;h3 id="问题-1"&gt;问题
 &lt;/h3&gt;&lt;p&gt;LLM provider 的流式响应可能在中途出错（rate limit、context overflow、model overload 等）。opencode 的错误处理代码把这些错误全部压成了通用字符串：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -851,7 +857,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;所有错误都变成了 &lt;code&gt;&amp;quot;OpenAI Responses stream error&amp;quot;&lt;/code&gt; 这一句话。维护者在 PR 描述里提到，这使得某个 session 的诊断变得极其痛苦——底层原因（base64 图片过大）完全不可见。&lt;/p&gt;
@@ -881,7 +887,7 @@
 &lt;/h3&gt;&lt;p&gt;错误处理的代码写得太&amp;quot;乐观&amp;quot;了——假设错误信息总在预期的位置。但 OpenAI 的 API 在不同错误场景下把信息放在不同的嵌套层级，代码没有覆盖所有情况。&lt;/p&gt;
 &lt;h2 id="bug-3anthropic-tool-result-类型检查不稳定"&gt;Bug 3：Anthropic Tool Result 类型检查不稳定
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28909" target="_blank" rel="noopener"
-&gt;#28909&lt;/a&gt;&lt;/p&gt;
+ &gt;#28909&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id="问题-2"&gt;问题
 &lt;/h3&gt;&lt;p&gt;这个 PR 在前两个修复合并后才出现。修复了图片 tool result 的结构化发送后，Anthropic 端的类型检查变得不稳定——某些边缘情况下 tool result 的类型推断会失败。&lt;/p&gt;
 &lt;p&gt;具体来说，&lt;code&gt;tool_result.content&lt;/code&gt; 的类型从 &lt;code&gt;string&lt;/code&gt; 扩展成了 &lt;code&gt;string | ContentItem[]&lt;/code&gt;，但下游代码没有完全适配这个联合类型。&lt;/p&gt;
@@ -929,35 +935,35 @@
 &lt;h2 id="总览"&gt;总览
 &lt;/h2&gt;&lt;p&gt;27 个 workflow 可以分成四类：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;类别&lt;/th&gt;
-&lt;th&gt;数量&lt;/th&gt;
-&lt;th&gt;作用&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;CI/测试&lt;/td&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;typecheck、单元测试、e2e、Nix 构建&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;发布/交付&lt;/td&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;CLI 发布、容器构建、VS Code 插件、GitHub Action 发布&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;自动化/Bot&lt;/td&gt;
-&lt;td&gt;16&lt;/td&gt;
-&lt;td&gt;issue 治理、PR 合规、AI code review、文档更新&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;文档/其他&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;统计、Discord 通知&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;类别&lt;/th&gt;
+					&lt;th&gt;数量&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CI/测试&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;typecheck、单元测试、e2e、Nix 构建&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;发布/交付&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;CLI 发布、容器构建、VS Code 插件、GitHub Action 发布&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自动化/Bot&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+					&lt;td&gt;issue 治理、PR 合规、AI code review、文档更新&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;文档/其他&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;统计、Discord 通知&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;16 个自动化 workflow 占了总数的 60%。opencode 不只是用 Actions 来跑测试和发布，而是把社区治理和代码质量审查也交给了自动化系统。&lt;/p&gt;
 &lt;h2 id="ci测试扎实但克制"&gt;CI/测试：扎实但克制
@@ -971,7 +977,7 @@
 &lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;：多个 workflow 都用了这个模式，同一个 PR 不会堆叠多次运行。对于一个接受大量社区 PR 的项目，这能省下不少 CI 资源。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;路径触发&lt;/strong&gt;：containers.yml 只在容器文件变更时运行，storybook.yml 只在 UI 变更时运行。不是所有东西都全量跑。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;混合 Runner 策略&lt;/strong&gt;：大部分 workflow 使用 &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
-&gt;Blacksmith&lt;/a&gt; 提供的第三方托管 runner（&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;、&lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;）。Blacksmith 是一个兼容 GitHub Actions API 的加速 runner 服务，底层用自建基础设施，比 GitHub 免费 runner 快不少。只有轻量级 bot 任务（close-issues、close-prs、compliance-close、pr-standards、deploy）留在 GitHub 原生的 &lt;code&gt;ubuntu-latest&lt;/code&gt; 上。计算密集的编译、测试、发布全走 Blacksmith，简单的脚本任务用 GitHub 原生 runner，按任务负载分配资源。&lt;/li&gt;
+ &gt;Blacksmith&lt;/a&gt; 提供的第三方托管 runner（&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;、&lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;）。Blacksmith 是一个兼容 GitHub Actions API 的加速 runner 服务，底层用自建基础设施，比 GitHub 免费 runner 快不少。只有轻量级 bot 任务（close-issues、close-prs、compliance-close、pr-standards、deploy）留在 GitHub 原生的 &lt;code&gt;ubuntu-latest&lt;/code&gt; 上。计算密集的编译、测试、发布全走 Blacksmith，简单的脚本任务用 GitHub 原生 runner，按任务负载分配资源。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="发布交付全平台覆盖"&gt;发布/交付：全平台覆盖
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; 是最复杂的 workflow，一个文件处理了完整的发布流程：&lt;/p&gt;
@@ -1063,8 +1069,8 @@
 &lt;/h2&gt;&lt;p&gt;用 OpenCode 写代码时，一个典型的工作流是：agent 在一个 session 内完成编码，然后我 review diff、创建 PR。但我发现一个反复出现的问题：&lt;strong&gt;agent 写完的代码经常带着&amp;quot;第一次草稿&amp;quot;的质量问题就进入 PR 了&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;这些问题包括：缺少错误处理、安全漏洞、性能不佳的查询、缺失的测试。如果能在 session 内——也就是代码还没提交到 PR 之前——让 agent 自行审查一轮，很多问题在 PR 阶段就不存在了。&lt;/p&gt;
 &lt;p&gt;这和 CI 阶段的 code review 是不同层次的事情。CI 审查我已经通过 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;opencode-actions&lt;/a&gt;（之前写过一篇&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;介绍文章&lt;/a&gt;）实现了——它发生在 PR 创建之后，由 GitHub Actions 触发。后来 Cloudflare 也在&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;工程博客&lt;/a&gt;中分享了类似思路：用 OpenCode 构建大规模 AI code review。而 opencode-review 要解决的是更早的阶段：&lt;strong&gt;在 session 内、在 PR 之前，让 agent 在写完代码后主动审查并修复问题&lt;/strong&gt;。两者互补：opencode-review 提升进入 PR 的代码质量基线，opencode-actions 则作为最后一道关卡。&lt;/p&gt;
+ &gt;opencode-actions&lt;/a&gt;（之前写过一篇&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;介绍文章&lt;/a&gt;）实现了——它发生在 PR 创建之后，由 GitHub Actions 触发。后来 Cloudflare 也在&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+ &gt;工程博客&lt;/a&gt;中分享了类似思路：用 OpenCode 构建大规模 AI code review。而 opencode-review 要解决的是更早的阶段：&lt;strong&gt;在 session 内、在 PR 之前，让 agent 在写完代码后主动审查并修复问题&lt;/strong&gt;。两者互补：opencode-review 提升进入 PR 的代码质量基线，opencode-actions 则作为最后一道关卡。&lt;/p&gt;
 &lt;p&gt;具体来说，有三个需要解决的子问题：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;审查覆盖不全&lt;/strong&gt;：agent 生成的代码可能引入安全漏洞、性能问题，但它自己不会主动检查这些&lt;/li&gt;
@@ -1077,23 +1083,14 @@
 &lt;/h3&gt;&lt;p&gt;第一个设计决策是&lt;strong&gt;为什么分五个维度&lt;/strong&gt;，而不是一个笼统的&amp;quot;好不好&amp;quot;的评价。&lt;/p&gt;
 &lt;p&gt;代码质量不是一个单一维度。一段代码可能功能正确、性能优秀，但存在 SQL 注入漏洞；也可能安全无害，但缺少测试覆盖。把它们混在一起评估，结果必然模糊。&lt;/p&gt;
 &lt;p&gt;学术上，&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
-&gt;Modern Code Review (MCR) Survey&lt;/a&gt; 收集了 2013-2025 年间的代码审查研究，提出了一个分类体系，涵盖缺陷检测、安全审查、性能分析、可维护性评估等多个任务维度。Ericsson 的研究团队在 &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
-&gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; 中也验证了：按维度拆分的审查比笼统审查在工业场景中更有效。&lt;/p&gt;
+ &gt;Modern Code Review (MCR) Survey&lt;/a&gt; 收集了 2013-2025 年间的代码审查研究，提出了一个分类体系，涵盖缺陷检测、安全审查、性能分析、可维护性评估等多个任务维度。Ericsson 的研究团队在 &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+ &gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; 中也验证了：按维度拆分的审查比笼统审查在工业场景中更有效。&lt;/p&gt;
 &lt;p&gt;opencode-review 的五个维度——code-quality、security、performance、testing、documentation——对应的就是这些研究中识别出的核心审查维度。每个维度可以独立开关，因为不同项目关注的重点不同：一个内部工具可能不需要文档审查，但一个安全敏感的服务不能跳过 security 维度。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_7330a01d3840e4a9.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_fceacab38c67aa8b.png 1024w"
-loading="lazy"
-alt="五个审查维度"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="五个审查维度" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_6ad3154bf9d83639.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h3 id="严重性分级"&gt;严重性分级
 &lt;/h3&gt;&lt;p&gt;第二个设计决策是&lt;strong&gt;为什么分三级严重性&lt;/strong&gt;（critical / suggestion / highlight）。&lt;/p&gt;
 &lt;p&gt;这来自静态分析工具领域的经验教训。安全工具和 linter 长期面临一个问题：&lt;strong&gt;alert fatigue（告警疲劳）&lt;/strong&gt;。当所有问题都被标记为同等重要时，开发者会开始忽略它们。&lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
-&gt;Veracode 的研究&lt;/a&gt;指出，告警疲劳导致的直接后果是真正的严重问题被淹没在噪音中。&lt;/p&gt;
+ &gt;Veracode 的研究&lt;/a&gt;指出，告警疲劳导致的直接后果是真正的严重问题被淹没在噪音中。&lt;/p&gt;
 &lt;p&gt;分三级的逻辑是：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;critical&lt;/strong&gt;：必须修复（安全漏洞、逻辑错误、资源泄漏）&lt;/li&gt;
@@ -1105,42 +1102,24 @@ data-flex-basis="430px"
 &lt;/h3&gt;&lt;p&gt;第三个设计决策是&lt;strong&gt;为什么 critical 问题要自动触发修复&lt;/strong&gt;，而不是仅仅报告。&lt;/p&gt;
 &lt;p&gt;这是一个有争议的设计。传统的审查工具通常是&amp;quot;只报告不修复&amp;quot;，把修复留给开发者。但 opencode-review 的场景不同——它审查的代码本身就是 AI agent 刚写完的，让另一个 agent 去修复合情合理。&lt;/p&gt;
 &lt;p&gt;学术上这属于 &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; 的范畴。&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
-&gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; 综述了 2022-2025 年间的 63 个 LLM-based APR 系统，分为四种范式。其中&amp;quot;分析增强&amp;quot;（analysis-augmented）范式——先用静态分析定位问题，再用 LLM 生成修复——被证明是最有效的。opencode-review 的 auto-fix chain 本质上就是这个范式：reviewer 发现 critical issue → 定位问题位置 → spawn fixer sub-agent → 生成最小化修复。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_67450c93ac3d843a.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_261b6e10779b8b33.png 1024w"
-loading="lazy"
-alt="自动修复链"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+ &gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; 综述了 2022-2025 年间的 63 个 LLM-based APR 系统，分为四种范式。其中&amp;quot;分析增强&amp;quot;（analysis-augmented）范式——先用静态分析定位问题，再用 LLM 生成修复——被证明是最有效的。opencode-review 的 auto-fix chain 本质上就是这个范式：reviewer 发现 critical issue → 定位问题位置 → spawn fixer sub-agent → 生成最小化修复。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="自动修复链" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_cc477bedddea60c3.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
-&gt;ICSE 2025 的一篇论文&lt;/a&gt; 也指出，LLM 在 APR 中的关键挑战是目标对齐（objective alignment）——修复的目标不是&amp;quot;生成看起来合理的代码&amp;quot;，而是&amp;quot;精确解决报告的问题&amp;quot;。这也是为什么 opencode-review 的 fixer 被设计为 &lt;strong&gt;minimal fix&lt;/strong&gt;——只做最小的修改来解决问题，不重写、不重构、不&amp;quot;顺手&amp;quot;做其他改动。&lt;/p&gt;
+ &gt;ICSE 2025 的一篇论文&lt;/a&gt; 也指出，LLM 在 APR 中的关键挑战是目标对齐（objective alignment）——修复的目标不是&amp;quot;生成看起来合理的代码&amp;quot;，而是&amp;quot;精确解决报告的问题&amp;quot;。这也是为什么 opencode-review 的 fixer 被设计为 &lt;strong&gt;minimal fix&lt;/strong&gt;——只做最小的修改来解决问题，不重写、不重构、不&amp;quot;顺手&amp;quot;做其他改动。&lt;/p&gt;
 &lt;h3 id="自动审查的隐性收益代码质量基线的持续提升"&gt;自动审查的隐性收益：代码质量基线的持续提升
 &lt;/h3&gt;&lt;p&gt;上面三个设计解决的是&amp;quot;发现问题&amp;quot;和&amp;quot;修复问题&amp;quot;。但自动审查还有一个容易被忽略的好处：&lt;strong&gt;它在不经意间持续提升了代码质量的基线&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;这个效果来自两个机制：&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;第一，审查反馈对写代码者的塑造。&lt;/strong&gt; &lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
-&gt;FSE 2022 的研究&lt;/a&gt; 在两年的工业实践中发现，当开发者知道自己的代码会被自动审查时，他们会在写代码阶段就更有意识地遵循规范——因为事后被指出来的成本变低了，提前写好的收益变高了。这是一种 &lt;strong&gt;nudge effect（助推效应）&lt;/strong&gt;。在 AI agent 的场景下，这个效应更强：agent 在一个 session 中写了代码、被 review 指出问题、修复、再次被审查——这个循环在同一 session 内就能完成多轮。每一轮反馈都在修正 agent 的输出倾向，相当于一个隐式的 fine-tuning 过程。&lt;/p&gt;
+ &gt;FSE 2022 的研究&lt;/a&gt; 在两年的工业实践中发现，当开发者知道自己的代码会被自动审查时，他们会在写代码阶段就更有意识地遵循规范——因为事后被指出来的成本变低了，提前写好的收益变高了。这是一种 &lt;strong&gt;nudge effect（助推效应）&lt;/strong&gt;。在 AI agent 的场景下，这个效应更强：agent 在一个 session 中写了代码、被 review 指出问题、修复、再次被审查——这个循环在同一 session 内就能完成多轮。每一轮反馈都在修正 agent 的输出倾向，相当于一个隐式的 fine-tuning 过程。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;第二，自动修复的直接质量累积。&lt;/strong&gt; critical issue 被自动修复意味着每一轮提交的代码质量都比没有审查时更高。这不是一次性的改进，而是持续的。就像代码库中的 lint 规则一样——一开始只是禁止明显错误，但随着规则积累，代码库的整体风格和质量在不知不觉中被拉高了。auto-fix chain 做的事情类似：安全漏洞被自动堵上、资源泄漏被自动修复、缺失的测试被自动补充。时间一长，代码库的质量基线自然高于没有自动审查的情况。&lt;/p&gt;
 &lt;p&gt;简单说：&lt;strong&gt;审查不是目的，质量提升才是。自动审查把&amp;quot;事后检查&amp;quot;变成了&amp;quot;过程中提升&amp;quot;。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_45c08f85532cd10c.jpg 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_f97e789531211c0b.jpg 1024w"
-loading="lazy"
-alt="代码质量基线提升"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="代码质量基线提升" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_9988531fb89c4458.jpg 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h3 id="cooldown-机制"&gt;Cooldown 机制
 &lt;/h3&gt;&lt;p&gt;还有一个小的设计细节：&lt;strong&gt;cooldown_seconds&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;auto-review 在 session idle 时触发，但 idle 事件可能频繁触发（比如 agent 在等待用户确认时也会 idle）。没有 cooldown 的话，同一份代码可能被审查好几次，浪费 token。120 秒的默认冷却期是一个经验值——足够让一轮修改完成，又不会等太久。&lt;/p&gt;
 &lt;h2 id="opencode-froggy另一种思路"&gt;opencode-froggy：另一种思路
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/smartfrog/opencode-froggy" target="_blank" rel="noopener"
-&gt;opencode-froggy&lt;/a&gt;（85 Stars，昨天刚发 0.12.0）提供了另一种思路。它不做结构化的多维度审查，而是提供 6 个专用 agent（architect、code-reviewer、code-simplifier、doc-writer、partner、rubber-duck）和一套灵活的 hooks 系统。&lt;/p&gt;
+ &gt;opencode-froggy&lt;/a&gt;（85 Stars，昨天刚发 0.12.0）提供了另一种思路。它不做结构化的多维度审查，而是提供 6 个专用 agent（architect、code-reviewer、code-simplifier、doc-writer、partner、rubber-duck）和一套灵活的 hooks 系统。&lt;/p&gt;
 &lt;p&gt;Froggy 的 code-reviewer 是一个通用的只读审查 agent，不区分维度和严重性。但它的 hooks 系统很强——你可以配置 &lt;code&gt;session.idle&lt;/code&gt; 事件自动跑 lint、自动格式化、甚至在写入敏感文件时拦截：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1155,57 +1134,57 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;event&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;session.idle&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;conditions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;hasCodeChange, isMainSession]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;bash&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npm run lint --fix&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;simplify-changes&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;这是一种&amp;quot;开发者自己编排流程&amp;quot;的思路，和 opencode-review 的&amp;quot;开箱即用的结构化审查&amp;quot;形成互补。&lt;/p&gt;
 &lt;h3 id="对比"&gt;对比
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;opencode-review&lt;/th&gt;
-&lt;th&gt;opencode-froggy&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;审查方式&lt;/td&gt;
-&lt;td&gt;结构化多维度分析&lt;/td&gt;
-&lt;td&gt;通用 code-reviewer agent&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;严重性分级&lt;/td&gt;
-&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;自动修复&lt;/td&gt;
-&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
-&lt;td&gt;code-simplifier，需手动触发&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;触发方式&lt;/td&gt;
-&lt;td&gt;session idle + cooldown&lt;/td&gt;
-&lt;td&gt;hooks 配置&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;自定义规则&lt;/td&gt;
-&lt;td&gt;custom_rules 支持项目规范&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;其他功能&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;6 agent + hooks + gitingest + 区块链&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;opencode-review&lt;/th&gt;
+					&lt;th&gt;opencode-froggy&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;审查方式&lt;/td&gt;
+					&lt;td&gt;结构化多维度分析&lt;/td&gt;
+					&lt;td&gt;通用 code-reviewer agent&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;严重性分级&lt;/td&gt;
+					&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自动修复&lt;/td&gt;
+					&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
+					&lt;td&gt;code-simplifier，需手动触发&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;触发方式&lt;/td&gt;
+					&lt;td&gt;session idle + cooldown&lt;/td&gt;
+					&lt;td&gt;hooks 配置&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自定义规则&lt;/td&gt;
+					&lt;td&gt;custom_rules 支持项目规范&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;其他功能&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;6 agent + hooks + gitingest + 区块链&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;两个不冲突，可以一起装。我的建议是：&lt;strong&gt;opencode-review 做日常自动审查，froggy 的 hooks 做流程编排&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id="插件安装"&gt;插件安装
@@ -1288,27 +1267,27 @@ data-flex-basis="430px"
 &lt;li&gt;&lt;strong&gt;envsitter-guard&lt;/strong&gt;：阻止 agent 读取 &lt;code&gt;.env&lt;/code&gt; 敏感文件&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;完整列表见 &lt;a class="link" href="https://github.com/awesome-opencode/awesome-opencode" target="_blank" rel="noopener"
-&gt;awesome-opencode&lt;/a&gt;。&lt;/p&gt;
+ &gt;awesome-opencode&lt;/a&gt;。&lt;/p&gt;
 &lt;h2 id="参考文献"&gt;参考文献
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
-&gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 代码审查研究综述&lt;/li&gt;
+ &gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 代码审查研究综述&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
-&gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — LLM 辅助代码审查的工业实践&lt;/li&gt;
+ &gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — LLM 辅助代码审查的工业实践&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
-&gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM 自动修复综述，覆盖 63 个系统&lt;/li&gt;
+ &gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM 自动修复综述，覆盖 63 个系统&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
-&gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — LLM 修复的目标对齐问题&lt;/li&gt;
+ &gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — LLM 修复的目标对齐问题&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
-&gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — 两年工业环境自动审查的经验总结&lt;/li&gt;
+ &gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — 两年工业环境自动审查的经验总结&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://homes.cs.washington.edu/~rjust/publ/code_review_automation_aiware_2024.pdf" target="_blank" rel="noopener"
-&gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — AutoCommenter 的部署与评估&lt;/li&gt;
+ &gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — AutoCommenter 的部署与评估&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2603.23448v2" target="_blank" rel="noopener"
-&gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent 代码审查基准测试&lt;/li&gt;
+ &gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent 代码审查基准测试&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - 一个 coding review agent&lt;/a&gt; — 基于 OpenCode 构建的 GitHub Action，CI 阶段的 code review&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare 用 OpenCode 构建大规模 AI 审查&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
+ &gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare 用 OpenCode 构建大规模 AI 审查&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:29:42 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -1333,7 +1312,7 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;问题2
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the 
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -1433,30 +1412,14 @@ data-flex-basis="430px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="如何使用"&gt;如何使用
 &lt;/h2&gt;&lt;p&gt;选择 deepseek 模型。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png"
-width="1152"
-height="441"
-srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_90da77582546fc32.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_7b7f08ffd58455a8.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="261"
-data-flex-basis="626px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="626px" data-flex-grow="261" height="441" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_c7ff8778ebe43d8c.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png 1152w" width="1152"&gt;&lt;/p&gt;
 &lt;p&gt;效果。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png"
-width="1361"
-height="510"
-srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_b83fabfded18efdc.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_c24f8389856c64c.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="266"
-data-flex-basis="640px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="640px" data-flex-grow="266" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_f7d35540372ceb17.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png 1361w" width="1361"&gt;&lt;/p&gt;
 &lt;h2 id="补充"&gt;补充
 &lt;/h2&gt;&lt;p&gt;这个方式无法解决问题&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;如果你遇到这个问题，还需要等待 opencode 去修复。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;相关文章&lt;/strong&gt;：&lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block 兼容性问题分析&lt;/a&gt; — 分析了 Claude Code 使用 DeepSeek 时 extended thinking 模式下多轮对话触发 400 错误的根因，以及社区解决方案。&lt;/p&gt;</description></item><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;相关文章&lt;/strong&gt;：&lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block 兼容性问题分析&lt;/a&gt; — 分析了 Claude Code 使用 DeepSeek 时 extended thinking 模式下多轮对话触发 400 错误的根因，以及社区解决方案。&lt;/p&gt;</description></item><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
 &lt;p&gt;目前主要提供两个功能，一个是 review，另一个是借助 runner 来执行 opencode （也就是直接用 runner 跑 opencode 的 prompt），来跑一下其他的功能。例如改代码，创建新的 issue，根据 issue 创建 PR 等。&lt;/p&gt;
 &lt;h2 id="稳定性怎么样"&gt;稳定性怎么样？
 &lt;/h2&gt;&lt;ul&gt;
@@ -1489,85 +1452,79 @@ data-flex-basis="640px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;现在，这个 actions 主要支持的是 Z.AI，ZHIPU，以及 OPENCODE GO 订阅。因此，如果用 ZHIPU，那么在项目中的 secrets 加上自己的 ZHIPU_API_KEY 即可。如果用的是 opencode go 订阅，则需要加上 OPENCODE_GO_API_KEY。&lt;/p&gt;
 &lt;p&gt;其他的都可以根据默认配置来。默认模型是 &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;。如果有更多的配置要求，建议去看原仓库的 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;README&lt;/a&gt;。&lt;/p&gt;
+ &gt;README&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;我之前在 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
-&gt;代码审查文章中也有讲过&lt;/a&gt;，这个快速地 review 脚本。&lt;/p&gt;
+ &gt;代码审查文章中也有讲过&lt;/a&gt;，这个快速地 review 脚本。&lt;/p&gt;
 &lt;h2 id="差异性"&gt;差异性
 &lt;/h2&gt;&lt;p&gt;实际上 opencode 自己也有 actions，那么为什么我要再做一个呢？&lt;/p&gt;
 &lt;p&gt;与官方的差异主要体现在几个方面：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;功能&lt;/th&gt;
-&lt;th&gt;上游状态&lt;/th&gt;
-&lt;th&gt;本仓库&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Model 默认值 fallback&lt;/td&gt;
-&lt;td&gt;仅 required input&lt;/td&gt;
-&lt;td&gt;三级 fallback（input → MODEL_NAME → 硬编码默认）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider 便捷字段&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;、&lt;code&gt;opencode-go-api-key&lt;/code&gt; 等&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Review prompt 模板&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;中文格式化 review（可合并/有条件合并/不可合并）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Retry 逻辑&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;执行超时&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;timeout-seconds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;版本检查&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;安装重试&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;install-attempts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;XDG cache 缓存&lt;/td&gt;
-&lt;td&gt;仅缓存 bin&lt;/td&gt;
-&lt;td&gt;同时缓存 bin + XDG cache&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;功能&lt;/th&gt;
+					&lt;th&gt;上游状态&lt;/th&gt;
+					&lt;th&gt;本仓库&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model 默认值 fallback&lt;/td&gt;
+					&lt;td&gt;仅 required input&lt;/td&gt;
+					&lt;td&gt;三级 fallback（input → MODEL_NAME → 硬编码默认）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider 便捷字段&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;、&lt;code&gt;opencode-go-api-key&lt;/code&gt; 等&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Review prompt 模板&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;中文格式化 review（可合并/有条件合并/不可合并）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Retry 逻辑&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;执行超时&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;timeout-seconds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;版本检查&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;安装重试&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;install-attempts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;XDG cache 缓存&lt;/td&gt;
+					&lt;td&gt;仅缓存 bin&lt;/td&gt;
+					&lt;td&gt;同时缓存 bin + XDG cache&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;在 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
-&gt;sun-praise/opencode-actions#29&lt;/a&gt; 中有详细的说明。&lt;/p&gt;
+ &gt;sun-praise/opencode-actions#29&lt;/a&gt; 中有详细的说明。&lt;/p&gt;
 &lt;h2 id="review-效果"&gt;review 效果
 &lt;/h2&gt;&lt;p&gt;可以从 repo 本身的 PR 看到 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
-&gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+ &gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;大概是这个效果：&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png"
-width="1407"
-height="1208"
-srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_2bf58faf91a7a9d.png 480w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_6740bc1877d53b60.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="116"
-data-flex-basis="279px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="279px" data-flex-grow="116" height="1208" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png" srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_da6eced56b414cb0.png 800w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png 1407w" width="1407"&gt;&lt;/p&gt;
 &lt;h2 id="未来"&gt;未来
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;尝试集成 gemini cli。现在 google 的 GEM 3.1 PRO 模型性价比很高，单位智能是最高的。&lt;/li&gt;
 &lt;li&gt;集成 MCP 插件功能。opencode review 的时候 MCP 如果有，可能会带来更好的 review 效果。&lt;/li&gt;
 &lt;li&gt;商业化的插件功能集成&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>探索 opencode 之后，我的一些思考</title><link>https://svtter.cn/p/opencode-three-months-reflection/</link><pubDate>Tue, 31 Mar 2026 11:30:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-three-months-reflection/</guid><description>&lt;img src="https://svtter.cn/p/opencode-three-months-reflection/cover.jpg" alt="Featured image of post 探索 opencode 之后，我的一些思考" /&gt;&lt;blockquote&gt;
-&lt;p&gt;一个开源工具，让我看清了&amp;quot;不被绑定&amp;quot;的价值，也让我重新理解了《大教堂与集市》&lt;/p&gt;&lt;/blockquote&gt;
+ &lt;p&gt;一个开源工具，让我看清了&amp;quot;不被绑定&amp;quot;的价值，也让我重新理解了《大教堂与集市》&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;h2 id="缘起选择-opencode-作为编程工具"&gt;缘起：选择 opencode 作为编程工具
 &lt;/h2&gt;&lt;p&gt;之前我写了一篇博客——《高效省钱：我的 AI Agent 工作流选择》，分享了自己用 opencode + Gemini 3 Flash + 智谱免费 GLM 4.7 构建&amp;quot;省钱又不妥协&amp;quot;的 AI 编程助手的经验。&lt;/p&gt;
 &lt;p&gt;当时我正想找一个性价比高的方案。Claude Code 的 Pro 计划一个月 20 美元，Max 计划则要 100 美元，对个人开发者来说确实不算便宜。而智谱的 Coding Plan Lite 套餐 20 元/月，加上 opencode 这个开源终端工具，正好组合成了一套&amp;quot;省钱&amp;quot;方案。&lt;/p&gt;
@@ -1576,16 +1533,7 @@ data-flex-basis="279px"
 &lt;p&gt;从 1 月开始，我就这样用起了 opencode + 智谱 Coding Plan。三个月下来，跑得很熟，体验也一直很稳定。&lt;/p&gt;
 &lt;h2 id="转折github-上的积压让我心里一沉"&gt;转折：GitHub 上的&amp;quot;积压&amp;quot;让我心里一沉
 &lt;/h2&gt;&lt;p&gt;直到最近，我随手翻了一下 opencode 的 GitHub 仓库。我看到了大量无人处理的 issue，还有堆了几周甚至几个月的 pull request，没人合并，没人回复。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-01.jpg"
-width="1200"
-height="896"
-srcset="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-01_hu_bd038bed779bd657.jpg 480w, https://svtter.cn/p/opencode-three-months-reflection/pics/inline-01_hu_f26788b5e1da7bc3.jpg 1024w"
-loading="lazy"
-alt="大量无人处理的 PR 和 issue 堆积在 GitHub 上"
-class="gallery-image"
-data-flex-grow="133"
-data-flex-basis="321px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="大量无人处理的 PR 和 issue 堆积在 GitHub 上" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" data-title-escaped="GitHub 上的积压" height="896" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-01.jpg" srcset="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-01_hu_875cc3089d3f3e1f.jpg 800w, https://svtter.cn/p/opencode-three-months-reflection/pics/inline-01.jpg 1200w" title="GitHub 上的积压" width="1200"&gt;&lt;/p&gt;
 &lt;p&gt;我心里&amp;quot;嘶&amp;quot;了一下：&amp;ldquo;这项目是不是没人维护了？&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;后来我才知道，2026 年 3 月，Anthropic 向 opencode 发来了正式的法律要求，要求移除所有 Claude 相关的集成。项目方在 1.3.0 版本中执行了这件事，创始人 Dax Raad 公开回应：&amp;ldquo;我们尽力说服 Anthropic 支持开发者的选择权，但他们派了律师来。&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;但说实话，这个法律事件本身我并不太担心。我只是一个用户，用 opencode 跑智谱的套餐，不涉及法律风险。真正让我在意的，是另一个问题——&lt;strong&gt;项目的工程治理能力&lt;/strong&gt;。&lt;/p&gt;
@@ -1595,31 +1543,13 @@ data-flex-basis="321px"
 &lt;/h2&gt;&lt;p&gt;但转念一想，我又释然了。&lt;/p&gt;
 &lt;p&gt;&amp;ldquo;因为是开源软件，所以 opencode 实际上就算是暂时不维护，我也可以使用历史版本。&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;这个想法一下子点醒了我。开源软件和商业 SaaS 的区别就在这：商业工具一旦公司倒闭或停服，你就真的没了；开源项目，哪怕 GitHub 上再也没人合并 PR，我手上那个跑得很顺的版本，照样能用。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-02.jpg"
-width="1200"
-height="896"
-srcset="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-02_hu_9c6b2d411a75c6aa.jpg 480w, https://svtter.cn/p/opencode-three-months-reflection/pics/inline-02_hu_b7f15e1f630cb77c.jpg 1024w"
-loading="lazy"
-alt="开源的安全垫：哪怕项目停滞，历史版本依然可以继续使用"
-class="gallery-image"
-data-flex-grow="133"
-data-flex-basis="321px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="开源的安全垫：哪怕项目停滞，历史版本依然可以继续使用" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" data-title-escaped="开源的安全垫" height="896" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-02.jpg" srcset="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-02_hu_ef372043473e5a61.jpg 800w, https://svtter.cn/p/opencode-three-months-reflection/pics/inline-02.jpg 1200w" title="开源的安全垫" width="1200"&gt;&lt;/p&gt;
 &lt;p&gt;模型 API 可能会升级，但那通常有缓冲期，而且 opencode 的 provider 抽象层是独立的，即使官方不更新，社区或我自己也可以 fork 改一下适配层。安全漏洞也许是个问题，但 coding agent 这类工具的风险主要在于代码执行权限，自己注意控制就好。&lt;/p&gt;
 &lt;p&gt;所以，最坏情况我也能继续用现在的版本，不用急着迁移。但我会保持观察——如果几个月后积压依然严重，可能就要考虑备选方案了。&lt;/p&gt;
 &lt;h2 id="大教堂与集市linus-为什么是大师"&gt;大教堂与集市：Linus 为什么是大师
 &lt;/h2&gt;&lt;p&gt;积压这个问题，让我想到了《大教堂与集市》。&lt;/p&gt;
 &lt;p&gt;Eric S. Raymond 把开源开发模式分成两种：大教堂模式（少数人精心设计、封闭开发）和集市模式（开放、迭代快、靠&amp;quot;足够多的眼睛&amp;quot;来捉 bug）。Linux 内核是集市模式的代表。Linus Torvalds 写的代码其实不算多，但他建立了一套让人放心的流程和权威——这才是重点。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-03.jpg"
-width="1200"
-height="896"
-srcset="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-03_hu_27e02f9e72a13ff3.jpg 480w, https://svtter.cn/p/opencode-three-months-reflection/pics/inline-03_hu_44a4ec2ba45cf506.jpg 1024w"
-loading="lazy"
-alt="大教堂模式（左）：封闭、有序；集市模式（右）：开放、混沌但高效"
-class="gallery-image"
-data-flex-grow="133"
-data-flex-basis="321px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="大教堂模式（左）：封闭、有序；集市模式（右）：开放、混沌但高效" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" data-title-escaped="大教堂与集市" height="896" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-03.jpg" srcset="https://svtter.cn/p/opencode-three-months-reflection/pics/inline-03_hu_910ccf4c699fa043.jpg 800w, https://svtter.cn/p/opencode-three-months-reflection/pics/inline-03.jpg 1200w" title="大教堂与集市" width="1200"&gt;&lt;/p&gt;
 &lt;p&gt;集市模式能成功，关键在于有一个清晰的、被信任的维护者来合并代码、建立规范、保持方向。即便 Linus 某段时间回复慢，大家也知道规范在那里，最终会被处理。Linux 活到现在，靠的是大家相信&amp;quot;好代码最终会被合进去&amp;quot;，不是靠 PR 响应速度。&lt;/p&gt;
 &lt;p&gt;用这个框架看 opencode，它一开始确实带着集市的气质：多模型支持、插件化、社区驱动、快速迭代。但最近积压的 issue 和 PR 暴露了一个问题：&lt;strong&gt;集市模式要运转，前提是有一只&amp;quot;看似松散但始终在运作的手&amp;quot;在合并代码&lt;/strong&gt;。这只手忙不过来了，集市也就乱了。&lt;/p&gt;
 &lt;p&gt;opencode 缺的是机制，不缺热心人。&lt;/p&gt;
@@ -1633,27 +1563,9 @@ data-flex-basis="321px"
 &lt;p&gt;我觉得这个点挺有意思。不是说&amp;quot;压缩上下文&amp;quot;这件事本身有多新鲜，而是它把这件事放在服务端做，并且写进了文档。也就是说，上下文管理不是用户自己在提示词层面想办法，而是产品本身就内建了一套机制。&lt;/p&gt;
 &lt;p&gt;顺手我又去看了一下 OpenCode 的 compaction。两边都叫 &lt;code&gt;compaction&lt;/code&gt;，但不是一回事。&lt;/p&gt;
 &lt;p&gt;Codex 这边强调的是：服务端在上下文达到阈值时，会把前面的交互压缩成一个更短的表示，后续请求继续带着这个压缩后的状态跑。文档里写得很清楚，&lt;code&gt;server-side compaction&lt;/code&gt; 会用更少的 tokens 携带之前的关键状态。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp"
-width="2752"
-height="1536"
-srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_f03edb827bd032dc.webp 480w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_556f88c4a4052352.webp 1024w"
-loading="lazy"
-alt="Codex server-side compaction 示意图"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Codex server-side compaction 示意图" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="1536" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp" srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_6d5987fbb044e914.webp 800w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_1ca3d9392bdcda35.webp 1600w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_38db872c637a7e19.webp 2400w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp 2752w" width="2752"&gt;&lt;/p&gt;
 &lt;p&gt;OpenCode 这边，我看了一下源码，它也有 compaction，但更像应用层的会话压缩：上下文快满时，调用一个隐藏的 &lt;code&gt;compaction&lt;/code&gt; agent 生成 summary，后续请求不再带完整旧历史，而是保留这段 summary 继续。还有 &lt;code&gt;prune&lt;/code&gt; 会把旧的工具输出清掉，只保留占位文本。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp"
-width="2752"
-height="1536"
-srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_ce8a676aa70786e6.webp 480w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_3701a87c6e58bf7c.webp 1024w"
-loading="lazy"
-alt="OpenCode 应用层 compaction 示意图"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="OpenCode 应用层 compaction 示意图" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="1536" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp" srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_508f88412aee6495.webp 800w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_acb9a2b759b0eea2.webp 1600w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_848096c2d257866e.webp 2400w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp 2752w" width="2752"&gt;&lt;/p&gt;
 &lt;p&gt;所以两边虽然名字一样，但关注点不一样：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Codex：服务端的上下文管理能力&lt;/li&gt;
@@ -1663,9 +1575,9 @@ data-flex-basis="430px"
 &lt;h2 id="参考"&gt;参考
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://developers.openai.com/api/docs/guides/compaction" target="_blank" rel="noopener"
-&gt;OpenAI Compaction 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenAI Compaction 文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/config/" target="_blank" rel="noopener"
-&gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>OpenCode 配置优化记录</title><link>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/</link><pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/cover.png" alt="Featured image of post OpenCode 配置优化记录" /&gt;&lt;p&gt;不知道大家是否意识到，实际上使用 MCP 等服务的时候，会大量消耗 token。这是由于一次提交的上下文数量过多，导致 token 消耗较大。&lt;/p&gt;
 &lt;p&gt;那么在使用 opencode 的时候，可以进行哪些优化呢？&lt;/p&gt;
 &lt;h2 id="我已经进行的优化"&gt;我已经进行的优化
@@ -1680,8 +1592,8 @@ data-flex-basis="430px"
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s2"&gt;&amp;#34;compaction&amp;#34;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;auto&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 上下文满时自动压缩
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;prune&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;// 移除旧的工具输出以节省空间
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;prune&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="c1"&gt;// 移除旧的工具输出以节省空间
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;strong&gt;效果&lt;/strong&gt;: 预估节省 20-30% token&lt;/p&gt;
@@ -1818,13 +1730,15 @@ data-flex-basis="430px"
 &lt;h2 id="参考资料"&gt;参考资料
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/config/" target="_blank" rel="noopener"
-&gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://www.truefoundry.com/blog/opencode-token-usage-how-it-works-and-how-to-optimize-it" target="_blank" rel="noopener"
-&gt;Token 优化指南&lt;/a&gt;&lt;/li&gt;
+ &gt;Token 优化指南&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/sst/opencode/issues/5813" target="_blank" rel="noopener"
-&gt;GitHub Issue #5813 - Raw Chat Agent&lt;/a&gt;&lt;/li&gt;
+ &gt;GitHub Issue #5813 - Raw Chat Agent&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/cover.png" alt="Featured image of post 使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查" /&gt;&lt;blockquote&gt;
-&lt;p&gt;大模型会磨洋工，需要另一个 agent 或 AI 来监督。&lt;/p&gt;&lt;/blockquote&gt;
+ &lt;p&gt;大模型会磨洋工，需要另一个 agent 或 AI 来监督。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;最近在项目中集成了 OpenCode 的 AI 代码审查功能，使用智谱 AI 的 GLM-5 模型自动 review PR 代码。本文记录完整的集成过程和踩过的坑。&lt;/p&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;项目需要一个自动化的代码审查机制：&lt;/p&gt;
@@ -1836,7 +1750,7 @@ data-flex-basis="430px"
 &lt;h2 id="技术选型"&gt;技术选型
 &lt;/h2&gt;&lt;h3 id="opencode"&gt;OpenCode
 &lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://opencode.ai" target="_blank" rel="noopener"
-&gt;OpenCode&lt;/a&gt; 是一个开源的 AI coding agent，支持：&lt;/p&gt;
+ &gt;OpenCode&lt;/a&gt; 是一个开源的 AI coding agent，支持：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;多种 LLM 提供商（OpenAI、Anthropic、智谱等）&lt;/li&gt;
 &lt;li&gt;GitHub/GitLab 集成&lt;/li&gt;
@@ -1844,7 +1758,7 @@ data-flex-basis="430px"
 &lt;/ul&gt;
 &lt;h3 id="glm-5-coding-plan"&gt;GLM-5 Coding Plan
 &lt;/h3&gt;&lt;p&gt;选择智谱 AI 的 &lt;a class="link" href="https://docs.z.ai/guides/llm/glm-5" target="_blank" rel="noopener"
-&gt;GLM Coding Plan&lt;/a&gt; 原因：&lt;/p&gt;
+ &gt;GLM Coding Plan&lt;/a&gt; 原因：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;专为 AI 编程优化，支持 OpenCode&lt;/li&gt;
 &lt;li&gt;价格实惠（$3/月起）&lt;/li&gt;
@@ -1879,22 +1793,22 @@ data-flex-basis="430px"
 &lt;/h2&gt;&lt;h3 id="1-确定模型格式"&gt;1. 确定模型格式
 &lt;/h3&gt;&lt;p&gt;OpenCode 的模型格式为 &lt;code&gt;provider_id/model_id&lt;/code&gt;。对于智谱 GLM-5：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;配置项&lt;/th&gt;
-&lt;th&gt;值&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;环境变量&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Model 格式&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;zhipuai-coding-plan/glm-5&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;配置项&lt;/th&gt;
+					&lt;th&gt;值&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;环境变量&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model 格式&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipuai-coding-plan/glm-5&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="2-创建-workflow-文件"&gt;2. 创建 Workflow 文件
 &lt;/h3&gt;&lt;p&gt;创建 &lt;code&gt;.github/workflows/opencode-review.yml&lt;/code&gt;：&lt;/p&gt;
@@ -1948,11 +1862,11 @@ data-flex-basis="430px"
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;OpenCode PR Review&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;types&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;opened, synchronize, reopened, ready_for_review]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;AI Code Review&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 仅在 PR 准备就绪时运行（跳过 draft PR）&lt;/span&gt;&lt;span class="w"&gt;
@@ -1980,7 +1894,7 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;use_github_token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Review this pull request (read-only mode, DO NOT modify any code):
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Please check:
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Code quality issues
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Potential bugs or logic errors
@@ -1988,7 +1902,7 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Security concerns
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Performance issues
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Suggest improvements
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Please respond in Chinese. DO NOT modify any code, only provide review comments.&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -1996,7 +1910,7 @@ data-flex-basis="430px"
 &lt;/h3&gt;&lt;p&gt;在仓库 Settings → Secrets and variables → Actions 中添加：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;: 从 &lt;a class="link" href="https://z.ai/manage-apikey/apikey-list" target="_blank" rel="noopener"
-&gt;Z.AI Console&lt;/a&gt; 获取&lt;/li&gt;
+ &gt;Z.AI Console&lt;/a&gt; 获取&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="踩坑记录"&gt;踩坑记录
 &lt;/h2&gt;&lt;h3 id="坑-1-权限不足-403-forbidden"&gt;坑 1: 权限不足 (403 Forbidden)
@@ -2125,13 +2039,13 @@ data-flex-basis="430px"
 &lt;h2 id="参考链接"&gt;参考链接
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/" target="_blank" rel="noopener"
-&gt;OpenCode 官方文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode 官方文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/github/" target="_blank" rel="noopener"
-&gt;OpenCode GitHub 集成&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode GitHub 集成&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.z.ai/guides/llm/glm-5" target="_blank" rel="noopener"
-&gt;GLM-5 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;GLM-5 文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.z.ai/coding-plan/overview" target="_blank" rel="noopener"
-&gt;GLM Coding Plan&lt;/a&gt;&lt;/li&gt;
+ &gt;GLM Coding Plan&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="相关文章"&gt;相关文章
 &lt;/h2&gt;&lt;ul&gt;
@@ -2149,12 +2063,12 @@ data-flex-basis="430px"
 &lt;h2 id="工具列表"&gt;工具列表
 &lt;/h2&gt;&lt;h3 id="tmux-mcp"&gt;tmux mcp
 &lt;/h3&gt;&lt;p&gt;先让 opencode 配置 Linux 环境的 tmux，然后让 opencode 安装 &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
-&gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt; ；安装完成后即可使用 oc 来控制 tmux 的内容。&lt;/p&gt;
+ &gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt; ；安装完成后即可使用 oc 来控制 tmux 的内容。&lt;/p&gt;
 &lt;p&gt;可以通过这种方式来重新激活的停止的 opencode session。例如，可以开多个 tmux，然后让其中一个 opencode 通过 tmux 工具来监控，启停任务。&lt;/p&gt;
 &lt;h3 id="ralph-loop"&gt;ralph-loop
 &lt;/h3&gt;&lt;p&gt;Ralph 是一个自主 AI 代理循环，它会反复运行 Amp，直到所有 PRD 项都完成。每次迭代都会创建一个全新的 Amp 实例，并具有干净的上下文。&lt;/p&gt;
 &lt;p&gt;Ralph 最早可能来自这里 &lt;a class="link" href="https://github.com/snarktank/ralph" target="_blank" rel="noopener"
-&gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
+ &gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;因为其卓有成效（实际上是在模型性能进一步提升之后发生的），也被引入了 claude code。&lt;/p&gt;
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
 &lt;div class="repo-card" data-repo="frankbria/ralph-claude-code"&gt;&lt;/div&gt;
@@ -2190,7 +2104,7 @@ data-flex-basis="430px"
 &lt;h2 id="改写成-agents"&gt;改写成 agents
 &lt;/h2&gt;&lt;p&gt;我建议直接通过 opencode 或者 claude code 将这些工具和 mcp 改写成 agent。&lt;/p&gt;
 &lt;p&gt;相比于 skills command，这些工具，更适合通过 agent 来调用。&lt;a class="link" href="https://svtter.cn/p/why-agent/#llm-%E7%9A%84%E9%97%AE%E9%A2%98" target="_blank" rel="noopener"
-&gt;agent 上下文很干净&lt;/a&gt;，对工具调用几乎是必然的事情。&lt;/p&gt;
+ &gt;agent 上下文很干净&lt;/a&gt;，对工具调用几乎是必然的事情。&lt;/p&gt;
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;随着 LLM 越来越强，大量的 mcp，依赖于 LLM 能力的 MCP 自然而然的获得了提升。原本不怎么好用的工具变得更好用了。这也正是迎合了那句话：不要做大模型能力增强之后没有意义的东西。
 大模型的能力仍然在增强，并且价格在不断下降。&lt;/p&gt;
@@ -2202,20 +2116,11 @@ data-flex-basis="430px"
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;制定计划&lt;/strong&gt;：使用 Gemini 3 Flash&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;执行构建&lt;/strong&gt;：使用 OpenCode 提供的免费 GLM 4.7（或 MiniMax M2.1）。亦或者你已经购买了 &lt;a class="link" href="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener"
-&gt;Zhipu Coding Plan&lt;/a&gt;。&lt;/li&gt;
+ &gt;Zhipu Coding Plan&lt;/a&gt;。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;提到 Gemini 3 就不能不提 GPT-5.2。&lt;/p&gt;
 &lt;p&gt;首先，部分工程师不使用 coding agent，而是使用直接使用 ChatGPT.com。这种使用方式且不论是否高效，可靠性就令人担忧。从实际体验来看，GPT-5.2 的回复语气做了拟人化微调，过于迎合用户。虽然可以调整语气，但对于专业开发者来说可能不是最佳选择。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png"
-width="1023"
-height="930"
-srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_175ada8cb4120ce2.png 480w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c7107e2757a481d7.png 1024w"
-loading="lazy"
-alt="GPT-5.2 回复语气截图"
-class="gallery-image"
-data-flex-grow="110"
-data-flex-basis="264px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="GPT-5.2 回复语气截图" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="930" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png" srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c4a365684620f3ba.png 800w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png 1023w" width="1023"&gt;&lt;/p&gt;
 &lt;p&gt;此外，尽管 GPT-5.2 在 SWE-bench veried 上得到了较好的性能，但是我实际体验不好。这就不得不说一下 SWE-bench 的历史：&lt;/p&gt;
 &lt;p&gt;SWE-bench 最初由&lt;strong&gt;普林斯顿大学&lt;/strong&gt;团队提出（ICLR 2024），用于评估语言模型解决真实 GitHub 问题的能力。&lt;/p&gt;
 &lt;p&gt;但问题在于：2024年8月，OpenAI 的 Preparedness 团队与原作者合作，推出了 &lt;strong&gt;SWE-bench Verified&lt;/strong&gt;（500个经过人工验证的问题子集）。由于 OpenAI 参与了这个新版本 benchmark 的&lt;strong&gt;设计&lt;/strong&gt;，因此在这个 benchmark 下测试的 OpenAI 模型性能值得怀疑。这并不一定是主观引入性能优化，但是 Bias 在这种情况下，极有可能存在。&lt;/p&gt;

@@ -2,7 +2,7 @@
 &lt;p&gt;不过后来我重新验证了 API 行为，发现我最初的 issue 描述其实有误——模型并没有&amp;quot;停止思考&amp;quot;。这件事后来变成了一个更好的教训：&lt;strong&gt;AI bot 和我都在同一个错误上达成了共识&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id="起因"&gt;起因
 &lt;/h2&gt;&lt;p&gt;我在用 OMP（一个终端 AI coding agent）的时候注意到 &lt;code&gt;Ctrl+T&lt;/code&gt; 隐藏 thinking blocks 时，会同时设置 &lt;code&gt;hideThinkingSummary&lt;/code&gt;，这个字段会影响 API 请求参数。我当时认为这不只是&amp;quot;不显示&amp;quot;，而是&amp;quot;模型不再思考&amp;quot;。于是开了 issue &lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/1313" target="_blank" rel="noopener"
-&gt;#1313&lt;/a&gt;。&lt;/p&gt;
+ &gt;#1313&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;事后查证 API 文档发现，这个判断是&lt;strong&gt;错误的&lt;/strong&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Anthropic 的 &lt;code&gt;thinking.display: &amp;quot;omitted&amp;quot;&lt;/code&gt; — 模型仍在服务端完整执行 extended thinking，只是 thinking 内容不返回给客户端&lt;/li&gt;
@@ -12,7 +12,7 @@
 &lt;p&gt;实际的耦合问题只是设计层面的不清晰（同一个快捷键对不同 provider 行为不同），而不是质量退化的 bug。Issue 最终被关闭了。&lt;/p&gt;
 &lt;h2 id="roboomp-的第一次回复"&gt;roboomp 的第一次回复
 &lt;/h2&gt;&lt;p&gt;Issue 发出去几秒钟后，一个叫 &lt;a class="link" href="https://github.com/roboomp" target="_blank" rel="noopener"
-&gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
+ &gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;这个功能大部分已经存在了——&lt;code&gt;hideThinkingBlock&lt;/code&gt; 设置、&lt;code&gt;Ctrl+T&lt;/code&gt; 快捷键、渲染路径&lt;/li&gt;
 &lt;li&gt;缺的只是 CLI 启动参数&lt;/li&gt;
@@ -30,7 +30,7 @@
 &lt;p&gt;我还补充了引入这个耦合的 commit 历史，方便追溯。&lt;/p&gt;
 &lt;h2 id="它自己开了个-pr"&gt;它自己开了个 PR
 &lt;/h2&gt;&lt;p&gt;然后发生了让我惊讶的事——roboomp 连续回复了两条评论，并直接开了一个 PR：&lt;a class="link" href="https://github.com/can1357/oh-my-pi/pull/1314" target="_blank" rel="noopener"
-&gt;#1314&lt;/a&gt;。&lt;/p&gt;
+ &gt;#1314&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;PR 的改动：&lt;strong&gt;0 addition, 3 deletion&lt;/strong&gt;。只删了三行：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;sdk.ts:1860&lt;/code&gt; — agent 初始化时不再把 &lt;code&gt;hideThinkingBlock&lt;/code&gt; 赋给 &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
@@ -75,29 +75,29 @@
 &lt;h2 id="有类似的开源项目吗"&gt;有类似的开源项目吗
 &lt;/h2&gt;&lt;p&gt;找了一圈，目前最接近的有：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;项目&lt;/th&gt;
-&lt;th&gt;说明&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
-&gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
-&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
-&gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;项目&lt;/th&gt;
+					&lt;th&gt;说明&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
+ &gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
+					&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
+ &gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;但说实话，没有一个做到 roboomp 这个水准。大部分还停留在&amp;quot;接 webhook → 调 LLM → 贴评论&amp;quot;的阶段。能自主读源码、理解代码结构、参与设计讨论、做精准修复的，roboomp 是我看到的第一个。&lt;/p&gt;
 &lt;h2 id="意味着什么"&gt;意味着什么
@@ -116,10 +116,10 @@
 &lt;p&gt;三个 bug 分别出在这两个方向上。&lt;/p&gt;
 &lt;h2 id="bug-1tool-result-中的图片被字符串化"&gt;Bug 1：Tool Result 中的图片被字符串化
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28754" target="_blank" rel="noopener"
-&gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
-&gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
-&gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
-&gt;#28861&lt;/a&gt;）&lt;/p&gt;
+ &gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
+ &gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
+ &gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
+ &gt;#28861&lt;/a&gt;）&lt;/p&gt;
 &lt;h3 id="问题"&gt;问题
 &lt;/h3&gt;&lt;p&gt;当 LLM 调用一个工具（比如截图工具），工具返回的结果可能包含图片（base64 编码）。opencode 的协议层在处理这种 tool result 时，统一调用了 &lt;code&gt;ProviderShared.toolResultText(part)&lt;/code&gt;，这个函数把整个 tool result——包括图片——JSON.stringify 成一个字符串。&lt;/p&gt;
 &lt;p&gt;对于 OpenAI Responses API，这意味着：&lt;/p&gt;
@@ -130,7 +130,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前：所有 tool result 都变成字符串
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;一个包含 base64 图片的 tool result 被序列化成字符串塞进了 &lt;code&gt;function_call_output.output&lt;/code&gt;。对于 Anthropic Messages API 同样：图片被 JSON.stringify 后塞进了 &lt;code&gt;tool_result.content&lt;/code&gt;。&lt;/p&gt;
@@ -149,7 +149,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复后：图片以结构化格式发送
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;input_image&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;image_url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;data:image/png;base64,...&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
@@ -159,8 +159,8 @@
 &lt;/h3&gt;&lt;p&gt;这不是某次重构搞坏的，而是初始设计就没考虑到 tool result 会返回非文本内容。&lt;code&gt;toolResultText()&lt;/code&gt; 作为一个通用函数，把所有内容都当文本处理——在只有文本 tool result 的世界里这是对的，但世界变了。&lt;/p&gt;
 &lt;h2 id="bug-2stream-error-信息被吞掉"&gt;Bug 2：Stream Error 信息被吞掉
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28757" target="_blank" rel="noopener"
-&gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
-&gt;#28860&lt;/a&gt;）&lt;/p&gt;
+ &gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
+ &gt;#28860&lt;/a&gt;）&lt;/p&gt;
 &lt;h3 id="问题-1"&gt;问题
 &lt;/h3&gt;&lt;p&gt;LLM provider 的流式响应可能在中途出错（rate limit、context overflow、model overload 等）。opencode 的错误处理代码把这些错误全部压成了通用字符串：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -170,7 +170,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;所有错误都变成了 &lt;code&gt;&amp;quot;OpenAI Responses stream error&amp;quot;&lt;/code&gt; 这一句话。维护者在 PR 描述里提到，这使得某个 session 的诊断变得极其痛苦——底层原因（base64 图片过大）完全不可见。&lt;/p&gt;
@@ -200,7 +200,7 @@
 &lt;/h3&gt;&lt;p&gt;错误处理的代码写得太&amp;quot;乐观&amp;quot;了——假设错误信息总在预期的位置。但 OpenAI 的 API 在不同错误场景下把信息放在不同的嵌套层级，代码没有覆盖所有情况。&lt;/p&gt;
 &lt;h2 id="bug-3anthropic-tool-result-类型检查不稳定"&gt;Bug 3：Anthropic Tool Result 类型检查不稳定
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28909" target="_blank" rel="noopener"
-&gt;#28909&lt;/a&gt;&lt;/p&gt;
+ &gt;#28909&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id="问题-2"&gt;问题
 &lt;/h3&gt;&lt;p&gt;这个 PR 在前两个修复合并后才出现。修复了图片 tool result 的结构化发送后，Anthropic 端的类型检查变得不稳定——某些边缘情况下 tool result 的类型推断会失败。&lt;/p&gt;
 &lt;p&gt;具体来说，&lt;code&gt;tool_result.content&lt;/code&gt; 的类型从 &lt;code&gt;string&lt;/code&gt; 扩展成了 &lt;code&gt;string | ContentItem[]&lt;/code&gt;，但下游代码没有完全适配这个联合类型。&lt;/p&gt;
@@ -248,35 +248,35 @@
 &lt;h2 id="总览"&gt;总览
 &lt;/h2&gt;&lt;p&gt;27 个 workflow 可以分成四类：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;类别&lt;/th&gt;
-&lt;th&gt;数量&lt;/th&gt;
-&lt;th&gt;作用&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;CI/测试&lt;/td&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;typecheck、单元测试、e2e、Nix 构建&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;发布/交付&lt;/td&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;CLI 发布、容器构建、VS Code 插件、GitHub Action 发布&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;自动化/Bot&lt;/td&gt;
-&lt;td&gt;16&lt;/td&gt;
-&lt;td&gt;issue 治理、PR 合规、AI code review、文档更新&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;文档/其他&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;统计、Discord 通知&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;类别&lt;/th&gt;
+					&lt;th&gt;数量&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CI/测试&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;typecheck、单元测试、e2e、Nix 构建&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;发布/交付&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;CLI 发布、容器构建、VS Code 插件、GitHub Action 发布&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自动化/Bot&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+					&lt;td&gt;issue 治理、PR 合规、AI code review、文档更新&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;文档/其他&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;统计、Discord 通知&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;16 个自动化 workflow 占了总数的 60%。opencode 不只是用 Actions 来跑测试和发布，而是把社区治理和代码质量审查也交给了自动化系统。&lt;/p&gt;
 &lt;h2 id="ci测试扎实但克制"&gt;CI/测试：扎实但克制
@@ -290,7 +290,7 @@
 &lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;：多个 workflow 都用了这个模式，同一个 PR 不会堆叠多次运行。对于一个接受大量社区 PR 的项目，这能省下不少 CI 资源。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;路径触发&lt;/strong&gt;：containers.yml 只在容器文件变更时运行，storybook.yml 只在 UI 变更时运行。不是所有东西都全量跑。&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;混合 Runner 策略&lt;/strong&gt;：大部分 workflow 使用 &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
-&gt;Blacksmith&lt;/a&gt; 提供的第三方托管 runner（&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;、&lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;）。Blacksmith 是一个兼容 GitHub Actions API 的加速 runner 服务，底层用自建基础设施，比 GitHub 免费 runner 快不少。只有轻量级 bot 任务（close-issues、close-prs、compliance-close、pr-standards、deploy）留在 GitHub 原生的 &lt;code&gt;ubuntu-latest&lt;/code&gt; 上。计算密集的编译、测试、发布全走 Blacksmith，简单的脚本任务用 GitHub 原生 runner，按任务负载分配资源。&lt;/li&gt;
+ &gt;Blacksmith&lt;/a&gt; 提供的第三方托管 runner（&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;、&lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;）。Blacksmith 是一个兼容 GitHub Actions API 的加速 runner 服务，底层用自建基础设施，比 GitHub 免费 runner 快不少。只有轻量级 bot 任务（close-issues、close-prs、compliance-close、pr-standards、deploy）留在 GitHub 原生的 &lt;code&gt;ubuntu-latest&lt;/code&gt; 上。计算密集的编译、测试、发布全走 Blacksmith，简单的脚本任务用 GitHub 原生 runner，按任务负载分配资源。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="发布交付全平台覆盖"&gt;发布/交付：全平台覆盖
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; 是最复杂的 workflow，一个文件处理了完整的发布流程：&lt;/p&gt;
@@ -382,8 +382,8 @@
 &lt;/h2&gt;&lt;p&gt;用 OpenCode 写代码时，一个典型的工作流是：agent 在一个 session 内完成编码，然后我 review diff、创建 PR。但我发现一个反复出现的问题：&lt;strong&gt;agent 写完的代码经常带着&amp;quot;第一次草稿&amp;quot;的质量问题就进入 PR 了&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;这些问题包括：缺少错误处理、安全漏洞、性能不佳的查询、缺失的测试。如果能在 session 内——也就是代码还没提交到 PR 之前——让 agent 自行审查一轮，很多问题在 PR 阶段就不存在了。&lt;/p&gt;
 &lt;p&gt;这和 CI 阶段的 code review 是不同层次的事情。CI 审查我已经通过 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;opencode-actions&lt;/a&gt;（之前写过一篇&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;介绍文章&lt;/a&gt;）实现了——它发生在 PR 创建之后，由 GitHub Actions 触发。后来 Cloudflare 也在&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;工程博客&lt;/a&gt;中分享了类似思路：用 OpenCode 构建大规模 AI code review。而 opencode-review 要解决的是更早的阶段：&lt;strong&gt;在 session 内、在 PR 之前，让 agent 在写完代码后主动审查并修复问题&lt;/strong&gt;。两者互补：opencode-review 提升进入 PR 的代码质量基线，opencode-actions 则作为最后一道关卡。&lt;/p&gt;
+ &gt;opencode-actions&lt;/a&gt;（之前写过一篇&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;介绍文章&lt;/a&gt;）实现了——它发生在 PR 创建之后，由 GitHub Actions 触发。后来 Cloudflare 也在&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+ &gt;工程博客&lt;/a&gt;中分享了类似思路：用 OpenCode 构建大规模 AI code review。而 opencode-review 要解决的是更早的阶段：&lt;strong&gt;在 session 内、在 PR 之前，让 agent 在写完代码后主动审查并修复问题&lt;/strong&gt;。两者互补：opencode-review 提升进入 PR 的代码质量基线，opencode-actions 则作为最后一道关卡。&lt;/p&gt;
 &lt;p&gt;具体来说，有三个需要解决的子问题：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;审查覆盖不全&lt;/strong&gt;：agent 生成的代码可能引入安全漏洞、性能问题，但它自己不会主动检查这些&lt;/li&gt;
@@ -396,23 +396,14 @@
 &lt;/h3&gt;&lt;p&gt;第一个设计决策是&lt;strong&gt;为什么分五个维度&lt;/strong&gt;，而不是一个笼统的&amp;quot;好不好&amp;quot;的评价。&lt;/p&gt;
 &lt;p&gt;代码质量不是一个单一维度。一段代码可能功能正确、性能优秀，但存在 SQL 注入漏洞；也可能安全无害，但缺少测试覆盖。把它们混在一起评估，结果必然模糊。&lt;/p&gt;
 &lt;p&gt;学术上，&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
-&gt;Modern Code Review (MCR) Survey&lt;/a&gt; 收集了 2013-2025 年间的代码审查研究，提出了一个分类体系，涵盖缺陷检测、安全审查、性能分析、可维护性评估等多个任务维度。Ericsson 的研究团队在 &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
-&gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; 中也验证了：按维度拆分的审查比笼统审查在工业场景中更有效。&lt;/p&gt;
+ &gt;Modern Code Review (MCR) Survey&lt;/a&gt; 收集了 2013-2025 年间的代码审查研究，提出了一个分类体系，涵盖缺陷检测、安全审查、性能分析、可维护性评估等多个任务维度。Ericsson 的研究团队在 &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+ &gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; 中也验证了：按维度拆分的审查比笼统审查在工业场景中更有效。&lt;/p&gt;
 &lt;p&gt;opencode-review 的五个维度——code-quality、security、performance、testing、documentation——对应的就是这些研究中识别出的核心审查维度。每个维度可以独立开关，因为不同项目关注的重点不同：一个内部工具可能不需要文档审查，但一个安全敏感的服务不能跳过 security 维度。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_7330a01d3840e4a9.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_fceacab38c67aa8b.png 1024w"
-loading="lazy"
-alt="五个审查维度"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="五个审查维度" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_6ad3154bf9d83639.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h3 id="严重性分级"&gt;严重性分级
 &lt;/h3&gt;&lt;p&gt;第二个设计决策是&lt;strong&gt;为什么分三级严重性&lt;/strong&gt;（critical / suggestion / highlight）。&lt;/p&gt;
 &lt;p&gt;这来自静态分析工具领域的经验教训。安全工具和 linter 长期面临一个问题：&lt;strong&gt;alert fatigue（告警疲劳）&lt;/strong&gt;。当所有问题都被标记为同等重要时，开发者会开始忽略它们。&lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
-&gt;Veracode 的研究&lt;/a&gt;指出，告警疲劳导致的直接后果是真正的严重问题被淹没在噪音中。&lt;/p&gt;
+ &gt;Veracode 的研究&lt;/a&gt;指出，告警疲劳导致的直接后果是真正的严重问题被淹没在噪音中。&lt;/p&gt;
 &lt;p&gt;分三级的逻辑是：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;critical&lt;/strong&gt;：必须修复（安全漏洞、逻辑错误、资源泄漏）&lt;/li&gt;
@@ -424,42 +415,24 @@ data-flex-basis="430px"
 &lt;/h3&gt;&lt;p&gt;第三个设计决策是&lt;strong&gt;为什么 critical 问题要自动触发修复&lt;/strong&gt;，而不是仅仅报告。&lt;/p&gt;
 &lt;p&gt;这是一个有争议的设计。传统的审查工具通常是&amp;quot;只报告不修复&amp;quot;，把修复留给开发者。但 opencode-review 的场景不同——它审查的代码本身就是 AI agent 刚写完的，让另一个 agent 去修复合情合理。&lt;/p&gt;
 &lt;p&gt;学术上这属于 &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; 的范畴。&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
-&gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; 综述了 2022-2025 年间的 63 个 LLM-based APR 系统，分为四种范式。其中&amp;quot;分析增强&amp;quot;（analysis-augmented）范式——先用静态分析定位问题，再用 LLM 生成修复——被证明是最有效的。opencode-review 的 auto-fix chain 本质上就是这个范式：reviewer 发现 critical issue → 定位问题位置 → spawn fixer sub-agent → 生成最小化修复。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_67450c93ac3d843a.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_261b6e10779b8b33.png 1024w"
-loading="lazy"
-alt="自动修复链"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+ &gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; 综述了 2022-2025 年间的 63 个 LLM-based APR 系统，分为四种范式。其中&amp;quot;分析增强&amp;quot;（analysis-augmented）范式——先用静态分析定位问题，再用 LLM 生成修复——被证明是最有效的。opencode-review 的 auto-fix chain 本质上就是这个范式：reviewer 发现 critical issue → 定位问题位置 → spawn fixer sub-agent → 生成最小化修复。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="自动修复链" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_cc477bedddea60c3.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
-&gt;ICSE 2025 的一篇论文&lt;/a&gt; 也指出，LLM 在 APR 中的关键挑战是目标对齐（objective alignment）——修复的目标不是&amp;quot;生成看起来合理的代码&amp;quot;，而是&amp;quot;精确解决报告的问题&amp;quot;。这也是为什么 opencode-review 的 fixer 被设计为 &lt;strong&gt;minimal fix&lt;/strong&gt;——只做最小的修改来解决问题，不重写、不重构、不&amp;quot;顺手&amp;quot;做其他改动。&lt;/p&gt;
+ &gt;ICSE 2025 的一篇论文&lt;/a&gt; 也指出，LLM 在 APR 中的关键挑战是目标对齐（objective alignment）——修复的目标不是&amp;quot;生成看起来合理的代码&amp;quot;，而是&amp;quot;精确解决报告的问题&amp;quot;。这也是为什么 opencode-review 的 fixer 被设计为 &lt;strong&gt;minimal fix&lt;/strong&gt;——只做最小的修改来解决问题，不重写、不重构、不&amp;quot;顺手&amp;quot;做其他改动。&lt;/p&gt;
 &lt;h3 id="自动审查的隐性收益代码质量基线的持续提升"&gt;自动审查的隐性收益：代码质量基线的持续提升
 &lt;/h3&gt;&lt;p&gt;上面三个设计解决的是&amp;quot;发现问题&amp;quot;和&amp;quot;修复问题&amp;quot;。但自动审查还有一个容易被忽略的好处：&lt;strong&gt;它在不经意间持续提升了代码质量的基线&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;这个效果来自两个机制：&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;第一，审查反馈对写代码者的塑造。&lt;/strong&gt; &lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
-&gt;FSE 2022 的研究&lt;/a&gt; 在两年的工业实践中发现，当开发者知道自己的代码会被自动审查时，他们会在写代码阶段就更有意识地遵循规范——因为事后被指出来的成本变低了，提前写好的收益变高了。这是一种 &lt;strong&gt;nudge effect（助推效应）&lt;/strong&gt;。在 AI agent 的场景下，这个效应更强：agent 在一个 session 中写了代码、被 review 指出问题、修复、再次被审查——这个循环在同一 session 内就能完成多轮。每一轮反馈都在修正 agent 的输出倾向，相当于一个隐式的 fine-tuning 过程。&lt;/p&gt;
+ &gt;FSE 2022 的研究&lt;/a&gt; 在两年的工业实践中发现，当开发者知道自己的代码会被自动审查时，他们会在写代码阶段就更有意识地遵循规范——因为事后被指出来的成本变低了，提前写好的收益变高了。这是一种 &lt;strong&gt;nudge effect（助推效应）&lt;/strong&gt;。在 AI agent 的场景下，这个效应更强：agent 在一个 session 中写了代码、被 review 指出问题、修复、再次被审查——这个循环在同一 session 内就能完成多轮。每一轮反馈都在修正 agent 的输出倾向，相当于一个隐式的 fine-tuning 过程。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;第二，自动修复的直接质量累积。&lt;/strong&gt; critical issue 被自动修复意味着每一轮提交的代码质量都比没有审查时更高。这不是一次性的改进，而是持续的。就像代码库中的 lint 规则一样——一开始只是禁止明显错误，但随着规则积累，代码库的整体风格和质量在不知不觉中被拉高了。auto-fix chain 做的事情类似：安全漏洞被自动堵上、资源泄漏被自动修复、缺失的测试被自动补充。时间一长，代码库的质量基线自然高于没有自动审查的情况。&lt;/p&gt;
 &lt;p&gt;简单说：&lt;strong&gt;审查不是目的，质量提升才是。自动审查把&amp;quot;事后检查&amp;quot;变成了&amp;quot;过程中提升&amp;quot;。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_45c08f85532cd10c.jpg 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_f97e789531211c0b.jpg 1024w"
-loading="lazy"
-alt="代码质量基线提升"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="代码质量基线提升" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_9988531fb89c4458.jpg 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h3 id="cooldown-机制"&gt;Cooldown 机制
 &lt;/h3&gt;&lt;p&gt;还有一个小的设计细节：&lt;strong&gt;cooldown_seconds&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;auto-review 在 session idle 时触发，但 idle 事件可能频繁触发（比如 agent 在等待用户确认时也会 idle）。没有 cooldown 的话，同一份代码可能被审查好几次，浪费 token。120 秒的默认冷却期是一个经验值——足够让一轮修改完成，又不会等太久。&lt;/p&gt;
 &lt;h2 id="opencode-froggy另一种思路"&gt;opencode-froggy：另一种思路
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/smartfrog/opencode-froggy" target="_blank" rel="noopener"
-&gt;opencode-froggy&lt;/a&gt;（85 Stars，昨天刚发 0.12.0）提供了另一种思路。它不做结构化的多维度审查，而是提供 6 个专用 agent（architect、code-reviewer、code-simplifier、doc-writer、partner、rubber-duck）和一套灵活的 hooks 系统。&lt;/p&gt;
+ &gt;opencode-froggy&lt;/a&gt;（85 Stars，昨天刚发 0.12.0）提供了另一种思路。它不做结构化的多维度审查，而是提供 6 个专用 agent（architect、code-reviewer、code-simplifier、doc-writer、partner、rubber-duck）和一套灵活的 hooks 系统。&lt;/p&gt;
 &lt;p&gt;Froggy 的 code-reviewer 是一个通用的只读审查 agent，不区分维度和严重性。但它的 hooks 系统很强——你可以配置 &lt;code&gt;session.idle&lt;/code&gt; 事件自动跑 lint、自动格式化、甚至在写入敏感文件时拦截：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -474,57 +447,57 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;event&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;session.idle&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;conditions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;hasCodeChange, isMainSession]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;bash&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npm run lint --fix&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;simplify-changes&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;这是一种&amp;quot;开发者自己编排流程&amp;quot;的思路，和 opencode-review 的&amp;quot;开箱即用的结构化审查&amp;quot;形成互补。&lt;/p&gt;
 &lt;h3 id="对比"&gt;对比
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;opencode-review&lt;/th&gt;
-&lt;th&gt;opencode-froggy&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;审查方式&lt;/td&gt;
-&lt;td&gt;结构化多维度分析&lt;/td&gt;
-&lt;td&gt;通用 code-reviewer agent&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;严重性分级&lt;/td&gt;
-&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;自动修复&lt;/td&gt;
-&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
-&lt;td&gt;code-simplifier，需手动触发&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;触发方式&lt;/td&gt;
-&lt;td&gt;session idle + cooldown&lt;/td&gt;
-&lt;td&gt;hooks 配置&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;自定义规则&lt;/td&gt;
-&lt;td&gt;custom_rules 支持项目规范&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;其他功能&lt;/td&gt;
-&lt;td&gt;无&lt;/td&gt;
-&lt;td&gt;6 agent + hooks + gitingest + 区块链&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;opencode-review&lt;/th&gt;
+					&lt;th&gt;opencode-froggy&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;审查方式&lt;/td&gt;
+					&lt;td&gt;结构化多维度分析&lt;/td&gt;
+					&lt;td&gt;通用 code-reviewer agent&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;严重性分级&lt;/td&gt;
+					&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自动修复&lt;/td&gt;
+					&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
+					&lt;td&gt;code-simplifier，需手动触发&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;触发方式&lt;/td&gt;
+					&lt;td&gt;session idle + cooldown&lt;/td&gt;
+					&lt;td&gt;hooks 配置&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自定义规则&lt;/td&gt;
+					&lt;td&gt;custom_rules 支持项目规范&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;其他功能&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;6 agent + hooks + gitingest + 区块链&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;两个不冲突，可以一起装。我的建议是：&lt;strong&gt;opencode-review 做日常自动审查，froggy 的 hooks 做流程编排&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id="插件安装"&gt;插件安装
@@ -607,26 +580,26 @@ data-flex-basis="430px"
 &lt;li&gt;&lt;strong&gt;envsitter-guard&lt;/strong&gt;：阻止 agent 读取 &lt;code&gt;.env&lt;/code&gt; 敏感文件&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;完整列表见 &lt;a class="link" href="https://github.com/awesome-opencode/awesome-opencode" target="_blank" rel="noopener"
-&gt;awesome-opencode&lt;/a&gt;。&lt;/p&gt;
+ &gt;awesome-opencode&lt;/a&gt;。&lt;/p&gt;
 &lt;h2 id="参考文献"&gt;参考文献
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
-&gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 代码审查研究综述&lt;/li&gt;
+ &gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 代码审查研究综述&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
-&gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — LLM 辅助代码审查的工业实践&lt;/li&gt;
+ &gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — LLM 辅助代码审查的工业实践&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
-&gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM 自动修复综述，覆盖 63 个系统&lt;/li&gt;
+ &gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM 自动修复综述，覆盖 63 个系统&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
-&gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — LLM 修复的目标对齐问题&lt;/li&gt;
+ &gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — LLM 修复的目标对齐问题&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
-&gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — 两年工业环境自动审查的经验总结&lt;/li&gt;
+ &gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — 两年工业环境自动审查的经验总结&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://homes.cs.washington.edu/~rjust/publ/code_review_automation_aiware_2024.pdf" target="_blank" rel="noopener"
-&gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — AutoCommenter 的部署与评估&lt;/li&gt;
+ &gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — AutoCommenter 的部署与评估&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2603.23448v2" target="_blank" rel="noopener"
-&gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent 代码审查基准测试&lt;/li&gt;
+ &gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent 代码审查基准测试&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - 一个 coding review agent&lt;/a&gt; — 基于 OpenCode 构建的 GitHub Action，CI 阶段的 code review&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare 用 OpenCode 构建大规模 AI 审查&lt;/li&gt;
+ &gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare 用 OpenCode 构建大规模 AI 审查&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>DeepSeek 技术脉络</title><link>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</link><pubDate>Fri, 15 May 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/</guid><description>&lt;img src="https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/cover.png" alt="Featured image of post DeepSeek 技术脉络" /&gt;&lt;!DOCTYPE html&gt;
 &lt;html lang="zh-CN"&gt;
 &lt;head&gt;
@@ -634,347 +607,391 @@ data-flex-basis="430px"
 &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
 &lt;title&gt;DeepSeek 技术脉络&lt;/title&gt;
 &lt;style&gt;
-:root { --bg: #0a0a0f; --card: #12121e; --card2: #181830; --accent: #4f8ef7; --accent2: #1a3a6e; --red: #ef4444; --green: #22c55e; --yellow: #f5a623; --purple: #a855f7; --cyan: #06b6d4; --text: #e8e8f0; --muted: #7a7a90; --border: #252540; }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', sans-serif; line-height: 1.75; padding: 2rem; max-width: 920px; margin: 0 auto; }
-h1 { font-size: 2.2rem; margin-bottom: 0.2rem; color: var(--accent); }
-.subtitle { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
-h2 { font-size: 1.35rem; margin: 2.5rem 0 1rem; padding-left: 0.8rem; border-left: 4px solid var(--accent); color: #fff; }
-h3 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.5rem; }
-.timeline { position: relative; padding-left: 2rem; }
-.timeline::before { content: ''; position: absolute; left: 0.55rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--purple), var(--cyan), var(--green)); }
-.tl-item { position: relative; margin-bottom: 2rem; }
-.tl-dot { position: absolute; left: -1.75rem; top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
-.tl-date { font-size: 0.8rem; color: var(--accent); font-weight: 600; margin-bottom: 0.2rem; }
-.tl-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
-.tl-title .tag { font-size: 0.7rem; font-weight: 400; color: var(--muted); background: var(--border); padding: 1px 8px; border-radius: 10px; margin-left: 0.5rem; vertical-align: middle; }
-.tl-desc { color: #bbb; font-size: 0.9rem; }
-.tl-desc strong { color: var(--text); }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
-.card h4 { font-size: 0.95rem; color: #fff; margin-bottom: 0.4rem; }
-.card p { color: #aaa; font-size: 0.88rem; }
-.tech-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
-.tech { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); }
-.tech.blue { border-color: var(--accent); color: var(--accent); }
-.tech.green { border-color: var(--green); color: var(--green); }
-.tech.purple { border-color: var(--purple); color: var(--purple); }
-.tech.yellow { border-color: var(--yellow); color: var(--yellow); }
-.tech.cyan { border-color: var(--cyan); color: var(--cyan); }
-.tech.red { border-color: var(--red); color: var(--red); }
-.highlight { background: linear-gradient(135deg, var(--accent2), #1a1040); border: 1px solid var(--accent); border-radius: 12px; padding: 1.3rem; margin: 1rem 0; }
-.highlight h4 { color: var(--accent); margin-bottom: 0.4rem; }
-.highlight p { color: #ccc; font-size: 0.88rem; }
-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.82rem; }
-th { background: var(--accent2); padding: 0.6rem; text-align: left; font-weight: 600; color: #fff; }
-td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); color: #bbb; }
-tr:hover td { background: rgba(79,142,247,0.05); }
-.mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.8rem; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
-@media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } body { padding: 1rem; } h1 { font-size: 1.6rem; } }
-.footer { text-align: center; color: var(--muted); margin-top: 3rem; font-size: 0.78rem; }
+ :root { --bg: #0a0a0f; --card: #12121e; --card2: #181830; --accent: #4f8ef7; --accent2: #1a3a6e; --red: #ef4444; --green: #22c55e; --yellow: #f5a623; --purple: #a855f7; --cyan: #06b6d4; --text: #e8e8f0; --muted: #7a7a90; --border: #252540; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', sans-serif; line-height: 1.75; padding: 2rem; max-width: 920px; margin: 0 auto; }
+ h1 { font-size: 2.2rem; margin-bottom: 0.2rem; color: var(--accent); }
+ .subtitle { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+ h2 { font-size: 1.35rem; margin: 2.5rem 0 1rem; padding-left: 0.8rem; border-left: 4px solid var(--accent); color: #fff; }
+ h3 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.5rem; }
+
+ .timeline { position: relative; padding-left: 2rem; }
+ .timeline::before { content: ''; position: absolute; left: 0.55rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--purple), var(--cyan), var(--green)); }
+ .tl-item { position: relative; margin-bottom: 2rem; }
+ .tl-dot { position: absolute; left: -1.75rem; top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+ .tl-date { font-size: 0.8rem; color: var(--accent); font-weight: 600; margin-bottom: 0.2rem; }
+ .tl-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+ .tl-title .tag { font-size: 0.7rem; font-weight: 400; color: var(--muted); background: var(--border); padding: 1px 8px; border-radius: 10px; margin-left: 0.5rem; vertical-align: middle; }
+ .tl-desc { color: #bbb; font-size: 0.9rem; }
+ .tl-desc strong { color: var(--text); }
+
+ .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; margin-bottom: 1rem; }
+ .card h4 { font-size: 0.95rem; color: #fff; margin-bottom: 0.4rem; }
+ .card p { color: #aaa; font-size: 0.88rem; }
+
+ .tech-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+ .tech { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); }
+ .tech.blue { border-color: var(--accent); color: var(--accent); }
+ .tech.green { border-color: var(--green); color: var(--green); }
+ .tech.purple { border-color: var(--purple); color: var(--purple); }
+ .tech.yellow { border-color: var(--yellow); color: var(--yellow); }
+ .tech.cyan { border-color: var(--cyan); color: var(--cyan); }
+ .tech.red { border-color: var(--red); color: var(--red); }
+
+ .highlight { background: linear-gradient(135deg, var(--accent2), #1a1040); border: 1px solid var(--accent); border-radius: 12px; padding: 1.3rem; margin: 1rem 0; }
+ .highlight h4 { color: var(--accent); margin-bottom: 0.4rem; }
+ .highlight p { color: #ccc; font-size: 0.88rem; }
+
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.82rem; }
+ th { background: var(--accent2); padding: 0.6rem; text-align: left; font-weight: 600; color: #fff; }
+ td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); color: #bbb; }
+ tr:hover td { background: rgba(79,142,247,0.05); }
+ .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.8rem; }
+
+ .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+ @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } body { padding: 1rem; } h1 { font-size: 1.6rem; } }
+
+ .footer { text-align: center; color: var(--muted); margin-top: 3rem; font-size: 0.78rem; }
 &lt;/style&gt;
 &lt;script async src="https://www.googletagmanager.com/gtag/js?id=G-65DJGXT4VC"&gt;&lt;/script&gt;
 &lt;script&gt;
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag("js", new Date());
-gtag("config", "G-65DJGXT4VC");
+ window.dataLayer = window.dataLayer || [];
+ function gtag(){dataLayer.push(arguments);}
+ gtag("js", new Date());
+ gtag("config", "G-65DJGXT4VC");
 &lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
+
 &lt;img src="cover.png" alt="DeepSeek 技术脉络" style="width:100%;border-radius:12px;margin-bottom:1.5rem;"&gt;
+
 &lt;h1&gt;DeepSeek 技术脉络&lt;/h1&gt;
 &lt;p class="subtitle"&gt;从量化基金内部实验室到全球 AI 震荡源 · 2023-2026&lt;/p&gt;
+
 &lt;div class="highlight"&gt;
-&lt;h4&gt;🧠 核心哲学&lt;/h4&gt;
-&lt;p&gt;&lt;strong&gt;极致的算法效率 &gt; 暴力的算力堆叠&lt;/strong&gt;。在美国芯片禁运限制下，用更弱的芯片（出口版 H800）、更少的 GPU、更低的成本，通过 MoE、MLA、FP8 混合精度等架构创新，达到甚至超越 OpenAI、Meta 的模型性能。全部模型 MIT 开源。&lt;/p&gt;
+ &lt;h4&gt;🧠 核心哲学&lt;/h4&gt;
+ &lt;p&gt;&lt;strong&gt;极致的算法效率 &gt; 暴力的算力堆叠&lt;/strong&gt;。在美国芯片禁运限制下，用更弱的芯片（出口版 H800）、更少的 GPU、更低的成本，通过 MoE、MLA、FP8 混合精度等架构创新，达到甚至超越 OpenAI、Meta 的模型性能。全部模型 MIT 开源。&lt;/p&gt;
 &lt;/div&gt;
+
 &lt;h2&gt;📅 技术演进时间线&lt;/h2&gt;
+
 &lt;div class="timeline"&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2023 年 11 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-LLM 7B / 67B &lt;span class="tag"&gt;起点&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-架构基本照搬 &lt;a href="https://arxiv.org/abs/2401.02954" target="_blank" rel="noopener" style="color:var(--accent)"&gt;Llama&lt;/a&gt;：pre-norm decoder-only Transformer + RMSNorm + SwiGLU + RoPE + GQA（仅 67B）。
-训练 2T tokens（中英文 Common Crawl 去重），benchmark 超过 Llama 2。
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2023 年 11 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-LLM 7B / 67B &lt;span class="tag"&gt;起点&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ 架构基本照搬 &lt;a href="https://arxiv.org/abs/2401.02954" target="_blank" rel="noopener" style="color:var(--accent)"&gt;Llama&lt;/a&gt;：pre-norm decoder-only Transformer + RMSNorm + SwiGLU + RoPE + GQA（仅 67B）。
+ 训练 2T tokens（中英文 Common Crawl 去重），benchmark 超过 Llama 2。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech"&gt;Dense Transformer&lt;/span&gt;
+ &lt;span class="tech blue"&gt;GQA（仅 67B）&lt;/span&gt;
+ &lt;span class="tech"&gt;RoPE&lt;/span&gt;
+ &lt;span class="tech"&gt;SwiGLU&lt;/span&gt;
+ &lt;span class="tech"&gt;2T tokens&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2024 年 1 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeekMoE &lt;span class="tag"&gt;MoE 探索&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ 16B 参数（每 token 激活 ~2.4B）。引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2401.06066" target="_blank" rel="noopener" style="color:var(--text)"&gt;共享专家（Shared Experts）&lt;/a&gt;&lt;/strong&gt;——始终激活的专家学习通用能力，路由专家（Routed Experts）学习特定能力。解决了标准 MoE 中专家负载不均的问题。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech green"&gt;Shared + Routed Experts&lt;/span&gt;
+ &lt;span class="tech"&gt;16B / 2.4B active&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2024 年 2 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-Math &lt;span class="tag"&gt;GRPO 首秀&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ 基于 Coder 7B 初始化，用 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2402.03300" target="_blank" rel="noopener" style="color:var(--text)"&gt;GRPO（Group Relative Policy Optimization）&lt;/a&gt;&lt;/strong&gt; 做强化学习。这是 GRPO 的首次应用——用过程奖励模型（PRM）训练，而非传统 PPO。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech purple"&gt;GRPO&lt;/span&gt;
+ &lt;span class="tech yellow"&gt;PRM 过程奖励&lt;/span&gt;
+ &lt;span class="tech"&gt;144K 数学题&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2024 年 5 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-V2 &lt;span class="tag"&gt;架构大改&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ &lt;strong&gt;里程碑式架构变革。&lt;/strong&gt;引入 &lt;a href="https://arxiv.org/abs/2405.04434" target="_blank" rel="noopener" style="color:var(--text)"&gt;MLA（Multi-head Latent Attention）&lt;/a&gt;替代标准 MHA，通过压缩潜在向量大幅降低 KV cache 显存。MoE + MLA 双创新架构。
+ 训练 8.1T tokens，两阶段 RL（推理任务 + 通用任务）。
+ &lt;strong&gt;价格：每百万输出 token 仅 2 元人民币。&lt;/strong&gt;
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech red"&gt;MLA 多头潜在注意力&lt;/span&gt;
+ &lt;span class="tech green"&gt;DeepSeekMoE&lt;/span&gt;
+ &lt;span class="tech purple"&gt;GRPO 两阶段 RL&lt;/span&gt;
+ &lt;span class="tech"&gt;8.1T tokens&lt;/span&gt;
+ &lt;span class="tech"&gt;128K context&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2024 年 12 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-V3 &lt;span class="tag"&gt;效率巅峰&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ &lt;strong&gt;训练成本仅 $600 万&lt;/strong&gt;（GPT-4 为 $1 亿）。14.8T tokens 预训练，引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2412.19437" target="_blank" rel="noopener" style="color:var(--text)"&gt;Multi-token Prediction&lt;/a&gt;&lt;/strong&gt;（可选多 token 解码加速）。
+ 极致工程优化：FP8 (E4M3) 前向传播、自定义 12-bit float、20/132 SM 专用于通信、动态专家重分配、辅助负载均衡损失。
+ Benchmark 超越 Llama 3.1 和 Qwen 2.5，匹敌 GPT-4o 和 Claude 3.5 Sonnet。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech red"&gt;MLA&lt;/span&gt;
+ &lt;span class="tech green"&gt;MoE&lt;/span&gt;
+ &lt;span class="tech yellow"&gt;Multi-token Prediction&lt;/span&gt;
+ &lt;span class="tech cyan"&gt;FP8 (E4M3)&lt;/span&gt;
+ &lt;span class="tech"&gt;14.8T tokens&lt;/span&gt;
+ &lt;span class="tech purple"&gt;GRPO RL&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot" style="border-color: var(--red);"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2025 年 1 月 20 日&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-R1 💥 &lt;span class="tag"&gt;AI 史普特尼克时刻&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ &lt;strong&gt;引爆全球。&lt;/strong&gt;基于 V3-Base 初始化，纯 RL 驱动的推理模型。
+ &lt;br&gt;&lt;strong&gt;&lt;a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener" style="color:var(--text)"&gt;R1-Zero：&lt;/a&gt;&lt;/strong&gt;完全无 SFT，纯 GRPO + 规则奖励（答案正确性 + 格式），自发涌现 Chain-of-Thought 推理。
+ &lt;br&gt;&lt;strong&gt;R1：&lt;/strong&gt;在 R1-Zero 基础上加冷启动 SFT（~5K-10K 长链推理示例）→ RL（含语言一致性奖励）→ 合成 800K 数据 → 再 SFT → 再 RL（推理用规则奖励 + 非推理用模型奖励）。
+ &lt;br&gt;&lt;strong&gt;蒸馏模型：&lt;/strong&gt;用 R1 合成的 800K 数据直接 SFT 到 LLaMA、Qwen 等开源模型上。
+ &lt;br&gt;AIME / MATH benchmark 超越 OpenAI o1。发布后 Nvidia 市值单日蒸发 $6000 亿。论文发表于 &lt;a href="https://www.nature.com/articles/s41586-025-09422-z" target="_blank" rel="noopener" style="color:var(--text)"&gt;Nature&lt;/a&gt;（2025.9）。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech red"&gt;GRPO 纯 RL&lt;/span&gt;
+ &lt;span class="tech yellow"&gt;自发 CoT&lt;/span&gt;
+ &lt;span class="tech green"&gt;R1-Zero → R1 → Distill&lt;/span&gt;
+ &lt;span class="tech purple"&gt;Nature 发表&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2025 年 3 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-V3-0324 &lt;span class="tag"&gt;MIT 开源&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;V3 架构，MIT License 发布。&lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2025 年 5 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-R1-0528 &lt;span class="tag"&gt;R2 延期&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ R1 更新版。原计划 R2 早期发布，但梁文锋对性能不满意。传闻原因：数据标注进度慢 + 被鼓励使用华为昇腾芯片但稳定性和互联性能不足。最终选择 Nvidia 训练 + 华为推理。
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2025 年 8 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-V3.1 &lt;span class="tag"&gt;混合架构&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ Thinking / Non-thinking 双模式混合架构。SWE-bench、Terminal-bench 超过 V3 和 R1 超 40%。MIT License。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech blue"&gt;Thinking + Non-thinking&lt;/span&gt;
+ &lt;span class="tech green"&gt;SWE-bench +40%&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2025 年 9 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;V3.1-Terminus / V3.2-Exp &lt;span class="tag"&gt;稀疏注意力&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ V3.2-Exp 引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2502.11089" target="_blank" rel="noopener" style="color:var(--text)"&gt;DeepSeek Sparse Attention&lt;/a&gt;&lt;/strong&gt;（NSA），更高效的注意力机制。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech cyan"&gt;Native Sparse Attention&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2025 年 12 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-V3.2 &lt;span class="tag"&gt;稀疏注意力正式版&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;V3.2 + V3.2-Speciale（专注推理的变体）。&lt;a href="https://arxiv.org/abs/2512.02556" target="_blank" rel="noopener" style="color:var(--text)"&gt;DeepSeek Sparse Attention&lt;/a&gt; 正式集成。&lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot" style="border-color: var(--yellow);"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2026 年 2 月&lt;/div&gt;
+ &lt;div class="tl-title"&gt;Anthropic 指控 &lt;span class="tag"&gt;争议&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a href="https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks" target="_blank" rel="noopener" style="color:var(--text)"&gt;Claude 的对话&lt;/a&gt;，用于训练自己的模型。同时 Moonshot AI 也被指控类似行为。
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot" style="border-color: var(--green);"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2026 年 4 月 24 日&lt;/div&gt;
+ &lt;div class="tl-title"&gt;DeepSeek-V4-Pro / V4-Flash &lt;span class="tag"&gt;最新&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ &lt;strong&gt;V4 系列：&lt;/strong&gt;V4-Pro 1.6 万亿参数 + V4-Flash 2840 亿参数。100 万 token 上下文窗口。原生支持文本、图像、视频多模态。MIT License。
+ 已被华为、寒武纪等芯片制造商采用。融资谈判中，估值或达 $100 亿。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech red"&gt;1.6T params&lt;/span&gt;
+ &lt;span class="tech yellow"&gt;1M context&lt;/span&gt;
+ &lt;span class="tech green"&gt;MIT License&lt;/span&gt;
+ &lt;span class="tech blue"&gt;华为/寒武纪采用&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item"&gt;
+ &lt;div class="tl-dot" style="border-color: var(--cyan);"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2026 年 1 月 27 日&lt;/div&gt;
+ &lt;div class="tl-title"&gt;&lt;a href="https://arxiv.org/abs/2601.20552" target="_blank" rel="noopener" style="color:#fff"&gt;DeepSeek-OCR 2&lt;/a&gt; &lt;span class="tag"&gt;视觉模型&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ 3B 参数视觉语言模型，引入 &lt;strong&gt;Visual Causal Flow&lt;/strong&gt; 架构（DeepEncoder V2），可动态重排视觉 token 模拟人类阅读逻辑。每页仅需 256-1120 个视觉 token，benchmark 91.09%。开源。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech cyan"&gt;Visual Causal Flow&lt;/span&gt;
+ &lt;span class="tech"&gt;3B params&lt;/span&gt;
+ &lt;span class="tech green"&gt;开源&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
+ &lt;div class="tl-item" style="margin-bottom: 0;"&gt;
+ &lt;div class="tl-dot" style="border-color: var(--cyan);"&gt;&lt;/div&gt;
+ &lt;div class="tl-date"&gt;2026 年 4 月 29 日&lt;/div&gt;
+ &lt;div class="tl-title"&gt;识图模式 &lt;span class="tag"&gt;多模态&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="tl-desc"&gt;
+ 基于 V4 原生多模态能力的识图模式灰度上线，5 月 9 日大范围开放。支持上传图片进行内容理解与分析，采用两阶段策略（粗读 + 关键区域精读）。补齐了 DeepSeek 多模态空白。
+ &lt;/div&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech cyan"&gt;原生多模态&lt;/span&gt;
+ &lt;span class="tech blue"&gt;文本 + 图像 + 视频&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+
 &lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech"&gt;Dense Transformer&lt;/span&gt;
-&lt;span class="tech blue"&gt;GQA（仅 67B）&lt;/span&gt;
-&lt;span class="tech"&gt;RoPE&lt;/span&gt;
-&lt;span class="tech"&gt;SwiGLU&lt;/span&gt;
-&lt;span class="tech"&gt;2T tokens&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2024 年 1 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeekMoE &lt;span class="tag"&gt;MoE 探索&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-16B 参数（每 token 激活 ~2.4B）。引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2401.06066" target="_blank" rel="noopener" style="color:var(--text)"&gt;共享专家（Shared Experts）&lt;/a&gt;&lt;/strong&gt;——始终激活的专家学习通用能力，路由专家（Routed Experts）学习特定能力。解决了标准 MoE 中专家负载不均的问题。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech green"&gt;Shared + Routed Experts&lt;/span&gt;
-&lt;span class="tech"&gt;16B / 2.4B active&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2024 年 2 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-Math &lt;span class="tag"&gt;GRPO 首秀&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-基于 Coder 7B 初始化，用 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2402.03300" target="_blank" rel="noopener" style="color:var(--text)"&gt;GRPO（Group Relative Policy Optimization）&lt;/a&gt;&lt;/strong&gt; 做强化学习。这是 GRPO 的首次应用——用过程奖励模型（PRM）训练，而非传统 PPO。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech purple"&gt;GRPO&lt;/span&gt;
-&lt;span class="tech yellow"&gt;PRM 过程奖励&lt;/span&gt;
-&lt;span class="tech"&gt;144K 数学题&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2024 年 5 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-V2 &lt;span class="tag"&gt;架构大改&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-&lt;strong&gt;里程碑式架构变革。&lt;/strong&gt;引入 &lt;a href="https://arxiv.org/abs/2405.04434" target="_blank" rel="noopener" style="color:var(--text)"&gt;MLA（Multi-head Latent Attention）&lt;/a&gt;替代标准 MHA，通过压缩潜在向量大幅降低 KV cache 显存。MoE + MLA 双创新架构。
-训练 8.1T tokens，两阶段 RL（推理任务 + 通用任务）。
-&lt;strong&gt;价格：每百万输出 token 仅 2 元人民币。&lt;/strong&gt;
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech red"&gt;MLA 多头潜在注意力&lt;/span&gt;
-&lt;span class="tech green"&gt;DeepSeekMoE&lt;/span&gt;
-&lt;span class="tech purple"&gt;GRPO 两阶段 RL&lt;/span&gt;
-&lt;span class="tech"&gt;8.1T tokens&lt;/span&gt;
-&lt;span class="tech"&gt;128K context&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2024 年 12 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-V3 &lt;span class="tag"&gt;效率巅峰&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-&lt;strong&gt;训练成本仅 $600 万&lt;/strong&gt;（GPT-4 为 $1 亿）。14.8T tokens 预训练，引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2412.19437" target="_blank" rel="noopener" style="color:var(--text)"&gt;Multi-token Prediction&lt;/a&gt;&lt;/strong&gt;（可选多 token 解码加速）。
-极致工程优化：FP8 (E4M3) 前向传播、自定义 12-bit float、20/132 SM 专用于通信、动态专家重分配、辅助负载均衡损失。
-Benchmark 超越 Llama 3.1 和 Qwen 2.5，匹敌 GPT-4o 和 Claude 3.5 Sonnet。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech red"&gt;MLA&lt;/span&gt;
-&lt;span class="tech green"&gt;MoE&lt;/span&gt;
-&lt;span class="tech yellow"&gt;Multi-token Prediction&lt;/span&gt;
-&lt;span class="tech cyan"&gt;FP8 (E4M3)&lt;/span&gt;
-&lt;span class="tech"&gt;14.8T tokens&lt;/span&gt;
-&lt;span class="tech purple"&gt;GRPO RL&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot" style="border-color: var(--red);"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2025 年 1 月 20 日&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-R1 💥 &lt;span class="tag"&gt;AI 史普特尼克时刻&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-&lt;strong&gt;引爆全球。&lt;/strong&gt;基于 V3-Base 初始化，纯 RL 驱动的推理模型。
-&lt;br&gt;&lt;strong&gt;&lt;a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener" style="color:var(--text)"&gt;R1-Zero：&lt;/a&gt;&lt;/strong&gt;完全无 SFT，纯 GRPO + 规则奖励（答案正确性 + 格式），自发涌现 Chain-of-Thought 推理。
-&lt;br&gt;&lt;strong&gt;R1：&lt;/strong&gt;在 R1-Zero 基础上加冷启动 SFT（~5K-10K 长链推理示例）→ RL（含语言一致性奖励）→ 合成 800K 数据 → 再 SFT → 再 RL（推理用规则奖励 + 非推理用模型奖励）。
-&lt;br&gt;&lt;strong&gt;蒸馏模型：&lt;/strong&gt;用 R1 合成的 800K 数据直接 SFT 到 LLaMA、Qwen 等开源模型上。
-&lt;br&gt;AIME / MATH benchmark 超越 OpenAI o1。发布后 Nvidia 市值单日蒸发 $6000 亿。论文发表于 &lt;a href="https://www.nature.com/articles/s41586-025-09422-z" target="_blank" rel="noopener" style="color:var(--text)"&gt;Nature&lt;/a&gt;（2025.9）。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech red"&gt;GRPO 纯 RL&lt;/span&gt;
-&lt;span class="tech yellow"&gt;自发 CoT&lt;/span&gt;
-&lt;span class="tech green"&gt;R1-Zero → R1 → Distill&lt;/span&gt;
-&lt;span class="tech purple"&gt;Nature 发表&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2025 年 3 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-V3-0324 &lt;span class="tag"&gt;MIT 开源&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;V3 架构，MIT License 发布。&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2025 年 5 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-R1-0528 &lt;span class="tag"&gt;R2 延期&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-R1 更新版。原计划 R2 早期发布，但梁文锋对性能不满意。传闻原因：数据标注进度慢 + 被鼓励使用华为昇腾芯片但稳定性和互联性能不足。最终选择 Nvidia 训练 + 华为推理。
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2025 年 8 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-V3.1 &lt;span class="tag"&gt;混合架构&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-Thinking / Non-thinking 双模式混合架构。SWE-bench、Terminal-bench 超过 V3 和 R1 超 40%。MIT License。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech blue"&gt;Thinking + Non-thinking&lt;/span&gt;
-&lt;span class="tech green"&gt;SWE-bench +40%&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2025 年 9 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;V3.1-Terminus / V3.2-Exp &lt;span class="tag"&gt;稀疏注意力&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-V3.2-Exp 引入 &lt;strong&gt;&lt;a href="https://arxiv.org/abs/2502.11089" target="_blank" rel="noopener" style="color:var(--text)"&gt;DeepSeek Sparse Attention&lt;/a&gt;&lt;/strong&gt;（NSA），更高效的注意力机制。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech cyan"&gt;Native Sparse Attention&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2025 年 12 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-V3.2 &lt;span class="tag"&gt;稀疏注意力正式版&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;V3.2 + V3.2-Speciale（专注推理的变体）。&lt;a href="https://arxiv.org/abs/2512.02556" target="_blank" rel="noopener" style="color:var(--text)"&gt;DeepSeek Sparse Attention&lt;/a&gt; 正式集成。&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot" style="border-color: var(--yellow);"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2026 年 2 月&lt;/div&gt;
-&lt;div class="tl-title"&gt;Anthropic 指控 &lt;span class="tag"&gt;争议&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a href="https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks" target="_blank" rel="noopener" style="color:var(--text)"&gt;Claude 的对话&lt;/a&gt;，用于训练自己的模型。同时 Moonshot AI 也被指控类似行为。
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot" style="border-color: var(--green);"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2026 年 4 月 24 日&lt;/div&gt;
-&lt;div class="tl-title"&gt;DeepSeek-V4-Pro / V4-Flash &lt;span class="tag"&gt;最新&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-&lt;strong&gt;V4 系列：&lt;/strong&gt;V4-Pro 1.6 万亿参数 + V4-Flash 2840 亿参数。100 万 token 上下文窗口。原生支持文本、图像、视频多模态。MIT License。
-已被华为、寒武纪等芯片制造商采用。融资谈判中，估值或达 $100 亿。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech red"&gt;1.6T params&lt;/span&gt;
-&lt;span class="tech yellow"&gt;1M context&lt;/span&gt;
-&lt;span class="tech green"&gt;MIT License&lt;/span&gt;
-&lt;span class="tech blue"&gt;华为/寒武纪采用&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item"&gt;
-&lt;div class="tl-dot" style="border-color: var(--cyan);"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2026 年 1 月 27 日&lt;/div&gt;
-&lt;div class="tl-title"&gt;&lt;a href="https://arxiv.org/abs/2601.20552" target="_blank" rel="noopener" style="color:#fff"&gt;DeepSeek-OCR 2&lt;/a&gt; &lt;span class="tag"&gt;视觉模型&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-3B 参数视觉语言模型，引入 &lt;strong&gt;Visual Causal Flow&lt;/strong&gt; 架构（DeepEncoder V2），可动态重排视觉 token 模拟人类阅读逻辑。每页仅需 256-1120 个视觉 token，benchmark 91.09%。开源。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech cyan"&gt;Visual Causal Flow&lt;/span&gt;
-&lt;span class="tech"&gt;3B params&lt;/span&gt;
-&lt;span class="tech green"&gt;开源&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="tl-item" style="margin-bottom: 0;"&gt;
-&lt;div class="tl-dot" style="border-color: var(--cyan);"&gt;&lt;/div&gt;
-&lt;div class="tl-date"&gt;2026 年 4 月 29 日&lt;/div&gt;
-&lt;div class="tl-title"&gt;识图模式 &lt;span class="tag"&gt;多模态&lt;/span&gt;&lt;/div&gt;
-&lt;div class="tl-desc"&gt;
-基于 V4 原生多模态能力的识图模式灰度上线，5 月 9 日大范围开放。支持上传图片进行内容理解与分析，采用两阶段策略（粗读 + 关键区域精读）。补齐了 DeepSeek 多模态空白。
-&lt;/div&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech cyan"&gt;原生多模态&lt;/span&gt;
-&lt;span class="tech blue"&gt;文本 + 图像 + 视频&lt;/span&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+
 &lt;h2&gt;⚡ 核心技术创新&lt;/h2&gt;
+
 &lt;div class="grid2"&gt;
-&lt;div class="card"&gt;
-&lt;h4&gt;MLA — 多头潜在注意力&lt;/h4&gt;
-&lt;p&gt;V2 起引入。将 KV cache 压缩为低秩潜在向量，大幅降低推理显存占用。是 DeepSeek 成本优势的基石之一。&lt;/p&gt;
+ &lt;div class="card"&gt;
+ &lt;h4&gt;MLA — 多头潜在注意力&lt;/h4&gt;
+ &lt;p&gt;V2 起引入。将 KV cache 压缩为低秩潜在向量，大幅降低推理显存占用。是 DeepSeek 成本优势的基石之一。&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class="card"&gt;
+ &lt;h4&gt;DeepSeekMoE — 共享专家路由&lt;/h4&gt;
+ &lt;p&gt;标准 MoE 的改进：始终激活的 Shared Experts 学通用能力，Routed Experts 学专项能力，解决负载不均问题。&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class="card"&gt;
+ &lt;h4&gt;GRPO — 群组相对策略优化&lt;/h4&gt;
+ &lt;p&gt;替代 PPO 的 RL 算法。Math 首秀 → V2 两阶段 RL → R1 纯 RL 推理。R1-Zero 在无 SFT 下自发涌现 CoT。&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class="card"&gt;
+ &lt;h4&gt;FP8 混合精度训练&lt;/h4&gt;
+ &lt;p&gt;前向传播用 E4M3（4-bit 指数 + 3-bit 尾数），配合 128×128 块级缩放保证数值稳定性，优化器状态用 BF16。需要特殊 GEMM 累积。&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class="card"&gt;
+ &lt;h4&gt;Multi-token Prediction&lt;/h4&gt;
+ &lt;p&gt;V3 起引入。可选的多 token 并行解码，牺牲一定精度换取生成速度提升。&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class="card"&gt;
+ &lt;h4&gt;Native Sparse Attention&lt;/h4&gt;
+ &lt;p&gt;V3.2 引入。硬件对齐的原生可训练稀疏注意力，进一步提升长上下文效率。&lt;/p&gt;
+ &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="card"&gt;
-&lt;h4&gt;DeepSeekMoE — 共享专家路由&lt;/h4&gt;
-&lt;p&gt;标准 MoE 的改进：始终激活的 Shared Experts 学通用能力，Routed Experts 学专项能力，解决负载不均问题。&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="card"&gt;
-&lt;h4&gt;GRPO — 群组相对策略优化&lt;/h4&gt;
-&lt;p&gt;替代 PPO 的 RL 算法。Math 首秀 → V2 两阶段 RL → R1 纯 RL 推理。R1-Zero 在无 SFT 下自发涌现 CoT。&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="card"&gt;
-&lt;h4&gt;FP8 混合精度训练&lt;/h4&gt;
-&lt;p&gt;前向传播用 E4M3（4-bit 指数 + 3-bit 尾数），配合 128×128 块级缩放保证数值稳定性，优化器状态用 BF16。需要特殊 GEMM 累积。&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="card"&gt;
-&lt;h4&gt;Multi-token Prediction&lt;/h4&gt;
-&lt;p&gt;V3 起引入。可选的多 token 并行解码，牺牲一定精度换取生成速度提升。&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="card"&gt;
-&lt;h4&gt;Native Sparse Attention&lt;/h4&gt;
-&lt;p&gt;V3.2 引入。硬件对齐的原生可训练稀疏注意力，进一步提升长上下文效率。&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+
 &lt;h2&gt;🏗️ 算力基础设施&lt;/h2&gt;
+
 &lt;div class="card"&gt;
-&lt;h4&gt;&lt;a href="https://arxiv.org/abs/2408.14158" target="_blank" rel="noopener" style="color:#fff"&gt;Fire-Flyer（萤火）集群&lt;/a&gt;&lt;/h4&gt;
-&lt;p&gt;自建软硬件协同设计算力集群。Fire-Flyer 1（2019，已退役）→ Fire-Flyer 2（2021，仍在运行）。&lt;/p&gt;
-&lt;table&gt;
-&lt;tr&gt;&lt;th&gt;组件&lt;/th&gt;&lt;th&gt;技术&lt;/th&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;strong&gt;硬件&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;Nvidia GPU（A100 → H800），200 Gbps 互联，双 Fat Tree 拓扑&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;strong&gt;3FS&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;分布式并行文件系统，Direct I/O + RDMA Read，专为异步随机读优化&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;strong&gt;hfreduce&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;异步通信库，替代 NCCL，CPU 异步执行避免阻塞 GPU kernel&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;strong&gt;HaiScale DDP&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;并行训练库：DP / PP / TP / EP / FSDP / ZeRO 全支持&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;strong&gt;H800 优化&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;132 SM 中 20 个专用于通信；每 10 分钟动态重分配专家所在机器&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
+ &lt;h4&gt;&lt;a href="https://arxiv.org/abs/2408.14158" target="_blank" rel="noopener" style="color:#fff"&gt;Fire-Flyer（萤火）集群&lt;/a&gt;&lt;/h4&gt;
+ &lt;p&gt;自建软硬件协同设计算力集群。Fire-Flyer 1（2019，已退役）→ Fire-Flyer 2（2021，仍在运行）。&lt;/p&gt;
+ &lt;table&gt;
+ &lt;tr&gt;&lt;th&gt;组件&lt;/th&gt;&lt;th&gt;技术&lt;/th&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;&lt;strong&gt;硬件&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;Nvidia GPU（A100 → H800），200 Gbps 互联，双 Fat Tree 拓扑&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;&lt;strong&gt;3FS&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;分布式并行文件系统，Direct I/O + RDMA Read，专为异步随机读优化&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;&lt;strong&gt;hfreduce&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;异步通信库，替代 NCCL，CPU 异步执行避免阻塞 GPU kernel&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;&lt;strong&gt;HaiScale DDP&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;并行训练库：DP / PP / TP / EP / FSDP / ZeRO 全支持&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;&lt;strong&gt;H800 优化&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;132 SM 中 20 个专用于通信；每 10 分钟动态重分配专家所在机器&lt;/td&gt;&lt;/tr&gt;
+ &lt;/table&gt;
 &lt;/div&gt;
+
 &lt;h2&gt;🔄 模型训练流程演进&lt;/h2&gt;
+
 &lt;div class="card"&gt;
-&lt;h4&gt;V2 / Coder-V2 训练流程&lt;/h4&gt;
-&lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;预训练 → YaRN 上下文扩展 → SFT → GRPO 两阶段 RL&lt;/p&gt;
-&lt;p style="color: #888; font-size: 0.82rem;"&gt;阶段 1 RL：数学/编码（编译器反馈 + 标签）。阶段 2 RL：有用性/安全性（人类偏好 + 规则奖励）。&lt;/p&gt;
+ &lt;h4&gt;V2 / Coder-V2 训练流程&lt;/h4&gt;
+ &lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;预训练 → YaRN 上下文扩展 → SFT → GRPO 两阶段 RL&lt;/p&gt;
+ &lt;p style="color: #888; font-size: 0.82rem;"&gt;阶段 1 RL：数学/编码（编译器反馈 + 标签）。阶段 2 RL：有用性/安全性（人类偏好 + 规则奖励）。&lt;/p&gt;
 &lt;/div&gt;
+
 &lt;div class="card"&gt;
-&lt;h4&gt;V3 训练流程&lt;/h4&gt;
-&lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;14.8T 预训练 → 两次 YaRN 扩展(4K→32K→128K) → SFT(1.5M, 推理+非推理) → GRPO RL(模型奖励+规则奖励)&lt;/p&gt;
-&lt;p style="color: #888; font-size: 0.82rem;"&gt;推理数据由专家模型生成（非 R1 本身，因为 R1 输出"过度思考、格式差、过长"）。非推理数据由 V2.5 + 人工审核。&lt;/p&gt;
+ &lt;h4&gt;V3 训练流程&lt;/h4&gt;
+ &lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;14.8T 预训练 → 两次 YaRN 扩展(4K→32K→128K) → SFT(1.5M, 推理+非推理) → GRPO RL(模型奖励+规则奖励)&lt;/p&gt;
+ &lt;p style="color: #888; font-size: 0.82rem;"&gt;推理数据由专家模型生成（非 R1 本身，因为 R1 输出"过度思考、格式差、过长"）。非推理数据由 V2.5 + 人工审核。&lt;/p&gt;
 &lt;/div&gt;
+
 &lt;div class="card"&gt;
-&lt;h4&gt;R1 训练流程&lt;/h4&gt;
-&lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;R1-Zero: V3-Base → 纯 GRPO RL (无 SFT, 无模型奖励, 规则奖励)&lt;/p&gt;
-&lt;p class="mono" style="color: var(--accent); margin: 0.3rem 0;"&gt;R1: V3-Base → 冷启动 SFT → RL(+语言一致性) → 合成 800K 数据 → SFT → RL(推理规则+非推理模型奖励)&lt;/p&gt;
-&lt;p style="color: #888; font-size: 0.82rem;"&gt;R1-Zero 证明了纯 RL 可以涌现推理能力，但存在可读性和语言混合问题。R1 通过冷启动 + 语言奖励解决。&lt;/p&gt;
+ &lt;h4&gt;R1 训练流程&lt;/h4&gt;
+ &lt;p class="mono" style="color: var(--accent); margin: 0.5rem 0;"&gt;R1-Zero: V3-Base → 纯 GRPO RL (无 SFT, 无模型奖励, 规则奖励)&lt;/p&gt;
+ &lt;p class="mono" style="color: var(--accent); margin: 0.3rem 0;"&gt;R1: V3-Base → 冷启动 SFT → RL(+语言一致性) → 合成 800K 数据 → SFT → RL(推理规则+非推理模型奖励)&lt;/p&gt;
+ &lt;p style="color: #888; font-size: 0.82rem;"&gt;R1-Zero 证明了纯 RL 可以涌现推理能力，但存在可读性和语言混合问题。R1 通过冷启动 + 语言奖励解决。&lt;/p&gt;
 &lt;/div&gt;
+
 &lt;h2&gt;🔀 R1 蒸馏模型家族&lt;/h2&gt;
+
 &lt;div class="card"&gt;
-&lt;p&gt;用 R1 合成的 800K 数据直接 SFT 到其他开源基座模型上，无需 RL：&lt;/p&gt;
-&lt;div class="tech-row"&gt;
-&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Qwen-32B&lt;/span&gt;
-&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Qwen-7B&lt;/span&gt;
-&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Llama-70B&lt;/span&gt;
-&lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Llama-8B&lt;/span&gt;
+ &lt;p&gt;用 R1 合成的 800K 数据直接 SFT 到其他开源基座模型上，无需 RL：&lt;/p&gt;
+ &lt;div class="tech-row"&gt;
+ &lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Qwen-32B&lt;/span&gt;
+ &lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Qwen-7B&lt;/span&gt;
+ &lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Llama-70B&lt;/span&gt;
+ &lt;span class="tech blue"&gt;DeepSeek-R1-Distill-Llama-8B&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;p style="color: #888; font-size: 0.82rem; margin-top: 0.5rem;"&gt;让任何开源模型都能获得推理能力，无需昂贵的 RL 训练。&lt;/p&gt;
 &lt;/div&gt;
-&lt;p style="color: #888; font-size: 0.82rem; margin-top: 0.5rem;"&gt;让任何开源模型都能获得推理能力，无需昂贵的 RL 训练。&lt;/p&gt;
-&lt;/div&gt;
+
 &lt;h2&gt;🎯 战略定位&lt;/h2&gt;
+
 &lt;div class="grid2"&gt;
-&lt;div class="highlight" style="border-color: var(--green);"&gt;
-&lt;h4&gt;✅ DeepSeek 做什么&lt;/h4&gt;
-&lt;p&gt;• 语言模型 + 推理 + 视觉（DeepSeek-OCR 2）+ 多模态（V4 识图模式）&lt;br&gt;• 极致成本效率（MoE + MLA + FP8）&lt;br&gt;• 全部 MIT 开源&lt;br&gt;• "专注研究，暂无商业化"&lt;br&gt;• 算法 &gt; 算力的技术路线&lt;/p&gt;
+ &lt;div class="highlight" style="border-color: var(--green);"&gt;
+ &lt;h4&gt;✅ DeepSeek 做什么&lt;/h4&gt;
+ &lt;p&gt;• 语言模型 + 推理 + 视觉（DeepSeek-OCR 2）+ 多模态（V4 识图模式）&lt;br&gt;• 极致成本效率（MoE + MLA + FP8）&lt;br&gt;• 全部 MIT 开源&lt;br&gt;• "专注研究，暂无商业化"&lt;br&gt;• 算法 &gt; 算力的技术路线&lt;/p&gt;
+ &lt;/div&gt;
+ &lt;div class="highlight" style="border-color: var(--red);"&gt;
+ &lt;h4&gt;❌ DeepSeek 不做什么&lt;/h4&gt;
+ &lt;p&gt;• 不做世界模型&lt;br&gt;• 不追求快速 IPO&lt;br&gt;• 不跟风视频生成&lt;/p&gt;
+ &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="highlight" style="border-color: var(--red);"&gt;
-&lt;h4&gt;❌ DeepSeek 不做什么&lt;/h4&gt;
-&lt;p&gt;• 不做世界模型&lt;br&gt;• 不追求快速 IPO&lt;br&gt;• 不跟风视频生成&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+
 &lt;h2&gt;📊 行业影响&lt;/h2&gt;
+
 &lt;table&gt;
-&lt;tr&gt;&lt;th&gt;指标&lt;/th&gt;&lt;th&gt;数据&lt;/th&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;V3 训练成本&lt;/td&gt;&lt;td&gt;&lt;strong style="color: var(--green);"&gt;$600 万&lt;/strong&gt;（GPT-4: $1 亿）&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;R1 发布后 Nvidia 单日市值蒸发&lt;/td&gt;&lt;td&gt;&lt;strong style="color: var(--red);"&gt;$6000 亿&lt;/strong&gt;（美股历史最大单股跌幅）&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;R1 发布后超越 ChatGPT&lt;/td&gt;&lt;td&gt;美国 iOS App Store 下载量第一&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;V4-Flash 参数&lt;/td&gt;&lt;td&gt;284B&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;V4-Pro 参数&lt;/td&gt;&lt;td&gt;1.6T&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;V4 上下文窗口&lt;/td&gt;&lt;td&gt;1M tokens&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;最新估值（2026.4 谈判中）&lt;/td&gt;&lt;td&gt;~$100 亿&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;芯片策略&lt;/td&gt;&lt;td&gt;Nvidia 训练 + 华为昇腾推理&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;R2 状态&lt;/td&gt;&lt;td&gt;梁文锋不满意，持续延期中&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;th&gt;指标&lt;/th&gt;&lt;th&gt;数据&lt;/th&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;V3 训练成本&lt;/td&gt;&lt;td&gt;&lt;strong style="color: var(--green);"&gt;$600 万&lt;/strong&gt;（GPT-4: $1 亿）&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;R1 发布后 Nvidia 单日市值蒸发&lt;/td&gt;&lt;td&gt;&lt;strong style="color: var(--red);"&gt;$6000 亿&lt;/strong&gt;（美股历史最大单股跌幅）&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;R1 发布后超越 ChatGPT&lt;/td&gt;&lt;td&gt;美国 iOS App Store 下载量第一&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;V4-Flash 参数&lt;/td&gt;&lt;td&gt;284B&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;V4-Pro 参数&lt;/td&gt;&lt;td&gt;1.6T&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;V4 上下文窗口&lt;/td&gt;&lt;td&gt;1M tokens&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;最新估值（2026.4 谈判中）&lt;/td&gt;&lt;td&gt;~$100 亿&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;芯片策略&lt;/td&gt;&lt;td&gt;Nvidia 训练 + 华为昇腾推理&lt;/td&gt;&lt;/tr&gt;
+ &lt;tr&gt;&lt;td&gt;R2 状态&lt;/td&gt;&lt;td&gt;梁文锋不满意，持续延期中&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
+
 &lt;div class="footer"&gt;
-信息来源：Wikipedia · DeepSeek 技术报告 · Nature · Financial Times · Caixin · 2026 年 5 月 15 日整理
+ 信息来源：Wikipedia · DeepSeek 技术报告 · Nature · Financial Times · Caixin · 2026 年 5 月 15 日整理
 &lt;/div&gt;
+
 &lt;/body&gt;
 &lt;/html&gt;</description></item><item><title>sth：一个给 AI Agent 用的 HTML 预览服务器</title><link>https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth：一个给 AI Agent 用的 HTML 预览服务器" /&gt;&lt;p&gt;我开源了一个小工具：&lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
-&gt;static-html&lt;/a&gt;，命令行叫 &lt;code&gt;sth&lt;/code&gt;。&lt;/p&gt;
+ &gt;static-html&lt;/a&gt;，命令行叫 &lt;code&gt;sth&lt;/code&gt;。&lt;/p&gt;
 &lt;p&gt;它做的事情很简单：提供一个 HTTP 服务，让你把本地生成的 HTML 文件注册上去，然后在浏览器里预览。&lt;/p&gt;
 &lt;h2 id="为什么需要这个东西"&gt;为什么需要这个东西
 &lt;/h2&gt;&lt;p&gt;问题出在 AI Agent 的输出上。&lt;/p&gt;
@@ -1064,8 +1081,8 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;p&gt;就这么简单，没有多余的依赖。&lt;/p&gt;
 &lt;h2 id="开源"&gt;开源
 &lt;/h2&gt;&lt;p&gt;这个工具之前是 private repo，今天刚改成 public：&lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
-&gt;sun-praise/static-html&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;如果你也在用 AI Agent 做日常开发工作，并且遇到过&amp;quot;agent 输出的复杂内容在聊天工具里没法看&amp;quot;的问题，可以试试 &lt;code&gt;sth&lt;/code&gt;。它足够轻量，够用就行。&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;&lt;h2 id="问题描述"&gt;问题描述
+ &gt;sun-praise/static-html&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;如果你也在用 AI Agent 做日常开发工作，并且遇到过&amp;quot;agent 输出的复杂内容在聊天工具里没法看&amp;quot;的问题，可以试试 &lt;code&gt;sth&lt;/code&gt;。它足够轻量，够用就行。&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;&lt;h2 id="问题描述"&gt;问题描述
 &lt;/h2&gt;&lt;p&gt;在 Claude Code 中直接使用 DeepSeek 模型（如 &lt;code&gt;deepseek-v4-flash&lt;/code&gt;）时，开启 extended thinking 后，多轮对话会触发 400 错误：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1087,24 +1104,24 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="协议不兼容"&gt;协议不兼容
 &lt;/h3&gt;&lt;p&gt;根据 &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
-&gt;DeepSeek Anthropic API 兼容文档&lt;/a&gt;，兼容情况如下：&lt;/p&gt;
+ &gt;DeepSeek Anthropic API 兼容文档&lt;/a&gt;，兼容情况如下：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Message 字段&lt;/th&gt;
-&lt;th&gt;支持状态&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;✅ Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;❌ Not Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Message 字段&lt;/th&gt;
+					&lt;th&gt;支持状态&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;✅ Supported&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;❌ Not Supported&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Claude Code 在 extended thinking 模式下的多轮对话中，会忠实地将上一轮返回的所有 thinking blocks（包括 &lt;code&gt;redacted_thinking&lt;/code&gt; 类型）原样回传给 API。DeepSeek 不识别 &lt;code&gt;redacted_thinking&lt;/code&gt;，因此报 400。&lt;/p&gt;
 &lt;p&gt;此外，DeepSeek 的 thinking block 格式与 Anthropic 原生协议存在差异，在 tool_use 场景下的回传逻辑也不完全兼容。&lt;/p&gt;
@@ -1117,63 +1134,63 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;h2 id="社区反馈"&gt;社区反馈
 &lt;/h2&gt;&lt;p&gt;这是一个&lt;strong&gt;广泛存在的社区问题&lt;/strong&gt;，几乎所有 CC 代理/路由项目都遇到了：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;项目&lt;/th&gt;
-&lt;th&gt;标题&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
-&gt;#1&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-use&lt;/td&gt;
-&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
-&gt;#878&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;openclaude&lt;/td&gt;
-&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
-&gt;#1355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;claude-code-router&lt;/td&gt;
-&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
-&gt;#4543&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;new-api&lt;/td&gt;
-&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
-&gt;#355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;9router&lt;/td&gt;
-&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
-&gt;#16748&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;hermes-agent&lt;/td&gt;
-&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
-&gt;#2414&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-switch&lt;/td&gt;
-&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
-&gt;#174&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-haha&lt;/td&gt;
-&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;项目&lt;/th&gt;
+					&lt;th&gt;标题&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+ &gt;#1&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-use&lt;/td&gt;
+					&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+ &gt;#878&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;openclaude&lt;/td&gt;
+					&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+ &gt;#1355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;claude-code-router&lt;/td&gt;
+					&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+ &gt;#4543&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;new-api&lt;/td&gt;
+					&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+ &gt;#355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;9router&lt;/td&gt;
+					&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+ &gt;#16748&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;hermes-agent&lt;/td&gt;
+					&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+ &gt;#2414&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-switch&lt;/td&gt;
+					&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+ &gt;#174&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-haha&lt;/td&gt;
+					&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="deepseek-官方回应"&gt;DeepSeek 官方回应
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;零回应。&lt;/strong&gt; 也没必要回应。&lt;/p&gt;
@@ -1189,7 +1206,7 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;/ol&gt;
 &lt;h2 id="opencode-为什么没有这个问题"&gt;OpenCode 为什么没有这个问题？
 &lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
-&gt;opencode-ai/opencode&lt;/a&gt;) 在架构上天然规避了这个问题，并非专门&amp;quot;修复&amp;quot;。&lt;/p&gt;
+ &gt;opencode-ai/opencode&lt;/a&gt;) 在架构上天然规避了这个问题，并非专门&amp;quot;修复&amp;quot;。&lt;/p&gt;
 &lt;p&gt;关键在 &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; 的 &lt;code&gt;convertMessages&lt;/code&gt; 方法（第 60-119 行）：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;构建 assistant 消息时，只回传 &lt;code&gt;TextContent&lt;/code&gt;（文本）和 &lt;code&gt;ToolCall&lt;/code&gt;（工具调用）&lt;/li&gt;
@@ -1198,30 +1215,30 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;/ul&gt;
 &lt;p&gt;对比 Claude Code 的行为：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;thinking 回传&lt;/td&gt;
-&lt;td&gt;✅ 忠实回传所有 thinking blocks（含 redacted_thinking）&lt;/td&gt;
-&lt;td&gt;❌ 不回传 thinking blocks&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;架构原因&lt;/td&gt;
-&lt;td&gt;遵循 Anthropic API 规范，要求原样回传&lt;/td&gt;
-&lt;td&gt;自行管理对话状态，thinking 仅用于 UI 展示&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;DeepSeek 兼容性&lt;/td&gt;
-&lt;td&gt;❌ 触发 400（redacted_thinking 不被识别）&lt;/td&gt;
-&lt;td&gt;✅ 不受影响（根本不传 thinking）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;thinking 回传&lt;/td&gt;
+					&lt;td&gt;✅ 忠实回传所有 thinking blocks（含 redacted_thinking）&lt;/td&gt;
+					&lt;td&gt;❌ 不回传 thinking blocks&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;架构原因&lt;/td&gt;
+					&lt;td&gt;遵循 Anthropic API 规范，要求原样回传&lt;/td&gt;
+					&lt;td&gt;自行管理对话状态，thinking 仅用于 UI 展示&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DeepSeek 兼容性&lt;/td&gt;
+					&lt;td&gt;❌ 触发 400（redacted_thinking 不被识别）&lt;/td&gt;
+					&lt;td&gt;✅ 不受影响（根本不传 thinking）&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;结论：OpenCode 避开问题的方式是以不遵循 Anthropic extended thinking 规范为代价的。&lt;/strong&gt; 这种做法对 DeepSeek 等第三方兼容端点友好，但如果未来需要 Anthropic 原生的 thinking 上下文保持能力，可能需要重新实现。&lt;/p&gt;
 &lt;h2 id="不回传-thinking-blocks-是否会影响-deepseek-性能"&gt;不回传 thinking blocks 是否会影响 DeepSeek 性能？
@@ -1235,40 +1252,40 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;h2 id="相关的-claude-code-原生-issue"&gt;相关的 Claude Code 原生 issue
 &lt;/h2&gt;&lt;p&gt;CC 自身在 Anthropic 模型上也有类似的 thinking block 回传 bug（非 DeepSeek 特有）：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;标题&lt;/th&gt;
-&lt;th&gt;状态&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
-&gt;#10199&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
-&gt;#51985&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
-&gt;#20692&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
-&gt;#54482&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;</description></item><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;标题&lt;/th&gt;
+					&lt;th&gt;状态&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+ &gt;#10199&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+ &gt;#51985&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+ &gt;#20692&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+ &gt;#54482&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>如何解决 opencode 中 deepseek 模型的 reasoning 问题</title><link>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</link><pubDate>Fri, 24 Apr 2026 12:29:42 +0800</pubDate><guid>https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post 如何解决 opencode 中 deepseek 模型的 reasoning 问题" /&gt;&lt;p&gt;当我们使用 deepseek-reasoner 的时候，往往会遇到这个问题：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -1293,7 +1310,7 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;问题2
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the 
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -1393,32 +1410,16 @@ Anthropic 指控 DeepSeek 使用数千个虚假账号生成数百万条与 &lt;a
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="如何使用"&gt;如何使用
 &lt;/h2&gt;&lt;p&gt;选择 deepseek 模型。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png"
-width="1152"
-height="441"
-srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_90da77582546fc32.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_7b7f08ffd58455a8.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="261"
-data-flex-basis="626px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="626px" data-flex-grow="261" height="441" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_c7ff8778ebe43d8c.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png 1152w" width="1152"&gt;&lt;/p&gt;
 &lt;p&gt;效果。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png"
-width="1361"
-height="510"
-srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_b83fabfded18efdc.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_c24f8389856c64c.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="266"
-data-flex-basis="640px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="640px" data-flex-grow="266" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_f7d35540372ceb17.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png 1361w" width="1361"&gt;&lt;/p&gt;
 &lt;h2 id="补充"&gt;补充
 &lt;/h2&gt;&lt;p&gt;这个方式无法解决问题&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;如果你遇到这个问题，还需要等待 opencode 去修复。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;相关文章&lt;/strong&gt;：&lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block 兼容性问题分析&lt;/a&gt; — 分析了 Claude Code 使用 DeepSeek 时 extended thinking 模式下多轮对话触发 400 错误的根因，以及社区解决方案。&lt;/p&gt;</description></item><item><title>Software Factory：把 PR Review 修复做成一个闭环</title><link>https://svtter.cn/p/software-factory-pr-review-loop/</link><pubDate>Mon, 23 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/software-factory-pr-review-loop/</guid><description>&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/cover.svg" alt="Featured image of post Software Factory：把 PR Review 修复做成一个闭环" /&gt;&lt;p&gt;如果你已经在用 Claude Code、OpenCode、Codex（不提 Aider 了）这类工具写代码，真正耗时间的往往不是“第一次生成”，而是 review 之后那几轮重复劳动：看评论、整理问题、切回分支、修代码、跑测试、再回写 PR。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 就是我为这段流程写的一个轻量系统。它不想变成另一个 GitLab，也不准备一上来就做成重型多租户平台；它只专注一件事：把 GitHub PR review 反馈变成一个可追踪、可自动执行、可本地运行的修复闭环。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 就是我为这段流程写的一个轻量系统。它不想变成另一个 GitLab，也不准备一上来就做成重型多租户平台；它只专注一件事：把 GitHub PR review 反馈变成一个可追踪、可自动执行、可本地运行的修复闭环。&lt;/p&gt;
 &lt;h2 id="为什么要做这个项目"&gt;为什么要做这个项目
 &lt;/h2&gt;&lt;p&gt;现在很多 AI 编码工具已经能把“写代码”这一步提速很多，但团队协作里的瓶颈并没有消失。&lt;/p&gt;
 &lt;p&gt;一个典型场景是这样的：&lt;/p&gt;
@@ -1431,10 +1432,10 @@ data-flex-basis="640px"
 &lt;/ul&gt;
 &lt;p&gt;问题不在于这条链路复杂到无法理解，而在于它太重复了。只要你已经接受“让 AI 参与改代码”，那下一步自然就是把 review 之后的修复过程也纳入自动化。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 的目标，就是把这段重复劳动抽出来，做成一个边界清晰的小系统。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 的目标，就是把这段重复劳动抽出来，做成一个边界清晰的小系统。&lt;/p&gt;
 &lt;h2 id="它到底在做什么"&gt;它到底在做什么
 &lt;/h2&gt;&lt;p&gt;一句话概括：&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 是一个围绕 GitHub PR 审查反馈闭环构建的轻量编排器。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 是一个围绕 GitHub PR 审查反馈闭环构建的轻量编排器。&lt;/p&gt;
 &lt;p&gt;它的核心链路大致是这样：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1464,14 +1465,11 @@ data-flex-basis="640px"
 &lt;li&gt;&lt;code&gt;Agent Worker&lt;/code&gt; 负责 checkout、修复、验证、提交、回写&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;Thin Web&lt;/code&gt; 负责展示最近任务、状态和错误摘要&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-01.svg"
-loading="lazy"
-alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入，再经过 Normalizer、Worker 和 Thin Web，形成可追踪的修复闭环"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入，再经过 Normalizer、Worker 和 Thin Web，形成可追踪的修复闭环" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-01.svg"&gt;&lt;/p&gt;
 &lt;p&gt;我觉得这样实际上实现起来比较敏捷：它不是把所有逻辑塞进一个“大模型万能入口”，而是尽量把触发、归一化、执行、可视化拆开。这样以后你要替换 agent、增加策略或者接入别的触发源，成本会低很多。&lt;/p&gt;
 &lt;h2 id="它到底有多轻"&gt;它到底有多轻
 &lt;/h2&gt;&lt;p&gt;我用最轻量的方式实现了 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt;：&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;后端就是一个 &lt;code&gt;FastAPI&lt;/code&gt; 服务&lt;/li&gt;
 &lt;li&gt;状态存储先用 &lt;code&gt;SQLite&lt;/code&gt;&lt;/li&gt;
@@ -1481,11 +1479,11 @@ alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入
 &lt;/ul&gt;
 &lt;p&gt;换句话说，它更像一个能逐步扩展的 &lt;code&gt;AI-native PR Autofix Orchestrator&lt;/code&gt;，而不是一个覆盖整个研发流程的大平台。&lt;/p&gt;
 &lt;p&gt;如果你看过我之前写的 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" &gt;使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查&lt;/a&gt;，应该能感觉到这条思路是一脉相承的：先把 runner 和模型跑起来，再把 review 之后的动作继续往前推。&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 只是把这条链路从“自动 review”再往前做了一步，开始处理 review 之后的修复闭环。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 只是把这条链路从“自动 review”再往前做了一步，开始处理 review 之后的修复闭环。&lt;/p&gt;
 &lt;h2 id="现在已经做到什么程度"&gt;现在已经做到什么程度
 &lt;/h2&gt;&lt;p&gt;从当前代码和文档来看，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 已经不是一个只有想法的草稿，而是有比较完整主干能力的 MVP，也已经发了 &lt;a class="link" href="https://github.com/sun-praise/software-factory/releases/tag/v0.1.0" target="_blank" rel="noopener"
-&gt;v0.1.0 release&lt;/a&gt;。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 已经不是一个只有想法的草稿，而是有比较完整主干能力的 MVP，也已经发了 &lt;a class="link" href="https://github.com/sun-praise/software-factory/releases/tag/v0.1.0" target="_blank" rel="noopener"
+ &gt;v0.1.0 release&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;目前已经完成的部分包括：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;最小可跑骨架：FastAPI 服务、健康检查、基础 SSR 页面&lt;/li&gt;
@@ -1494,22 +1492,22 @@ alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入
 &lt;li&gt;Agent Worker 执行链路：checkout、跑检查命令、commit、push、回写 PR&lt;/li&gt;
 &lt;li&gt;稳定性模块：PR 锁、重试、最大自动修复次数限制、噪声评论过滤、日志归档&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-02.svg"
-loading="lazy"
-alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补文档、测试和压测"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补文档、测试和压测" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-02.svg"&gt;&lt;/p&gt;
 &lt;p&gt;这意味着它已经覆盖了从“收到反馈”到“尝试修复并回写结果”的主路径。&lt;/p&gt;
 &lt;p&gt;我们也通过让 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 自己优化 &lt;a class="link" href="https://github.com/sun-praise/software-factory/pull/59" target="_blank" rel="noopener"
-&gt;PR #59&lt;/a&gt;，验证了这套流程确实能跑通。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;这件事最有意思的地方在于，&lt;code&gt;#59&lt;/code&gt; 不只是一个普通 PR，它意味着 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 已经开始参与 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 自己的开发了。&lt;/p&gt;&lt;/blockquote&gt;
+ &gt;software-factory&lt;/a&gt; 自己优化 &lt;a class="link" href="https://github.com/sun-praise/software-factory/pull/59" target="_blank" rel="noopener"
+ &gt;PR #59&lt;/a&gt;，验证了这套流程确实能跑通。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这件事最有意思的地方在于，&lt;code&gt;#59&lt;/code&gt; 不只是一个普通 PR，它意味着 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt; 已经开始参与 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt; 自己的开发了。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;另外我觉得比较实用的一点，是这个项目并没有把 Web 界面做成纯展示页。除了任务列表和详情，它还在往更可操作的方向走，比如运行详情、operator hints、手动 issue 提交、agent 设置这些入口，说明它的目标不是只做一条后台脚本，而是做一个真正可运维的小系统。&lt;/p&gt;
 &lt;h2 id="这个项目最有意思的地方"&gt;这个项目最有意思的地方
 &lt;/h2&gt;&lt;p&gt;如果只是做一个“收到评论后调用 AI 修代码”的 demo，其实并不难。&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 更有意思的地方，在于它开始认真处理真实系统才会遇到的问题。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 更有意思的地方，在于它开始认真处理真实系统才会遇到的问题。&lt;/p&gt;
 &lt;h3 id="1-它把触发分成了内部和外部两类"&gt;1. 它把“触发”分成了内部和外部两类
 &lt;/h3&gt;&lt;p&gt;内部触发来自 Claude Code Hook，用来确定性记录开发会话；外部触发来自 GitHub Webhook，用来感知 PR review 的变化。这种拆分让系统知道“什么时候发生了开发动作”，也知道“什么时候出现了新的修复需求”。&lt;/p&gt;
 &lt;h3 id="2-它没有直接把-review-原文丢给-agent"&gt;2. 它没有直接把 review 原文丢给 agent
@@ -1520,7 +1518,7 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;/h3&gt;&lt;p&gt;这个项目默认就强调本地运行、共享 &lt;code&gt;DB_PATH&lt;/code&gt;、轻量状态存储和可视化页面。这种 local-first 设计对个人开发者和小团队很友好：你可以先在自己的环境里把闭环跑通，再考虑是否要把它推向更大的部署形态。&lt;/p&gt;
 &lt;h2 id="它适合什么人"&gt;它适合什么人
 &lt;/h2&gt;&lt;p&gt;我觉得 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 现在最适合下面几类场景：&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 现在最适合下面几类场景：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;已经在 GitHub 上做 code review，希望减少 review 后重复修复劳动的个人开发者&lt;/li&gt;
 &lt;li&gt;小团队或内部工具团队，想先把 PR 自动修复闭环跑起来，而不是先上完整平台&lt;/li&gt;
@@ -1529,7 +1527,7 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;p&gt;如果你的目标是做一个覆盖 CI/CD、权限、审批、租户隔离、复杂报表的企业平台，那它目前显然还不是那个方向。但如果你要解决的问题足够具体：把 review feedback 自动变成下一轮修复动作，那这个项目的切口其实很准。&lt;/p&gt;
 &lt;h2 id="接下来还可以往哪里走"&gt;接下来还可以往哪里走
 &lt;/h2&gt;&lt;p&gt;从文档里的规划看，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 下一步最值得期待的，不是继续堆页面，而是补齐几个真正影响可用性的能力：&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 下一步最值得期待的，不是继续堆页面，而是补齐几个真正影响可用性的能力：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;更完整的 E2E 和压力测试&lt;/li&gt;
 &lt;li&gt;多仓库支持和更细的策略控制&lt;/li&gt;
@@ -1539,9 +1537,9 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;p&gt;尤其是“按仓库构建可复用运行时镜像”这个方向，我觉得很有价值。很多 agent 系统失败并不是因为模型不会修，而是因为运行环境不稳定、依赖不完整、工作目录和真实项目不一致。要让自动修复从 demo 走向日常可用，这一步迟早得做。&lt;/p&gt;
 &lt;h2 id="写在最后"&gt;写在最后
 &lt;/h2&gt;&lt;p&gt;对我来说，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 最重要的不是它用了 FastAPI、SQLite 还是某个具体 agent，而是它试图把一个很真实、很重复、也很容易被忽视的研发环节单独拿出来优化：PR review 之后的修复闭环。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 最重要的不是它用了 FastAPI、SQLite 还是某个具体 agent，而是它试图把一个很真实、很重复、也很容易被忽视的研发环节单独拿出来优化：PR review 之后的修复闭环。&lt;/p&gt;
 &lt;p&gt;如果说很多 AI 编码工具解决的是“怎么更快写出第一版代码”，那 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 解决的问题更接近“怎么把代码真正推进到可以合并的状态”。而这一步，恰恰是团队协作里最容易反复消耗人的地方。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 解决的问题更接近“怎么把代码真正推进到可以合并的状态”。而这一步，恰恰是团队协作里最容易反复消耗人的地方。&lt;/p&gt;
 &lt;p&gt;所以我会把它看成一个很典型的项目：它不是为了证明 AI 会不会写代码，而是想验证 AI 能不能在真实工程流程里，稳定地处理 review 反馈，并把后续修复一步步推进下去。&lt;/p&gt;</description></item><item><title>大模型 Coding Plan 年付，到底值不值？</title><link>https://svtter.cn/p/coding-plan-yearly-worth-it/</link><pubDate>Sun, 22 Mar 2026 16:30:00 +0800</pubDate><guid>https://svtter.cn/p/coding-plan-yearly-worth-it/</guid><description>&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/cover-alt.jpg" alt="Featured image of post 大模型 Coding Plan 年付，到底值不值？" /&gt;&lt;p&gt;前段时间我写过一篇文章：&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;那篇文章讨论的是一个偏“供给侧”的问题：厂商宣传的海量额度，在并发、吞吐和 agent 调用膨胀的现实里，到底能不能兑现。&lt;/p&gt;
 &lt;p&gt;但这还不是全部。&lt;/p&gt;
@@ -1598,30 +1596,30 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;/div&gt;&lt;p&gt;也就是说，&lt;strong&gt;哪怕全部按输入 token 计费&lt;/strong&gt;，一个月也已经是 &lt;code&gt;600 多美元&lt;/code&gt;。&lt;/p&gt;
 &lt;p&gt;而如果考虑更接近真实编码场景的输入输出比例，账单会更高。&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style="text-align: left"&gt;输入 / 输出占比&lt;/th&gt;
-&lt;th style="text-align: left"&gt;估算单价（每 1M）&lt;/th&gt;
-&lt;th style="text-align: left"&gt;月成本（USD）&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style="text-align: left"&gt;80% / 20%&lt;/td&gt;
-&lt;td style="text-align: left"&gt;&lt;code&gt;$1.44&lt;/code&gt;&lt;/td&gt;
-&lt;td style="text-align: left"&gt;&lt;code&gt;$953&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="text-align: left"&gt;70% / 30%&lt;/td&gt;
-&lt;td style="text-align: left"&gt;&lt;code&gt;$1.66&lt;/code&gt;&lt;/td&gt;
-&lt;td style="text-align: left"&gt;&lt;code&gt;$1,099&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="text-align: left"&gt;50% / 50%&lt;/td&gt;
-&lt;td style="text-align: left"&gt;&lt;code&gt;$2.10&lt;/code&gt;&lt;/td&gt;
-&lt;td style="text-align: left"&gt;&lt;code&gt;$1,390&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;输入 / 输出占比&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;估算单价（每 1M）&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;月成本（USD）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;80% / 20%&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1.44&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$953&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;70% / 30%&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1.66&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1,099&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;50% / 50%&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$2.10&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1,390&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;如果粗略按 &lt;code&gt;1 USD ≈ 6.9 RMB&lt;/code&gt; 来看，大概就是：&lt;/p&gt;
 &lt;ul&gt;
@@ -1638,19 +1636,13 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;所以从纯价格上看，结论非常直接：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;对我这种每月稳定消耗数亿 tokens 的重度样本来说，&lt;code&gt;GLM-5 Max&lt;/code&gt; 不是“省一点”，而是“省很多”。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;对我这种每月稳定消耗数亿 tokens 的重度样本来说，&lt;code&gt;GLM-5 Max&lt;/code&gt; 不是“省一点”，而是“省很多”。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;但这句话还有一个隐含前提：&lt;strong&gt;这些工作负载必须大部分能落进套餐支持的工具链和额度规则里。&lt;/strong&gt; 如果你的大量 token 消耗其实发生在通用 API、非支持工具，或者持续撞到 5 小时/周限额，那这笔账就要重算。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01.jpg"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01_hu_fdb0b905d1ed06f9.jpg 480w, https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01_hu_4449519bbe244f45.jpg 1024w"
-loading="lazy"
-alt="GLM-5 Max 年费订阅与按量 API 账单之间的成本反差示意图"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="GLM-5 Max 年费订阅与按量 API 账单之间的成本反差示意图" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01.jpg" srcset="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01_hu_fd14bf737940fb1c.jpg 800w, https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-01.jpg 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h2 id="但这里有一个前提省钱不等于一定够用"&gt;但这里有一个前提：省钱，不等于一定够用
 &lt;/h2&gt;&lt;p&gt;这正是上一篇文章想表达的重点。&lt;/p&gt;
 &lt;p&gt;这类高配年付套餐之所以可能非常省钱，不代表它就没有边界。官方文档里依然写了不少限制：&lt;/p&gt;
@@ -1667,16 +1659,7 @@ data-flex-basis="430px"
 &lt;li&gt;从“体验”角度看，你还是可能撞到周限额、窗口限额和并发限制。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;这不是数学矛盾，而是两个不同的问题。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02.jpg"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02_hu_18dffd924e5a0e8b.jpg 480w, https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02_hu_5a1a4dc6bb1ba884.jpg 1024w"
-loading="lazy"
-alt="便宜订阅卡通过狭窄闸机、背后堆满 token 的示意图"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="便宜订阅卡通过狭窄闸机、背后堆满 token 的示意图" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02.jpg" srcset="https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02_hu_c4dd7fd420aeaa66.jpg 800w, https://svtter.cn/p/coding-plan-yearly-worth-it/pics/inline-02.jpg 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h2 id="什么人适合买这类高配年付套餐"&gt;什么人适合买这类高配年付套餐
 &lt;/h2&gt;&lt;p&gt;我觉得比较适合买这类高配年付 Coding Plan 的，是下面这类用户：&lt;/p&gt;
 &lt;ul&gt;
@@ -1699,8 +1682,11 @@ data-flex-basis="430px"
 &lt;h2 id="所以上一篇文章是不是错了"&gt;所以，上一篇文章是不是错了？
 &lt;/h2&gt;&lt;p&gt;不是。&lt;/p&gt;
 &lt;p&gt;上一篇文章的核心观点依然成立：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;厂商宣传的“海量额度”，并不等于你在现实工作流里可以无摩擦、无上限地把它全部跑出来。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;厂商宣传的“海量额度”，并不等于你在现实工作流里可以无摩擦、无上限地把它全部跑出来。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;但这不妨碍这类套餐对重度用户依然有价值。&lt;/p&gt;
 &lt;p&gt;换句话说：&lt;/p&gt;
 &lt;ul&gt;
@@ -1717,17 +1703,20 @@ data-flex-basis="430px"
 &lt;li&gt;你有没有必要全程都用 &lt;code&gt;GLM-5&lt;/code&gt;，还是可以让更便宜的模型承担大部分日常任务。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;所以我最后的判断很简单：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;对轻度用户，这类高配年付套餐更像预付费焦虑。&lt;/p&gt;
-&lt;p&gt;对重度用户，它更像一张非常便宜、但带限流的通行证。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;对轻度用户，这类高配年付套餐更像预付费焦虑。&lt;/p&gt;
+&lt;p&gt;对重度用户，它更像一张非常便宜、但带限流的通行证。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;最后补一个现实问题。&lt;/p&gt;
 &lt;p&gt;就算这笔账算下来很值，我们最后也未必买得到那个限购的 Coding Plan。&lt;/p&gt;
 &lt;h2 id="参考"&gt;参考
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.z.ai/guides/overview/pricing" target="_blank" rel="noopener"
-&gt;Z.AI Pricing&lt;/a&gt;&lt;/li&gt;
+ &gt;Z.AI Pricing&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.z.ai/devpack/faq" target="_blank" rel="noopener"
-&gt;Z.AI GLM Coding Plan FAQ&lt;/a&gt;&lt;/li&gt;
+ &gt;Z.AI GLM Coding Plan FAQ&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="相关文章"&gt;相关文章
 &lt;/h2&gt;&lt;ul&gt;
@@ -1737,9 +1726,12 @@ data-flex-basis="430px"
 &lt;p&gt;我的判断是：&lt;strong&gt;不能。&lt;/strong&gt; 自己部署模型，并不等于无限自由，它只是把很多原本由平台承担的限制和成本，转移到了你自己身上。&lt;/p&gt;
 &lt;p&gt;但这个问题还有后半句，而且更重要：如果使用量足够大，自建到底会不会更划算？&lt;/p&gt;
 &lt;p&gt;答案是：&lt;strong&gt;有可能，但前提比很多人想的要苛刻。&lt;/strong&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;简单说：自己部署大模型，不等于无限自由。&lt;/p&gt;
-&lt;p&gt;它只是把原本由平台承担的一部分成本和责任，转移到了你自己身上。只有在长期高负载、硬件利用率高、并且你能接受模型能力差异或有能力自己优化时，自建才可能真正划算。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;简单说：自己部署大模型，不等于无限自由。&lt;/p&gt;
+&lt;p&gt;它只是把原本由平台承担的一部分成本和责任，转移到了你自己身上。只有在长期高负载、硬件利用率高、并且你能接受模型能力差异或有能力自己优化时，自建才可能真正划算。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;h2 id="本地部署不等于无限制"&gt;本地部署，不等于无限制
 &lt;/h2&gt;&lt;p&gt;先把最容易出现的误解说清楚。&lt;/p&gt;
 &lt;p&gt;很多人把“模型跑在自己机器上”理解成“以后想怎么用就怎么用”，但限制并不会消失，它们只是换了一种形式出现。&lt;/p&gt;
@@ -1789,53 +1781,44 @@ data-flex-basis="430px"
 &lt;/ul&gt;
 &lt;p&gt;在这个假设下，大致会得到下面这样的量级判断：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style="text-align: left"&gt;使用场景&lt;/th&gt;
-&lt;th style="text-align: left"&gt;日均 token 消耗&lt;/th&gt;
-&lt;th style="text-align: left"&gt;可能的本地方案&lt;/th&gt;
-&lt;th style="text-align: left"&gt;自建年成本&lt;/th&gt;
-&lt;th style="text-align: left"&gt;API 年成本&lt;/th&gt;
-&lt;th style="text-align: left"&gt;粗略结论&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style="text-align: left"&gt;轻度使用&lt;/td&gt;
-&lt;td style="text-align: left"&gt;50 万&lt;/td&gt;
-&lt;td style="text-align: left"&gt;单卡高端消费级工作站&lt;/td&gt;
-&lt;td style="text-align: left"&gt;2 万 - 4 万元&lt;/td&gt;
-&lt;td style="text-align: left"&gt;约 0.9 万元&lt;/td&gt;
-&lt;td style="text-align: left"&gt;API 更省钱&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="text-align: left"&gt;中度使用&lt;/td&gt;
-&lt;td style="text-align: left"&gt;500 万&lt;/td&gt;
-&lt;td style="text-align: left"&gt;双卡或小型推理工作站&lt;/td&gt;
-&lt;td style="text-align: left"&gt;6 万 - 12 万元&lt;/td&gt;
-&lt;td style="text-align: left"&gt;约 9 万元&lt;/td&gt;
-&lt;td style="text-align: left"&gt;接近平衡点&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style="text-align: left"&gt;重度使用&lt;/td&gt;
-&lt;td style="text-align: left"&gt;5000 万&lt;/td&gt;
-&lt;td style="text-align: left"&gt;多卡服务器或集群&lt;/td&gt;
-&lt;td style="text-align: left"&gt;40 万 - 80 万元&lt;/td&gt;
-&lt;td style="text-align: left"&gt;约 91 万元&lt;/td&gt;
-&lt;td style="text-align: left"&gt;自建可能更划算&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;使用场景&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;日均 token 消耗&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;可能的本地方案&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;自建年成本&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;API 年成本&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;粗略结论&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;轻度使用&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;50 万&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;单卡高端消费级工作站&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;2 万 - 4 万元&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;约 0.9 万元&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;API 更省钱&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;中度使用&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;500 万&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;双卡或小型推理工作站&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;6 万 - 12 万元&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;约 9 万元&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;接近平衡点&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;重度使用&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;5000 万&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;多卡服务器或集群&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;40 万 - 80 万元&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;约 91 万元&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;自建可能更划算&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg"
-width="4800"
-height="3584"
-srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_e538165957f7c9a8.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_c17af6e4e0b01ddc.jpg 1024w"
-loading="lazy"
-alt="从轻度到重度使用场景中，API 成本与本地硬件投入逐渐发生变化的示意图"
-class="gallery-image"
-data-flex-grow="133"
-data-flex-basis="321px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="从轻度到重度使用场景中，API 成本与本地硬件投入逐渐发生变化的示意图" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" height="3584" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg" srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_1e76f86f86236802.jpg 800w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_ddbf892da5b45dea.jpg 1600w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_ea605a4b361fedd2.jpg 2400w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg 4800w" width="4800"&gt;&lt;/p&gt;
 &lt;p&gt;如果你希望本地效果尽量逼近顶级闭源模型，那么这张表往往还会继续上修，因为更强的模型、更大的显存、更高的可用性目标，都会把硬件和运维成本继续往上推。&lt;/p&gt;
 &lt;p&gt;这张表大概能说明三件事：&lt;/p&gt;
 &lt;ol&gt;
@@ -1854,16 +1837,7 @@ data-flex-basis="321px"
 &lt;/ol&gt;
 &lt;p&gt;换句话说，&lt;strong&gt;很多人以为自己在算部署成本，其实先做的是能力降级。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;这件事本身没有问题，但要承认它。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg"
-width="4800"
-height="3584"
-srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_3afbc14068dd055d.jpg 480w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_7f9cead440467875.jpg 1024w"
-loading="lazy"
-alt="闭源云模型与本地开源模型在能力、成本和运维负担上并不完全等价的示意图"
-class="gallery-image"
-data-flex-grow="133"
-data-flex-basis="321px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="闭源云模型与本地开源模型在能力、成本和运维负担上并不完全等价的示意图" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" height="3584" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg" srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_ab315000c6186654.jpg 800w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_822abea868b8c446.jpg 1600w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_a7fc6f60a607179b.jpg 2400w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg 4800w" width="4800"&gt;&lt;/p&gt;
 &lt;h2 id="除了省钱自建还有哪些真正的收益"&gt;除了省钱，自建还有哪些真正的收益
 &lt;/h2&gt;&lt;p&gt;如果一家公司最后还是决定自建，通常不只是为了省 API 钱。&lt;/p&gt;
 &lt;ul&gt;
@@ -1922,30 +1896,30 @@ data-flex-basis="321px"
 &lt;p&gt;但 NanoClaw 最革命性的设计是&lt;strong&gt;操作系统级隔离&lt;/strong&gt;：每个智能体都在独立的 Linux 容器中运行 - 在 macOS 上采用 Apple Containers，在 Linux 上使用 Docker。容器内只有智能体循环和 Anthropic 智能体 SDK，文件系统访问受挂载白名单限制，敏感路径（如 &lt;code&gt;.ssh&lt;/code&gt;、&lt;code&gt;.aws&lt;/code&gt;）被自动屏蔽。&lt;/p&gt;
 &lt;p&gt;这种架构的防护效果立竿见影：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;攻击场景&lt;/th&gt;
-&lt;th&gt;OpenClaw&lt;/th&gt;
-&lt;th&gt;NanoClaw&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;提示词注入&lt;/td&gt;
-&lt;td&gt;突破后可访问宿主机&lt;/td&gt;
-&lt;td&gt;破坏范围限制在容器内&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;恶意插件&lt;/td&gt;
-&lt;td&gt;可能窃取宿主机数据&lt;/td&gt;
-&lt;td&gt;无法访问未挂载的目录&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;权限滥用&lt;/td&gt;
-&lt;td&gt;需应用层权限声明&lt;/td&gt;
-&lt;td&gt;默认无权限，需显式挂载&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;攻击场景&lt;/th&gt;
+					&lt;th&gt;OpenClaw&lt;/th&gt;
+					&lt;th&gt;NanoClaw&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;提示词注入&lt;/td&gt;
+					&lt;td&gt;突破后可访问宿主机&lt;/td&gt;
+					&lt;td&gt;破坏范围限制在容器内&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;恶意插件&lt;/td&gt;
+					&lt;td&gt;可能窃取宿主机数据&lt;/td&gt;
+					&lt;td&gt;无法访问未挂载的目录&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;权限滥用&lt;/td&gt;
+					&lt;td&gt;需应用层权限声明&lt;/td&gt;
+					&lt;td&gt;默认无权限，需显式挂载&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;这正是 Karpathy 推荐 NanoClaw 的原因：“其核心引擎约 4000 行代码（我和 AI 智能体都能理解，感觉可管理、可审计、灵活等），默认在容器中运行一切。”&lt;/p&gt;
 &lt;h2 id="四深入对比两条路径的哲学差异"&gt;四、深入对比：两条路径的哲学差异
@@ -2000,7 +1974,9 @@ data-flex-basis="321px"
 &lt;/ul&gt;
 &lt;h3 id="q4nanoclaw-是用-python-实现的吗"&gt;Q4：NanoClaw 是用 Python 实现的吗？
 &lt;/h3&gt;&lt;p&gt;A4：不是，NanoClaw 核心是用 TypeScript/Node.js 编写的。你可能联想到的是 OpenClaw 生态中的一个 Python 轻量级框架 &lt;strong&gt;Nanobot&lt;/strong&gt;（约 4000 行 Python），它提供了类似的自动化能力，但没有 NanoClaw 的容器级隔离。两者是不同的项目。&lt;/p&gt;</description></item><item><title>使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/cover.png" alt="Featured image of post 使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查" /&gt;&lt;blockquote&gt;
-&lt;p&gt;大模型会磨洋工，需要另一个 agent 或 AI 来监督。&lt;/p&gt;&lt;/blockquote&gt;
+ &lt;p&gt;大模型会磨洋工，需要另一个 agent 或 AI 来监督。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;最近在项目中集成了 OpenCode 的 AI 代码审查功能，使用智谱 AI 的 GLM-5 模型自动 review PR 代码。本文记录完整的集成过程和踩过的坑。&lt;/p&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;项目需要一个自动化的代码审查机制：&lt;/p&gt;
@@ -2012,7 +1988,7 @@ data-flex-basis="321px"
 &lt;h2 id="技术选型"&gt;技术选型
 &lt;/h2&gt;&lt;h3 id="opencode"&gt;OpenCode
 &lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://opencode.ai" target="_blank" rel="noopener"
-&gt;OpenCode&lt;/a&gt; 是一个开源的 AI coding agent，支持：&lt;/p&gt;
+ &gt;OpenCode&lt;/a&gt; 是一个开源的 AI coding agent，支持：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;多种 LLM 提供商（OpenAI、Anthropic、智谱等）&lt;/li&gt;
 &lt;li&gt;GitHub/GitLab 集成&lt;/li&gt;
@@ -2020,7 +1996,7 @@ data-flex-basis="321px"
 &lt;/ul&gt;
 &lt;h3 id="glm-5-coding-plan"&gt;GLM-5 Coding Plan
 &lt;/h3&gt;&lt;p&gt;选择智谱 AI 的 &lt;a class="link" href="https://docs.z.ai/guides/llm/glm-5" target="_blank" rel="noopener"
-&gt;GLM Coding Plan&lt;/a&gt; 原因：&lt;/p&gt;
+ &gt;GLM Coding Plan&lt;/a&gt; 原因：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;专为 AI 编程优化，支持 OpenCode&lt;/li&gt;
 &lt;li&gt;价格实惠（$3/月起）&lt;/li&gt;
@@ -2055,22 +2031,22 @@ data-flex-basis="321px"
 &lt;/h2&gt;&lt;h3 id="1-确定模型格式"&gt;1. 确定模型格式
 &lt;/h3&gt;&lt;p&gt;OpenCode 的模型格式为 &lt;code&gt;provider_id/model_id&lt;/code&gt;。对于智谱 GLM-5：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;配置项&lt;/th&gt;
-&lt;th&gt;值&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;环境变量&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Model 格式&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;zhipuai-coding-plan/glm-5&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;配置项&lt;/th&gt;
+					&lt;th&gt;值&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;环境变量&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model 格式&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipuai-coding-plan/glm-5&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="2-创建-workflow-文件"&gt;2. 创建 Workflow 文件
 &lt;/h3&gt;&lt;p&gt;创建 &lt;code&gt;.github/workflows/opencode-review.yml&lt;/code&gt;：&lt;/p&gt;
@@ -2124,11 +2100,11 @@ data-flex-basis="321px"
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;OpenCode PR Review&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;types&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;opened, synchronize, reopened, ready_for_review]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;AI Code Review&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 仅在 PR 准备就绪时运行（跳过 draft PR）&lt;/span&gt;&lt;span class="w"&gt;
@@ -2156,7 +2132,7 @@ data-flex-basis="321px"
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;use_github_token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Review this pull request (read-only mode, DO NOT modify any code):
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Please check:
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Code quality issues
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Potential bugs or logic errors
@@ -2164,7 +2140,7 @@ data-flex-basis="321px"
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Security concerns
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Performance issues
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Suggest improvements
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Please respond in Chinese. DO NOT modify any code, only provide review comments.&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -2172,7 +2148,7 @@ data-flex-basis="321px"
 &lt;/h3&gt;&lt;p&gt;在仓库 Settings → Secrets and variables → Actions 中添加：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;: 从 &lt;a class="link" href="https://z.ai/manage-apikey/apikey-list" target="_blank" rel="noopener"
-&gt;Z.AI Console&lt;/a&gt; 获取&lt;/li&gt;
+ &gt;Z.AI Console&lt;/a&gt; 获取&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="踩坑记录"&gt;踩坑记录
 &lt;/h2&gt;&lt;h3 id="坑-1-权限不足-403-forbidden"&gt;坑 1: 权限不足 (403 Forbidden)
@@ -2301,13 +2277,13 @@ data-flex-basis="321px"
 &lt;h2 id="参考链接"&gt;参考链接
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/" target="_blank" rel="noopener"
-&gt;OpenCode 官方文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode 官方文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/github/" target="_blank" rel="noopener"
-&gt;OpenCode GitHub 集成&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode GitHub 集成&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.z.ai/guides/llm/glm-5" target="_blank" rel="noopener"
-&gt;GLM-5 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;GLM-5 文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.z.ai/coding-plan/overview" target="_blank" rel="noopener"
-&gt;GLM Coding Plan&lt;/a&gt;&lt;/li&gt;
+ &gt;GLM Coding Plan&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="相关文章"&gt;相关文章
 &lt;/h2&gt;&lt;ul&gt;
@@ -2317,7 +2293,7 @@ data-flex-basis="321px"
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/git-mcp-tools.md/" &gt;Git MCP Tools&lt;/a&gt; - 让大模型操作 Git 的 MCP 服务&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>ComfyUI Start.md</title><link>https://svtter.cn/p/comfyui-start.md/</link><pubDate>Mon, 10 Mar 2025 16:54:57 +0800</pubDate><guid>https://svtter.cn/p/comfyui-start.md/</guid><description>&lt;img src="https://svtter.cn/p/comfyui-start.md/pics/image.png" alt="Featured image of post ComfyUI Start.md" /&gt;&lt;p&gt;ComfyUI 是一个使用生成模型进行图像处理的工作流工具，可以很好的处理图像和生成图像。
 为了能够流畅运行，我将其部署到服务器上。直接根据&lt;a class="link" href="https://docs.comfy.org/zh-CN/installation/manual_install#nvidia" target="_blank" rel="noopener"
-&gt;官方链接&lt;/a&gt;去跑，非常流畅。&lt;/p&gt;
+ &gt;官方链接&lt;/a&gt;去跑，非常流畅。&lt;/p&gt;
 &lt;h2 id="问题和解答"&gt;问题和解答
 &lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;ComfyUI 一般是桌面版本，服务器上也能使用吗？&lt;/li&gt;

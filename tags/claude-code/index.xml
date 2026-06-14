@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 10 Jun 2026 00:56:34 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Agent 时代的 Meta Programming</title><link>https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/</link><pubDate>Wed, 10 Jun 2026 00:56:34 +0800</pubDate><guid>https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/</guid><description>&lt;img src="https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/pics/cover_1781024729.png" alt="Featured image of post AI Agent 时代的 Meta Programming" /&gt;&lt;blockquote&gt;
-&lt;p&gt;AI 时代的 Meta Programming 是 workflow。&lt;/p&gt;&lt;/blockquote&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 10 Jun 2026 00:56:34 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>AI Agent 时代的 Meta Programming</title><link>https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/</link><pubDate>Wed, 10 Jun 2026 01:05:46 +0800</pubDate><guid>https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/</guid><description>&lt;img src="https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/pics/cover_1781024729.png" alt="Featured image of post AI Agent 时代的 Meta Programming" /&gt;&lt;blockquote&gt;
+ &lt;p&gt;AI 时代的 Meta Programming 是 workflow。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;最近很多人在说自己使用 loop 进行编程，但是没有具体说怎么做。&lt;/p&gt;
 &lt;p&gt;本文是我的理解和实践。&lt;/p&gt;
 &lt;h2 id="什么是-meta-programming"&gt;什么是 meta programming
@@ -17,7 +19,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define BAD(x) x*x &lt;/span&gt;&lt;span class="c1"&gt;// BAD(2+3) → 2+3*2+3 = 11
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="cp"&gt;#define GOOD(x) ((x)*(x)) &lt;/span&gt;&lt;span class="c1"&gt;// GOOD(2+3) → ((2+3)*(2+3)) = 25
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define GOOD(x) ((x)*(x)) &lt;/span&gt;&lt;span class="c1"&gt;// GOOD(2+3) → ((2+3)*(2+3)) = 25
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;此时 MetaG 就是 C++ 预处理器。&lt;/p&gt;
@@ -82,12 +84,12 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-golang" data-lang="golang"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 泛型函数：返回两个相同类型值的较小者（要求类型支持 &amp;lt; 运算符）&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;MetaG 接收泛型定义，根据类型参数生成具体的函数实例。&lt;/p&gt;
@@ -100,8 +102,8 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-golang" data-lang="golang"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 省略实现细节&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="总结"&gt;总结
@@ -154,7 +156,7 @@
 &lt;h3 id="omp---oh-my-pi"&gt;OMP - oh my pi
 &lt;/h3&gt;&lt;p&gt;workflow 这个功能在 OMP 上体验更好。&lt;/p&gt;
 &lt;p&gt;可以通过对话将 Python workflow 落盘，下一次直接 eval 使用。在 Claude Code 中，workflow 用 JS 表示。&lt;/p&gt;
-&lt;p&gt;如果 py 文件里本身有 loop，那么下次 coding 的过程就是 eval loop 的过程。workflow 本身也可有输入输出。&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;&lt;h2 id="问题描述"&gt;问题描述
+&lt;p&gt;如果 py 文件里本身有 loop，那么下次 coding 的过程就是 eval loop 的过程。workflow 本身也可有输入输出。&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;&lt;h2 id="问题描述"&gt;问题描述
 &lt;/h2&gt;&lt;p&gt;在 Claude Code 中直接使用 DeepSeek 模型（如 &lt;code&gt;deepseek-v4-flash&lt;/code&gt;）时，开启 extended thinking 后，多轮对话会触发 400 错误：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -176,24 +178,24 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="协议不兼容"&gt;协议不兼容
 &lt;/h3&gt;&lt;p&gt;根据 &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
-&gt;DeepSeek Anthropic API 兼容文档&lt;/a&gt;，兼容情况如下：&lt;/p&gt;
+ &gt;DeepSeek Anthropic API 兼容文档&lt;/a&gt;，兼容情况如下：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Message 字段&lt;/th&gt;
-&lt;th&gt;支持状态&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;✅ Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;❌ Not Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Message 字段&lt;/th&gt;
+					&lt;th&gt;支持状态&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;✅ Supported&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;❌ Not Supported&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Claude Code 在 extended thinking 模式下的多轮对话中，会忠实地将上一轮返回的所有 thinking blocks（包括 &lt;code&gt;redacted_thinking&lt;/code&gt; 类型）原样回传给 API。DeepSeek 不识别 &lt;code&gt;redacted_thinking&lt;/code&gt;，因此报 400。&lt;/p&gt;
 &lt;p&gt;此外，DeepSeek 的 thinking block 格式与 Anthropic 原生协议存在差异，在 tool_use 场景下的回传逻辑也不完全兼容。&lt;/p&gt;
@@ -206,63 +208,63 @@
 &lt;h2 id="社区反馈"&gt;社区反馈
 &lt;/h2&gt;&lt;p&gt;这是一个&lt;strong&gt;广泛存在的社区问题&lt;/strong&gt;，几乎所有 CC 代理/路由项目都遇到了：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;项目&lt;/th&gt;
-&lt;th&gt;标题&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
-&gt;#1&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-use&lt;/td&gt;
-&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
-&gt;#878&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;openclaude&lt;/td&gt;
-&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
-&gt;#1355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;claude-code-router&lt;/td&gt;
-&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
-&gt;#4543&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;new-api&lt;/td&gt;
-&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
-&gt;#355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;9router&lt;/td&gt;
-&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
-&gt;#16748&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;hermes-agent&lt;/td&gt;
-&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
-&gt;#2414&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-switch&lt;/td&gt;
-&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
-&gt;#174&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-haha&lt;/td&gt;
-&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;项目&lt;/th&gt;
+					&lt;th&gt;标题&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+ &gt;#1&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-use&lt;/td&gt;
+					&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+ &gt;#878&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;openclaude&lt;/td&gt;
+					&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+ &gt;#1355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;claude-code-router&lt;/td&gt;
+					&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+ &gt;#4543&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;new-api&lt;/td&gt;
+					&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+ &gt;#355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;9router&lt;/td&gt;
+					&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+ &gt;#16748&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;hermes-agent&lt;/td&gt;
+					&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+ &gt;#2414&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-switch&lt;/td&gt;
+					&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+ &gt;#174&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-haha&lt;/td&gt;
+					&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="deepseek-官方回应"&gt;DeepSeek 官方回应
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;零回应。&lt;/strong&gt; 也没必要回应。&lt;/p&gt;
@@ -278,7 +280,7 @@
 &lt;/ol&gt;
 &lt;h2 id="opencode-为什么没有这个问题"&gt;OpenCode 为什么没有这个问题？
 &lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
-&gt;opencode-ai/opencode&lt;/a&gt;) 在架构上天然规避了这个问题，并非专门&amp;quot;修复&amp;quot;。&lt;/p&gt;
+ &gt;opencode-ai/opencode&lt;/a&gt;) 在架构上天然规避了这个问题，并非专门&amp;quot;修复&amp;quot;。&lt;/p&gt;
 &lt;p&gt;关键在 &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; 的 &lt;code&gt;convertMessages&lt;/code&gt; 方法（第 60-119 行）：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;构建 assistant 消息时，只回传 &lt;code&gt;TextContent&lt;/code&gt;（文本）和 &lt;code&gt;ToolCall&lt;/code&gt;（工具调用）&lt;/li&gt;
@@ -287,30 +289,30 @@
 &lt;/ul&gt;
 &lt;p&gt;对比 Claude Code 的行为：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;thinking 回传&lt;/td&gt;
-&lt;td&gt;✅ 忠实回传所有 thinking blocks（含 redacted_thinking）&lt;/td&gt;
-&lt;td&gt;❌ 不回传 thinking blocks&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;架构原因&lt;/td&gt;
-&lt;td&gt;遵循 Anthropic API 规范，要求原样回传&lt;/td&gt;
-&lt;td&gt;自行管理对话状态，thinking 仅用于 UI 展示&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;DeepSeek 兼容性&lt;/td&gt;
-&lt;td&gt;❌ 触发 400（redacted_thinking 不被识别）&lt;/td&gt;
-&lt;td&gt;✅ 不受影响（根本不传 thinking）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;thinking 回传&lt;/td&gt;
+					&lt;td&gt;✅ 忠实回传所有 thinking blocks（含 redacted_thinking）&lt;/td&gt;
+					&lt;td&gt;❌ 不回传 thinking blocks&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;架构原因&lt;/td&gt;
+					&lt;td&gt;遵循 Anthropic API 规范，要求原样回传&lt;/td&gt;
+					&lt;td&gt;自行管理对话状态，thinking 仅用于 UI 展示&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DeepSeek 兼容性&lt;/td&gt;
+					&lt;td&gt;❌ 触发 400（redacted_thinking 不被识别）&lt;/td&gt;
+					&lt;td&gt;✅ 不受影响（根本不传 thinking）&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;结论：OpenCode 避开问题的方式是以不遵循 Anthropic extended thinking 规范为代价的。&lt;/strong&gt; 这种做法对 DeepSeek 等第三方兼容端点友好，但如果未来需要 Anthropic 原生的 thinking 上下文保持能力，可能需要重新实现。&lt;/p&gt;
 &lt;h2 id="不回传-thinking-blocks-是否会影响-deepseek-性能"&gt;不回传 thinking blocks 是否会影响 DeepSeek 性能？
@@ -324,39 +326,39 @@
 &lt;h2 id="相关的-claude-code-原生-issue"&gt;相关的 Claude Code 原生 issue
 &lt;/h2&gt;&lt;p&gt;CC 自身在 Anthropic 模型上也有类似的 thinking block 回传 bug（非 DeepSeek 特有）：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;标题&lt;/th&gt;
-&lt;th&gt;状态&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
-&gt;#10199&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
-&gt;#51985&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
-&gt;#20692&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
-&gt;#54482&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;标题&lt;/th&gt;
+					&lt;th&gt;状态&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+ &gt;#10199&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+ &gt;#51985&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+ &gt;#20692&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+ &gt;#54482&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;</description></item><item><title>深入理解 claw 家族：OpenClaw / NanoClaw</title><link>https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/</link><pubDate>Wed, 11 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/</guid><description>&lt;img src="https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/cover.png" alt="Featured image of post 深入理解 claw 家族：OpenClaw / NanoClaw" /&gt;&lt;p&gt;2026 年开年，AI 智能体领域最热闹的话题莫过于“养虾” - OpenClaw 的爆火让无数人看到了 AI 从“动嘴”到“动手”的进化。然而，就在大家忙着给这只“龙虾”投喂插件时，另一个名字悄然崛起：NanoClaw。它凭借 Andrej Karpathy 的推荐和极致的安全设计，迅速俘获了另一批开发者的心。&lt;/p&gt;
 &lt;p&gt;这两个名字相似却理念迥异的项目，共同构成了我所说的“claw 家族”。在深度使用和对比之后，我想分享一些关于它们的洞见，希望能帮你理清思路，找到最适合自己的那只“龙虾”。&lt;/p&gt;
 &lt;h2 id="一核心洞察claw-的本质是自托管的-claude-code"&gt;一、核心洞察：claw 的本质是自托管的 Claude Code
@@ -387,30 +389,30 @@
 &lt;p&gt;但 NanoClaw 最革命性的设计是&lt;strong&gt;操作系统级隔离&lt;/strong&gt;：每个智能体都在独立的 Linux 容器中运行 - 在 macOS 上采用 Apple Containers，在 Linux 上使用 Docker。容器内只有智能体循环和 Anthropic 智能体 SDK，文件系统访问受挂载白名单限制，敏感路径（如 &lt;code&gt;.ssh&lt;/code&gt;、&lt;code&gt;.aws&lt;/code&gt;）被自动屏蔽。&lt;/p&gt;
 &lt;p&gt;这种架构的防护效果立竿见影：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;攻击场景&lt;/th&gt;
-&lt;th&gt;OpenClaw&lt;/th&gt;
-&lt;th&gt;NanoClaw&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;提示词注入&lt;/td&gt;
-&lt;td&gt;突破后可访问宿主机&lt;/td&gt;
-&lt;td&gt;破坏范围限制在容器内&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;恶意插件&lt;/td&gt;
-&lt;td&gt;可能窃取宿主机数据&lt;/td&gt;
-&lt;td&gt;无法访问未挂载的目录&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;权限滥用&lt;/td&gt;
-&lt;td&gt;需应用层权限声明&lt;/td&gt;
-&lt;td&gt;默认无权限，需显式挂载&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;攻击场景&lt;/th&gt;
+					&lt;th&gt;OpenClaw&lt;/th&gt;
+					&lt;th&gt;NanoClaw&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;提示词注入&lt;/td&gt;
+					&lt;td&gt;突破后可访问宿主机&lt;/td&gt;
+					&lt;td&gt;破坏范围限制在容器内&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;恶意插件&lt;/td&gt;
+					&lt;td&gt;可能窃取宿主机数据&lt;/td&gt;
+					&lt;td&gt;无法访问未挂载的目录&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;权限滥用&lt;/td&gt;
+					&lt;td&gt;需应用层权限声明&lt;/td&gt;
+					&lt;td&gt;默认无权限，需显式挂载&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;这正是 Karpathy 推荐 NanoClaw 的原因：“其核心引擎约 4000 行代码（我和 AI 智能体都能理解，感觉可管理、可审计、灵活等），默认在容器中运行一切。”&lt;/p&gt;
 &lt;h2 id="四深入对比两条路径的哲学差异"&gt;四、深入对比：两条路径的哲学差异
@@ -537,30 +539,30 @@
 &lt;h2 id="典型套餐结构"&gt;典型套餐结构
 &lt;/h2&gt;&lt;p&gt;以市面上常见的三档套餐为例：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;套餐&lt;/th&gt;
-&lt;th&gt;月费&lt;/th&gt;
-&lt;th&gt;承诺用量（每 5 小时）&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Lite&lt;/td&gt;
-&lt;td&gt;~20 元&lt;/td&gt;
-&lt;td&gt;约 120 次 prompts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Pro&lt;/td&gt;
-&lt;td&gt;~100 元&lt;/td&gt;
-&lt;td&gt;约 600 次 prompts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Max&lt;/td&gt;
-&lt;td&gt;~200 元&lt;/td&gt;
-&lt;td&gt;约 2,400 次 prompts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;套餐&lt;/th&gt;
+					&lt;th&gt;月费&lt;/th&gt;
+					&lt;th&gt;承诺用量（每 5 小时）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Lite&lt;/td&gt;
+					&lt;td&gt;~20 元&lt;/td&gt;
+					&lt;td&gt;约 120 次 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Pro&lt;/td&gt;
+					&lt;td&gt;~100 元&lt;/td&gt;
+					&lt;td&gt;约 600 次 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Max&lt;/td&gt;
+					&lt;td&gt;~200 元&lt;/td&gt;
+					&lt;td&gt;约 2,400 次 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;官方还会补充说明：&amp;ldquo;每次 prompt 预计可调用模型 15-20 次，每月总计可用总量高达几十亿到数百亿 tokens。&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;看起来性价比爆表，但魔鬼藏在细节里。&lt;/p&gt;
@@ -568,26 +570,26 @@
 &lt;/h2&gt;&lt;p&gt;大多数厂商的文档中会轻描淡写地提到：&amp;ldquo;套餐使用受到并发数（在途请求任务数量）的限制。&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;但具体是多少？往往不会明确告知。根据社区反馈和实测，典型的并发限制如下：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;套餐&lt;/th&gt;
-&lt;th&gt;并发数（在途请求）&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Lite&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Pro&lt;/td&gt;
-&lt;td&gt;~4-5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Max&lt;/td&gt;
-&lt;td&gt;~7&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;套餐&lt;/th&gt;
+					&lt;th&gt;并发数（在途请求）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Lite&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Pro&lt;/td&gt;
+					&lt;td&gt;~4-5&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Max&lt;/td&gt;
+					&lt;td&gt;~7&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;这个数字，直接决定了你的实际吞吐量上限。&lt;/p&gt;
 &lt;h2 id="数学时间max-套餐能否用完-2400-prompts"&gt;数学时间：Max 套餐能否用完 2,400 prompts？
@@ -634,22 +636,22 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="结论"&gt;结论
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;指标&lt;/th&gt;
-&lt;th&gt;官方承诺&lt;/th&gt;
-&lt;th&gt;并发上限&lt;/th&gt;
-&lt;th&gt;达成率&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
-&lt;td&gt;2,400&lt;/td&gt;
-&lt;td&gt;~720&lt;/td&gt;
-&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th&gt;官方承诺&lt;/th&gt;
+					&lt;th&gt;并发上限&lt;/th&gt;
+					&lt;th&gt;达成率&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
+					&lt;td&gt;2,400&lt;/td&gt;
+					&lt;td&gt;~720&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;即使在理想条件下，Max 套餐的实际可用量也只有承诺的 30% 左右。&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="更残酷的现实agent-模式下的调用膨胀"&gt;更残酷的现实：Agent 模式下的调用膨胀
@@ -667,8 +669,11 @@
 &lt;p&gt;一个看似简单的 prompt，在 Agent 循环中可能触发 &lt;strong&gt;50-100+ 次模型调用&lt;/strong&gt;。&lt;/p&gt;
 &lt;h3 id="实测案例"&gt;实测案例
 &lt;/h3&gt;&lt;p&gt;有用户反馈：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&amp;ldquo;2 条简单 prompt，80 秒，消耗 38M Tokens，用掉 97% 的 5 小时限额&amp;rdquo;&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;2 条简单 prompt，80 秒，消耗 38M Tokens，用掉 97% 的 5 小时限额&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;反推计算：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;每个 prompt 消耗约 19M tokens&lt;/li&gt;
@@ -677,40 +682,40 @@
 &lt;p&gt;这比官方说的&amp;quot;15-20 次&amp;quot;高出 &lt;strong&gt;6-8 倍&lt;/strong&gt;。&lt;/p&gt;
 &lt;h3 id="修正后的实际可用量"&gt;修正后的实际可用量
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;场景&lt;/th&gt;
-&lt;th&gt;每 prompt 调用次数&lt;/th&gt;
-&lt;th&gt;5 小时可用 prompts&lt;/th&gt;
-&lt;th&gt;达成率&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;官方理想值&lt;/td&gt;
-&lt;td&gt;17.5&lt;/td&gt;
-&lt;td&gt;720&lt;/td&gt;
-&lt;td&gt;30%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;轻度使用&lt;/td&gt;
-&lt;td&gt;50&lt;/td&gt;
-&lt;td&gt;252&lt;/td&gt;
-&lt;td&gt;10.5%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;中度使用&lt;/td&gt;
-&lt;td&gt;75&lt;/td&gt;
-&lt;td&gt;168&lt;/td&gt;
-&lt;td&gt;7%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;重度 Agent&lt;/td&gt;
-&lt;td&gt;100+&lt;/td&gt;
-&lt;td&gt;&amp;lt;126&lt;/td&gt;
-&lt;td&gt;&amp;lt;5%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;场景&lt;/th&gt;
+					&lt;th&gt;每 prompt 调用次数&lt;/th&gt;
+					&lt;th&gt;5 小时可用 prompts&lt;/th&gt;
+					&lt;th&gt;达成率&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;官方理想值&lt;/td&gt;
+					&lt;td&gt;17.5&lt;/td&gt;
+					&lt;td&gt;720&lt;/td&gt;
+					&lt;td&gt;30%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;轻度使用&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;252&lt;/td&gt;
+					&lt;td&gt;10.5%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;中度使用&lt;/td&gt;
+					&lt;td&gt;75&lt;/td&gt;
+					&lt;td&gt;168&lt;/td&gt;
+					&lt;td&gt;7%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;重度 Agent&lt;/td&gt;
+					&lt;td&gt;100+&lt;/td&gt;
+					&lt;td&gt;&amp;lt;126&lt;/td&gt;
+					&lt;td&gt;&amp;lt;5%&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="为什么会这样"&gt;为什么会这样？
 &lt;/h2&gt;&lt;h3 id="1-token-计算包含-context"&gt;1. Token 计算包含 Context
@@ -733,40 +738,40 @@
 &lt;h2 id="一张表看清真相"&gt;一张表看清真相
 &lt;/h2&gt;&lt;p&gt;以 Max 套餐（~200 元/月）为例：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;指标&lt;/th&gt;
-&lt;th&gt;官方宣传&lt;/th&gt;
-&lt;th&gt;理论上限&lt;/th&gt;
-&lt;th&gt;实际预期&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
-&lt;td&gt;2,400&lt;/td&gt;
-&lt;td&gt;720&lt;/td&gt;
-&lt;td&gt;150-400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;每月 prompts&lt;/td&gt;
-&lt;td&gt;345,600&lt;/td&gt;
-&lt;td&gt;103,680&lt;/td&gt;
-&lt;td&gt;21,600-57,600&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;每月 tokens&lt;/td&gt;
-&lt;td&gt;&amp;ldquo;数百亿&amp;rdquo;&lt;/td&gt;
-&lt;td&gt;~100 亿&lt;/td&gt;
-&lt;td&gt;10-30 亿&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;达成率&lt;/td&gt;
-&lt;td&gt;100%&lt;/td&gt;
-&lt;td&gt;30%&lt;/td&gt;
-&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th&gt;官方宣传&lt;/th&gt;
+					&lt;th&gt;理论上限&lt;/th&gt;
+					&lt;th&gt;实际预期&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
+					&lt;td&gt;2,400&lt;/td&gt;
+					&lt;td&gt;720&lt;/td&gt;
+					&lt;td&gt;150-400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每月 prompts&lt;/td&gt;
+					&lt;td&gt;345,600&lt;/td&gt;
+					&lt;td&gt;103,680&lt;/td&gt;
+					&lt;td&gt;21,600-57,600&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每月 tokens&lt;/td&gt;
+					&lt;td&gt;&amp;ldquo;数百亿&amp;rdquo;&lt;/td&gt;
+					&lt;td&gt;~100 亿&lt;/td&gt;
+					&lt;td&gt;10-30 亿&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;达成率&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;30%&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="给开发者的建议"&gt;给开发者的建议
 &lt;/h2&gt;&lt;h3 id="1-别被数百亿-tokens忽悠"&gt;1. 别被&amp;quot;数百亿 tokens&amp;quot;忽悠
@@ -809,12 +814,12 @@
 &lt;h2 id="工具列表"&gt;工具列表
 &lt;/h2&gt;&lt;h3 id="tmux-mcp"&gt;tmux mcp
 &lt;/h3&gt;&lt;p&gt;先让 opencode 配置 Linux 环境的 tmux，然后让 opencode 安装 &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
-&gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt; ；安装完成后即可使用 oc 来控制 tmux 的内容。&lt;/p&gt;
+ &gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt; ；安装完成后即可使用 oc 来控制 tmux 的内容。&lt;/p&gt;
 &lt;p&gt;可以通过这种方式来重新激活的停止的 opencode session。例如，可以开多个 tmux，然后让其中一个 opencode 通过 tmux 工具来监控，启停任务。&lt;/p&gt;
 &lt;h3 id="ralph-loop"&gt;ralph-loop
 &lt;/h3&gt;&lt;p&gt;Ralph 是一个自主 AI 代理循环，它会反复运行 Amp，直到所有 PRD 项都完成。每次迭代都会创建一个全新的 Amp 实例，并具有干净的上下文。&lt;/p&gt;
 &lt;p&gt;Ralph 最早可能来自这里 &lt;a class="link" href="https://github.com/snarktank/ralph" target="_blank" rel="noopener"
-&gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
+ &gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;因为其卓有成效（实际上是在模型性能进一步提升之后发生的），也被引入了 claude code。&lt;/p&gt;
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
 &lt;div class="repo-card" data-repo="frankbria/ralph-claude-code"&gt;&lt;/div&gt;
@@ -850,14 +855,16 @@
 &lt;h2 id="改写成-agents"&gt;改写成 agents
 &lt;/h2&gt;&lt;p&gt;我建议直接通过 opencode 或者 claude code 将这些工具和 mcp 改写成 agent。&lt;/p&gt;
 &lt;p&gt;相比于 skills command，这些工具，更适合通过 agent 来调用。&lt;a class="link" href="https://svtter.cn/p/why-agent/#llm-%E7%9A%84%E9%97%AE%E9%A2%98" target="_blank" rel="noopener"
-&gt;agent 上下文很干净&lt;/a&gt;，对工具调用几乎是必然的事情。&lt;/p&gt;
+ &gt;agent 上下文很干净&lt;/a&gt;，对工具调用几乎是必然的事情。&lt;/p&gt;
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;随着 LLM 越来越强，大量的 mcp，依赖于 LLM 能力的 MCP 自然而然的获得了提升。原本不怎么好用的工具变得更好用了。这也正是迎合了那句话：不要做大模型能力增强之后没有意义的东西。
 大模型的能力仍然在增强，并且价格在不断下降。&lt;/p&gt;
 &lt;p&gt;我认为下一步打通不同模态和工具之间的交互，以及给工具赋予大模型的能力，是 agent engineer 必然的发展方向之一。&lt;/p&gt;</description></item><item><title>给 Claude Code 配置 Python UV 的 Hook 和 Skill</title><link>https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/pics/bg.svg" alt="Featured image of post 给 Claude Code 配置 Python UV 的 Hook 和 Skill" /&gt;&lt;blockquote&gt;
-&lt;p&gt;这个仓库的代码稍后上传。&lt;/p&gt;&lt;/blockquote&gt;
+ &lt;p&gt;这个仓库的代码稍后上传。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;项目里用 &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
-&gt;uv&lt;/a&gt; 管理 Python 依赖，但 Claude Code 总是习惯性地用 &lt;code&gt;python&lt;/code&gt; 或 &lt;code&gt;pip install&lt;/code&gt;。试了下用 Skill 和 Hook 来强制规范，踩了不少坑。&lt;/p&gt;
+ &gt;uv&lt;/a&gt; 管理 Python 依赖，但 Claude Code 总是习惯性地用 &lt;code&gt;python&lt;/code&gt; 或 &lt;code&gt;pip install&lt;/code&gt;。试了下用 Skill 和 Hook 来强制规范，踩了不少坑。&lt;/p&gt;
 &lt;h2 id="目标"&gt;目标
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;创建 Skill：告诉 Claude 项目用 uv&lt;/li&gt;
@@ -891,14 +898,14 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# 错误&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;location&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;project&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 错误&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;location&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;project&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# 正确&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;python-uv&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv. Use when adding Python packages, running Python scripts, or managing Python dependencies. Enforces uv instead of pip/python commands.&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 正确&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;python-uv&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv. Use when adding Python packages, running Python scripts, or managing Python dependencies. Enforces uv instead of pip/python commands.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;关键点：&lt;/p&gt;
@@ -1037,7 +1044,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;PreToolUse&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;matcher&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Bash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 简化的 matcher 格式
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;$CLAUDE_PROJECT_DIR/.claude/hooks/pre-bash&amp;#34;&lt;/span&gt;
@@ -1047,7 +1054,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 移除无效的 environment.PATH 配置
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;注意：&lt;/p&gt;
@@ -1117,11 +1124,11 @@
 &lt;h2 id="参考"&gt;参考
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
-&gt;uv&lt;/a&gt;&lt;/li&gt;
+ &gt;uv&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-hooks" target="_blank" rel="noopener"
-&gt;Claude Code Hooks 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;Claude Code Hooks 文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-skills" target="_blank" rel="noopener"
-&gt;Claude Code Skills 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;Claude Code Skills 文档&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>在虚拟机上运行 Claude Code 实现自动化测试与开发</title><link>https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/</guid><description>&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.png" alt="Featured image of post 在虚拟机上运行 Claude Code 实现自动化测试与开发" /&gt;&lt;p&gt;最近我验证了一套行之有效的 AI 开发方法，还不影响现有的工作流。这里总结一下。&lt;/p&gt;
 &lt;h2 id="为什么选择-vm--claude-code"&gt;为什么选择 VM + Claude Code
 &lt;/h2&gt;&lt;ul&gt;
@@ -1208,8 +1215,11 @@
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart xrdp
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：连接前不要在本地登录桌面，否则同用户会黑屏。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;/div&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：连接前不要在本地登录桌面，否则同用户会黑屏。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;h4 id="调整分辨率dpi"&gt;调整分辨率/DPI
 &lt;/h4&gt;&lt;ul&gt;
 &lt;li&gt;Windows 远程桌面连接前，在&amp;quot;显示选项&amp;quot;里调低分辨率（如 1920×1080）&lt;/li&gt;
@@ -1256,26 +1266,26 @@
 &lt;h2 id="自动化测试工作流mcp-配置"&gt;自动化测试工作流：MCP 配置
 &lt;/h2&gt;&lt;h3 id="playwright-mcp"&gt;Playwright MCP
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;MCP&lt;/th&gt;
-&lt;th&gt;特点&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (微软官方)&lt;/td&gt;
-&lt;td&gt;轻量、基于无障碍树&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (社区)&lt;/td&gt;
-&lt;td&gt;功能更全、支持截图、JS 执行&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;console 日志监控、Lighthouse 性能分析&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;MCP&lt;/th&gt;
+					&lt;th&gt;特点&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (微软官方)&lt;/td&gt;
+					&lt;td&gt;轻量、基于无障碍树&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (社区)&lt;/td&gt;
+					&lt;td&gt;功能更全、支持截图、JS 执行&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;console 日志监控、Lighthouse 性能分析&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="claude-code-配置"&gt;Claude Code 配置
 &lt;/h3&gt;&lt;p&gt;在项目根目录创建 &lt;code&gt;.mcp.json&lt;/code&gt;：&lt;/p&gt;
@@ -1358,30 +1368,30 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;strong&gt;配置差异对比&lt;/strong&gt;：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;配置项&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;顶层 key&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;type&lt;/td&gt;
-&lt;td&gt;不需要&lt;/td&gt;
-&lt;td&gt;必须（&lt;code&gt;local&lt;/code&gt;）&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;command&lt;/td&gt;
-&lt;td&gt;字符串&lt;/td&gt;
-&lt;td&gt;数组&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;配置项&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;顶层 key&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;type&lt;/td&gt;
+					&lt;td&gt;不需要&lt;/td&gt;
+					&lt;td&gt;必须（&lt;code&gt;local&lt;/code&gt;）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;command&lt;/td&gt;
+					&lt;td&gt;字符串&lt;/td&gt;
+					&lt;td&gt;数组&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="使用示例"&gt;使用示例
 &lt;/h3&gt;&lt;p&gt;配置好后可以用自然语言驱动测试：&lt;/p&gt;
@@ -1402,16 +1412,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="效果展示"&gt;效果展示
-&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
-width="2892"
-height="1848"
-srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_25ead07efadeb176.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_a8ec1f00bb2f829d.png 1024w"
-loading="lazy"
-alt="VM 远程桌面运行 Claude Code"
-class="gallery-image"
-data-flex-grow="156"
-data-flex-basis="375px"
-&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="VM 远程桌面运行 Claude Code" class="gallery-image" data-flex-basis="375px" data-flex-grow="156" height="1848" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png" srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_ee616737bb9471dd.png 800w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_91ab0046ef956a88.png 1600w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_1e8fe676864afc67.png 2400w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png 2892w" width="2892"&gt;&lt;/p&gt;
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;VM + Claude Code + Playwright MCP 的组合提供了一个隔离、可复现的自动化开发测试环境。整个流程：&lt;/p&gt;
 &lt;ol&gt;
@@ -1420,11 +1421,11 @@ data-flex-basis="375px"
 &lt;li&gt;安装 Claude Code / OpenCode&lt;/li&gt;
 &lt;li&gt;配置 Playwright MCP&lt;/li&gt;
 &lt;li&gt;用自然语言驱动自动化测试&lt;/li&gt;
-&lt;/ol&gt;</description></item><item><title>用 Claude Code 开发 Fried Rice 主题</title><link>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</link><pubDate>Tue, 23 Dec 2025 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post 用 Claude Code 开发 Fried Rice 主题" /&gt;&lt;p&gt;最近用 Claude Code 给我自己的博客主题 &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
-&gt;Fried Rice&lt;/a&gt; 加了一些 SEO 功能，整体体验还不错。&lt;/p&gt;
+&lt;/ol&gt;</description></item><item><title>用 Claude Code 开发 Fried Rice 主题</title><link>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</link><pubDate>Tue, 23 Dec 2025 15:25:02 +0800</pubDate><guid>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post 用 Claude Code 开发 Fried Rice 主题" /&gt;&lt;p&gt;最近用 Claude Code 给我自己的博客主题 &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
+ &gt;Fried Rice&lt;/a&gt; 加了一些 SEO 功能，整体体验还不错。&lt;/p&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;Fried Rice 是从 &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
-&gt;hugo-theme-stack&lt;/a&gt; fork 出来的主题。之前已经加了一些基础的 JSON-LD structured data，这次想继续完善。&lt;/p&gt;
+ &gt;hugo-theme-stack&lt;/a&gt; fork 出来的主题。之前已经加了一些基础的 JSON-LD structured data，这次想继续完善。&lt;/p&gt;
 &lt;h2 id="这次做了什么"&gt;这次做了什么
 &lt;/h2&gt;&lt;p&gt;主要是增强 SEO 的 structured data：&lt;/p&gt;
 &lt;ul&gt;
@@ -1433,16 +1434,7 @@ data-flex-basis="375px"
 &lt;li&gt;FAQ schema（支持文章内嵌 FAQ）&lt;/li&gt;
 &lt;li&gt;增强 Article/BlogPosting schema（加了 accessibility metadata）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png"
-width="2153"
-height="1761"
-srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_9e208084f399dd3b.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_ddc5a242949e5593.png 1024w"
-loading="lazy"
-alt="Fried Rice 主题预览"
-class="gallery-image"
-data-flex-grow="122"
-data-flex-basis="293px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Fried Rice 主题预览" class="gallery-image" data-flex-basis="293px" data-flex-grow="122" height="1761" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png" srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_34a0682cecca2e83.png 800w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_96a51644e8634f65.png 1600w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png 2153w" width="2153"&gt;&lt;/p&gt;
 &lt;h2 id="claude-code-的表现"&gt;Claude Code 的表现
 &lt;/h2&gt;&lt;p&gt;整个开发过程大概 2 小时，Claude Code 帮我：&lt;/p&gt;
 &lt;ol&gt;
@@ -1468,30 +1460,27 @@ data-flex-basis="293px"
 &lt;/h2&gt;&lt;p&gt;对于这种「加功能 + 修 bug」的任务，Claude Code 挺好用的。特别是 Hugo 模板这种语法繁琐的东西，让 AI 来写效率高很多。&lt;/p&gt;
 &lt;h2 id="相关项目"&gt;相关项目
 &lt;/h2&gt;
+
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;&lt;div class="repo-card" data-repo="Svtter/Fried-Rice"&gt;&lt;/div&gt;
+
 &lt;p&gt;&lt;strong&gt;基于:&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;</description></item><item><title>CS146S 是一门好课程</title><link>https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/</link><pubDate>Mon, 15 Dec 2025 20:45:35 +0800</pubDate><guid>https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/</guid><description>&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/bg.png" alt="Featured image of post CS146S 是一门好课程" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
-&gt;CS146S&lt;/a&gt; 是一门好课程，原因之一，是因为他教会了现代软件工程师如何更好的与AI协作。其二，它基本上涵盖了我所有的现代化 coding 能力。&lt;em&gt;（It&amp;rsquo;s a joke!）&lt;/em&gt;&lt;/p&gt;
+
+
+&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;
+</description></item><item><title>CS146S 是一门好课程</title><link>https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/</link><pubDate>Mon, 15 Dec 2025 21:27:41 +0800</pubDate><guid>https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/</guid><description>&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/bg.png" alt="Featured image of post CS146S 是一门好课程" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
+ &gt;CS146S&lt;/a&gt; 是一门好课程，原因之一，是因为他教会了现代软件工程师如何更好的与AI协作。其二，它基本上涵盖了我所有的现代化 coding 能力。&lt;em&gt;（It&amp;rsquo;s a joke!）&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;在接下来的内容里，我会将课程中的 slides 以超链接的形式嵌入在我的文字中。如果你感兴趣，可以直接点击超链接打开对应的 slides。&lt;/p&gt;
 &lt;h2 id="基本技巧"&gt;基本技巧
 &lt;/h2&gt;&lt;p&gt;基本能力我想大家和我一样，都已经掌握了。更清晰明确的 prompt，让 LLM 能够无二义性的执行指令。此外，还有 prompt 优化技巧，以及使用 &lt;a class="link" href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompt-improver" target="_blank" rel="noopener"
-&gt;claude 优化 prompt&lt;/a&gt;。&lt;/p&gt;
+ &gt;claude 优化 prompt&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;课程也聊了如何 &lt;a class="link" href="https://docs.google.com/presentation/d/11CP26VhsjnZOmi9YFgLlonzdib9BLyAlgc4cEvC5Fps/edit?usp=sharing" target="_blank" rel="noopener"
-&gt;构建 coding agent&lt;/a&gt; ，着重强调了可以使用 &lt;a class="link" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener"
-&gt;claude code sdk&lt;/a&gt;。现在叫做 claude agent sdk 了。&lt;/p&gt;
+ &gt;构建 coding agent&lt;/a&gt; ，着重强调了可以使用 &lt;a class="link" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener"
+ &gt;claude code sdk&lt;/a&gt;。现在叫做 claude agent sdk 了。&lt;/p&gt;
 &lt;p&gt;增加 LLM 能力，还可以使用 &lt;a class="link" href="https://docs.google.com/presentation/d/1zSC2ra77XOUrJeyS85houg1DU7z9hq5Y4ebagTch-5o/edit?usp=drive_link" target="_blank" rel="noopener"
-&gt;mcp 服务&lt;/a&gt; 服务。我构建了 &lt;a class="link" href="https://github.com/Svtter/git-mcp" target="_blank" rel="noopener"
-&gt;git-mcp&lt;/a&gt;，还有一个未开源的实验启动 MCP。&lt;/p&gt;
+ &gt;mcp 服务&lt;/a&gt; 服务。我构建了 &lt;a class="link" href="https://github.com/Svtter/git-mcp" target="_blank" rel="noopener"
+ &gt;git-mcp&lt;/a&gt;，还有一个未开源的实验启动 MCP。&lt;/p&gt;
 &lt;h3 id="mcp-a-bit-deeper-ppt-中的内容"&gt;MCP a bit deeper (ppt 中的内容）
-&lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png"
-width="2442"
-height="1268"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_5bb5ee36b6e10e41.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_70c54c437868eb9.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="192"
-data-flex-basis="462px"
-&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="462px" data-flex-grow="192" height="1268" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_7f4a2adac1c88db2.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_1dc9e72c00a99448.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_a307090cd0a1a8d3.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png 2442w" width="2442"&gt;&lt;/p&gt;
 &lt;p&gt;MCP 值得注意的是 Host/Server/Client 概念。很多 Host 是没有开源的。Deepchat 的 Host 可以借鉴。&lt;/p&gt;
 &lt;p&gt;局限性：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1508,58 +1497,25 @@ data-flex-basis="462px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="ide-agent"&gt;IDE agent
 &lt;/h2&gt;&lt;p&gt;从 &lt;a class="link" href="https://docs.google.com/presentation/d/11pQNCde_mmRnImBat0Zymnp8TCS_cT_1up7zbcj6Sjg/edit?usp=sharing" target="_blank" rel="noopener"
-&gt;IDE&lt;/a&gt; 角度来说，我从经常使用 cursor 已经转换成使用 claude code + vscode 来进行编程了。我感觉 claude code 作为一个 cli 要强大更多一些。不过有一段时间没有使用 cursor 了，不知道是否有一些进步。&lt;a class="link" href="https://www.trae.ai/solo" target="_blank" rel="noopener"
-&gt;Trae 的 solo 模式&lt;/a&gt; 也就那样，基本智力不足是最大的问题。Trae CN。&lt;/p&gt;
+ &gt;IDE&lt;/a&gt; 角度来说，我从经常使用 cursor 已经转换成使用 claude code + vscode 来进行编程了。我感觉 claude code 作为一个 cli 要强大更多一些。不过有一段时间没有使用 cursor 了，不知道是否有一些进步。&lt;a class="link" href="https://www.trae.ai/solo" target="_blank" rel="noopener"
+ &gt;Trae 的 solo 模式&lt;/a&gt; 也就那样，基本智力不足是最大的问题。Trae CN。&lt;/p&gt;
 &lt;p&gt;额外值得说的是，&lt;a class="link" href="https://www.linkedin.com/in/silasalberti/" target="_blank" rel="noopener"
-&gt;Silas Alberti&lt;/a&gt;, Head of Research &lt;a class="link" href="https://cognition.ai/" target="_blank" rel="noopener"
-&gt;Cognition&lt;/a&gt; 的 &lt;a class="link" href="https://docs.google.com/presentation/d/1i0pRttHf72lgz8C-n7DSegcLBgncYZe_ppU7dB9zhUA/edit?usp=sharing" target="_blank" rel="noopener"
-&gt;slides&lt;/a&gt; 非常强大。&lt;/p&gt;
+ &gt;Silas Alberti&lt;/a&gt;, Head of Research &lt;a class="link" href="https://cognition.ai/" target="_blank" rel="noopener"
+ &gt;Cognition&lt;/a&gt; 的 &lt;a class="link" href="https://docs.google.com/presentation/d/1i0pRttHf72lgz8C-n7DSegcLBgncYZe_ppU7dB9zhUA/edit?usp=sharing" target="_blank" rel="noopener"
+ &gt;slides&lt;/a&gt; 非常强大。&lt;/p&gt;
 &lt;p&gt;这张图的总结是太棒了。&lt;code&gt;真的是可以免费看的吗？&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png"
-width="2709"
-height="1491"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_4f423a1898a3c4be.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f0b3717c50b18ca0.png 1024w"
-loading="lazy"
-alt="local-cloud/sync-async 象限"
-class="gallery-image"
-data-flex-grow="181"
-data-flex-basis="436px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="local-cloud/sync-async 象限" class="gallery-image" data-flex-basis="436px" data-flex-grow="181" height="1491" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f3530b097ec2450c.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_582050af4b5abd8c.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_780be336b33f9765.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png 2709w" width="2709"&gt;&lt;/p&gt;
 &lt;p&gt;这篇文章中还提到了并行 agent 的概念。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png"
-width="2730"
-height="1428"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_888ea075db809469.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_aad727e671ca1c8d.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="191"
-data-flex-basis="458px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="458px" data-flex-grow="191" height="1428" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_ff1868994b889c81.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_7d7a353b0e292969.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_eac0959e63bed537.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png 2730w" width="2730"&gt;&lt;/p&gt;
 &lt;p&gt;所以对我来说，下一步精进的方向是 cloud + async。&lt;/p&gt;
 &lt;p&gt;这是 Silas Alberti 给的意见：&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png"
-width="2730"
-height="1596"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8737468dad94135f.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7975af118f4c1c9b.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="171"
-data-flex-basis="410px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="410px" data-flex-grow="171" height="1596" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_59fc89f29a039744.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7e23219e2737aa8e.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_cf334b8db0d07991.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png 2730w" width="2730"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://devin.ai/" target="_blank" rel="noopener"
-&gt;devin&lt;/a&gt; 和 &lt;a class="link" href="https://claude.ai/code" target="_blank" rel="noopener"
-&gt;claude code cloud&lt;/a&gt; 版本如出一辙。实际上已经完全可以使用 claude code cloud 版本进行 vibe coding。&lt;/p&gt;
+ &gt;devin&lt;/a&gt; 和 &lt;a class="link" href="https://claude.ai/code" target="_blank" rel="noopener"
+ &gt;claude code cloud&lt;/a&gt; 版本如出一辙。实际上已经完全可以使用 claude code cloud 版本进行 vibe coding。&lt;/p&gt;
 &lt;h2 id="agent-manager"&gt;Agent Manager
 &lt;/h2&gt;&lt;p&gt;工程师要成为 agent manager，而不是单纯的 software engineer。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png"
-width="2843"
-height="1514"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dff75fbff84f0862.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_9ea6b729a07f56bc.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="187"
-data-flex-basis="450px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="450px" data-flex-grow="187" height="1514" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_cb95e48ac85c561c.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dfbab1d3d2e18ae9.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_15f7edc55f4cd954.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png 2843w" width="2843"&gt;&lt;/p&gt;
 &lt;p&gt;在 claude code designer 的思路下，设计软件的流程应该是：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Provide high level requirements 🟩&lt;/li&gt;
@@ -1571,8 +1527,11 @@ data-flex-basis="450px"
 &lt;li&gt;Update docs 🟦&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;我的习惯更多是，编写简单的 requirements，然后生成 design，然后剩下的让 claude code 自己实现。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;最近发现它不太行。我采用了测试驱动开发的方法，确保每一步都做对。否则实际上 CI 和 Add tests 就没有意义了。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;最近发现它不太行。我采用了测试驱动开发的方法，确保每一步都做对。否则实际上 CI 和 Add tests 就没有意义了。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;Techniques for directing agents&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Agent behavior files (Claude.md/Cursorrules/agents.md)&lt;/li&gt;
@@ -1582,29 +1541,16 @@ data-flex-basis="450px"
 &lt;/ul&gt;
 &lt;p&gt;subagents 和 commands 我已经使用的很多了。但是 hooks 我一直没有找到 killing senario。&lt;/p&gt;
 &lt;h3 id="best-practice-claude-code"&gt;Best practice claude code
-&lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png"
-width="2613"
-height="1149"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6f1f8b4de9bcdaad.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_bd247f1e483fdf39.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="227"
-data-flex-basis="545px"
-&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="545px" data-flex-grow="227" height="1149" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_574a2baf64272748.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_fc011015d2d7bfb.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_319cb85588317976.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png 2613w" width="2613"&gt;&lt;/p&gt;
 &lt;p&gt;我想说的是，尽可能多使用 subagents 来避免 lost in the middle 现象。&lt;/p&gt;
 &lt;h3 id="claude-code-安利"&gt;&lt;a class="link" href="https://docs.google.com/presentation/d/1bv7Zozn6z45CAh-IyX99dMPMyXCHC7zj95UfwErBYQ8/edit?slide=id.g35e8acebb8e_0_106#slide=id.g35e8acebb8e_0_106" target="_blank" rel="noopener"
-&gt;claude code 安利&lt;/a&gt;
-&lt;/h3&gt;&lt;blockquote&gt;
-&lt;p&gt;之所以买 claude code，是因为？&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png"
-width="2850"
-height="1659"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_970bdc1680b37577.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e272c05700bf0f37.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="171"
-data-flex-basis="412px"
-&gt;&lt;/p&gt;
+ &gt;claude code 安利&lt;/a&gt;
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;之所以买 claude code，是因为？&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="412px" data-flex-grow="171" height="1659" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e361b65ffeb93560.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_806232c626ef33.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8f5cfe6cd461537f.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png 2850w" width="2850"&gt;&lt;/p&gt;
 &lt;p&gt;我们可以通过 sdk 做更多事情：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1615,58 +1561,24 @@ data-flex-basis="412px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude -p &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; “what did i &lt;span class="k"&gt;do&lt;/span&gt; this week?” &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; --allowedTools Bash&lt;span class="o"&gt;(&lt;/span&gt;git log:*&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; “what did i &lt;span class="k"&gt;do&lt;/span&gt; this week?” &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --allowedTools Bash&lt;span class="o"&gt;(&lt;/span&gt;git log:*&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --output-format stream-jso
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="结语"&gt;结语
 &lt;/h2&gt;&lt;p&gt;这个课程是免费的，但是里面的 insights 超过了大多数的收费课程。如果能看懂并且快速吸收，不要吝啬自己的时间，学起来。&lt;/p&gt;</description></item><item><title>豆包 doubao-seed-code 测试</title><link>https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/</link><pubDate>Thu, 13 Nov 2025 11:36:38 +0800</pubDate><guid>https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/</guid><description>&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-background.jpg" alt="Featured image of post 豆包 doubao-seed-code 测试" /&gt;&lt;p&gt;今天，我又测试了一下 doubao-seed-code，一个登顶的 coding llm model。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955.png"
-width="2703"
-height="246"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955_hu_4829969c2b2218e.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955_hu_e645bfeb7dea3d89.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="1098"
-data-flex-basis="2637px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="2637px" data-flex-grow="1098" height="246" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955.png" srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955_hu_6015a0203a84b219.png 800w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955_hu_640ca7097df88bd0.png 1600w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955_hu_320e9b32e5e5c38a.png 2400w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102508_955.png 2703w" width="2703"&gt;&lt;/p&gt;
 &lt;p&gt;我们可以看到强度甚至超过了 swe-agent + claude 4.5 sonnet。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding.png"
-width="1869"
-height="984"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding_hu_af0a2858e08165fe.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding_hu_fdef58a811dcff3b.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="189"
-data-flex-basis="455px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="455px" data-flex-grow="189" height="984" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding.png" srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding_hu_687bc3d33a524445.png 800w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding_hu_228936c4780b034e.png 1600w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-coding.png 1869w" width="1869"&gt;&lt;/p&gt;
 &lt;h2 id="评测目的"&gt;评测目的
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;看能否替换 claude max；claude max 价格是 $100；人民币大概 700 块左右&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="配置问题"&gt;配置问题
 &lt;/h2&gt;&lt;p&gt;但是我在配置过程中遇到了不少问题。一个比较大的问题是没有完全按照官网配置，按照其他博主的博客做的配置。导致实际上没有使用 coding plan，花了1块钱。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102453_528.png"
-width="1232"
-height="219"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102453_528_hu_cfe48eab057b3b1c.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102453_528_hu_381238dd881c4352.png 1024w"
-loading="lazy"
-alt="免费额度用光了"
-class="gallery-image"
-data-flex-grow="562"
-data-flex-basis="1350px"
-&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856.png"
-width="2115"
-height="119"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856_hu_2788665cd98ed64f.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856_hu_9f60db55bf53fa52.png 1024w"
-loading="lazy"
-alt="账户欠费了"
-class="gallery-image"
-data-flex-grow="1777"
-data-flex-basis="4265px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="免费额度用光了" class="gallery-image" data-flex-basis="1350px" data-flex-grow="562" height="219" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102453_528.png" srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102453_528_hu_bbfe00e6b0bddf5b.png 800w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_102453_528.png 1232w" width="1232"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="账户欠费了" class="gallery-image" data-flex-basis="4265px" data-flex-grow="1777" height="119" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856.png" srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856_hu_77cb881c5068b3c2.png 800w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856_hu_931bff9c0d690f0.png 1600w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/ScreenShot_2025-11-13_112244_856.png 2115w" width="2115"&gt;&lt;/p&gt;
 &lt;p&gt;具体的问题是，在使用 api 的时候，如果订阅了 coding plan，不能用兼容的 api，应该用 coding api。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1688,7 +1600,7 @@ data-flex-basis="4265px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;也就是下方的 &lt;code&gt;/coding&lt;/code&gt; endpoint。&lt;/p&gt;
 &lt;p&gt;另外，这种配置方法，是我的一种配置思路，在 &lt;a class="link" href="https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/" target="_blank" rel="noopener"
-&gt;动态切换 Provider 的 Claude Code&lt;/a&gt; 提到了。&lt;/p&gt;
+ &gt;动态切换 Provider 的 Claude Code&lt;/a&gt; 提到了。&lt;/p&gt;
 &lt;h2 id="实际使用感受"&gt;实际使用感受
 &lt;/h2&gt;&lt;p&gt;从 swe-benchmark 出发的基本性能上看，我认为能力应该不会太弱，大致上至少追到 minimax-m2 的水平。&lt;/p&gt;
 &lt;h3 id="问题1速度比较慢"&gt;问题1：速度比较慢。
@@ -1713,45 +1625,21 @@ data-flex-basis="4265px"
 &lt;!-- inside body, where you want to create the card --&gt;
 &lt;div class="repo-card" data-repo="svtter/hugo-admin"&gt;&lt;/div&gt;
 &lt;p&gt;豆包的做法：&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2.png"
-width="2076"
-height="1089"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2_hu_59af3a772132bdfa.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2_hu_30e82a1111aa715a.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="190"
-data-flex-basis="457px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="457px" data-flex-grow="190" height="1089" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2.png" srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2_hu_7bdded8f66dcaa33.png 800w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2_hu_add829fbf217d778.png 1600w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/doubao-problem-2.png 2076w" width="2076"&gt;&lt;/p&gt;
 &lt;p&gt;直接去改了文件，然后请求我的允许。&lt;/p&gt;
 &lt;p&gt;claude sonnet 的做法：&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet.png"
-width="2139"
-height="1188"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet_hu_54ea3670dbd8401a.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet_hu_d7e39cbc85caac43.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="180"
-data-flex-basis="432px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="432px" data-flex-grow="180" height="1188" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet.png" srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet_hu_d4cb58607c257390.png 800w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet_hu_e9622a7b03a43031.png 1600w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/sonnet.png 2139w" width="2139"&gt;&lt;/p&gt;
 &lt;p&gt;孰优孰劣，各位自有评判。&lt;/p&gt;
 &lt;p&gt;最终这个功能我使用 glm 4.6 来实现了。但是实现的效果不太好。对应这个&lt;a class="link" href="https://github.com/Svtter/hugo-admin/commit/ad7891e0038f154f37a4b65325746dce1c00d1b4" target="_blank" rel="noopener"
-&gt;提交&lt;/a&gt;。这也是我结合&lt;a class="link" href="https://github.com/github/spec-kit" target="_blank" rel="noopener"
-&gt;spec-kit&lt;/a&gt;做的一次尝试。具体的内容可以看&lt;a class="link" href="https://svtter.cn/p/%e9%80%9a%e8%bf%87-spec-kit-%e5%8a%a0%e5%bc%ba%e5%bc%b1%e6%a8%a1%e5%9e%8b%e7%9a%84%e8%a1%a8%e7%8e%b0/" target="_blank" rel="noopener"
-&gt;弱模型如何增强&lt;/a&gt;这篇文章。&lt;/p&gt;
+ &gt;提交&lt;/a&gt;。这也是我结合&lt;a class="link" href="https://github.com/github/spec-kit" target="_blank" rel="noopener"
+ &gt;spec-kit&lt;/a&gt;做的一次尝试。具体的内容可以看&lt;a class="link" href="https://svtter.cn/p/%e9%80%9a%e8%bf%87-spec-kit-%e5%8a%a0%e5%bc%ba%e5%bc%b1%e6%a8%a1%e5%9e%8b%e7%9a%84%e8%a1%a8%e7%8e%b0/" target="_blank" rel="noopener"
+ &gt;弱模型如何增强&lt;/a&gt;这篇文章。&lt;/p&gt;
 &lt;h3 id="使用-trae-cn"&gt;使用 Trae CN
 &lt;/h3&gt;&lt;p&gt;结合 Trae CN 之后，doubao-seed-code 性能有了明显的提升。能看得出更加聪明。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/trae-code.png"
-width="765"
-height="909"
-srcset="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/trae-code_hu_2917f31d1afd98df.png 480w, https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/trae-code_hu_e08e1377aa7ed66e.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="84"
-data-flex-basis="201px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="201px" data-flex-grow="84" height="909" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/pics/trae-code.png" width="765"&gt;&lt;/p&gt;
 &lt;p&gt;这个修改对应的是 &lt;a class="link" href="https://github.com/svtter/hugo-admin" target="_blank" rel="noopener"
-&gt;hugo-admin&lt;/a&gt; 项目中的 &lt;a class="link" href="https://github.com/Svtter/hugo-admin/commit/073c288316c481680c23ad7dfebf145ee2751165" target="_blank" rel="noopener"
-&gt;commit&lt;/a&gt;。&lt;/p&gt;
+ &gt;hugo-admin&lt;/a&gt; 项目中的 &lt;a class="link" href="https://github.com/Svtter/hugo-admin/commit/073c288316c481680c23ad7dfebf145ee2751165" target="_blank" rel="noopener"
+ &gt;commit&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;也就是说，如果你想让自己的订阅最划算，一定要结合 trae 来使用 doubao-seed-code（dsc）；否则缺少配套的上下文，性能是发挥不出来的。&lt;/p&gt;
 &lt;h2 id="为什么-traedsc-和-ccdsc-不一样"&gt;为什么 trae+dsc 和 cc+dsc 不一样？
 &lt;/h2&gt;&lt;p&gt;应该有几个主要原因。&lt;/p&gt;
@@ -1772,15 +1660,15 @@ data-flex-basis="201px"
 &lt;h2 id="参考阅读"&gt;参考阅读
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://dev.to/sienna/2025-complete-guide-doubao-seed-code-model-in-depth-analysis-of-bytedances-ai-programming-2bo2" target="_blank" rel="noopener"
-&gt;doubao 能力分析&lt;/a&gt;&lt;/li&gt;
+ &gt;doubao 能力分析&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="相关-coding-plan-文章"&gt;相关 Coding Plan 文章
 &lt;/h2&gt;&lt;p&gt;如果你对其他 AI coding plan 的体验感兴趣，可以阅读：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/" target="_blank" rel="noopener"
-&gt;我又买了 Kimi Coding Plan&lt;/a&gt; - Kimi 包月计划的使用体验&lt;/li&gt;
+ &gt;我又买了 Kimi Coding Plan&lt;/a&gt; - Kimi 包月计划的使用体验&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener"
-&gt;智谱 glm-4.5 在编程方面的若干问题&lt;/a&gt; - GLM 4.5 coding plan 的实际问题总结&lt;/li&gt;
+ &gt;智谱 glm-4.5 在编程方面的若干问题&lt;/a&gt; - GLM 4.5 coding plan 的实际问题总结&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>我又买了 Kimi Coding Plan</title><link>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</link><pubDate>Fri, 24 Oct 2025 17:03:48 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/bg.svg" alt="Featured image of post 我又买了 Kimi Coding Plan" /&gt;&lt;p&gt;kimi 的包月计划推出了。&lt;/p&gt;
 &lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;😋, it&amp;#39;s coming. &lt;a href="https://twitter.com/Kimi_Moonshot?ref_src=twsrc%5Etfw"&gt;@Kimi_Moonshot&lt;/a&gt; now has a subscription-based plan now!&lt;br&gt;&lt;br&gt;Start from $7/month up to $28.5/month, about 1/7 compared to Claude Code 😋 &lt;a href="https://t.co/hTnIbVjebg"&gt;https://t.co/hTnIbVjebg&lt;/a&gt; &lt;a href="https://t.co/Mi3EjOl346"&gt;pic.twitter.com/Mi3EjOl346&lt;/a&gt;&lt;/p&gt;&amp;mdash; Xuanwo (@OnlyXuanwo) &lt;a href="https://twitter.com/OnlyXuanwo/status/1981586444658548736?ref_src=twsrc%5Etfw"&gt;October 24, 2025&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
 &lt;p&gt;我试用了一下，感觉 kimi 集成 claude code 相比于 glm 要好很多。例如，不需要单独配置 web search。&lt;/p&gt;
@@ -1800,31 +1688,22 @@ data-flex-basis="201px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;在配置好 kimi 之后，即可使用。&lt;/p&gt;
 &lt;p&gt;此外，在封闭测试中，kimi k2 的性能得到了&lt;a class="link" href="https://mp.weixin.qq.com/s/nil-kRM2Ef1tV3CQ-6t7Ag" target="_blank" rel="noopener"
-&gt;Vercel CEO的认可&lt;/a&gt;。&lt;/p&gt;
+ &gt;Vercel CEO的认可&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;公开的测试结果大概是这样：&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/chart_group_1.png"
-width="1444"
-height="790"
-srcset="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/chart_group_1_hu_7bb07027f5df21e8.png 480w, https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/chart_group_1_hu_88188ee970d73449.png 1024w"
-loading="lazy"
-alt="coding model performance"
-class="gallery-image"
-data-flex-grow="182"
-data-flex-basis="438px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="coding model performance" class="gallery-image" data-flex-basis="438px" data-flex-grow="182" height="790" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/chart_group_1.png" srcset="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/chart_group_1_hu_a44a19d2eed23ce6.png 800w, https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/pics/chart_group_1.png 1444w" width="1444"&gt;&lt;/p&gt;
 &lt;h2 id="cli"&gt;CLI
 &lt;/h2&gt;&lt;p&gt;kimi 也有自己的 cli，具体可以看&lt;a class="link" href="https://mp.weixin.qq.com/s/M9m7vZoG8uEtGpKddAA4ZA" target="_blank" rel="noopener"
-&gt;这里&lt;/a&gt;。&lt;/p&gt;
+ &gt;这里&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://www.kimi.com/coding/docs/kimi-cli.html" target="_blank" rel="noopener"
-&gt;官方文档&lt;/a&gt;中讲了如何购买以及使用。不过从习惯上讲我更喜欢使用 claude code。&lt;/p&gt;
+ &gt;官方文档&lt;/a&gt;中讲了如何购买以及使用。不过从习惯上讲我更喜欢使用 claude code。&lt;/p&gt;
 &lt;h2 id="额外知识"&gt;额外知识
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;不同 kimi k2 的提供商，&lt;a class="link" href="https://mp.weixin.qq.com/s/v_r42j9YuXY7zYff6z4eXw" target="_blank" rel="noopener"
-&gt;性能是不一样的&lt;/a&gt;。所以某种程度上说，cache 是必然的。如果价格差距不大，并且网络访问没有问题，还是用原厂的最好。&lt;/li&gt;
+ &gt;性能是不一样的&lt;/a&gt;。所以某种程度上说，cache 是必然的。如果价格差距不大，并且网络访问没有问题，还是用原厂的最好。&lt;/li&gt;
 &lt;li&gt;现在这么多厂商都推出了自己的 coding plan 以及订阅计划。此时，如果希望动态修改 claude code 的 provider，可以通过 &lt;a class="link" href="https://github.com/farion1231/cc-switch" target="_blank" rel="noopener"
-&gt;cc-switch 项目&lt;/a&gt;。&lt;/li&gt;
+ &gt;cc-switch 项目&lt;/a&gt;。&lt;/li&gt;
 &lt;li&gt;同时发布的还有快手的 &lt;a class="link" href="https://kwaipilot.github.io/KAT-Coder/" target="_blank" rel="noopener"
-&gt;kwaipilot&lt;/a&gt;&lt;/li&gt;
+ &gt;kwaipilot&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;当然，还有其他的 coding 工具。这里有个总结：&lt;/p&gt;
 &lt;blockquote class="twitter-tweet"&gt;&lt;p lang="zh" dir="ltr"&gt;现在各种编程的Vibe CLI多到程序和程序员都不够了。我列下，还来不及进行ranking。&lt;br&gt;1）CC系的：Claude、Deepseek、GLM（包月）、Kimi、KAT-coder（限免）；&lt;br&gt;2）Codex&lt;br&gt;3）Gemini系的：Gemini、Qwen Code（限免）、iflow（限免）、Qodercli（限免）、Cursor-Agent。&lt;/p&gt;&amp;mdash; Michael Anti (@mranti) &lt;a href="https://twitter.com/mranti/status/1981381099889840358?ref_src=twsrc%5Etfw"&gt;October 23, 2025&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
@@ -1837,17 +1716,17 @@ data-flex-basis="438px"
 &lt;/h2&gt;&lt;p&gt;如果你对其他 AI coding plan 的体验感兴趣，可以阅读我的其他文章：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener"
-&gt;智谱 glm-4.5 在编程方面的若干问题&lt;/a&gt; - GLM 4.5 coding plan 的实际问题总结&lt;/li&gt;
+ &gt;智谱 glm-4.5 在编程方面的若干问题&lt;/a&gt; - GLM 4.5 coding plan 的实际问题总结&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/" target="_blank" rel="noopener"
-&gt;豆包 doubao-seed-code 测试&lt;/a&gt; - 字节豆包 coding plan 的深度测试和 Trae CN 集成&lt;/li&gt;
+ &gt;豆包 doubao-seed-code 测试&lt;/a&gt; - 字节豆包 coding plan 的深度测试和 Trae CN 集成&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Claude Code Plugin 使用体验</title><link>https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</link><pubDate>Tue, 14 Oct 2025 10:16:54 +0800</pubDate><guid>https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/</guid><description>&lt;img src="https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/pics/bg.svg" alt="Featured image of post Claude Code Plugin 使用体验" /&gt;&lt;p&gt;总的来说，体验不佳。&lt;/p&gt;
 &lt;p&gt;可能是因为刚推出的原因，总体来说不成熟。&lt;/p&gt;
 &lt;p&gt;典型的几个问题：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;有 &lt;a class="link" href="https://docs.claude.com/en/docs/claude-code/sub-agents#example-subagents" target="_blank" rel="noopener"
-&gt;agents&lt;/a&gt; 不用。&lt;/li&gt;
+ &gt;agents&lt;/a&gt; 不用。&lt;/li&gt;
 &lt;li&gt;有 &lt;a class="link" href="https://docs.claude.com/en/docs/agents-and-tools/mcp-connector#mcp-server-configuration" target="_blank" rel="noopener"
-&gt;mcp&lt;/a&gt; 不用。&lt;/li&gt;
+ &gt;mcp&lt;/a&gt; 不用。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;工具调用不频繁，需要自己去提醒。但是我作为用户，一般不会刻意的记有哪些 agent。&lt;/p&gt;
 &lt;p&gt;更重要的是影响效率。&lt;/p&gt;
@@ -1856,32 +1735,14 @@ data-flex-basis="438px"
 &lt;li&gt;plugins 很多情况下不会提升你的工具使用体验，反而会降低。这是由于 mcp 工具和 plugins 加大了 input tokens。这使得模型不得不处理更多的 context。transformers 计算复杂度是 O(n^2)，因此长度一旦上升，造成的影响很大。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;总的来说不建议现在用。&lt;/p&gt;</description></item><item><title>智谱 glm-4.5 在编程方面的若干问题</title><link>https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/</link><pubDate>Tue, 23 Sep 2025 10:24:43 +0800</pubDate><guid>https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/featured_20250924_145011.png" alt="Featured image of post 智谱 glm-4.5 在编程方面的若干问题" /&gt;&lt;p&gt;通过一些 leaderboard，以及 &lt;a class="link" href="https://arxiv.org/abs/2508.06471" target="_blank" rel="noopener"
-&gt;report&lt;/a&gt;，我看到 glm-4.5 获得了较高的评分，因此我狠狠心充值了年费的 coding plan。&lt;/p&gt;
+ &gt;report&lt;/a&gt;，我看到 glm-4.5 获得了较高的评分，因此我狠狠心充值了年费的 coding plan。&lt;/p&gt;
 &lt;p&gt;但是，在使用智谱 glm4.5 coding plan 的过程中，我遇到了若干问题，严重影响工作效率。&lt;/p&gt;
 &lt;h2 id="cline"&gt;Cline
 &lt;/h2&gt;&lt;p&gt;在 cline 中，大概会有几个问题&lt;/p&gt;
 &lt;p&gt;问题一: 简单的 diff 工具调用无法正确输出。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/prob1.png"
-width="588"
-height="243"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/prob1_hu_c223c4d691d57e45.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/prob1_hu_d88fd0395acfaf0d.png 1024w"
-loading="lazy"
-alt="diff prob"
-class="gallery-image"
-data-flex-grow="241"
-data-flex-basis="580px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="diff prob" class="gallery-image" data-flex-basis="580px" data-flex-grow="241" height="243" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/prob1.png" width="588"&gt;&lt;/p&gt;
 &lt;p&gt;问题二：任务列表工具无法使用。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/task.png"
-width="620"
-height="459"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/task_hu_fb5ce1c29fa6f477.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/task_hu_76332c4201a5cabb.png 1024w"
-loading="lazy"
-alt="tasklist prob"
-class="gallery-image"
-data-flex-grow="135"
-data-flex-basis="324px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="tasklist prob" class="gallery-image" data-flex-basis="324px" data-flex-grow="135" height="459" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/task.png" width="620"&gt;&lt;/p&gt;
 &lt;p&gt;我一度怀疑是 cline 的问题。但是转念一想，deepseek 和 gpt-5，以及 claude-4-opus 都没有问题。&lt;/p&gt;
 &lt;p&gt;prompt 不会因为这些改变。大概率还是智谱 glm-4.5 的问题。&lt;/p&gt;
 &lt;h2 id="claude-code"&gt;Claude Code
@@ -1893,16 +1754,7 @@ data-flex-basis="324px"
 &lt;p&gt;还有一个共性问题：谄媚。&lt;/p&gt;
 &lt;h3 id="停止响应"&gt;停止响应
 &lt;/h3&gt;&lt;p&gt;2025-10-03 遇到的新问题，在回答问题的时候停止反馈，并且终止流程了。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/bug-3.png"
-width="878"
-height="684"
-srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/bug-3_hu_b139680f7691cc74.png 480w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/bug-3_hu_7aad7cdb63ec3436.png 1024w"
-loading="lazy"
-alt="stop responsing"
-class="gallery-image"
-data-flex-grow="128"
-data-flex-basis="308px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="stop responsing" class="gallery-image" data-flex-basis="308px" data-flex-grow="128" height="684" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/bug-3.png" srcset="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/bug-3_hu_26a6ad02f2775787.png 800w, https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/bug-3.png 878w" width="878"&gt;&lt;/p&gt;
 &lt;p&gt;这个问题最大的可能是没有适配 thinking 接口，导致正在 thinking 但是不显示内容。&lt;/p&gt;
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;就我目前体验下来，国产 AI 除了 DeepSeek 以外，其他的几家都会出现大模型输出不稳定的情况。&lt;/p&gt;
@@ -1921,9 +1773,9 @@ data-flex-basis="308px"
 &lt;/h2&gt;&lt;p&gt;如果你对其他 AI coding plan 的体验感兴趣，可以阅读我的其他文章：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/" target="_blank" rel="noopener"
-&gt;我又买了 Kimi Coding Plan&lt;/a&gt; - Kimi 包月计划的使用体验和配置方法&lt;/li&gt;
+ &gt;我又买了 Kimi Coding Plan&lt;/a&gt; - Kimi 包月计划的使用体验和配置方法&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/" target="_blank" rel="noopener"
-&gt;豆包 doubao-seed-code 测试&lt;/a&gt; - 字节豆包 coding plan 的深度测试&lt;/li&gt;
+ &gt;豆包 doubao-seed-code 测试&lt;/a&gt; - 字节豆包 coding plan 的深度测试&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>通过 docker 使用 claude code</title><link>https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/</link><pubDate>Wed, 10 Sep 2025 10:15:30 +0800</pubDate><guid>https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/</guid><description>&lt;img src="https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/pics/featured_20250924_145020.png" alt="Featured image of post 通过 docker 使用 claude code" /&gt;&lt;p&gt;部分的系统比较老旧，无法很好的运行 Claude Code (CC)。&lt;/p&gt;
 &lt;h2 id="使用一个简单的-docker-镜像"&gt;使用一个简单的 docker 镜像
 &lt;/h2&gt;&lt;p&gt;这种情况情况下，可以使用 docker 来运行。可以使用这样的脚本：&lt;/p&gt;
@@ -1941,21 +1793,21 @@ data-flex-basis="308px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#!/bin/bash
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker run --rm -it &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; --env-file &lt;span class="nv"&gt;$HOME&lt;/span&gt;/.config/ccenv &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -e GITHUB_TOKEN &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -w &lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt; &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -v &lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;:&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt; &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; -v claude-code-docker-node-versions:/home/appuser/.nodenv/versions &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; gendosu/claude-code-docker:latest
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --env-file &lt;span class="nv"&gt;$HOME&lt;/span&gt;/.config/ccenv &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -e GITHUB_TOKEN &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -w &lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -v &lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;:&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -v claude-code-docker-node-versions:/home/appuser/.nodenv/versions &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; gendosu/claude-code-docker:latest
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;将这个脚本命名为&lt;code&gt;cc&lt;/code&gt;，然后放在&lt;code&gt;$HOME/.local/bin&lt;/code&gt;目录下，即可使用。&lt;/p&gt;
 &lt;p&gt;如果需要保存相关的配置，可以添加&lt;code&gt;-v $HOME/.config/.claude:/home/appuser/.claude&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id="一个完整的-docker-环境-claudebox"&gt;一个完整的 docker 环境 claudebox
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/RchGrav/claudebox" target="_blank" rel="noopener"
-&gt;claudebox&lt;/a&gt; 的自我定位是：&lt;/p&gt;
+ &gt;claudebox&lt;/a&gt; 的自我定位是：&lt;/p&gt;
 &lt;p&gt;The Ultimate Claude Code Docker Development Environment - Run Claude AI&amp;rsquo;s coding assistant in a fully containerized, reproducible environment with pre-configured development profiles and MCP servers.&lt;/p&gt;
 &lt;p&gt;安装方法：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -2047,12 +1899,12 @@ data-flex-basis="308px"
 &lt;p&gt;注意：每次打开新的 shell，都需要手动 &lt;code&gt;enable_*&lt;/code&gt;&lt;/p&gt;</description></item><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://svtter.cn/p/how-to-use-claude-code-with-deepseek/pics/bg.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;有时候我们无法直接使用 anthropic API。但是 Claude Code (CC) 体验非常好，我们又希望使用 CC。&lt;/p&gt;
 &lt;p&gt;这个时候可以试试 deepseek 提供的 API，来使用 CC。&lt;/p&gt;
 &lt;p&gt;Deepseek 已经提供了对应的接口：&lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/guides/anthropic_api" target="_blank" rel="noopener"
-&gt;如何使用 Claude Code + DeepSeek 的组合？&lt;/a&gt;&lt;/p&gt;
+ &gt;如何使用 Claude Code + DeepSeek 的组合？&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;现在主流的 llm api 有两个，一个是 openai，另一个就是 anthropic。anthropic 通过 CC 来获得了一定的话语权。&lt;/p&gt;
 &lt;p&gt;如果你想更多的了解 CC 的使用场景我建议阅读 &lt;a class="link" href="https://www.anthropic.com/news/how-anthropic-teams-use-claude-code" target="_blank" rel="noopener"
-&gt;Anthropic 的官方博客&lt;/a&gt;。&lt;/p&gt;
+ &gt;Anthropic 的官方博客&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;此外，还有一些扩展资料&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg" target="_blank" rel="noopener"
-&gt;https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg&lt;/a&gt;&lt;/li&gt;
+ &gt;https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item></channel></rss>

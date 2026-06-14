@@ -3,30 +3,30 @@
 &lt;h2 id="1-native-kimi-provider-not-a-generic-openai-compatible-layer"&gt;1. Native Kimi Provider (Not a Generic OpenAI-compatible Layer)
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; does not treat Kimi as &amp;ldquo;just another OpenAI-compatible endpoint.&amp;rdquo; Instead, it implements a dedicated &lt;code&gt;kimi&lt;/code&gt; provider type:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Feature&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider Type&lt;/td&gt;
-&lt;td&gt;Dedicated &lt;code&gt;'kimi'&lt;/code&gt; type with independent adapter&lt;/td&gt;
-&lt;td&gt;Accessed via generic OpenAI/Anthropic bridge&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Proprietary Fields&lt;/td&gt;
-&lt;td&gt;Native handling of &lt;code&gt;reasoning_content&lt;/code&gt;, &lt;code&gt;thinking&lt;/code&gt;, &lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;reasoning_content&lt;/code&gt; often lost in the bridge layer&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Auth Headers&lt;/td&gt;
-&lt;td&gt;Supports &lt;code&gt;kimiRequestHeaders&lt;/code&gt;, &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt;, and other Moonshot-specific headers&lt;/td&gt;
-&lt;td&gt;Generic header forwarding&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Feature&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider Type&lt;/td&gt;
+					&lt;td&gt;Dedicated &lt;code&gt;'kimi'&lt;/code&gt; type with independent adapter&lt;/td&gt;
+					&lt;td&gt;Accessed via generic OpenAI/Anthropic bridge&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Proprietary Fields&lt;/td&gt;
+					&lt;td&gt;Native handling of &lt;code&gt;reasoning_content&lt;/code&gt;, &lt;code&gt;thinking&lt;/code&gt;, &lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;reasoning_content&lt;/code&gt; often lost in the bridge layer&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Auth Headers&lt;/td&gt;
+					&lt;td&gt;Supports &lt;code&gt;kimiRequestHeaders&lt;/code&gt;, &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt;, and other Moonshot-specific headers&lt;/td&gt;
+					&lt;td&gt;Generic header forwarding&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="2-full-lifecycle-handling-of-reasoning_content"&gt;2. Full Lifecycle Handling of &lt;code&gt;reasoning_content&lt;/code&gt;
 &lt;/h2&gt;&lt;p&gt;kimi-k2.6 has thinking enabled by default and &lt;strong&gt;requires &lt;code&gt;reasoning_content&lt;/code&gt; to be preserved across multi-turn conversation history&lt;/strong&gt;. Otherwise, tool calls will result in a 400 error.&lt;/p&gt;
@@ -139,7 +139,7 @@
 &lt;p&gt;&lt;strong&gt;Conclusion: kimi-code treated the Kimi API as a first-class citizen from day one, not as a later patch.&lt;/strong&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;d95b013&lt;/code&gt; fix(catalog): preserve reasoning fields in custom model (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
-&gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+ &gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;This commit fixed a very subtle issue. models.dev uses the &lt;code&gt;interleaved&lt;/code&gt; field to mark reasoning support, but early code treated &lt;code&gt;interleaved=true&lt;/code&gt; as undefined, causing models selected via &lt;code&gt;/connect&lt;/code&gt; to silently lose their reasoning capability.&lt;/p&gt;
 &lt;p&gt;Fixes:&lt;/p&gt;
 &lt;ul&gt;
@@ -148,7 +148,7 @@
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;61f7d0e&lt;/code&gt; fix(kosong): make openai-compatible thinking work without reasoning_key (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
-&gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+ &gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;This is the core commit for reasoning handling&lt;/strong&gt;, showcasing kimi-code&amp;rsquo;s deep thinking on compatibility. The diff reveals a three-layer design:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -193,8 +193,11 @@
 &lt;/ol&gt;
 &lt;p&gt;Edge cases are handled meticulously: blank &lt;code&gt;reasoning_key&lt;/code&gt; (&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;) is normalized to &lt;code&gt;undefined&lt;/code&gt;; values explicitly set by the caller via &lt;code&gt;withGenerationKwargs&lt;/code&gt; &lt;strong&gt;are not silently overwritten by auto-injection&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;The verification goal explicitly states:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;hr&gt;
 &lt;h3 id="opencode-generic-layer-design-openai-centric"&gt;OpenCode: Generic Layer Design, OpenAI-centric
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;eb84f46&lt;/code&gt; fix(llm): split OpenAI reasoning summary blocks (#29000)&lt;/strong&gt;&lt;/p&gt;
@@ -209,96 +212,99 @@
 &lt;h3 id="a-hard-fact"&gt;A Hard Fact
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
-&gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;Status: still open&lt;/strong&gt;&lt;/li&gt;
+ &gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;Status: still open&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/27054" target="_blank" rel="noopener"
-&gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;Status: closed, but the resolution was to disable MCP (a workaround)&lt;/strong&gt;&lt;/li&gt;
+ &gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;Status: closed, but the resolution was to disable MCP (a workaround)&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The last comment on #27054:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;That&amp;rsquo;s not a fix. That&amp;rsquo;s avoiding the problem.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id="commit-history-comparison-summary"&gt;Commit History Comparison Summary
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Dimension&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Initial Design&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Initial commit includes full Kimi provider + schema normalizer + file service&lt;/td&gt;
-&lt;td&gt;Generic multi-model architecture, adapted later via bridge&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Reasoning Mechanism&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Designed around &lt;code&gt;reasoning_content&lt;/code&gt; field, with auto-scan / write-back / effort injection&lt;/td&gt;
-&lt;td&gt;Designed around OpenAI Responses&amp;rsquo; &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Schema Handling&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;, dereferences &lt;code&gt;$ref&lt;/code&gt; + backfills &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Generic schema validation, focused on friendly error messages&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Config Philosophy&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Makes OpenAI-compatible gateways &amp;ldquo;zero-config&amp;rdquo; by auto-inferring all fields&lt;/td&gt;
-&lt;td&gt;Relies on users manually adapting via bridge/config&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Issue Status&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Continuously shipping reasoning-related patches (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
-&gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
-&gt;#78&lt;/a&gt;)&lt;/td&gt;
-&lt;td&gt;kimi-k2.6 compatibility issue &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
-&gt;#26331&lt;/a&gt; still open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Dimension&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Initial Design&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Initial commit includes full Kimi provider + schema normalizer + file service&lt;/td&gt;
+					&lt;td&gt;Generic multi-model architecture, adapted later via bridge&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Reasoning Mechanism&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Designed around &lt;code&gt;reasoning_content&lt;/code&gt; field, with auto-scan / write-back / effort injection&lt;/td&gt;
+					&lt;td&gt;Designed around OpenAI Responses&amp;rsquo; &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Schema Handling&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;, dereferences &lt;code&gt;$ref&lt;/code&gt; + backfills &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Generic schema validation, focused on friendly error messages&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Config Philosophy&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Makes OpenAI-compatible gateways &amp;ldquo;zero-config&amp;rdquo; by auto-inferring all fields&lt;/td&gt;
+					&lt;td&gt;Relies on users manually adapting via bridge/config&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Issue Status&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Continuously shipping reasoning-related patches (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+ &gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+ &gt;#78&lt;/a&gt;)&lt;/td&gt;
+					&lt;td&gt;kimi-k2.6 compatibility issue &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+ &gt;#26331&lt;/a&gt; still open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="summary-core-differences"&gt;Summary: Core Differences
 &lt;/h2&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Dimension&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Architecture Positioning&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Native design for Kimi/Moonshot, dedicated provider&lt;/td&gt;
-&lt;td&gt;Generic multi-model agent, adapted via bridge&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Native support, full lifecycle preservation of &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Easily lost in bridge layer, causing 400 errors&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; for dereferencing and type backfilling&lt;/td&gt;
-&lt;td&gt;Generic schema generation, does not meet Kimi validator requirements&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;API Format&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Directly generates Moonshot-native format (including &lt;code&gt;thinking&lt;/code&gt; config, &lt;code&gt;$defs&lt;/code&gt; normalization, etc.)&lt;/td&gt;
-&lt;td&gt;Transformed through OpenAI/Anthropic protocol conversion, causing format mismatches&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Service Integration&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;Built-in Moonshot fetch/search/file services&lt;/td&gt;
-&lt;td&gt;Uses generic local tools&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Core Dependencies&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;CLI core does not directly depend on vendor SDKs; isolated via self-developed &lt;code&gt;kosong&lt;/code&gt; package&lt;/td&gt;
-&lt;td&gt;Core package directly coupled with &lt;code&gt;@ai-sdk/openai&lt;/code&gt; and more than a dozen other vendor SDKs&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Dimension&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Architecture Positioning&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Native design for Kimi/Moonshot, dedicated provider&lt;/td&gt;
+					&lt;td&gt;Generic multi-model agent, adapted via bridge&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Native support, full lifecycle preservation of &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Easily lost in bridge layer, causing 400 errors&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Dedicated &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; for dereferencing and type backfilling&lt;/td&gt;
+					&lt;td&gt;Generic schema generation, does not meet Kimi validator requirements&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;API Format&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Directly generates Moonshot-native format (including &lt;code&gt;thinking&lt;/code&gt; config, &lt;code&gt;$defs&lt;/code&gt; normalization, etc.)&lt;/td&gt;
+					&lt;td&gt;Transformed through OpenAI/Anthropic protocol conversion, causing format mismatches&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Service Integration&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Built-in Moonshot fetch/search/file services&lt;/td&gt;
+					&lt;td&gt;Uses generic local tools&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Core Dependencies&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;CLI core does not directly depend on vendor SDKs; isolated via self-developed &lt;code&gt;kosong&lt;/code&gt; package&lt;/td&gt;
+					&lt;td&gt;Core package directly coupled with &lt;code&gt;@ai-sdk/openai&lt;/code&gt; and more than a dozen other vendor SDKs&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Looking at commit history, kimi-code&amp;rsquo;s evolution is directed at &lt;strong&gt;continuously eliminating user configuration burden&lt;/strong&gt; (&lt;code&gt;reasoning_key&lt;/code&gt; went from required → optional override → auto-inferred; &lt;code&gt;interleaved&lt;/code&gt; went from filtered → correctly mapped), while OpenCode&amp;rsquo;s evolution is directed at &lt;strong&gt;deepening OpenAI ecosystem integration&lt;/strong&gt; (Responses API, encrypted reasoning, item reference), leaving Kimi adaptation stuck at the generic bridge layer.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;That&amp;rsquo;s the truth at the commit level: one is native evolution, the other is a bridge gap.&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows</title><link>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</link><pubDate>Fri, 22 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/cover.jpg" alt="Featured image of post OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows" /&gt;&lt;p&gt;opencode is a 160k-star AI coding tool with 27 workflow files in its &lt;code&gt;.github/workflows/&lt;/code&gt; directory. This number is not uncommon for open source projects, but what&amp;rsquo;s truly interesting is not the quantity, but the scope these workflows cover: from conventional CI/CD to AI-driven community governance, they&amp;rsquo;ve done almost everything GitHub Actions can do.&lt;/p&gt;
@@ -306,35 +312,35 @@
 &lt;h2 id="overview"&gt;Overview
 &lt;/h2&gt;&lt;p&gt;The 27 workflows can be divided into four categories:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Category&lt;/th&gt;
-&lt;th&gt;Count&lt;/th&gt;
-&lt;th&gt;Purpose&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;CI/Testing&lt;/td&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Release/Delivery&lt;/td&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Automation/Bot&lt;/td&gt;
-&lt;td&gt;16&lt;/td&gt;
-&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Docs/Other&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Category&lt;/th&gt;
+					&lt;th&gt;Count&lt;/th&gt;
+					&lt;th&gt;Purpose&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CI/Testing&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Release/Delivery&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Automation/Bot&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+					&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Docs/Other&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;16 automation workflows account for 60% of the total. opencode doesn&amp;rsquo;t just use Actions to run tests and releases—it also entrusts community governance and code quality review to the automation system.&lt;/p&gt;
 &lt;h2 id="citesting-solid-but-restrained"&gt;CI/Testing: Solid but Restrained
@@ -348,7 +354,7 @@
 &lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;: Multiple workflows use this pattern so the same PR doesn&amp;rsquo;t stack multiple runs. For a project receiving lots of community PRs, this saves significant CI resources.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Path triggering&lt;/strong&gt;: containers.yml only runs when container files change, storybook.yml only runs when UI changes. Not everything runs on all commits.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Mixed Runner Strategy&lt;/strong&gt;: Most workflows use &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
-&gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
+ &gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="releasedelivery-full-platform-coverage"&gt;Release/Delivery: Full Platform Coverage
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; is the most complex workflow, handling the complete release process in a single file:&lt;/p&gt;
@@ -440,8 +446,8 @@
 &lt;/h2&gt;&lt;p&gt;When using OpenCode to write code, a typical workflow is: the agent completes coding within a session, then I review the diff and create a PR. But I discovered a recurring problem: &lt;strong&gt;code written by agents often enters PRs with &amp;ldquo;first draft&amp;rdquo; quality issues&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;These issues include: missing error handling, security vulnerabilities, poorly performing queries, and missing tests. If the agent could perform a self-review within the session—before the code is committed to the PR—many problems wouldn&amp;rsquo;t exist at the PR stage.&lt;/p&gt;
 &lt;p&gt;This is different from code review at the CI stage. I&amp;rsquo;ve already implemented CI review through &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;opencode-actions&lt;/a&gt; (I previously wrote an &lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;introductory article&lt;/a&gt;)—it happens after PR creation, triggered by GitHub Actions. Later, Cloudflare also shared similar ideas in their &lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;engineering blog&lt;/a&gt;: using OpenCode to build large-scale AI code review. opencode-review aims to solve an earlier stage: &lt;strong&gt;within the session, before the PR, enabling the agent to proactively review and fix issues after writing code&lt;/strong&gt;. The two complement each other: opencode-review raises the quality baseline of code entering the PR, while opencode-actions serves as the final checkpoint.&lt;/p&gt;
+ &gt;opencode-actions&lt;/a&gt; (I previously wrote an &lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;introductory article&lt;/a&gt;)—it happens after PR creation, triggered by GitHub Actions. Later, Cloudflare also shared similar ideas in their &lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+ &gt;engineering blog&lt;/a&gt;: using OpenCode to build large-scale AI code review. opencode-review aims to solve an earlier stage: &lt;strong&gt;within the session, before the PR, enabling the agent to proactively review and fix issues after writing code&lt;/strong&gt;. The two complement each other: opencode-review raises the quality baseline of code entering the PR, while opencode-actions serves as the final checkpoint.&lt;/p&gt;
 &lt;p&gt;Specifically, there are three sub-problems to address:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;Incomplete review coverage&lt;/strong&gt;: Code generated by agents may introduce security vulnerabilities and performance issues, but they won&amp;rsquo;t proactively check for these&lt;/li&gt;
@@ -454,23 +460,14 @@
 &lt;/h3&gt;&lt;p&gt;The first design decision is &lt;strong&gt;why divide into five dimensions&lt;/strong&gt; rather than a general &amp;ldquo;good or bad&amp;rdquo; evaluation.&lt;/p&gt;
 &lt;p&gt;Code quality is not a single dimension. A piece of code may be functionally correct and performant, but contain SQL injection vulnerabilities; or it may be secure and harmless, but lack test coverage. Evaluating them together inevitably leads to vague results.&lt;/p&gt;
 &lt;p&gt;Academically, the &lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
-&gt;Modern Code Review (MCR) Survey&lt;/a&gt; collected code review research from 2013-2025, proposing a classification system covering multiple task dimensions including defect detection, security review, performance analysis, and maintainability assessment. Ericsson&amp;rsquo;s research team also verified in &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
-&gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; that dimension-specific review is more effective in industrial scenarios than general review.&lt;/p&gt;
+ &gt;Modern Code Review (MCR) Survey&lt;/a&gt; collected code review research from 2013-2025, proposing a classification system covering multiple task dimensions including defect detection, security review, performance analysis, and maintainability assessment. Ericsson&amp;rsquo;s research team also verified in &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
+ &gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; that dimension-specific review is more effective in industrial scenarios than general review.&lt;/p&gt;
 &lt;p&gt;opencode-review&amp;rsquo;s five dimensions—code-quality, security, performance, testing, documentation—correspond to the core review dimensions identified in these studies. Each dimension can be independently toggled because different projects focus on different priorities: an internal tool may not need documentation review, but a security-sensitive service cannot skip the security dimension.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_7330a01d3840e4a9.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_fceacab38c67aa8b.png 1024w"
-loading="lazy"
-alt="Five review dimensions"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Five review dimensions" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_6ad3154bf9d83639.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h3 id="severity-grading"&gt;Severity Grading
 &lt;/h3&gt;&lt;p&gt;The second design decision is &lt;strong&gt;why divide into three severity levels&lt;/strong&gt; (critical / suggestion / highlight).&lt;/p&gt;
 &lt;p&gt;This comes from lessons learned in the static analysis tool domain. Security tools and linters have long faced a problem: &lt;strong&gt;alert fatigue&lt;/strong&gt;. When all issues are marked as equally important, developers start ignoring them. &lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
-&gt;Veracode&amp;rsquo;s research&lt;/a&gt; points out that the direct consequence of alert fatigue is that truly serious issues get drowned out in noise.&lt;/p&gt;
+ &gt;Veracode&amp;rsquo;s research&lt;/a&gt; points out that the direct consequence of alert fatigue is that truly serious issues get drowned out in noise.&lt;/p&gt;
 &lt;p&gt;The logic of three levels is:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;critical&lt;/strong&gt;: Must fix (security vulnerabilities, logic errors, resource leaks)&lt;/li&gt;
@@ -482,42 +479,24 @@ data-flex-basis="430px"
 &lt;/h3&gt;&lt;p&gt;The third design decision is &lt;strong&gt;why critical issues should automatically trigger fixes&lt;/strong&gt; rather than just being reported.&lt;/p&gt;
 &lt;p&gt;This is a controversial design. Traditional review tools typically &amp;ldquo;report but don&amp;rsquo;t fix,&amp;rdquo; leaving fixes to developers. But opencode-review&amp;rsquo;s scenario is different—the code it reviews is itself just written by an AI agent, so having another agent fix it is reasonable.&lt;/p&gt;
 &lt;p&gt;Academically, this belongs to the &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; domain. &lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
-&gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; reviewed 63 LLM-based APR systems from 2022-2025, divided into four paradigms. Among them, the &amp;ldquo;analysis-augmented&amp;rdquo; paradigm—using static analysis to locate problems first, then using LLMs to generate fixes—was proven most effective. opencode-review&amp;rsquo;s auto-fix chain is essentially this paradigm: reviewer discovers critical issue → locates problem position → spawns fixer sub-agent → generates minimal fix.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_67450c93ac3d843a.png 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_261b6e10779b8b33.png 1024w"
-loading="lazy"
-alt="Auto-fix chain"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+ &gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; reviewed 63 LLM-based APR systems from 2022-2025, divided into four paradigms. Among them, the &amp;ldquo;analysis-augmented&amp;rdquo; paradigm—using static analysis to locate problems first, then using LLMs to generate fixes—was proven most effective. opencode-review&amp;rsquo;s auto-fix chain is essentially this paradigm: reviewer discovers critical issue → locates problem position → spawns fixer sub-agent → generates minimal fix.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Auto-fix chain" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_cc477bedddea60c3.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
-&gt;An ICSE 2025 paper&lt;/a&gt; also points out that a key challenge for LLMs in APR is objective alignment—the goal of fixing is not &amp;ldquo;generate code that looks reasonable,&amp;rdquo; but &amp;ldquo;precisely solve the reported problem.&amp;rdquo; This is why opencode-review&amp;rsquo;s fixer is designed as &lt;strong&gt;minimal fix&lt;/strong&gt;—making only the minimal modifications to solve the problem, no rewriting, no refactoring, no &amp;ldquo;convenient&amp;rdquo; other changes.&lt;/p&gt;
+ &gt;An ICSE 2025 paper&lt;/a&gt; also points out that a key challenge for LLMs in APR is objective alignment—the goal of fixing is not &amp;ldquo;generate code that looks reasonable,&amp;rdquo; but &amp;ldquo;precisely solve the reported problem.&amp;rdquo; This is why opencode-review&amp;rsquo;s fixer is designed as &lt;strong&gt;minimal fix&lt;/strong&gt;—making only the minimal modifications to solve the problem, no rewriting, no refactoring, no &amp;ldquo;convenient&amp;rdquo; other changes.&lt;/p&gt;
 &lt;h3 id="hidden-benefit-of-auto-review-continuous-improvement-of-code-quality-baseline"&gt;Hidden Benefit of Auto-Review: Continuous Improvement of Code Quality Baseline
 &lt;/h3&gt;&lt;p&gt;The three designs above solve &amp;ldquo;discovering problems&amp;rdquo; and &amp;ldquo;fixing problems.&amp;rdquo; But auto-review has an easily overlooked benefit: &lt;strong&gt;it continuously raises the baseline of code quality inadvertently&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;This effect comes from two mechanisms:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;First, the shaping of code writers by review feedback.&lt;/strong&gt; &lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
-&gt;FSE 2022 research&lt;/a&gt; found in two years of industrial practice that when developers know their code will be automatically reviewed, they consciously follow standards more during the coding phase—because the cost of being pointed out afterward becomes lower, and the benefit of writing well upfront becomes higher. This is a &lt;strong&gt;nudge effect&lt;/strong&gt;. In the AI agent scenario, this effect is stronger: the agent writes code in a session, gets reviewed and pointed out issues, fixes them, gets reviewed again—this cycle can complete multiple rounds within the same session. Each round of feedback corrects the agent&amp;rsquo;s output tendency, equivalent to an implicit fine-tuning process.&lt;/p&gt;
+ &gt;FSE 2022 research&lt;/a&gt; found in two years of industrial practice that when developers know their code will be automatically reviewed, they consciously follow standards more during the coding phase—because the cost of being pointed out afterward becomes lower, and the benefit of writing well upfront becomes higher. This is a &lt;strong&gt;nudge effect&lt;/strong&gt;. In the AI agent scenario, this effect is stronger: the agent writes code in a session, gets reviewed and pointed out issues, fixes them, gets reviewed again—this cycle can complete multiple rounds within the same session. Each round of feedback corrects the agent&amp;rsquo;s output tendency, equivalent to an implicit fine-tuning process.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Second, direct quality accumulation from automatic fixes.&lt;/strong&gt; Critical issues being automatically fixed means the code quality of each commit is higher than without review. This isn&amp;rsquo;t a one-time improvement, but continuous. Like lint rules in a codebase—at first they only prohibit obvious errors, but as rules accumulate, the overall style and quality of the codebase is unconsciously raised. The auto-fix chain does something similar: security vulnerabilities are automatically patched, resource leaks are automatically fixed, missing tests are automatically added. Over time, the codebase&amp;rsquo;s quality baseline naturally becomes higher than without auto-review.&lt;/p&gt;
 &lt;p&gt;Simply put: &lt;strong&gt;review is not the goal, quality improvement is. Auto-review turns &amp;ldquo;post-hoc inspection&amp;rdquo; into &amp;ldquo;in-process improvement.&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg"
-width="1376"
-height="768"
-srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_45c08f85532cd10c.jpg 480w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_f97e789531211c0b.jpg 1024w"
-loading="lazy"
-alt="Code quality baseline improvement"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Code quality baseline improvement" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_9988531fb89c4458.jpg 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg 1376w" width="1376"&gt;&lt;/p&gt;
 &lt;h3 id="cooldown-mechanism"&gt;Cooldown Mechanism
 &lt;/h3&gt;&lt;p&gt;There&amp;rsquo;s one more design detail: &lt;strong&gt;cooldown_seconds&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;auto-review triggers when the session is idle, but idle events can trigger frequently (for example, when the agent is waiting for user confirmation, it also idles). Without cooldown, the same code might be reviewed several times, wasting tokens. The default 120-second cooldown period is an empirical value—enough for one round of modifications to complete, without waiting too long.&lt;/p&gt;
 &lt;h2 id="opencode-froggy-another-approach"&gt;opencode-froggy: Another Approach
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/smartfrog/opencode-froggy" target="_blank" rel="noopener"
-&gt;opencode-froggy&lt;/a&gt; (85 Stars, just released 0.12.0 yesterday) provides another approach. It doesn&amp;rsquo;t do structured multi-dimensional review, but instead provides 6 specialized agents (architect, code-reviewer, code-simplifier, doc-writer, partner, rubber-duck) and a flexible hooks system.&lt;/p&gt;
+ &gt;opencode-froggy&lt;/a&gt; (85 Stars, just released 0.12.0 yesterday) provides another approach. It doesn&amp;rsquo;t do structured multi-dimensional review, but instead provides 6 specialized agents (architect, code-reviewer, code-simplifier, doc-writer, partner, rubber-duck) and a flexible hooks system.&lt;/p&gt;
 &lt;p&gt;Froggy&amp;rsquo;s code-reviewer is a general read-only review agent that doesn&amp;rsquo;t distinguish dimensions or severity. But its hooks system is strong—you can configure &lt;code&gt;session.idle&lt;/code&gt; events to automatically run lint, auto-format, or even intercept when writing sensitive files:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -532,57 +511,57 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;hooks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;event&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;session.idle&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;conditions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;hasCodeChange, isMainSession]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;bash&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;npm run lint --fix&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;simplify-changes&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;This is a &amp;ldquo;developer orchestrates the workflow&amp;rdquo; approach, complementing opencode-review&amp;rsquo;s &amp;ldquo;out-of-the-box structured review.&amp;rdquo;&lt;/p&gt;
 &lt;h3 id="comparison"&gt;Comparison
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;opencode-review&lt;/th&gt;
-&lt;th&gt;opencode-froggy&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Review method&lt;/td&gt;
-&lt;td&gt;Structured multi-dimensional analysis&lt;/td&gt;
-&lt;td&gt;General code-reviewer agent&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Severity grading&lt;/td&gt;
-&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Auto-fix&lt;/td&gt;
-&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
-&lt;td&gt;code-simplifier, manual trigger&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Trigger method&lt;/td&gt;
-&lt;td&gt;session idle + cooldown&lt;/td&gt;
-&lt;td&gt;hooks configuration&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Custom rules&lt;/td&gt;
-&lt;td&gt;custom_rules supports project norms&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Other features&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;6 agents + hooks + gitingest + blockchain&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;opencode-review&lt;/th&gt;
+					&lt;th&gt;opencode-froggy&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Review method&lt;/td&gt;
+					&lt;td&gt;Structured multi-dimensional analysis&lt;/td&gt;
+					&lt;td&gt;General code-reviewer agent&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Severity grading&lt;/td&gt;
+					&lt;td&gt;critical / suggestion / highlight&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Auto-fix&lt;/td&gt;
+					&lt;td&gt;critical issue → fixer sub-agent&lt;/td&gt;
+					&lt;td&gt;code-simplifier, manual trigger&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Trigger method&lt;/td&gt;
+					&lt;td&gt;session idle + cooldown&lt;/td&gt;
+					&lt;td&gt;hooks configuration&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Custom rules&lt;/td&gt;
+					&lt;td&gt;custom_rules supports project norms&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Other features&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;6 agents + hooks + gitingest + blockchain&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;The two don&amp;rsquo;t conflict and can be installed together. My suggestion is: &lt;strong&gt;opencode-review for daily auto-review, froggy&amp;rsquo;s hooks for workflow orchestration&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 id="plugin-installation"&gt;Plugin Installation
@@ -665,27 +644,27 @@ data-flex-basis="430px"
 &lt;li&gt;&lt;strong&gt;envsitter-guard&lt;/strong&gt;: Prevent agents from reading &lt;code&gt;.env&lt;/code&gt; sensitive files&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;See the complete list at &lt;a class="link" href="https://github.com/awesome-opencode/awesome-opencode" target="_blank" rel="noopener"
-&gt;awesome-opencode&lt;/a&gt;.&lt;/p&gt;
+ &gt;awesome-opencode&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="references"&gt;References
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/watreyoung/MCR-Survey" target="_blank" rel="noopener"
-&gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 code review research survey&lt;/li&gt;
+ &gt;Modern Code Review (MCR) Survey&lt;/a&gt; — 2013-2025 code review research survey&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
-&gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — Industrial practice of LLM-assisted code review&lt;/li&gt;
+ &gt;Automated Code Review Using LLMs at Ericsson&lt;/a&gt; — Industrial practice of LLM-assisted code review&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
-&gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM auto-fix survey, covering 63 systems&lt;/li&gt;
+ &gt;A Survey of LLM-based Automated Program Repair&lt;/a&gt; — LLM auto-fix survey, covering 63 systems&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
-&gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — Objective alignment issues in LLM fixing&lt;/li&gt;
+ &gt;Aligning the Objective of LLM-Based Program Repair (ICSE 2025)&lt;/a&gt; — Objective alignment issues in LLM fixing&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1145/3540250.3558950" target="_blank" rel="noopener"
-&gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — Two years of industrial environment auto-review experience&lt;/li&gt;
+ &gt;Understanding Automated Code Review Process (FSE 2022)&lt;/a&gt; — Two years of industrial environment auto-review experience&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://homes.cs.washington.edu/~rjust/publ/code_review_automation_aiware_2024.pdf" target="_blank" rel="noopener"
-&gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — Deployment and evaluation of AutoCommenter&lt;/li&gt;
+ &gt;AI-Assisted Assessment in Modern Code Review (AIware 2024)&lt;/a&gt; — Deployment and evaluation of AutoCommenter&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2603.23448v2" target="_blank" rel="noopener"
-&gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent code review benchmark&lt;/li&gt;
+ &gt;Code Review Agent Benchmark (c-CRAB)&lt;/a&gt; — AI agent code review benchmark&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - a coding review agent&lt;/a&gt; — GitHub Action built on OpenCode, code review at CI stage&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
-&gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare using OpenCode to build large-scale AI review&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>How to Fix DeepSeek Model Reasoning Issues in OpenCode</title><link>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</link><pubDate>Fri, 24 Apr 2026 12:23:58 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post How to Fix DeepSeek Model Reasoning Issues in OpenCode" /&gt;&lt;p&gt;When using deepseek-reasoner, we often encounter this problem:&lt;/p&gt;
+ &gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — Cloudflare using OpenCode to build large-scale AI review&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>How to Fix DeepSeek Model Reasoning Issues in OpenCode</title><link>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</link><pubDate>Fri, 24 Apr 2026 12:29:42 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post How to Fix DeepSeek Model Reasoning Issues in OpenCode" /&gt;&lt;p&gt;When using deepseek-reasoner, we often encounter this problem:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -710,7 +689,7 @@ data-flex-basis="430px"
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;The reasoning_content&amp;#39; in the thinking mode must be passed back to the API.
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Issue 2
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Bad Request: {&amp;#34;error&amp;#34;:{&amp;#34;message&amp;#34;:&amp;#34;The content[].thinking in the thinking mode must be passed back to the 
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;API.&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;invalid_request_error&amp;#34;,&amp;#34;param&amp;#34;:null,&amp;#34;code&amp;#34;:&amp;#34;invalid_request_error&amp;#34;}}
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -810,30 +789,14 @@ data-flex-basis="430px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="how-to-use"&gt;How to Use
 &lt;/h2&gt;&lt;p&gt;Select the deepseek model.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png"
-width="1152"
-height="441"
-srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_90da77582546fc32.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_7b7f08ffd58455a8.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="261"
-data-flex-basis="626px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="626px" data-flex-grow="261" height="441" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_c7ff8778ebe43d8c.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png 1152w" width="1152"&gt;&lt;/p&gt;
 &lt;p&gt;The result.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png"
-width="1361"
-height="510"
-srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_b83fabfded18efdc.png 480w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_c24f8389856c64c.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="266"
-data-flex-basis="640px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="640px" data-flex-grow="266" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_f7d35540372ceb17.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png 1361w" width="1361"&gt;&lt;/p&gt;
 &lt;h2 id="supplement"&gt;Supplement
 &lt;/h2&gt;&lt;p&gt;This method cannot solve this problem&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;If you encounter this problem, you need to wait for opencode to fix it.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Related article&lt;/strong&gt;: &lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block Compatibility Issue Analysis&lt;/a&gt; — Analyzes the root cause of 400 errors triggered by multi-turn conversations in extended thinking mode when using DeepSeek with Claude Code, along with community solutions.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Related article&lt;/strong&gt;: &lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block Compatibility Issue Analysis&lt;/a&gt; — Analyzes the root cause of 400 errors triggered by multi-turn conversations in extended thinking mode when using DeepSeek with Claude Code, along with community solutions.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
 &lt;p&gt;Currently, it provides two main features: one is review, and the other is using the runner to execute opencode (directly running opencode&amp;rsquo;s prompts on the runner) to handle other functionalities. For example, modifying code, creating new issues, creating PRs based on issues, etc.&lt;/p&gt;
 &lt;h2 id="how-stable-is-it"&gt;How stable is it?
 &lt;/h2&gt;&lt;ul&gt;
@@ -866,78 +829,70 @@ data-flex-basis="640px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Currently, this action mainly supports Z.AI, ZHIPU, and OPENCODE GO subscriptions. Therefore, if using ZHIPU, simply add your ZHIPU_API_KEY to the project&amp;rsquo;s secrets. If using the opencode go subscription, you need to add OPENCODE_GO_API_KEY.&lt;/p&gt;
 &lt;p&gt;Everything else can use the default configuration. The default model is &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;. For more configuration requirements, I recommend checking the original repository&amp;rsquo;s &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;README&lt;/a&gt;.&lt;/p&gt;
+ &gt;README&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I previously covered this quick review script in my &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
-&gt;code review article&lt;/a&gt;.&lt;/p&gt;
+ &gt;code review article&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="differences"&gt;Differences
 &lt;/h2&gt;&lt;p&gt;Actually, opencode has its own actions, so why did I build another one?&lt;/p&gt;
 &lt;p&gt;The differences from the official version are mainly reflected in several aspects:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Feature&lt;/th&gt;
-&lt;th&gt;Upstream Status&lt;/th&gt;
-&lt;th&gt;This Repository&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Model default fallback&lt;/td&gt;
-&lt;td&gt;Only required input&lt;/td&gt;
-&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider convenience fields&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Review prompt template&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Retry logic&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Execution timeout&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;timeout-seconds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Version check&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Installation retry&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;install-attempts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;XDG cache caching&lt;/td&gt;
-&lt;td&gt;Only caches bin&lt;/td&gt;
-&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Feature&lt;/th&gt;
+					&lt;th&gt;Upstream Status&lt;/th&gt;
+					&lt;th&gt;This Repository&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model default fallback&lt;/td&gt;
+					&lt;td&gt;Only required input&lt;/td&gt;
+					&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider convenience fields&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Review prompt template&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Retry logic&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Execution timeout&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;timeout-seconds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Version check&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Installation retry&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;install-attempts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;XDG cache caching&lt;/td&gt;
+					&lt;td&gt;Only caches bin&lt;/td&gt;
+					&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Detailed explanations are available in &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
-&gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
+ &gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="review-effectiveness"&gt;Review effectiveness
 &lt;/h2&gt;&lt;p&gt;You can see the results from the repo&amp;rsquo;s own PR at &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
-&gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+ &gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The effect looks like this:&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png"
-width="1407"
-height="1208"
-srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_2bf58faf91a7a9d.png 480w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_6740bc1877d53b60.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="116"
-data-flex-basis="279px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="279px" data-flex-grow="116" height="1208" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png" srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_da6eced56b414cb0.png 800w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png 1407w" width="1407"&gt;&lt;/p&gt;
 &lt;h2 id="future"&gt;Future
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Try integrating gemini cli. Google&amp;rsquo;s GEM 3.1 PRO model currently offers great value for money, with the highest intelligence per unit.&lt;/li&gt;
@@ -953,12 +908,12 @@ data-flex-basis="279px"
 &lt;h2 id="tool-list"&gt;Tool List
 &lt;/h2&gt;&lt;h3 id="tmux-mcp"&gt;tmux mcp
 &lt;/h3&gt;&lt;p&gt;First, configure tmux in the Linux environment with opencode, then have opencode install &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
-&gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt;. Once installed, you can use oc to control tmux content.&lt;/p&gt;
+ &gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt;. Once installed, you can use oc to control tmux content.&lt;/p&gt;
 &lt;p&gt;This method can be used to reactivate stopped opencode sessions. For example, you can open multiple tmux sessions and have one opencode monitor, start, and stop tasks through the tmux tool.&lt;/p&gt;
 &lt;h3 id="ralph-loop"&gt;ralph-loop
 &lt;/h3&gt;&lt;p&gt;Ralph is an autonomous AI agent loop that repeatedly runs Amp until all PRD items are completed. Each iteration creates a brand new Amp instance with a clean context.&lt;/p&gt;
 &lt;p&gt;Ralph likely originated from here: &lt;a class="link" href="https://github.com/snarktank/ralph" target="_blank" rel="noopener"
-&gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
+ &gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Due to its effectiveness (which actually occurred after further improvements in model performance), it was also introduced to claude code.&lt;/p&gt;
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
 &lt;div class="repo-card" data-repo="frankbria/ralph-claude-code"&gt;&lt;/div&gt;
@@ -994,7 +949,7 @@ data-flex-basis="279px"
 &lt;h2 id="rewriting-as-agents"&gt;Rewriting as Agents
 &lt;/h2&gt;&lt;p&gt;I recommend directly rewriting these tools and MCPs as agents through opencode or claude code.&lt;/p&gt;
 &lt;p&gt;Compared to skills commands, these tools are more suitable for invocation through agents. &lt;a class="link" href="https://svtter.cn/p/why-agent/#llm-%E7%9A%84%E9%97%AE%E9%A2%98" target="_blank" rel="noopener"
-&gt;Agent context is very clean&lt;/a&gt;, making tool invocation almost inevitable.&lt;/p&gt;
+ &gt;Agent context is very clean&lt;/a&gt;, making tool invocation almost inevitable.&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;As LLMs become increasingly powerful, numerous MCPs that rely on LLM capabilities naturally gain improvements. Tools that weren&amp;rsquo;t very useful before become more effective. This aligns with the saying: &amp;ldquo;Don&amp;rsquo;t build things that become meaningless after large model capability enhancements.&amp;rdquo;
 Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&gt;
@@ -1009,16 +964,7 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;/ul&gt;
 &lt;p&gt;Speaking of Gemini 3, we have to talk about &lt;strong&gt;GPT-5.2&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Many engineers still rely on ChatGPT.com directly instead of using a proper coding agent. Regardless of the efficiency debate, the reliability is concerning. From my experience, GPT-5.2&amp;rsquo;s default tone has been tuned to be overly &amp;ldquo;people-pleasing,&amp;rdquo; which might not be ideal for professional developers seeking direct technical feedback.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png"
-width="1023"
-height="930"
-srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_175ada8cb4120ce2.png 480w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c7107e2757a481d7.png 1024w"
-loading="lazy"
-alt="GPT-5.2 Response Tone"
-class="gallery-image"
-data-flex-grow="110"
-data-flex-basis="264px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="GPT-5.2 Response Tone" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="930" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png" srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c4a365684620f3ba.png 800w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png 1023w" width="1023"&gt;&lt;/p&gt;
 &lt;p&gt;Furthermore, while GPT-5.2 scored impressively on &lt;strong&gt;SWE-bench Verified&lt;/strong&gt;, my real-world experience has been mixed. It&amp;rsquo;s worth looking at the history of SWE-bench:&lt;/p&gt;
 &lt;p&gt;Originally proposed by a team from &lt;strong&gt;Princeton University&lt;/strong&gt; (ICLR 2024), it evaluates a model&amp;rsquo;s ability to solve real GitHub issues. However, in August 2024, OpenAI&amp;rsquo;s Preparedness team collaborated with the original authors to create &lt;strong&gt;SWE-bench Verified&lt;/strong&gt; (a subset of 500 manually verified issues). Since OpenAI was involved in the design of this benchmark, their models&amp;rsquo; performance on it should be taken with a grain of salt. While not necessarily a deliberate manipulation, the risk of inherent bias is significant.&lt;/p&gt;
 &lt;p&gt;Ultimately, as I often say, &amp;ldquo;Codex&amp;rdquo; models don&amp;rsquo;t always deliver the most practical results in everyday coding.&lt;/p&gt;

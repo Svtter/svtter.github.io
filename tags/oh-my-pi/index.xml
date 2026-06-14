@@ -2,7 +2,7 @@
 &lt;p&gt;不过后来我重新验证了 API 行为，发现我最初的 issue 描述其实有误——模型并没有&amp;quot;停止思考&amp;quot;。这件事后来变成了一个更好的教训：&lt;strong&gt;AI bot 和我都在同一个错误上达成了共识&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id="起因"&gt;起因
 &lt;/h2&gt;&lt;p&gt;我在用 OMP（一个终端 AI coding agent）的时候注意到 &lt;code&gt;Ctrl+T&lt;/code&gt; 隐藏 thinking blocks 时，会同时设置 &lt;code&gt;hideThinkingSummary&lt;/code&gt;，这个字段会影响 API 请求参数。我当时认为这不只是&amp;quot;不显示&amp;quot;，而是&amp;quot;模型不再思考&amp;quot;。于是开了 issue &lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/1313" target="_blank" rel="noopener"
-&gt;#1313&lt;/a&gt;。&lt;/p&gt;
+ &gt;#1313&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;事后查证 API 文档发现，这个判断是&lt;strong&gt;错误的&lt;/strong&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Anthropic 的 &lt;code&gt;thinking.display: &amp;quot;omitted&amp;quot;&lt;/code&gt; — 模型仍在服务端完整执行 extended thinking，只是 thinking 内容不返回给客户端&lt;/li&gt;
@@ -12,7 +12,7 @@
 &lt;p&gt;实际的耦合问题只是设计层面的不清晰（同一个快捷键对不同 provider 行为不同），而不是质量退化的 bug。Issue 最终被关闭了。&lt;/p&gt;
 &lt;h2 id="roboomp-的第一次回复"&gt;roboomp 的第一次回复
 &lt;/h2&gt;&lt;p&gt;Issue 发出去几秒钟后，一个叫 &lt;a class="link" href="https://github.com/roboomp" target="_blank" rel="noopener"
-&gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
+ &gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;这个功能大部分已经存在了——&lt;code&gt;hideThinkingBlock&lt;/code&gt; 设置、&lt;code&gt;Ctrl+T&lt;/code&gt; 快捷键、渲染路径&lt;/li&gt;
 &lt;li&gt;缺的只是 CLI 启动参数&lt;/li&gt;
@@ -30,7 +30,7 @@
 &lt;p&gt;我还补充了引入这个耦合的 commit 历史，方便追溯。&lt;/p&gt;
 &lt;h2 id="它自己开了个-pr"&gt;它自己开了个 PR
 &lt;/h2&gt;&lt;p&gt;然后发生了让我惊讶的事——roboomp 连续回复了两条评论，并直接开了一个 PR：&lt;a class="link" href="https://github.com/can1357/oh-my-pi/pull/1314" target="_blank" rel="noopener"
-&gt;#1314&lt;/a&gt;。&lt;/p&gt;
+ &gt;#1314&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;PR 的改动：&lt;strong&gt;0 addition, 3 deletion&lt;/strong&gt;。只删了三行：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;sdk.ts:1860&lt;/code&gt; — agent 初始化时不再把 &lt;code&gt;hideThinkingBlock&lt;/code&gt; 赋给 &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
@@ -75,29 +75,29 @@
 &lt;h2 id="有类似的开源项目吗"&gt;有类似的开源项目吗
 &lt;/h2&gt;&lt;p&gt;找了一圈，目前最接近的有：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;项目&lt;/th&gt;
-&lt;th&gt;说明&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
-&gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
-&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
-&gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;项目&lt;/th&gt;
+					&lt;th&gt;说明&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
+ &gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
+					&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
+ &gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;但说实话，没有一个做到 roboomp 这个水准。大部分还停留在&amp;quot;接 webhook → 调 LLM → 贴评论&amp;quot;的阶段。能自主读源码、理解代码结构、参与设计讨论、做精准修复的，roboomp 是我看到的第一个。&lt;/p&gt;
 &lt;h2 id="意味着什么"&gt;意味着什么

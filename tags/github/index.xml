@@ -2,7 +2,7 @@
 &lt;p&gt;不过后来我重新验证了 API 行为，发现我最初的 issue 描述其实有误——模型并没有&amp;quot;停止思考&amp;quot;。这件事后来变成了一个更好的教训：&lt;strong&gt;AI bot 和我都在同一个错误上达成了共识&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id="起因"&gt;起因
 &lt;/h2&gt;&lt;p&gt;我在用 OMP（一个终端 AI coding agent）的时候注意到 &lt;code&gt;Ctrl+T&lt;/code&gt; 隐藏 thinking blocks 时，会同时设置 &lt;code&gt;hideThinkingSummary&lt;/code&gt;，这个字段会影响 API 请求参数。我当时认为这不只是&amp;quot;不显示&amp;quot;，而是&amp;quot;模型不再思考&amp;quot;。于是开了 issue &lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/1313" target="_blank" rel="noopener"
-&gt;#1313&lt;/a&gt;。&lt;/p&gt;
+ &gt;#1313&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;事后查证 API 文档发现，这个判断是&lt;strong&gt;错误的&lt;/strong&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Anthropic 的 &lt;code&gt;thinking.display: &amp;quot;omitted&amp;quot;&lt;/code&gt; — 模型仍在服务端完整执行 extended thinking，只是 thinking 内容不返回给客户端&lt;/li&gt;
@@ -12,7 +12,7 @@
 &lt;p&gt;实际的耦合问题只是设计层面的不清晰（同一个快捷键对不同 provider 行为不同），而不是质量退化的 bug。Issue 最终被关闭了。&lt;/p&gt;
 &lt;h2 id="roboomp-的第一次回复"&gt;roboomp 的第一次回复
 &lt;/h2&gt;&lt;p&gt;Issue 发出去几秒钟后，一个叫 &lt;a class="link" href="https://github.com/roboomp" target="_blank" rel="noopener"
-&gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
+ &gt;roboomp&lt;/a&gt; 的 bot 自动回复了。不是那种&amp;quot;感谢反馈，已转发产品团队&amp;quot;的模板废话。它直接告诉我：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;这个功能大部分已经存在了——&lt;code&gt;hideThinkingBlock&lt;/code&gt; 设置、&lt;code&gt;Ctrl+T&lt;/code&gt; 快捷键、渲染路径&lt;/li&gt;
 &lt;li&gt;缺的只是 CLI 启动参数&lt;/li&gt;
@@ -30,7 +30,7 @@
 &lt;p&gt;我还补充了引入这个耦合的 commit 历史，方便追溯。&lt;/p&gt;
 &lt;h2 id="它自己开了个-pr"&gt;它自己开了个 PR
 &lt;/h2&gt;&lt;p&gt;然后发生了让我惊讶的事——roboomp 连续回复了两条评论，并直接开了一个 PR：&lt;a class="link" href="https://github.com/can1357/oh-my-pi/pull/1314" target="_blank" rel="noopener"
-&gt;#1314&lt;/a&gt;。&lt;/p&gt;
+ &gt;#1314&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;PR 的改动：&lt;strong&gt;0 addition, 3 deletion&lt;/strong&gt;。只删了三行：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;code&gt;sdk.ts:1860&lt;/code&gt; — agent 初始化时不再把 &lt;code&gt;hideThinkingBlock&lt;/code&gt; 赋给 &lt;code&gt;hideThinkingSummary&lt;/code&gt;&lt;/li&gt;
@@ -75,29 +75,29 @@
 &lt;h2 id="有类似的开源项目吗"&gt;有类似的开源项目吗
 &lt;/h2&gt;&lt;p&gt;找了一圈，目前最接近的有：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;项目&lt;/th&gt;
-&lt;th&gt;说明&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
-&gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
-&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
-&gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;项目&lt;/th&gt;
+					&lt;th&gt;说明&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/jonwiggins/optio" target="_blank" rel="noopener"
+ &gt;optio&lt;/a&gt; (962⭐)&lt;/td&gt;
+					&lt;td&gt;AI coding agent 的 workflow 编排，task → merged PR&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/GabsFranke/claude-code-github-agent" target="_blank" rel="noopener"
+ &gt;claude-code-github-agent&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Hook 40+ GitHub events，自动 triage / review / fix，架构最像 roboomp&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Issue/PR 驱动的自动开发系统&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;但说实话，没有一个做到 roboomp 这个水准。大部分还停留在&amp;quot;接 webhook → 调 LLM → 贴评论&amp;quot;的阶段。能自主读源码、理解代码结构、参与设计讨论、做精准修复的，roboomp 是我看到的第一个。&lt;/p&gt;
 &lt;h2 id="意味着什么"&gt;意味着什么
@@ -106,7 +106,7 @@
 &lt;p&gt;&lt;strong&gt;局限面&lt;/strong&gt;：AI bot 会沿着用户给出的前提往下推演，但&lt;strong&gt;不会独立验证前提是否正确&lt;/strong&gt;。这次我和 roboomp 都犯了同一个错误——认为 &lt;code&gt;hideThinkingSummary&lt;/code&gt; 会降低模型质量。bot 的代码定位能力很强，但在事实核查上和人类一样容易&amp;quot;先入为主&amp;quot;。&lt;/p&gt;
 &lt;p&gt;这对使用 AI 工具的人来说是个重要提醒：&lt;strong&gt;AI 能精确地执行错误的分析&lt;/strong&gt;。它会完美地修一个不存在的 bug。代码改得对不对是一回事，改得该不该是另一回事。&lt;/p&gt;</description></item><item><title>Software Factory：把 PR Review 修复做成一个闭环</title><link>https://svtter.cn/p/software-factory-pr-review-loop/</link><pubDate>Mon, 23 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/software-factory-pr-review-loop/</guid><description>&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/cover.svg" alt="Featured image of post Software Factory：把 PR Review 修复做成一个闭环" /&gt;&lt;p&gt;如果你已经在用 Claude Code、OpenCode、Codex（不提 Aider 了）这类工具写代码，真正耗时间的往往不是“第一次生成”，而是 review 之后那几轮重复劳动：看评论、整理问题、切回分支、修代码、跑测试、再回写 PR。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 就是我为这段流程写的一个轻量系统。它不想变成另一个 GitLab，也不准备一上来就做成重型多租户平台；它只专注一件事：把 GitHub PR review 反馈变成一个可追踪、可自动执行、可本地运行的修复闭环。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 就是我为这段流程写的一个轻量系统。它不想变成另一个 GitLab，也不准备一上来就做成重型多租户平台；它只专注一件事：把 GitHub PR review 反馈变成一个可追踪、可自动执行、可本地运行的修复闭环。&lt;/p&gt;
 &lt;h2 id="为什么要做这个项目"&gt;为什么要做这个项目
 &lt;/h2&gt;&lt;p&gt;现在很多 AI 编码工具已经能把“写代码”这一步提速很多，但团队协作里的瓶颈并没有消失。&lt;/p&gt;
 &lt;p&gt;一个典型场景是这样的：&lt;/p&gt;
@@ -119,10 +119,10 @@
 &lt;/ul&gt;
 &lt;p&gt;问题不在于这条链路复杂到无法理解，而在于它太重复了。只要你已经接受“让 AI 参与改代码”，那下一步自然就是把 review 之后的修复过程也纳入自动化。&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 的目标，就是把这段重复劳动抽出来，做成一个边界清晰的小系统。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 的目标，就是把这段重复劳动抽出来，做成一个边界清晰的小系统。&lt;/p&gt;
 &lt;h2 id="它到底在做什么"&gt;它到底在做什么
 &lt;/h2&gt;&lt;p&gt;一句话概括：&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 是一个围绕 GitHub PR 审查反馈闭环构建的轻量编排器。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 是一个围绕 GitHub PR 审查反馈闭环构建的轻量编排器。&lt;/p&gt;
 &lt;p&gt;它的核心链路大致是这样：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -152,14 +152,11 @@
 &lt;li&gt;&lt;code&gt;Agent Worker&lt;/code&gt; 负责 checkout、修复、验证、提交、回写&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;Thin Web&lt;/code&gt; 负责展示最近任务、状态和错误摘要&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-01.svg"
-loading="lazy"
-alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入，再经过 Normalizer、Worker 和 Thin Web，形成可追踪的修复闭环"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入，再经过 Normalizer、Worker 和 Thin Web，形成可追踪的修复闭环" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-01.svg"&gt;&lt;/p&gt;
 &lt;p&gt;我觉得这样实际上实现起来比较敏捷：它不是把所有逻辑塞进一个“大模型万能入口”，而是尽量把触发、归一化、执行、可视化拆开。这样以后你要替换 agent、增加策略或者接入别的触发源，成本会低很多。&lt;/p&gt;
 &lt;h2 id="它到底有多轻"&gt;它到底有多轻
 &lt;/h2&gt;&lt;p&gt;我用最轻量的方式实现了 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt;：&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt;：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;后端就是一个 &lt;code&gt;FastAPI&lt;/code&gt; 服务&lt;/li&gt;
 &lt;li&gt;状态存储先用 &lt;code&gt;SQLite&lt;/code&gt;&lt;/li&gt;
@@ -169,11 +166,11 @@ alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入
 &lt;/ul&gt;
 &lt;p&gt;换句话说，它更像一个能逐步扩展的 &lt;code&gt;AI-native PR Autofix Orchestrator&lt;/code&gt;，而不是一个覆盖整个研发流程的大平台。&lt;/p&gt;
 &lt;p&gt;如果你看过我之前写的 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-4.7-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" &gt;使用 OpenCode + GLM-4.7 实现 GitHub PR 自动代码审查&lt;/a&gt;，应该能感觉到这条思路是一脉相承的：先把 runner 和模型跑起来，再把 review 之后的动作继续往前推。&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 只是把这条链路从“自动 review”再往前做了一步，开始处理 review 之后的修复闭环。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 只是把这条链路从“自动 review”再往前做了一步，开始处理 review 之后的修复闭环。&lt;/p&gt;
 &lt;h2 id="现在已经做到什么程度"&gt;现在已经做到什么程度
 &lt;/h2&gt;&lt;p&gt;从当前代码和文档来看，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 已经不是一个只有想法的草稿，而是有比较完整主干能力的 MVP，也已经发了 &lt;a class="link" href="https://github.com/sun-praise/software-factory/releases/tag/v0.1.0" target="_blank" rel="noopener"
-&gt;v0.1.0 release&lt;/a&gt;。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 已经不是一个只有想法的草稿，而是有比较完整主干能力的 MVP，也已经发了 &lt;a class="link" href="https://github.com/sun-praise/software-factory/releases/tag/v0.1.0" target="_blank" rel="noopener"
+ &gt;v0.1.0 release&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;目前已经完成的部分包括：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;最小可跑骨架：FastAPI 服务、健康检查、基础 SSR 页面&lt;/li&gt;
@@ -182,22 +179,22 @@ alt="software-factory 的主链路示意图：从 Hook 和 GitHub Webhook 进入
 &lt;li&gt;Agent Worker 执行链路：checkout、跑检查命令、commit、push、回写 PR&lt;/li&gt;
 &lt;li&gt;稳定性模块：PR 锁、重试、最大自动修复次数限制、噪声评论过滤、日志归档&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-02.svg"
-loading="lazy"
-alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补文档、测试和压测"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补文档、测试和压测" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/software-factory-pr-review-loop/pics/inline-02.svg"&gt;&lt;/p&gt;
 &lt;p&gt;这意味着它已经覆盖了从“收到反馈”到“尝试修复并回写结果”的主路径。&lt;/p&gt;
 &lt;p&gt;我们也通过让 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 自己优化 &lt;a class="link" href="https://github.com/sun-praise/software-factory/pull/59" target="_blank" rel="noopener"
-&gt;PR #59&lt;/a&gt;，验证了这套流程确实能跑通。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;这件事最有意思的地方在于，&lt;code&gt;#59&lt;/code&gt; 不只是一个普通 PR，它意味着 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 已经开始参与 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 自己的开发了。&lt;/p&gt;&lt;/blockquote&gt;
+ &gt;software-factory&lt;/a&gt; 自己优化 &lt;a class="link" href="https://github.com/sun-praise/software-factory/pull/59" target="_blank" rel="noopener"
+ &gt;PR #59&lt;/a&gt;，验证了这套流程确实能跑通。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这件事最有意思的地方在于，&lt;code&gt;#59&lt;/code&gt; 不只是一个普通 PR，它意味着 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt; 已经开始参与 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
+ &gt;software-factory&lt;/a&gt; 自己的开发了。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;另外我觉得比较实用的一点，是这个项目并没有把 Web 界面做成纯展示页。除了任务列表和详情，它还在往更可操作的方向走，比如运行详情、operator hints、手动 issue 提交、agent 设置这些入口，说明它的目标不是只做一条后台脚本，而是做一个真正可运维的小系统。&lt;/p&gt;
 &lt;h2 id="这个项目最有意思的地方"&gt;这个项目最有意思的地方
 &lt;/h2&gt;&lt;p&gt;如果只是做一个“收到评论后调用 AI 修代码”的 demo，其实并不难。&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 更有意思的地方，在于它开始认真处理真实系统才会遇到的问题。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 更有意思的地方，在于它开始认真处理真实系统才会遇到的问题。&lt;/p&gt;
 &lt;h3 id="1-它把触发分成了内部和外部两类"&gt;1. 它把“触发”分成了内部和外部两类
 &lt;/h3&gt;&lt;p&gt;内部触发来自 Claude Code Hook，用来确定性记录开发会话；外部触发来自 GitHub Webhook，用来感知 PR review 的变化。这种拆分让系统知道“什么时候发生了开发动作”，也知道“什么时候出现了新的修复需求”。&lt;/p&gt;
 &lt;h3 id="2-它没有直接把-review-原文丢给-agent"&gt;2. 它没有直接把 review 原文丢给 agent
@@ -208,7 +205,7 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;/h3&gt;&lt;p&gt;这个项目默认就强调本地运行、共享 &lt;code&gt;DB_PATH&lt;/code&gt;、轻量状态存储和可视化页面。这种 local-first 设计对个人开发者和小团队很友好：你可以先在自己的环境里把闭环跑通，再考虑是否要把它推向更大的部署形态。&lt;/p&gt;
 &lt;h2 id="它适合什么人"&gt;它适合什么人
 &lt;/h2&gt;&lt;p&gt;我觉得 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 现在最适合下面几类场景：&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 现在最适合下面几类场景：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;已经在 GitHub 上做 code review，希望减少 review 后重复修复劳动的个人开发者&lt;/li&gt;
 &lt;li&gt;小团队或内部工具团队，想先把 PR 自动修复闭环跑起来，而不是先上完整平台&lt;/li&gt;
@@ -217,7 +214,7 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;p&gt;如果你的目标是做一个覆盖 CI/CD、权限、审批、租户隔离、复杂报表的企业平台，那它目前显然还不是那个方向。但如果你要解决的问题足够具体：把 review feedback 自动变成下一轮修复动作，那这个项目的切口其实很准。&lt;/p&gt;
 &lt;h2 id="接下来还可以往哪里走"&gt;接下来还可以往哪里走
 &lt;/h2&gt;&lt;p&gt;从文档里的规划看，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 下一步最值得期待的，不是继续堆页面，而是补齐几个真正影响可用性的能力：&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 下一步最值得期待的，不是继续堆页面，而是补齐几个真正影响可用性的能力：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;更完整的 E2E 和压力测试&lt;/li&gt;
 &lt;li&gt;多仓库支持和更细的策略控制&lt;/li&gt;
@@ -227,7 +224,7 @@ alt="software-factory 的里程碑进度图：M1 到 M6 已完成，M7 正在补
 &lt;p&gt;尤其是“按仓库构建可复用运行时镜像”这个方向，我觉得很有价值。很多 agent 系统失败并不是因为模型不会修，而是因为运行环境不稳定、依赖不完整、工作目录和真实项目不一致。要让自动修复从 demo 走向日常可用，这一步迟早得做。&lt;/p&gt;
 &lt;h2 id="写在最后"&gt;写在最后
 &lt;/h2&gt;&lt;p&gt;对我来说，&lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 最重要的不是它用了 FastAPI、SQLite 还是某个具体 agent，而是它试图把一个很真实、很重复、也很容易被忽视的研发环节单独拿出来优化：PR review 之后的修复闭环。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 最重要的不是它用了 FastAPI、SQLite 还是某个具体 agent，而是它试图把一个很真实、很重复、也很容易被忽视的研发环节单独拿出来优化：PR review 之后的修复闭环。&lt;/p&gt;
 &lt;p&gt;如果说很多 AI 编码工具解决的是“怎么更快写出第一版代码”，那 &lt;a class="link" href="https://github.com/sun-praise/software-factory" target="_blank" rel="noopener"
-&gt;software-factory&lt;/a&gt; 解决的问题更接近“怎么把代码真正推进到可以合并的状态”。而这一步，恰恰是团队协作里最容易反复消耗人的地方。&lt;/p&gt;
+ &gt;software-factory&lt;/a&gt; 解决的问题更接近“怎么把代码真正推进到可以合并的状态”。而这一步，恰恰是团队协作里最容易反复消耗人的地方。&lt;/p&gt;
 &lt;p&gt;所以我会把它看成一个很典型的项目：它不是为了证明 AI 会不会写代码，而是想验证 AI 能不能在真实工程流程里，稳定地处理 review 反馈，并把后续修复一步步推进下去。&lt;/p&gt;</description></item></channel></rss>

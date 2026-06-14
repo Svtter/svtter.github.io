@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on Svtter's Blog</title><link>https://svtter.cn/en/tags/python/</link><description>Recent content in Python on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 30 Dec 2025 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Configuring Claude Code Python UV Hooks and Skills</title><link>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/pics/bg.svg" alt="Featured image of post Configuring Claude Code Python UV Hooks and Skills" /&gt;&lt;p&gt;My project uses &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
-&gt;uv&lt;/a&gt; to manage Python dependencies, but Claude Code habitually defaults to &lt;code&gt;python&lt;/code&gt; or &lt;code&gt;pip install&lt;/code&gt;. I tried using Skills and Hooks to enforce this standard and encountered quite a few pitfalls.&lt;/p&gt;
+ &gt;uv&lt;/a&gt; to manage Python dependencies, but Claude Code habitually defaults to &lt;code&gt;python&lt;/code&gt; or &lt;code&gt;pip install&lt;/code&gt;. I tried using Skills and Hooks to enforce this standard and encountered quite a few pitfalls.&lt;/p&gt;
 &lt;h2 id="goal"&gt;Goal
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Create a Skill: Inform Claude that the project uses uv&lt;/li&gt;
@@ -33,14 +33,14 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Wrong&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;location&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;project&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Wrong&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;location&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;project&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Correct&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;python-uv&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv. Use when adding Python packages, running Python scripts, or managing Python dependencies. Enforces uv instead of pip/python commands.&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Correct&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;python-uv&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv. Use when adding Python packages, running Python scripts, or managing Python dependencies. Enforces uv instead of pip/python commands.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Key points:&lt;/p&gt;
@@ -179,7 +179,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;PreToolUse&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;matcher&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Bash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// Simplified matcher format
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;$CLAUDE_PROJECT_DIR/.claude/hooks/pre-bash&amp;#34;&lt;/span&gt;
@@ -189,7 +189,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Remove ineffective environment.PATH configuration
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Notes:&lt;/p&gt;
@@ -259,13 +259,13 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;h2 id="references"&gt;References
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
-&gt;uv&lt;/a&gt;&lt;/li&gt;
+ &gt;uv&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-hooks" target="_blank" rel="noopener"
-&gt;Claude Code Hooks Documentation&lt;/a&gt;&lt;/li&gt;
+ &gt;Claude Code Hooks Documentation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-skills" target="_blank" rel="noopener"
-&gt;Claude Code Skills Documentation&lt;/a&gt;&lt;/li&gt;
+ &gt;Claude Code Skills Documentation&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Hugo Admin - A Lightweight Hugo Blog Management Interface</title><link>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</link><pubDate>Tue, 23 Dec 2025 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</guid><description>&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/featured.png" alt="Featured image of post Hugo Admin - A Lightweight Hugo Blog Management Interface" /&gt;&lt;p&gt;When managing a Hugo blog, you often need to switch back and forth between the terminal and editor. To simplify this process, I developed &lt;a class="link" href="https://github.com/Svtter/hugo-admin" target="_blank" rel="noopener"
-&gt;hugo-admin&lt;/a&gt;, a lightweight web management interface based on Flask.&lt;/p&gt;
+ &gt;hugo-admin&lt;/a&gt;, a lightweight web management interface based on Flask.&lt;/p&gt;
 &lt;h2 id="why-its-needed"&gt;Why It&amp;rsquo;s Needed
 &lt;/h2&gt;&lt;p&gt;The typical workflow for writing Hugo blogs is:&lt;/p&gt;
 &lt;ol&gt;
@@ -286,16 +286,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;li&gt;&lt;strong&gt;Image Management&lt;/strong&gt;: Upload and manage article images&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="interface-display"&gt;Interface Display
-&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png"
-width="1920"
-height="1080"
-srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_eb1747e0ec7106ec.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_f1b2609be5f2d5a2.png 1024w"
-loading="lazy"
-alt="hugo-admin interface"
-class="gallery-image"
-data-flex-grow="177"
-data-flex-basis="426px"
-&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="hugo-admin interface" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="1080" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png" srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_97d032cd1dac853b.png 800w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_1120089bfaa65cd2.png 1600w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png 1920w" width="1920"&gt;&lt;/p&gt;
 &lt;h2 id="tech-stack"&gt;Tech Stack
 &lt;/h2&gt;&lt;p&gt;Backend uses Flask + Flask-SocketIO, frontend uses Tailwind CSS + Alpine.js. Real-time log pushing is implemented based on WebSocket.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -383,7 +374,7 @@ data-flex-basis="426px"
 &lt;li&gt;&lt;strong&gt;Direct Hugo API usage&lt;/strong&gt;: No need for SQLite3 cache, directly calls Hugo API to get article information, more lightweight and efficient&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The advanced version is priced at $10 USD. &lt;a class="link" href="https://ko-fi.com/s/57009bf884" target="_blank" rel="noopener"
-&gt;Click here to purchase&lt;/a&gt; to get complete source code. If you have higher requirements for performance and deployment convenience, consider the advanced version.&lt;/p&gt;
+ &gt;Click here to purchase&lt;/a&gt; to get complete source code. If you have higher requirements for performance and deployment convenience, consider the advanced version.&lt;/p&gt;
 &lt;h2 id="future-plans"&gt;Future Plans
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Git operations interface&lt;/li&gt;
@@ -391,6 +382,8 @@ data-flex-basis="426px"
 &lt;li&gt;Docker deployment&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The project is open source, welcome to Star and PR.&lt;/p&gt;
+
+
 &lt;div class="repo-card" data-repo="Svtter/hugo-admin"&gt;&lt;/div&gt;</description></item><item><title>Using uv to publish Python packages</title><link>https://svtter.cn/en/p/using-uv-to-publish-python-packages/</link><pubDate>Tue, 03 Jun 2025 15:54:28 +0800</pubDate><guid>https://svtter.cn/en/p/using-uv-to-publish-python-packages/</guid><description>&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1

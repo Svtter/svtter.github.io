@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deepseek on Svtter's Blog</title><link>https://svtter.cn/en/categories/deepseek/</link><description>Recent content in Deepseek on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/deepseek/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deepseek on Svtter's Blog</title><link>https://svtter.cn/en/categories/deepseek/</link><description>Recent content in Deepseek on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/categories/deepseek/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
 &lt;/h2&gt;&lt;p&gt;When using DeepSeek models (such as &lt;code&gt;deepseek-v4-flash&lt;/code&gt;) directly in Claude Code with extended thinking enabled, multi-turn conversations trigger a 400 error:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -20,24 +20,24 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="protocol-incompatibility"&gt;Protocol Incompatibility
 &lt;/h3&gt;&lt;p&gt;According to the &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
-&gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
+ &gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Message Field&lt;/th&gt;
-&lt;th&gt;Support Status&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;✅ Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;❌ Not Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Message Field&lt;/th&gt;
+					&lt;th&gt;Support Status&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;✅ Supported&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;❌ Not Supported&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;In extended thinking mode during multi-turn conversations, Claude Code faithfully passes back all thinking blocks from the previous round (including &lt;code&gt;redacted_thinking&lt;/code&gt; types) to the API as-is. DeepSeek does not recognize &lt;code&gt;redacted_thinking&lt;/code&gt;, hence the 400 error.&lt;/p&gt;
 &lt;p&gt;Additionally, DeepSeek&amp;rsquo;s thinking block format differs from Anthropic&amp;rsquo;s native protocol, and the replay logic in tool_use scenarios is not fully compatible either.&lt;/p&gt;
@@ -50,63 +50,63 @@
 &lt;h2 id="community-feedback"&gt;Community Feedback
 &lt;/h2&gt;&lt;p&gt;This is a &lt;strong&gt;widespread community issue&lt;/strong&gt; that almost all CC agent/router projects have encountered:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;Project&lt;/th&gt;
-&lt;th&gt;Title&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
-&gt;#1&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-use&lt;/td&gt;
-&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
-&gt;#878&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;openclaude&lt;/td&gt;
-&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
-&gt;#1355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;claude-code-router&lt;/td&gt;
-&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
-&gt;#4543&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;new-api&lt;/td&gt;
-&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
-&gt;#355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;9router&lt;/td&gt;
-&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
-&gt;#16748&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;hermes-agent&lt;/td&gt;
-&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
-&gt;#2414&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-switch&lt;/td&gt;
-&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
-&gt;#174&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-haha&lt;/td&gt;
-&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;Project&lt;/th&gt;
+					&lt;th&gt;Title&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+ &gt;#1&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-use&lt;/td&gt;
+					&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+ &gt;#878&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;openclaude&lt;/td&gt;
+					&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+ &gt;#1355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;claude-code-router&lt;/td&gt;
+					&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+ &gt;#4543&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;new-api&lt;/td&gt;
+					&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+ &gt;#355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;9router&lt;/td&gt;
+					&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+ &gt;#16748&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;hermes-agent&lt;/td&gt;
+					&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+ &gt;#2414&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-switch&lt;/td&gt;
+					&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+ &gt;#174&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-haha&lt;/td&gt;
+					&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="deepseek-official-response"&gt;DeepSeek Official Response
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zero response.&lt;/strong&gt; Nor is there any need to respond.&lt;/p&gt;
@@ -122,7 +122,7 @@
 &lt;/ol&gt;
 &lt;h2 id="why-doesnt-opencode-have-this-problem"&gt;Why Doesn&amp;rsquo;t OpenCode Have This Problem?
 &lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
-&gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
+ &gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
 &lt;p&gt;The key lies in the &lt;code&gt;convertMessages&lt;/code&gt; method in &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; (lines 60-119):&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;When building assistant messages, it only passes back &lt;code&gt;TextContent&lt;/code&gt; (text) and &lt;code&gt;ToolCall&lt;/code&gt; (tool calls)&lt;/li&gt;
@@ -131,30 +131,30 @@
 &lt;/ul&gt;
 &lt;p&gt;Comparison with Claude Code&amp;rsquo;s behavior:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;thinking replay&lt;/td&gt;
-&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
-&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;architectural reason&lt;/td&gt;
-&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
-&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
-&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
-&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;thinking replay&lt;/td&gt;
+					&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
+					&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;architectural reason&lt;/td&gt;
+					&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
+					&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
+					&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
+					&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Conclusion: OpenCode avoids the problem at the cost of not following Anthropic&amp;rsquo;s extended thinking specification.&lt;/strong&gt; This approach is friendly to third-party compatible endpoints like DeepSeek, but if Anthropic native thinking context retention capability is needed in the future, re-implementation may be necessary.&lt;/p&gt;
 &lt;h2 id="does-not-replay-thinking-blocks-affect-deepseek-performance"&gt;Does Not Replay Thinking Blocks Affect DeepSeek Performance?
@@ -168,37 +168,37 @@
 &lt;h2 id="related-claude-code-native-issues"&gt;Related Claude Code Native Issues
 &lt;/h2&gt;&lt;p&gt;CC itself has similar thinking block replay bugs on Anthropic models (not DeepSeek-specific):&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;Title&lt;/th&gt;
-&lt;th&gt;Status&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
-&gt;#10199&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
-&gt;#51985&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
-&gt;#20692&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
-&gt;#54482&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;Title&lt;/th&gt;
+					&lt;th&gt;Status&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+ &gt;#10199&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+ &gt;#51985&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+ &gt;#20692&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+ &gt;#54482&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;</description></item></channel></rss>

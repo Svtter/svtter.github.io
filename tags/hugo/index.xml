@@ -1,9 +1,149 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hugo on Svtter's Blog</title><link>https://svtter.cn/tags/hugo/</link><description>Recent content in Hugo on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 15 May 2026 15:59:17 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/hugo/index.xml" rel="self" type="application/rss+xml"/><item><title>新的博客形式</title><link>https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/</link><pubDate>Fri, 15 May 2026 15:59:17 +0800</pubDate><guid>https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/</guid><description>&lt;img src="https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/pics/cover_1780819344.png" alt="Featured image of post 新的博客形式" /&gt;&lt;p&gt;近期了解了一下 deepseek 发展的脉络，整理了一个 &lt;a class="link" href="https://svtter.cn/p/deepseek-%e6%8a%80%e6%9c%af%e8%84%89%e7%bb%9c/" &gt;DeepSeek 技术脉络&lt;/a&gt;。review 过后，我觉得这是一个有价值的，可发表的文件。但是直接转换成 markdown 文件后，会损失很多信息和细节。因此，我尝试了一下 hugo 的 &lt;code&gt;{{ .raw }}&lt;/code&gt; 模式。意外的发现，效果不错，SEO 仍然支持。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hugo on Svtter's Blog</title><link>https://svtter.cn/tags/hugo/</link><description>Recent content in Hugo on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 13 Jun 2026 18:29:24 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/hugo/index.xml" rel="self" type="application/rss+xml"/><item><title>Hugo 0.163 升级记录：security.allowContent 拦截了 HTML 内容</title><link>https://svtter.cn/p/hugo-0163-%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/</link><pubDate>Sat, 13 Jun 2026 18:29:24 +0800</pubDate><guid>https://svtter.cn/p/hugo-0163-%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/</guid><description>&lt;img src="https://svtter.cn/p/hugo-0163-%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/pics/cover_1781357169.png" alt="Featured image of post Hugo 0.163 升级记录：security.allowContent 拦截了 HTML 内容" /&gt;&lt;p&gt;最近更新了一次主题，不知不觉把 Hugo 也带到了 &lt;code&gt;v0.163.1&lt;/code&gt;。然后 &lt;code&gt;hugo server&lt;/code&gt; 就起不来了。&lt;/p&gt;
+&lt;h2 id="现象"&gt;现象
+&lt;/h2&gt;&lt;p&gt;启动直接报错：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ERROR ... content/index.html:1:1&amp;#34;: access denied: &amp;#34;text/html&amp;#34; is not whitelisted in policy &amp;#34;security.allowContent&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;首页 &lt;code&gt;content/index.html&lt;/code&gt;（一个嵌着 GitHub Calendar 的页面）被拒之门外。奇怪的是 markdown 文章一个没受影响。&lt;/p&gt;
+&lt;h2 id="根因"&gt;根因
+&lt;/h2&gt;&lt;p&gt;不是主题的锅，是 Hugo 本身。&lt;code&gt;0.163&lt;/code&gt; 引入了一个新的安全策略 &lt;code&gt;security.allowContent&lt;/code&gt;，默认配置长这样：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;security&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;allowContent&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;! ^text/html$&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;意图是防止 &lt;code&gt;content/&lt;/code&gt; 目录里混入恶意 HTML（一种 XSS 防护）。&lt;code&gt;!&lt;/code&gt; 前缀表示 deny 规则。方向是对的，但本站的 HTML 内容页是正经页面，不是攻击向量，于是被误伤了。&lt;/p&gt;
+&lt;h2 id="allowcontent-的语义挺绕"&gt;allowContent 的语义挺绕
+&lt;/h2&gt;&lt;p&gt;这部分是最值得记的。我先按官方 security 文档那套 allowlist 的思路去猜，结果几次试错才搞清楚。把几次配置的结果放一起对比就很明显了：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;配置&lt;/th&gt;
+					&lt;th style="text-align: center"&gt;html&lt;/th&gt;
+					&lt;th style="text-align: center"&gt;markdown&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;默认 &lt;code&gt;['! ^text/html$']&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: center"&gt;拒&lt;/td&gt;
+					&lt;td style="text-align: center"&gt;放行&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;空列表 &lt;code&gt;[]&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: center"&gt;拒&lt;/td&gt;
+					&lt;td style="text-align: center"&gt;放行&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;['^text/html$']&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: center"&gt;放行&lt;/td&gt;
+					&lt;td style="text-align: center"&gt;拒&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;据此可以推出几条结论：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;配置里&lt;strong&gt;没有任何 allow 规则&lt;/strong&gt;（只有 &lt;code&gt;!&lt;/code&gt; deny 规则，或者干脆为空）→ 「默认放行」模式，只拦截命中 deny 的类型；&lt;/li&gt;
+&lt;li&gt;配置里&lt;strong&gt;一旦出现 allow 规则&lt;/strong&gt;（不带 &lt;code&gt;!&lt;/code&gt; 的项）→ 立刻切到「白名单」模式，只有命中的类型才放行，其余全部拒绝；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;text/html&lt;/code&gt; 还有一条&lt;strong&gt;隐含的内置 deny&lt;/strong&gt;，连空列表 &lt;code&gt;[]&lt;/code&gt; 都清不掉它（所以 &lt;code&gt;[]&lt;/code&gt; 和默认表现一模一样）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这就解释了为什么「显式放行 html」(&lt;code&gt;['^text/html$']&lt;/code&gt;) 反而把 markdown 也一起拒了——它触发了白名单模式。&lt;/p&gt;
+&lt;p&gt;所以正确的修法是用一条通配 allow 规则：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;security&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;allowContent&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.*&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;.*&lt;/code&gt; 命中所有类型，html 和 markdown 都放行；而且 allow 规则能压过那条内置的 html deny（实测 &lt;code&gt;['^text/html$']&lt;/code&gt; 时 html 是能通过的，证明 allow 优先级高于内置 deny）。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;顺带一提，直接读 &lt;code&gt;hugo config&lt;/code&gt; 打印出的当前生效配置，是确认这些细节最快的办法，比翻文档靠谱——毕竟官方 security 页面目前根本还没收录 &lt;code&gt;allowContent&lt;/code&gt; 这个新 key。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="修复"&gt;修复
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;config/_default/config.toml&lt;/code&gt; 末尾加上面那段，&lt;code&gt;hugo server&lt;/code&gt; 恢复正常。&lt;/p&gt;
+&lt;h2 id="更大的坑contentindexhtml-让整站文章只剩四分之一"&gt;更大的坑：content/index.html 让整站文章只剩四分之一
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;allowContent&lt;/code&gt; 修完，&lt;code&gt;hugo server&lt;/code&gt; 确实能起了。但写这篇文章时发现一个&lt;strong&gt;比上面严重得多&lt;/strong&gt;的问题——新写的文章死活构建不出来，怎么都不生成独立页面。&lt;/p&gt;
+&lt;p&gt;排查下来，又是 0.163 的行为变化。项目根目录有个 &lt;code&gt;content/index.html&lt;/code&gt;（starter 模板自带的，里面嵌了个 GitHub Calendar）。Hugo 一直有条警告：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Using index.html in your content&amp;rsquo;s root directory is usually incorrect &amp;hellip; your home page will be treated as a leaf bundle, meaning it won&amp;rsquo;t be able to have any child pages or sections.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;以前（旧版 Hugo）这条只是警告、不影响构建；&lt;strong&gt;0.163 开始动真格了&lt;/strong&gt;——首页一旦是 leaf bundle，整棵 content 树就丢了子页面/子 section。后果很吓人，拿掉这个文件前后对比：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;有 content/index.html&lt;/th&gt;
+					&lt;th&gt;改成 _index.html 后&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;构建出的文章&lt;/td&gt;
+					&lt;td&gt;~106 篇&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;625 篇&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;文章 URL&lt;/td&gt;
+					&lt;td&gt;全跑去 &lt;code&gt;/post/&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;恢复 &lt;code&gt;/p/:slug/&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;新文章&lt;/td&gt;
+					&lt;td&gt;静默吞掉&lt;/td&gt;
+					&lt;td&gt;正常&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;hugo list all&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;只剩 1 条&lt;/td&gt;
+					&lt;td&gt;715 条&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;也就是说，&lt;strong&gt;如果直接拿 0.163 重新部署，站点会凭空消失四分之三的文章，所有旧的 &lt;code&gt;/p/&lt;/code&gt; 链接全 404&lt;/strong&gt;。这个杀伤力比 &lt;code&gt;allowContent&lt;/code&gt; 大多了，而且 &lt;code&gt;hugo server&lt;/code&gt; 照样能&amp;quot;启动成功&amp;quot;，不报错，极度隐蔽。&lt;/p&gt;
+&lt;p&gt;最骚的是，这个 &lt;code&gt;content/index.html&lt;/code&gt; 里的日历&lt;strong&gt;从来就没在线上首页渲染过&lt;/strong&gt;（线上首页是文章列表），它纯粹是个&amp;quot;只搞破坏不干活&amp;quot;的死文件——来自 starter 模板，留着只会埋雷。&lt;/p&gt;
+&lt;p&gt;修法很简单，二选一：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;content/index.html&lt;/code&gt; 改名成 &lt;code&gt;content/_index.html&lt;/code&gt;（变成 branch bundle，不再吞子页面），构建立刻恢复；&lt;/li&gt;
+&lt;li&gt;或者干脆删掉它，效果一样、更干净。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="另外带出来的两个小问题"&gt;另外带出来的两个小问题
+&lt;/h2&gt;&lt;p&gt;排查过程里还冒出来两个，跟安全策略无关：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;hugo --gc&lt;/code&gt; 报 permission denied&lt;/strong&gt;。&lt;code&gt;resources/_gen/&lt;/code&gt; 下的缓存文件是 root 拥有的——大概是之前用 root 或容器跑过一次构建留下的。&lt;code&gt;sudo chown -R $USER resources/&lt;/code&gt; 归位即可。这玩意儿只影响 &lt;code&gt;--gc&lt;/code&gt; 的垃圾回收，不影响 &lt;code&gt;hugo server&lt;/code&gt; 和普通构建。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一批配置弃用警告&lt;/strong&gt;（v0.158 起 deprecated）：&lt;code&gt;languageCode&lt;/code&gt; → &lt;code&gt;locale&lt;/code&gt;、&lt;code&gt;languages.*.languageName&lt;/code&gt; → &lt;code&gt;languages.*.label&lt;/code&gt;、&lt;code&gt;languages.*.languageDirection&lt;/code&gt; → &lt;code&gt;languages.*.direction&lt;/code&gt;。现在还是 WARN，未来版本会变成 ERROR。这个我开了个 &lt;a class="link" href="https://github.com/Svtter/hugo-blog/issues/72" target="_blank" rel="noopener"
+ &gt;issue&lt;/a&gt; 跟踪，回头一并改了。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="小结"&gt;小结
+&lt;/h2&gt;&lt;p&gt;这次 0.163 升级踩了两个坑，一个明一个暗：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;明的&lt;/strong&gt;：&lt;code&gt;security.allowContent&lt;/code&gt; 默认拦 HTML，启动直接报错，反而好发现。加 &lt;code&gt;allowContent = ['.*']&lt;/code&gt; 解决。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;暗的&lt;/strong&gt;：&lt;code&gt;content/index.html&lt;/code&gt; 让首页变 leaf bundle，0.163 下静默吞掉四分之三的文章、打乱所有 URL，而 &lt;code&gt;hugo server&lt;/code&gt; 照样&amp;quot;成功启动&amp;quot;不报错。这个才是真正危险的——要不是我顺手写篇文章发现它构建不出来，直接部署就惨了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;教训：升级 Hugo 大版本后，别光看 &lt;code&gt;hugo server&lt;/code&gt; 能不能起，&lt;strong&gt;一定要对比一下构建出的文章数量和 URL 结构&lt;/strong&gt;有没有变（比如 &lt;code&gt;find public/p -type d | wc -l&lt;/code&gt;）。&lt;code&gt;hugo server&lt;/code&gt; 成功 ≠ 站点健康。&lt;/p&gt;
+&lt;p&gt;至于那些弃用警告（&lt;code&gt;languageCode&lt;/code&gt; 之类），回头慢慢改，不影响运行。&lt;/p&gt;</description></item><item><title>新的博客形式</title><link>https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/</link><pubDate>Fri, 15 May 2026 17:16:24 +0800</pubDate><guid>https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/</guid><description>&lt;img src="https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/pics/cover_1780819344.png" alt="Featured image of post 新的博客形式" /&gt;&lt;p&gt;近期了解了一下 deepseek 发展的脉络，整理了一个 &lt;a class="link" href="https://svtter.cn/p/deepseek-%e6%8a%80%e6%9c%af%e8%84%89%e7%bb%9c/" &gt;DeepSeek 技术脉络&lt;/a&gt;。review 过后，我觉得这是一个有价值的，可发表的文件。但是直接转换成 markdown 文件后，会损失很多信息和细节。因此，我尝试了一下 hugo 的 &lt;code&gt;{{ .raw }}&lt;/code&gt; 模式。意外的发现，效果不错，SEO 仍然支持。&lt;/p&gt;
 &lt;p&gt;我以后会多发一些这样的文章。这些文章本身是与 AI 共创的。阅读体验比单纯的文字要好一点。&lt;/p&gt;
 &lt;p&gt;我一般会把 html 文件存在 &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
-&gt;static-html&lt;/a&gt; 里面，做统一的管理。推荐你也试试。介绍的文章在这里 &lt;a class="link" href="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/" target="_blank" rel="noopener"
-&gt;sth：一个给 AI Agent 用的 HTML 预览服务器&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>Hugo Admin - 轻量级 Hugo 博客管理界面</title><link>https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/</link><pubDate>Tue, 23 Dec 2025 16:00:00 +0800</pubDate><guid>https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/</guid><description>&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/featured.png" alt="Featured image of post Hugo Admin - 轻量级 Hugo 博客管理界面" /&gt;&lt;p&gt;管理 Hugo 博客时，常常需要在终端和编辑器之间来回切换。为了简化这个流程，我开发了 &lt;a class="link" href="https://github.com/Svtter/hugo-admin" target="_blank" rel="noopener"
-&gt;hugo-admin&lt;/a&gt;，一个基于 Flask 的轻量级 Web 管理界面。&lt;/p&gt;
+ &gt;static-html&lt;/a&gt; 里面，做统一的管理。推荐你也试试。介绍的文章在这里 &lt;a class="link" href="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/" target="_blank" rel="noopener"
+ &gt;sth：一个给 AI Agent 用的 HTML 预览服务器&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>Hugo Admin - 轻量级 Hugo 博客管理界面</title><link>https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/</link><pubDate>Tue, 23 Dec 2025 16:00:00 +0800</pubDate><guid>https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/</guid><description>&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/featured.png" alt="Featured image of post Hugo Admin - 轻量级 Hugo 博客管理界面" /&gt;&lt;p&gt;管理 Hugo 博客时，常常需要在终端和编辑器之间来回切换。为了简化这个流程，我开发了 &lt;a class="link" href="https://github.com/Svtter/hugo-admin" target="_blank" rel="noopener"
+ &gt;hugo-admin&lt;/a&gt;，一个基于 Flask 的轻量级 Web 管理界面。&lt;/p&gt;
 &lt;h2 id="为什么需要它"&gt;为什么需要它
 &lt;/h2&gt;&lt;p&gt;使用 Hugo 写博客的流程通常是这样的：&lt;/p&gt;
 &lt;ol&gt;
@@ -24,16 +164,7 @@
 &lt;li&gt;&lt;strong&gt;图片管理&lt;/strong&gt;: 上传和管理文章图片&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="界面展示"&gt;界面展示
-&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png"
-width="1920"
-height="1080"
-srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_eb1747e0ec7106ec.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_f1b2609be5f2d5a2.png 1024w"
-loading="lazy"
-alt="hugo-admin 界面"
-class="gallery-image"
-data-flex-grow="177"
-data-flex-basis="426px"
-&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="hugo-admin 界面" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="1080" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png" srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_97d032cd1dac853b.png 800w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_1120089bfaa65cd2.png 1600w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png 1920w" width="1920"&gt;&lt;/p&gt;
 &lt;h2 id="技术栈"&gt;技术栈
 &lt;/h2&gt;&lt;p&gt;后端使用 Flask + Flask-SocketIO，前端使用 Tailwind CSS + Alpine.js。实时日志推送基于 WebSocket 实现。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -121,7 +252,7 @@ data-flex-basis="426px"
 &lt;li&gt;&lt;strong&gt;直接使用 Hugo API&lt;/strong&gt;: 无需 SQLite3 缓存，直接调用 Hugo API 获取文章信息，更轻量高效&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;高级版本售价 $10 美元，&lt;a class="link" href="https://ko-fi.com/s/57009bf884" target="_blank" rel="noopener"
-&gt;点击这里购买&lt;/a&gt;后会提供完整源代码。如果你对性能和部署便利性有更高要求，可以考虑高级版本。&lt;/p&gt;
+ &gt;点击这里购买&lt;/a&gt;后会提供完整源代码。如果你对性能和部署便利性有更高要求，可以考虑高级版本。&lt;/p&gt;
 &lt;h2 id="后续计划"&gt;后续计划
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Git 操作界面&lt;/li&gt;
@@ -129,11 +260,13 @@ data-flex-basis="426px"
 &lt;li&gt;Docker 部署&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;项目开源，欢迎 Star 和 PR。&lt;/p&gt;
-&lt;div class="repo-card" data-repo="Svtter/hugo-admin"&gt;&lt;/div&gt;</description></item><item><title>用 Claude Code 开发 Fried Rice 主题</title><link>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</link><pubDate>Tue, 23 Dec 2025 15:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post 用 Claude Code 开发 Fried Rice 主题" /&gt;&lt;p&gt;最近用 Claude Code 给我自己的博客主题 &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
-&gt;Fried Rice&lt;/a&gt; 加了一些 SEO 功能，整体体验还不错。&lt;/p&gt;
+
+
+&lt;div class="repo-card" data-repo="Svtter/hugo-admin"&gt;&lt;/div&gt;</description></item><item><title>用 Claude Code 开发 Fried Rice 主题</title><link>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</link><pubDate>Tue, 23 Dec 2025 15:25:02 +0800</pubDate><guid>https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post 用 Claude Code 开发 Fried Rice 主题" /&gt;&lt;p&gt;最近用 Claude Code 给我自己的博客主题 &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
+ &gt;Fried Rice&lt;/a&gt; 加了一些 SEO 功能，整体体验还不错。&lt;/p&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;Fried Rice 是从 &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
-&gt;hugo-theme-stack&lt;/a&gt; fork 出来的主题。之前已经加了一些基础的 JSON-LD structured data，这次想继续完善。&lt;/p&gt;
+ &gt;hugo-theme-stack&lt;/a&gt; fork 出来的主题。之前已经加了一些基础的 JSON-LD structured data，这次想继续完善。&lt;/p&gt;
 &lt;h2 id="这次做了什么"&gt;这次做了什么
 &lt;/h2&gt;&lt;p&gt;主要是增强 SEO 的 structured data：&lt;/p&gt;
 &lt;ul&gt;
@@ -142,16 +275,7 @@ data-flex-basis="426px"
 &lt;li&gt;FAQ schema（支持文章内嵌 FAQ）&lt;/li&gt;
 &lt;li&gt;增强 Article/BlogPosting schema（加了 accessibility metadata）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png"
-width="2153"
-height="1761"
-srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_9e208084f399dd3b.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_ddc5a242949e5593.png 1024w"
-loading="lazy"
-alt="Fried Rice 主题预览"
-class="gallery-image"
-data-flex-grow="122"
-data-flex-basis="293px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Fried Rice 主题预览" class="gallery-image" data-flex-basis="293px" data-flex-grow="122" height="1761" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png" srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_34a0682cecca2e83.png 800w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_96a51644e8634f65.png 1600w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png 2153w" width="2153"&gt;&lt;/p&gt;
 &lt;h2 id="claude-code-的表现"&gt;Claude Code 的表现
 &lt;/h2&gt;&lt;p&gt;整个开发过程大概 2 小时，Claude Code 帮我：&lt;/p&gt;
 &lt;ol&gt;
@@ -177,11 +301,16 @@ data-flex-basis="293px"
 &lt;/h2&gt;&lt;p&gt;对于这种「加功能 + 修 bug」的任务，Claude Code 挺好用的。特别是 Hugo 模板这种语法繁琐的东西，让 AI 来写效率高很多。&lt;/p&gt;
 &lt;h2 id="相关项目"&gt;相关项目
 &lt;/h2&gt;
+
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;&lt;div class="repo-card" data-repo="Svtter/Fried-Rice"&gt;&lt;/div&gt;
+
 &lt;p&gt;&lt;strong&gt;基于:&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;</description></item><item><title>Update the Hugo.md</title><link>https://svtter.cn/p/update-the-hugo.md/</link><pubDate>Fri, 07 Mar 2025 11:39:32 +0800</pubDate><guid>https://svtter.cn/p/update-the-hugo.md/</guid><description>&lt;p&gt;由于之前使用的 hugo 版本太低，更新需要费很多功夫，于是我更新了 hugo，现在只需要关注文章即可。&lt;/p&gt;
+
+
+&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;
+</description></item><item><title>Update the Hugo.md</title><link>https://svtter.cn/p/update-the-hugo.md/</link><pubDate>Fri, 07 Mar 2025 11:39:32 +0800</pubDate><guid>https://svtter.cn/p/update-the-hugo.md/</guid><description>&lt;p&gt;由于之前使用的 hugo 版本太低，更新需要费很多功夫，于是我更新了 hugo，现在只需要关注文章即可。&lt;/p&gt;
 &lt;p&gt;我现在使用的新的主题是 &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
-&gt;hugo-theme-stack&lt;/a&gt;.&lt;/p&gt;
+ &gt;hugo-theme-stack&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;因为我的 &lt;code&gt;hugo 源文件&lt;/code&gt; 和 &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; 不再同一个 repo 下，也就是说，我不能使用 branch 来直接配置 gh-pages。&lt;/p&gt;
 &lt;p&gt;因此，我调整了 &lt;code&gt;workflow&lt;/code&gt;，来适应我的情况。这是我的 workflow 配置文件：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -241,15 +370,15 @@ data-flex-basis="293px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Deploy to Github Pages&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Deploy to Github Pages&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;push&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;branches&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;master]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;branches&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;master]&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;build&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runs-on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ubuntu-latest&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;

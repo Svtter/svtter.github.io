@@ -10,10 +10,10 @@
 &lt;p&gt;三个 bug 分别出在这两个方向上。&lt;/p&gt;
 &lt;h2 id="bug-1tool-result-中的图片被字符串化"&gt;Bug 1：Tool Result 中的图片被字符串化
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28754" target="_blank" rel="noopener"
-&gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
-&gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
-&gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
-&gt;#28861&lt;/a&gt;）&lt;/p&gt;
+ &gt;#28754&lt;/a&gt;（OpenAI，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28859" target="_blank" rel="noopener"
+ &gt;#28859&lt;/a&gt;）、&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28755" target="_blank" rel="noopener"
+ &gt;#28755&lt;/a&gt;（Anthropic，关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28861" target="_blank" rel="noopener"
+ &gt;#28861&lt;/a&gt;）&lt;/p&gt;
 &lt;h3 id="问题"&gt;问题
 &lt;/h3&gt;&lt;p&gt;当 LLM 调用一个工具（比如截图工具），工具返回的结果可能包含图片（base64 编码）。opencode 的协议层在处理这种 tool result 时，统一调用了 &lt;code&gt;ProviderShared.toolResultText(part)&lt;/code&gt;，这个函数把整个 tool result——包括图片——JSON.stringify 成一个字符串。&lt;/p&gt;
 &lt;p&gt;对于 OpenAI Responses API，这意味着：&lt;/p&gt;
@@ -24,7 +24,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前：所有 tool result 都变成字符串
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;#34;type&amp;#34;:&amp;#34;image&amp;#34;,&amp;#34;data&amp;#34;:&amp;#34;base64...&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;一个包含 base64 图片的 tool result 被序列化成字符串塞进了 &lt;code&gt;function_call_output.output&lt;/code&gt;。对于 Anthropic Messages API 同样：图片被 JSON.stringify 后塞进了 &lt;code&gt;tool_result.content&lt;/code&gt;。&lt;/p&gt;
@@ -43,7 +43,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复后：图片以结构化格式发送
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;function_call_output&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;call_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;...&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;output&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;input_image&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;image_url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;data:image/png;base64,...&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
@@ -53,8 +53,8 @@
 &lt;/h3&gt;&lt;p&gt;这不是某次重构搞坏的，而是初始设计就没考虑到 tool result 会返回非文本内容。&lt;code&gt;toolResultText()&lt;/code&gt; 作为一个通用函数，把所有内容都当文本处理——在只有文本 tool result 的世界里这是对的，但世界变了。&lt;/p&gt;
 &lt;h2 id="bug-2stream-error-信息被吞掉"&gt;Bug 2：Stream Error 信息被吞掉
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28757" target="_blank" rel="noopener"
-&gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
-&gt;#28860&lt;/a&gt;）&lt;/p&gt;
+ &gt;#28757&lt;/a&gt;（关闭 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/28860" target="_blank" rel="noopener"
+ &gt;#28860&lt;/a&gt;）&lt;/p&gt;
 &lt;h3 id="问题-1"&gt;问题
 &lt;/h3&gt;&lt;p&gt;LLM provider 的流式响应可能在中途出错（rate limit、context overflow、model overload 等）。opencode 的错误处理代码把这些错误全部压成了通用字符串：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -64,7 +64,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 修复前
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;message&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="nx"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;??&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;OpenAI Responses stream error&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;所有错误都变成了 &lt;code&gt;&amp;quot;OpenAI Responses stream error&amp;quot;&lt;/code&gt; 这一句话。维护者在 PR 描述里提到，这使得某个 session 的诊断变得极其痛苦——底层原因（base64 图片过大）完全不可见。&lt;/p&gt;
@@ -94,7 +94,7 @@
 &lt;/h3&gt;&lt;p&gt;错误处理的代码写得太&amp;quot;乐观&amp;quot;了——假设错误信息总在预期的位置。但 OpenAI 的 API 在不同错误场景下把信息放在不同的嵌套层级，代码没有覆盖所有情况。&lt;/p&gt;
 &lt;h2 id="bug-3anthropic-tool-result-类型检查不稳定"&gt;Bug 3：Anthropic Tool Result 类型检查不稳定
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;相关 PR&lt;/strong&gt;：&lt;a class="link" href="https://github.com/anomalyco/opencode/pull/28909" target="_blank" rel="noopener"
-&gt;#28909&lt;/a&gt;&lt;/p&gt;
+ &gt;#28909&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id="问题-2"&gt;问题
 &lt;/h3&gt;&lt;p&gt;这个 PR 在前两个修复合并后才出现。修复了图片 tool result 的结构化发送后，Anthropic 端的类型检查变得不稳定——某些边缘情况下 tool result 的类型推断会失败。&lt;/p&gt;
 &lt;p&gt;具体来说，&lt;code&gt;tool_result.content&lt;/code&gt; 的类型从 &lt;code&gt;string&lt;/code&gt; 扩展成了 &lt;code&gt;string | ContentItem[]&lt;/code&gt;，但下游代码没有完全适配这个联合类型。&lt;/p&gt;

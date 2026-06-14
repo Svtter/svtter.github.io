@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Security on Svtter's Blog</title><link>https://svtter.cn/categories/security/</link><description>Recent content in Security on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 13 Dec 2025 11:02:40 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/security/index.xml" rel="self" type="application/rss+xml"/><item><title>谨慎使用新兴开源软件</title><link>https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/</guid><description>&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/background.png" alt="Featured image of post 谨慎使用新兴开源软件" /&gt;&lt;p&gt;最近我在 dify/langchain 上翻车了，得出这个结论。&lt;/p&gt;
 &lt;h2 id="追溯"&gt;追溯
 &lt;/h2&gt;&lt;p&gt;大概7个月前，我部署了开源的 dify 到服务器，通过官方的 docker compose 启动了实例。但是最近，由于 Dify 代码节点的沙箱逃逸漏洞（CVE-2025-3466），被 webshell 提权，植入了门罗币挖矿程序。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png"
-width="2553"
-height="462"
-srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_6b9d32fdd11c794d.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_1cc30a9f8660048.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="552"
-data-flex-basis="1326px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="1326px" data-flex-grow="552" height="462" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png" srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_a5cdbf798e8121ac.png 800w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_68dcb0fffe2da99.png 1600w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_156460a4ea5b2da4.png 2400w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png 2553w" width="2553"&gt;&lt;/p&gt;
 &lt;p&gt;好在，这次被提权之后，入侵者做的事情不多，并且入侵的是 docker container，损失可控。&lt;/p&gt;
 &lt;h2 id="cve-2025-3466-详情"&gt;CVE-2025-3466 详情
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;CVE编号&lt;/strong&gt;: CVE-2025-3466
@@ -37,9 +29,9 @@ Dify 的代码节点（code node）存在沙箱逃逸漏洞，允许攻击者通
 &lt;p&gt;&lt;strong&gt;相关链接&lt;/strong&gt;:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://nvd.nist.gov/vuln/detail/cve-2025-3466" target="_blank" rel="noopener"
-&gt;NVD 详情&lt;/a&gt;&lt;/li&gt;
+ &gt;NVD 详情&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/advisories/GHSA-x53g-q9xm-rf4m" target="_blank" rel="noopener"
-&gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
+ &gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;从这个角度看，保护服务器安全，几个关键的因素不可少。&lt;/p&gt;
 &lt;h2 id="个人服务器安全"&gt;个人服务器安全

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/en/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude Code on Svtter's Blog</title><link>https://svtter.cn/en/tags/claude-code/</link><description>Recent content in Claude Code on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/claude-code/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
 &lt;/h2&gt;&lt;p&gt;When using DeepSeek models (such as &lt;code&gt;deepseek-v4-flash&lt;/code&gt;) directly in Claude Code with extended thinking enabled, multi-turn conversations trigger a 400 error:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -20,24 +20,24 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="protocol-incompatibility"&gt;Protocol Incompatibility
 &lt;/h3&gt;&lt;p&gt;According to the &lt;a class="link" href="https://api-docs.deepseek.com/guides/anthropic_api" target="_blank" rel="noopener"
-&gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
+ &gt;DeepSeek Anthropic API Compatibility Documentation&lt;/a&gt;, the compatibility status is as follows:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Message Field&lt;/th&gt;
-&lt;th&gt;Support Status&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;✅ Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;❌ Not Supported&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Message Field&lt;/th&gt;
+					&lt;th&gt;Support Status&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;✅ Supported&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;content[].redacted_thinking&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;❌ Not Supported&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;In extended thinking mode during multi-turn conversations, Claude Code faithfully passes back all thinking blocks from the previous round (including &lt;code&gt;redacted_thinking&lt;/code&gt; types) to the API as-is. DeepSeek does not recognize &lt;code&gt;redacted_thinking&lt;/code&gt;, hence the 400 error.&lt;/p&gt;
 &lt;p&gt;Additionally, DeepSeek&amp;rsquo;s thinking block format differs from Anthropic&amp;rsquo;s native protocol, and the replay logic in tool_use scenarios is not fully compatible either.&lt;/p&gt;
@@ -50,63 +50,63 @@
 &lt;h2 id="community-feedback"&gt;Community Feedback
 &lt;/h2&gt;&lt;p&gt;This is a &lt;strong&gt;widespread community issue&lt;/strong&gt; that almost all CC agent/router projects have encountered:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;Project&lt;/th&gt;
-&lt;th&gt;Title&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
-&gt;#1&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-use&lt;/td&gt;
-&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
-&gt;#878&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;openclaude&lt;/td&gt;
-&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
-&gt;#1355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;claude-code-router&lt;/td&gt;
-&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
-&gt;#4543&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;new-api&lt;/td&gt;
-&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
-&gt;#355&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;9router&lt;/td&gt;
-&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
-&gt;#16748&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;hermes-agent&lt;/td&gt;
-&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
-&gt;#2414&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-switch&lt;/td&gt;
-&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
-&gt;#174&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;cc-haha&lt;/td&gt;
-&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;Project&lt;/th&gt;
+					&lt;th&gt;Title&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/leechen298/cc-use/issues/1" target="_blank" rel="noopener"
+ &gt;#1&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-use&lt;/td&gt;
+					&lt;td&gt;DeepSeek Thinking Mode Error: &lt;code&gt;content[].thinking&lt;/code&gt; Must Be Passed Back&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/Gitlawb/openclaude/issues/878" target="_blank" rel="noopener"
+ &gt;#878&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;openclaude&lt;/td&gt;
+					&lt;td&gt;DeepSeek V4: reasoning_content must be passed back (400) on tool_calls&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/musistudio/claude-code-router/issues/1355" target="_blank" rel="noopener"
+ &gt;#1355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;claude-code-router&lt;/td&gt;
+					&lt;td&gt;CCR 代理 deepseek V4 思考时返回 400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/QuantumNous/new-api/issues/4543" target="_blank" rel="noopener"
+ &gt;#4543&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;new-api&lt;/td&gt;
+					&lt;td&gt;ClaudeCode 接入 DeepSeek V4 遇到 400 reasoning_content 报错&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/decolua/9router/issues/355" target="_blank" rel="noopener"
+ &gt;#355&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;9router&lt;/td&gt;
+					&lt;td&gt;DeepSeek API Error 400 – Missing reasoning_content&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NousResearch/hermes-agent/issues/16748" target="_blank" rel="noopener"
+ &gt;#16748&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;hermes-agent&lt;/td&gt;
+					&lt;td&gt;DeepSeek /anthropic: stripped thinking blocks cause HTTP 400 on replay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/farion1231/cc-switch/issues/2414" target="_blank" rel="noopener"
+ &gt;#2414&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-switch&lt;/td&gt;
+					&lt;td&gt;Claude 使用 cc-switch 配置 deepseek-v4-pro，无法识别字段&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/NanmiCoder/cc-haha/issues/174" target="_blank" rel="noopener"
+ &gt;#174&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;cc-haha&lt;/td&gt;
+					&lt;td&gt;/compact 命令在使用 DeepSeek API 时无法工作&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="deepseek-official-response"&gt;DeepSeek Official Response
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Zero response.&lt;/strong&gt; Nor is there any need to respond.&lt;/p&gt;
@@ -122,7 +122,7 @@
 &lt;/ol&gt;
 &lt;h2 id="why-doesnt-opencode-have-this-problem"&gt;Why Doesn&amp;rsquo;t OpenCode Have This Problem?
 &lt;/h2&gt;&lt;p&gt;OpenCode (&lt;a class="link" href="https://github.com/opencode-ai/opencode" target="_blank" rel="noopener"
-&gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
+ &gt;opencode-ai/opencode&lt;/a&gt;) naturally avoids this problem architecturally, not through a dedicated &amp;ldquo;fix&amp;rdquo;.&lt;/p&gt;
 &lt;p&gt;The key lies in the &lt;code&gt;convertMessages&lt;/code&gt; method in &lt;code&gt;internal/llm/provider/anthropic.go&lt;/code&gt; (lines 60-119):&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;When building assistant messages, it only passes back &lt;code&gt;TextContent&lt;/code&gt; (text) and &lt;code&gt;ToolCall&lt;/code&gt; (tool calls)&lt;/li&gt;
@@ -131,30 +131,30 @@
 &lt;/ul&gt;
 &lt;p&gt;Comparison with Claude Code&amp;rsquo;s behavior:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;thinking replay&lt;/td&gt;
-&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
-&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;architectural reason&lt;/td&gt;
-&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
-&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
-&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
-&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;thinking replay&lt;/td&gt;
+					&lt;td&gt;✅ Faithfully replay all thinking blocks (including redacted_thinking)&lt;/td&gt;
+					&lt;td&gt;❌ Do not replay thinking blocks&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;architectural reason&lt;/td&gt;
+					&lt;td&gt;Follow Anthropic API specification, requires unchanged replay&lt;/td&gt;
+					&lt;td&gt;Self-managed conversation state, thinking only for UI display&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DeepSeek compatibility&lt;/td&gt;
+					&lt;td&gt;❌ Triggers 400 (redacted_thinking not recognized)&lt;/td&gt;
+					&lt;td&gt;✅ Not affected (doesn&amp;rsquo;t pass thinking at all)&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Conclusion: OpenCode avoids the problem at the cost of not following Anthropic&amp;rsquo;s extended thinking specification.&lt;/strong&gt; This approach is friendly to third-party compatible endpoints like DeepSeek, but if Anthropic native thinking context retention capability is needed in the future, re-implementation may be necessary.&lt;/p&gt;
 &lt;h2 id="does-not-replay-thinking-blocks-affect-deepseek-performance"&gt;Does Not Replay Thinking Blocks Affect DeepSeek Performance?
@@ -168,69 +168,69 @@
 &lt;h2 id="related-claude-code-native-issues"&gt;Related Claude Code Native Issues
 &lt;/h2&gt;&lt;p&gt;CC itself has similar thinking block replay bugs on Anthropic models (not DeepSeek-specific):&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Issue&lt;/th&gt;
-&lt;th&gt;Title&lt;/th&gt;
-&lt;th&gt;Status&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
-&gt;#10199&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
-&gt;#51985&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
-&gt;#20692&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
-&lt;td&gt;Open (oncall)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
-&gt;#54482&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
-&lt;td&gt;Open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Issue&lt;/th&gt;
+					&lt;th&gt;Title&lt;/th&gt;
+					&lt;th&gt;Status&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/10199" target="_blank" rel="noopener"
+ &gt;#10199&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;API Error 400 - Thinking Block Modification Error&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/51985" target="_blank" rel="noopener"
+ &gt;#51985&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking block missing in multi-turn conversations&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/20692" target="_blank" rel="noopener"
+ &gt;#20692&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;thinking blocks order error on first tool use&lt;/td&gt;
+					&lt;td&gt;Open (oncall)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/anthropics/claude-code/issues/54482" target="_blank" rel="noopener"
+ &gt;#54482&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;Thinking blocks stripped from context every turn (Opus 4.7)&lt;/td&gt;
+					&lt;td&gt;Open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;</description></item><item><title>The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?</title><link>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/cover.png" alt="Featured image of post The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?" /&gt;&lt;h2 id="preface"&gt;Preface
 &lt;/h2&gt;&lt;p&gt;Recently, several domestic big model manufacturers have launched Coding Plan subscription packages for developers, promoting &amp;ldquo;low prices for massive usage,&amp;rdquo; claiming that for just tens to hundreds of RMB per month, you can get &amp;ldquo;hundreds of billions of tokens&amp;rdquo; of usage quota.&lt;/p&gt;
 &lt;p&gt;It sounds wonderful, but as a developer accustomed to speaking with data, I decided to do some calculations: &lt;strong&gt;Under concurrency limits, can these promised usage amounts really be consumed?&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="typical-package-structure"&gt;Typical Package Structure
 &lt;/h2&gt;&lt;p&gt;Taking the common three-tier packages on the market as an example:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Package&lt;/th&gt;
-&lt;th&gt;Monthly Fee&lt;/th&gt;
-&lt;th&gt;Promised Usage (every 5 hours)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Lite&lt;/td&gt;
-&lt;td&gt;~20 RMB&lt;/td&gt;
-&lt;td&gt;About 120 prompts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Pro&lt;/td&gt;
-&lt;td&gt;~100 RMB&lt;/td&gt;
-&lt;td&gt;About 600 prompts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Max&lt;/td&gt;
-&lt;td&gt;~200 RMB&lt;/td&gt;
-&lt;td&gt;About 2,400 prompts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Package&lt;/th&gt;
+					&lt;th&gt;Monthly Fee&lt;/th&gt;
+					&lt;th&gt;Promised Usage (every 5 hours)&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Lite&lt;/td&gt;
+					&lt;td&gt;~20 RMB&lt;/td&gt;
+					&lt;td&gt;About 120 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Pro&lt;/td&gt;
+					&lt;td&gt;~100 RMB&lt;/td&gt;
+					&lt;td&gt;About 600 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Max&lt;/td&gt;
+					&lt;td&gt;~200 RMB&lt;/td&gt;
+					&lt;td&gt;About 2,400 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Officials will also add: &amp;ldquo;Each prompt is expected to call the model 15-20 times, with a total monthly usage of up to tens to hundreds of billions of tokens.&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;It seems like incredible value, but the devil is in the details.&lt;/p&gt;
@@ -238,26 +238,26 @@
 &lt;/h2&gt;&lt;p&gt;Most manufacturers&amp;rsquo; documentation will casually mention: &amp;ldquo;Package usage is subject to concurrency limits (number of in-flight request tasks).&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;But what exactly is the limit? Often not explicitly stated. According to community feedback and actual measurements, typical concurrency limits are as follows:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Package&lt;/th&gt;
-&lt;th&gt;Concurrency (in-flight requests)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Lite&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Pro&lt;/td&gt;
-&lt;td&gt;~4-5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Max&lt;/td&gt;
-&lt;td&gt;~7&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Package&lt;/th&gt;
+					&lt;th&gt;Concurrency (in-flight requests)&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Lite&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Pro&lt;/td&gt;
+					&lt;td&gt;~4-5&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Max&lt;/td&gt;
+					&lt;td&gt;~7&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;This number directly determines your actual throughput ceiling.&lt;/p&gt;
 &lt;h2 id="math-time-can-the-max-package-use-2400-prompts"&gt;Math Time: Can the Max Package Use 2,400 Prompts?
@@ -304,22 +304,22 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id="conclusion"&gt;Conclusion
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metric&lt;/th&gt;
-&lt;th&gt;Official Promise&lt;/th&gt;
-&lt;th&gt;Concurrency Limit&lt;/th&gt;
-&lt;th&gt;Achievement Rate&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Prompts per 5 hours&lt;/td&gt;
-&lt;td&gt;2,400&lt;/td&gt;
-&lt;td&gt;~720&lt;/td&gt;
-&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Metric&lt;/th&gt;
+					&lt;th&gt;Official Promise&lt;/th&gt;
+					&lt;th&gt;Concurrency Limit&lt;/th&gt;
+					&lt;th&gt;Achievement Rate&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Prompts per 5 hours&lt;/td&gt;
+					&lt;td&gt;2,400&lt;/td&gt;
+					&lt;td&gt;~720&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Even under ideal conditions, the actual usable amount of the Max package is only about 30% of the promise.&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="harsher-reality-call-inflation-in-agent-mode"&gt;Harsher Reality: Call Inflation in Agent Mode
@@ -337,8 +337,11 @@
 &lt;p&gt;A seemingly simple prompt may trigger &lt;strong&gt;50-100+ model calls&lt;/strong&gt; in an Agent loop.&lt;/p&gt;
 &lt;h3 id="actual-measurement-case"&gt;Actual Measurement Case
 &lt;/h3&gt;&lt;p&gt;User feedback:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&amp;ldquo;2 simple prompts, 80 seconds, consumed 38M Tokens, used up 97% of the 5-hour limit&amp;rdquo;&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;2 simple prompts, 80 seconds, consumed 38M Tokens, used up 97% of the 5-hour limit&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;Reverse calculation:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Each prompt consumes about 19M tokens&lt;/li&gt;
@@ -347,40 +350,40 @@
 &lt;p&gt;This is &lt;strong&gt;6-8 times higher&lt;/strong&gt; than the official &amp;ldquo;15-20 times.&amp;rdquo;&lt;/p&gt;
 &lt;h3 id="revised-actual-usable-amount"&gt;Revised Actual Usable Amount
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Scenario&lt;/th&gt;
-&lt;th&gt;Calls per prompt&lt;/th&gt;
-&lt;th&gt;Usable prompts in 5 hours&lt;/th&gt;
-&lt;th&gt;Achievement Rate&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Official ideal&lt;/td&gt;
-&lt;td&gt;17.5&lt;/td&gt;
-&lt;td&gt;720&lt;/td&gt;
-&lt;td&gt;30%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Light usage&lt;/td&gt;
-&lt;td&gt;50&lt;/td&gt;
-&lt;td&gt;252&lt;/td&gt;
-&lt;td&gt;10.5%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Moderate usage&lt;/td&gt;
-&lt;td&gt;75&lt;/td&gt;
-&lt;td&gt;168&lt;/td&gt;
-&lt;td&gt;7%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Heavy Agent usage&lt;/td&gt;
-&lt;td&gt;100+&lt;/td&gt;
-&lt;td&gt;&amp;lt;126&lt;/td&gt;
-&lt;td&gt;&amp;lt;5%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Scenario&lt;/th&gt;
+					&lt;th&gt;Calls per prompt&lt;/th&gt;
+					&lt;th&gt;Usable prompts in 5 hours&lt;/th&gt;
+					&lt;th&gt;Achievement Rate&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Official ideal&lt;/td&gt;
+					&lt;td&gt;17.5&lt;/td&gt;
+					&lt;td&gt;720&lt;/td&gt;
+					&lt;td&gt;30%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Light usage&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;252&lt;/td&gt;
+					&lt;td&gt;10.5%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Moderate usage&lt;/td&gt;
+					&lt;td&gt;75&lt;/td&gt;
+					&lt;td&gt;168&lt;/td&gt;
+					&lt;td&gt;7%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Heavy Agent usage&lt;/td&gt;
+					&lt;td&gt;100+&lt;/td&gt;
+					&lt;td&gt;&amp;lt;126&lt;/td&gt;
+					&lt;td&gt;&amp;lt;5%&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="why-is-this-happening"&gt;Why Is This Happening?
 &lt;/h2&gt;&lt;h3 id="1-token-calculation-includes-context"&gt;1. Token Calculation Includes Context
@@ -403,40 +406,40 @@
 &lt;h2 id="a-table-to-see-the-truth"&gt;A Table to See the Truth
 &lt;/h2&gt;&lt;p&gt;Taking the Max package (~200 RMB/month) as an example:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Metric&lt;/th&gt;
-&lt;th&gt;Official Promotion&lt;/th&gt;
-&lt;th&gt;Theoretical Limit&lt;/th&gt;
-&lt;th&gt;Actual Expectation&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Prompts per 5 hours&lt;/td&gt;
-&lt;td&gt;2,400&lt;/td&gt;
-&lt;td&gt;720&lt;/td&gt;
-&lt;td&gt;150-400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Monthly prompts&lt;/td&gt;
-&lt;td&gt;345,600&lt;/td&gt;
-&lt;td&gt;103,680&lt;/td&gt;
-&lt;td&gt;21,600-57,600&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Monthly tokens&lt;/td&gt;
-&lt;td&gt;&amp;ldquo;Hundreds of billions&amp;rdquo;&lt;/td&gt;
-&lt;td&gt;~10 billion&lt;/td&gt;
-&lt;td&gt;1-3 billion&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Achievement Rate&lt;/td&gt;
-&lt;td&gt;100%&lt;/td&gt;
-&lt;td&gt;30%&lt;/td&gt;
-&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Metric&lt;/th&gt;
+					&lt;th&gt;Official Promotion&lt;/th&gt;
+					&lt;th&gt;Theoretical Limit&lt;/th&gt;
+					&lt;th&gt;Actual Expectation&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Prompts per 5 hours&lt;/td&gt;
+					&lt;td&gt;2,400&lt;/td&gt;
+					&lt;td&gt;720&lt;/td&gt;
+					&lt;td&gt;150-400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Monthly prompts&lt;/td&gt;
+					&lt;td&gt;345,600&lt;/td&gt;
+					&lt;td&gt;103,680&lt;/td&gt;
+					&lt;td&gt;21,600-57,600&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Monthly tokens&lt;/td&gt;
+					&lt;td&gt;&amp;ldquo;Hundreds of billions&amp;rdquo;&lt;/td&gt;
+					&lt;td&gt;~10 billion&lt;/td&gt;
+					&lt;td&gt;1-3 billion&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Achievement Rate&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;30%&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="advice-for-developers"&gt;Advice for Developers
 &lt;/h2&gt;&lt;h3 id="1-dont-be-fooled-by-hundreds-of-billions-of-tokens"&gt;1. Don&amp;rsquo;t Be Fooled by &amp;ldquo;Hundreds of Billions of Tokens&amp;rdquo;
@@ -479,12 +482,12 @@
 &lt;h2 id="tool-list"&gt;Tool List
 &lt;/h2&gt;&lt;h3 id="tmux-mcp"&gt;tmux mcp
 &lt;/h3&gt;&lt;p&gt;First, configure tmux in the Linux environment with opencode, then have opencode install &lt;a class="link" href="https://github.com/rinadelph/tmux-mcp.git" target="_blank" rel="noopener"
-&gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt;. Once installed, you can use oc to control tmux content.&lt;/p&gt;
+ &gt;https://github.com/rinadelph/tmux-mcp.git&lt;/a&gt;. Once installed, you can use oc to control tmux content.&lt;/p&gt;
 &lt;p&gt;This method can be used to reactivate stopped opencode sessions. For example, you can open multiple tmux sessions and have one opencode monitor, start, and stop tasks through the tmux tool.&lt;/p&gt;
 &lt;h3 id="ralph-loop"&gt;ralph-loop
 &lt;/h3&gt;&lt;p&gt;Ralph is an autonomous AI agent loop that repeatedly runs Amp until all PRD items are completed. Each iteration creates a brand new Amp instance with a clean context.&lt;/p&gt;
 &lt;p&gt;Ralph likely originated from here: &lt;a class="link" href="https://github.com/snarktank/ralph" target="_blank" rel="noopener"
-&gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
+ &gt;https://github.com/snarktank/ralph&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Due to its effectiveness (which actually occurred after further improvements in model performance), it was also introduced to claude code.&lt;/p&gt;
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
 &lt;div class="repo-card" data-repo="frankbria/ralph-claude-code"&gt;&lt;/div&gt;
@@ -520,12 +523,12 @@
 &lt;h2 id="rewriting-as-agents"&gt;Rewriting as Agents
 &lt;/h2&gt;&lt;p&gt;I recommend directly rewriting these tools and MCPs as agents through opencode or claude code.&lt;/p&gt;
 &lt;p&gt;Compared to skills commands, these tools are more suitable for invocation through agents. &lt;a class="link" href="https://svtter.cn/p/why-agent/#llm-%E7%9A%84%E9%97%AE%E9%A2%98" target="_blank" rel="noopener"
-&gt;Agent context is very clean&lt;/a&gt;, making tool invocation almost inevitable.&lt;/p&gt;
+ &gt;Agent context is very clean&lt;/a&gt;, making tool invocation almost inevitable.&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;As LLMs become increasingly powerful, numerous MCPs that rely on LLM capabilities naturally gain improvements. Tools that weren&amp;rsquo;t very useful before become more effective. This aligns with the saying: &amp;ldquo;Don&amp;rsquo;t build things that become meaningless after large model capability enhancements.&amp;rdquo;
 Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&gt;
 &lt;p&gt;I believe the next step is to bridge interactions between different modalities and tools, as well as endowing tools with large model capabilities, which is one of the inevitable development directions for agent engineers.&lt;/p&gt;</description></item><item><title>Configuring Claude Code Python UV Hooks and Skills</title><link>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/pics/bg.svg" alt="Featured image of post Configuring Claude Code Python UV Hooks and Skills" /&gt;&lt;p&gt;My project uses &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
-&gt;uv&lt;/a&gt; to manage Python dependencies, but Claude Code habitually defaults to &lt;code&gt;python&lt;/code&gt; or &lt;code&gt;pip install&lt;/code&gt;. I tried using Skills and Hooks to enforce this standard and encountered quite a few pitfalls.&lt;/p&gt;
+ &gt;uv&lt;/a&gt; to manage Python dependencies, but Claude Code habitually defaults to &lt;code&gt;python&lt;/code&gt; or &lt;code&gt;pip install&lt;/code&gt;. I tried using Skills and Hooks to enforce this standard and encountered quite a few pitfalls.&lt;/p&gt;
 &lt;h2 id="goal"&gt;Goal
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Create a Skill: Inform Claude that the project uses uv&lt;/li&gt;
@@ -559,14 +562,14 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Wrong&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;location&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;project&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Wrong&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;location&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;project&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Correct&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;python-uv&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv. Use when adding Python packages, running Python scripts, or managing Python dependencies. Enforces uv instead of pip/python commands.&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Correct&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;python-uv&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Python dependency and execution management using uv. Use when adding Python packages, running Python scripts, or managing Python dependencies. Enforces uv instead of pip/python commands.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Key points:&lt;/p&gt;
@@ -705,7 +708,7 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;PreToolUse&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;matcher&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Bash&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// Simplified matcher format
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;$CLAUDE_PROJECT_DIR/.claude/hooks/pre-bash&amp;#34;&lt;/span&gt;
@@ -715,7 +718,7 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Remove ineffective environment.PATH configuration
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Notes:&lt;/p&gt;
@@ -785,11 +788,11 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;h2 id="references"&gt;References
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
-&gt;uv&lt;/a&gt;&lt;/li&gt;
+ &gt;uv&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-hooks" target="_blank" rel="noopener"
-&gt;Claude Code Hooks Documentation&lt;/a&gt;&lt;/li&gt;
+ &gt;Claude Code Hooks Documentation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-skills" target="_blank" rel="noopener"
-&gt;Claude Code Skills Documentation&lt;/a&gt;&lt;/li&gt;
+ &gt;Claude Code Skills Documentation&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Running Claude Code in a VM for Automated Testing and Development</title><link>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</guid><description>&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.png" alt="Featured image of post Running Claude Code in a VM for Automated Testing and Development" /&gt;&lt;p&gt;Recently, I verified an effective AI development method that doesn&amp;rsquo;t affect the existing workflow. Here&amp;rsquo;s a summary.&lt;/p&gt;
 &lt;h2 id="why-choose-vm--claude-code"&gt;Why Choose VM + Claude Code
 &lt;/h2&gt;&lt;ul&gt;
@@ -876,8 +879,11 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart xrdp
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: Don&amp;rsquo;t log in to the desktop locally before connecting, otherwise the same user will see a black screen.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;/div&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: Don&amp;rsquo;t log in to the desktop locally before connecting, otherwise the same user will see a black screen.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;h4 id="adjust-resolutiondpi"&gt;Adjust Resolution/DPI
 &lt;/h4&gt;&lt;ul&gt;
 &lt;li&gt;Before Windows remote desktop connection, lower the resolution in &amp;ldquo;Display Options&amp;rdquo; (e.g., 1920×1080)&lt;/li&gt;
@@ -924,26 +930,26 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;h2 id="automated-testing-workflow-mcp-configuration"&gt;Automated Testing Workflow: MCP Configuration
 &lt;/h2&gt;&lt;h3 id="playwright-mcp"&gt;Playwright MCP
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;MCP&lt;/th&gt;
-&lt;th&gt;Features&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (Microsoft official)&lt;/td&gt;
-&lt;td&gt;Lightweight, based on accessibility tree&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (community)&lt;/td&gt;
-&lt;td&gt;More complete features, supports screenshots, JS execution&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Console log monitoring, Lighthouse performance analysis&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;MCP&lt;/th&gt;
+					&lt;th&gt;Features&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (Microsoft official)&lt;/td&gt;
+					&lt;td&gt;Lightweight, based on accessibility tree&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (community)&lt;/td&gt;
+					&lt;td&gt;More complete features, supports screenshots, JS execution&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Console log monitoring, Lighthouse performance analysis&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="claude-code-configuration"&gt;Claude Code Configuration
 &lt;/h3&gt;&lt;p&gt;Create &lt;code&gt;.mcp.json&lt;/code&gt; in project root:&lt;/p&gt;
@@ -1026,30 +1032,30 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;strong&gt;Configuration Comparison&lt;/strong&gt;:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration Item&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Top-level key&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;type&lt;/td&gt;
-&lt;td&gt;Not needed&lt;/td&gt;
-&lt;td&gt;Required (&lt;code&gt;local&lt;/code&gt;)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;command&lt;/td&gt;
-&lt;td&gt;String&lt;/td&gt;
-&lt;td&gt;Array&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Configuration Item&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Top-level key&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;type&lt;/td&gt;
+					&lt;td&gt;Not needed&lt;/td&gt;
+					&lt;td&gt;Required (&lt;code&gt;local&lt;/code&gt;)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;command&lt;/td&gt;
+					&lt;td&gt;String&lt;/td&gt;
+					&lt;td&gt;Array&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="usage-example"&gt;Usage Example
 &lt;/h3&gt;&lt;p&gt;After configuration, you can drive tests with natural language:&lt;/p&gt;
@@ -1070,16 +1076,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="results-display"&gt;Results Display
-&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
-width="2892"
-height="1848"
-srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_25ead07efadeb176.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_a8ec1f00bb2f829d.png 1024w"
-loading="lazy"
-alt="VM remote desktop running Claude Code"
-class="gallery-image"
-data-flex-grow="156"
-data-flex-basis="375px"
-&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="VM remote desktop running Claude Code" class="gallery-image" data-flex-basis="375px" data-flex-grow="156" height="1848" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png" srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_ee616737bb9471dd.png 800w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_91ab0046ef956a88.png 1600w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_1e8fe676864afc67.png 2400w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png 2892w" width="2892"&gt;&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;The VM + Claude Code + Playwright MCP combination provides an isolated, reproducible automated development testing environment. The entire process:&lt;/p&gt;
 &lt;ol&gt;
@@ -1088,11 +1085,11 @@ data-flex-basis="375px"
 &lt;li&gt;Install Claude Code / OpenCode&lt;/li&gt;
 &lt;li&gt;Configure Playwright MCP&lt;/li&gt;
 &lt;li&gt;Drive automated testing with natural language&lt;/li&gt;
-&lt;/ol&gt;</description></item><item><title>Developing Fried Rice Theme with Claude Code</title><link>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</link><pubDate>Tue, 23 Dec 2025 15:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post Developing Fried Rice Theme with Claude Code" /&gt;&lt;p&gt;Recently, I used Claude Code to add some SEO features to my own blog theme &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
-&gt;Fried Rice&lt;/a&gt;, and the overall experience was quite good.&lt;/p&gt;
+&lt;/ol&gt;</description></item><item><title>Developing Fried Rice Theme with Claude Code</title><link>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</link><pubDate>Tue, 23 Dec 2025 15:25:02 +0800</pubDate><guid>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post Developing Fried Rice Theme with Claude Code" /&gt;&lt;p&gt;Recently, I used Claude Code to add some SEO features to my own blog theme &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
+ &gt;Fried Rice&lt;/a&gt;, and the overall experience was quite good.&lt;/p&gt;
 &lt;h2 id="background"&gt;Background
 &lt;/h2&gt;&lt;p&gt;Fried Rice is a theme forked from &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
-&gt;hugo-theme-stack&lt;/a&gt;. Previously, I had already added some basic JSON-LD structured data, and this time I wanted to continue improving it.&lt;/p&gt;
+ &gt;hugo-theme-stack&lt;/a&gt;. Previously, I had already added some basic JSON-LD structured data, and this time I wanted to continue improving it.&lt;/p&gt;
 &lt;h2 id="what-was-done-this-time"&gt;What Was Done This Time
 &lt;/h2&gt;&lt;p&gt;Mainly enhancing SEO structured data:&lt;/p&gt;
 &lt;ul&gt;
@@ -1101,16 +1098,7 @@ data-flex-basis="375px"
 &lt;li&gt;FAQ schema (supports inline FAQ in articles)&lt;/li&gt;
 &lt;li&gt;Enhanced Article/BlogPosting schema (added accessibility metadata)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png"
-width="2153"
-height="1761"
-srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_9e208084f399dd3b.png 480w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_ddc5a242949e5593.png 1024w"
-loading="lazy"
-alt="Fried Rice Theme Preview"
-class="gallery-image"
-data-flex-grow="122"
-data-flex-basis="293px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Fried Rice Theme Preview" class="gallery-image" data-flex-basis="293px" data-flex-grow="122" height="1761" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png" srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_34a0682cecca2e83.png 800w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_96a51644e8634f65.png 1600w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png 2153w" width="2153"&gt;&lt;/p&gt;
 &lt;h2 id="claude-codes-performance"&gt;Claude Code&amp;rsquo;s Performance
 &lt;/h2&gt;&lt;p&gt;The entire development process took about 2 hours. Claude Code helped me:&lt;/p&gt;
 &lt;ol&gt;
@@ -1136,30 +1124,27 @@ data-flex-basis="293px"
 &lt;/h2&gt;&lt;p&gt;For this kind of &amp;ldquo;add feature + fix bug&amp;rdquo; task, Claude Code is quite useful. Especially for tedious syntax like Hugo templates, having AI write it is much more efficient.&lt;/p&gt;
 &lt;h2 id="related-projects"&gt;Related Projects
 &lt;/h2&gt;
+
 &lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;&lt;div class="repo-card" data-repo="Svtter/Fried-Rice"&gt;&lt;/div&gt;
+
 &lt;p&gt;&lt;strong&gt;Based on:&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;</description></item><item><title>CS146S is a Good Course</title><link>https://svtter.cn/en/p/cs146s-is-a-good-course/</link><pubDate>Mon, 15 Dec 2025 20:45:35 +0800</pubDate><guid>https://svtter.cn/en/p/cs146s-is-a-good-course/</guid><description>&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/bg.png" alt="Featured image of post CS146S is a Good Course" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
-&gt;CS146S&lt;/a&gt; is a good course, one of the reasons is that it teaches modern software engineers how to better collaborate with AI. Secondly, it basically covers all my modern coding capabilities. &lt;em&gt;(It&amp;rsquo;s a joke!)&lt;/em&gt;&lt;/p&gt;
+
+
+&lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;
+</description></item><item><title>CS146S is a Good Course</title><link>https://svtter.cn/en/p/cs146s-is-a-good-course/</link><pubDate>Mon, 15 Dec 2025 21:27:41 +0800</pubDate><guid>https://svtter.cn/en/p/cs146s-is-a-good-course/</guid><description>&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/bg.png" alt="Featured image of post CS146S is a Good Course" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
+ &gt;CS146S&lt;/a&gt; is a good course, one of the reasons is that it teaches modern software engineers how to better collaborate with AI. Secondly, it basically covers all my modern coding capabilities. &lt;em&gt;(It&amp;rsquo;s a joke!)&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;In the following content, I will embed the slides from the course as hyperlinks in my text. If you&amp;rsquo;re interested, you can click the hyperlinks directly to open the corresponding slides.&lt;/p&gt;
 &lt;h2 id="basic-techniques"&gt;Basic Techniques
 &lt;/h2&gt;&lt;p&gt;I think everyone, like me, has already mastered the basic capabilities. More clear and explicit prompts let LLMs execute instructions unambiguously. Additionally, there are prompt optimization techniques, and using &lt;a class="link" href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompt-improver" target="_blank" rel="noopener"
-&gt;Claude to optimize prompts&lt;/a&gt;.&lt;/p&gt;
+ &gt;Claude to optimize prompts&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The course also talked about how to &lt;a class="link" href="https://docs.google.com/presentation/d/11CP26VhsjnZOmi9YFgLlonzdib9BLyAlgc4cEvC5Fps/edit?usp=sharing" target="_blank" rel="noopener"
-&gt;build coding agents&lt;/a&gt;, emphasizing that you can use the &lt;a class="link" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener"
-&gt;Claude Code SDK&lt;/a&gt;. It&amp;rsquo;s now called Claude Agent SDK.&lt;/p&gt;
+ &gt;build coding agents&lt;/a&gt;, emphasizing that you can use the &lt;a class="link" href="https://platform.claude.com/docs/en/agent-sdk/overview" target="_blank" rel="noopener"
+ &gt;Claude Code SDK&lt;/a&gt;. It&amp;rsquo;s now called Claude Agent SDK.&lt;/p&gt;
 &lt;p&gt;To enhance LLM capabilities, you can also use &lt;a class="link" href="https://docs.google.com/presentation/d/1zSC2ra77XOUrJeyS85houg1DU7z9hq5Y4ebagTch-5o/edit?usp=drive_link" target="_blank" rel="noopener"
-&gt;MCP services&lt;/a&gt;. I built &lt;a class="link" href="https://github.com/Svtter/git-mcp" target="_blank" rel="noopener"
-&gt;git-mcp&lt;/a&gt;, and there&amp;rsquo;s also an unopen-sourced experimental startup MCP.&lt;/p&gt;
+ &gt;MCP services&lt;/a&gt;. I built &lt;a class="link" href="https://github.com/Svtter/git-mcp" target="_blank" rel="noopener"
+ &gt;git-mcp&lt;/a&gt;, and there&amp;rsquo;s also an unopen-sourced experimental startup MCP.&lt;/p&gt;
 &lt;h3 id="mcp-a-bit-deeper-content-from-the-ppt"&gt;MCP a bit deeper (content from the PPT)
-&lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png"
-width="2442"
-height="1268"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_5bb5ee36b6e10e41.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_70c54c437868eb9.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="192"
-data-flex-basis="462px"
-&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="462px" data-flex-grow="192" height="1268" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_7f4a2adac1c88db2.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_1dc9e72c00a99448.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_a307090cd0a1a8d3.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png 2442w" width="2442"&gt;&lt;/p&gt;
 &lt;p&gt;With MCP, it&amp;rsquo;s worth noting the Host/Server/Client concept. Many Hosts are not open-source. Deepchat&amp;rsquo;s Host can be referenced.&lt;/p&gt;
 &lt;p&gt;Limitations:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1176,57 +1161,24 @@ data-flex-basis="462px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="ide-agent"&gt;IDE Agent
 &lt;/h2&gt;&lt;p&gt;From the &lt;a class="link" href="https://docs.google.com/presentation/d/11pQNCde_mmRnImBat0Zymnp8TCS_cT_1up7zbcj6Sjg/edit?usp=sharing" target="_blank" rel="noopener"
-&gt;IDE&lt;/a&gt; perspective, I&amp;rsquo;ve switched from frequently using Cursor to using Claude Code + VSCode for programming. I feel Claude Code as a CLI is more powerful. However, I haven&amp;rsquo;t used Cursor for a while, so I don&amp;rsquo;t know if there have been some improvements. &lt;a class="link" href="https://www.trae.ai/solo" target="_blank" rel="noopener"
-&gt;Trae&amp;rsquo;s solo mode&lt;/a&gt; is just like that, basically insufficient intelligence is the biggest problem. Trae CN.&lt;/p&gt;
+ &gt;IDE&lt;/a&gt; perspective, I&amp;rsquo;ve switched from frequently using Cursor to using Claude Code + VSCode for programming. I feel Claude Code as a CLI is more powerful. However, I haven&amp;rsquo;t used Cursor for a while, so I don&amp;rsquo;t know if there have been some improvements. &lt;a class="link" href="https://www.trae.ai/solo" target="_blank" rel="noopener"
+ &gt;Trae&amp;rsquo;s solo mode&lt;/a&gt; is just like that, basically insufficient intelligence is the biggest problem. Trae CN.&lt;/p&gt;
 &lt;p&gt;Additionally worth mentioning is that Silas Alberti, Head of Research &lt;a class="link" href="https://cognition.ai/" target="_blank" rel="noopener"
-&gt;Cognition&lt;/a&gt;&amp;rsquo;s &lt;a class="link" href="https://docs.google.com/presentation/d/1i0pRttHf72lgz8C-n7DSegcLBgncYZe_ppU7dB9zhUA/edit?usp=sharing" target="_blank" rel="noopener"
-&gt;slides&lt;/a&gt; are very powerful.&lt;/p&gt;
+ &gt;Cognition&lt;/a&gt;&amp;rsquo;s &lt;a class="link" href="https://docs.google.com/presentation/d/1i0pRttHf72lgz8C-n7DSegcLBgncYZe_ppU7dB9zhUA/edit?usp=sharing" target="_blank" rel="noopener"
+ &gt;slides&lt;/a&gt; are very powerful.&lt;/p&gt;
 &lt;p&gt;This summary diagram is awesome. &lt;code&gt;Is it really free to watch?&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png"
-width="2709"
-height="1491"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_4f423a1898a3c4be.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f0b3717c50b18ca0.png 1024w"
-loading="lazy"
-alt="local-cloud/sync-async limitations"
-class="gallery-image"
-data-flex-grow="181"
-data-flex-basis="436px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="local-cloud/sync-async limitations" class="gallery-image" data-flex-basis="436px" data-flex-grow="181" height="1491" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f3530b097ec2450c.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_582050af4b5abd8c.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_780be336b33f9765.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png 2709w" width="2709"&gt;&lt;/p&gt;
 &lt;p&gt;This article also mentions the concept of parallel agents.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png"
-width="2730"
-height="1428"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_888ea075db809469.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_aad727e671ca1c8d.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="191"
-data-flex-basis="458px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="458px" data-flex-grow="191" height="1428" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_ff1868994b889c81.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_7d7a353b0e292969.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_eac0959e63bed537.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png 2730w" width="2730"&gt;&lt;/p&gt;
 &lt;p&gt;So for me, the next direction to improve is cloud + async.&lt;/p&gt;
 &lt;p&gt;This is Silas Alberti&amp;rsquo;s advice:&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png"
-width="2730"
-height="1596"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_8737468dad94135f.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7975af118f4c1c9b.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="171"
-data-flex-basis="410px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="410px" data-flex-grow="171" height="1596" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_59fc89f29a039744.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7e23219e2737aa8e.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_cf334b8db0d07991.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png 2730w" width="2730"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://devin.ai/" target="_blank" rel="noopener"
-&gt;devin&lt;/a&gt; and &lt;a class="link" href="https://claude.ai/code" target="_blank" rel="noopener"
-&gt;Claude Code Cloud&lt;/a&gt; are exactly the same. Actually, you can completely use Claude Code Cloud version for vibe coding.&lt;/p&gt;
+ &gt;devin&lt;/a&gt; and &lt;a class="link" href="https://claude.ai/code" target="_blank" rel="noopener"
+ &gt;Claude Code Cloud&lt;/a&gt; are exactly the same. Actually, you can completely use Claude Code Cloud version for vibe coding.&lt;/p&gt;
 &lt;h2 id="agent-manager"&gt;Agent Manager
 &lt;/h2&gt;&lt;p&gt;Engineers need to become agent managers, not just software engineers.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png"
-width="2843"
-height="1514"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dff75fbff84f0862.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_9ea6b729a07f56bc.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="187"
-data-flex-basis="450px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="450px" data-flex-grow="187" height="1514" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_cb95e48ac85c561c.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dfbab1d3d2e18ae9.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_15f7edc55f4cd954.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png 2843w" width="2843"&gt;&lt;/p&gt;
 &lt;p&gt;Under the Claude Code designer mindset, the software design process should be:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Provide high level requirements 🟩&lt;/li&gt;
@@ -1238,8 +1190,11 @@ data-flex-basis="450px"
 &lt;li&gt;Update docs 🟦&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;My habit is more to write simple requirements, then generate design, then let Claude Code implement the rest itself.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;I recently found it&amp;rsquo;s not that capable. I adopted a test-driven development approach to ensure every step is done correctly. Otherwise, CI and Add tests actually have no meaning.&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;I recently found it&amp;rsquo;s not that capable. I adopted a test-driven development approach to ensure every step is done correctly. Otherwise, CI and Add tests actually have no meaning.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;Techniques for directing agents:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Agent behavior files (Claude.md/Cursorrules/agents.md)&lt;/li&gt;
@@ -1249,29 +1204,16 @@ data-flex-basis="450px"
 &lt;/ul&gt;
 &lt;p&gt;I&amp;rsquo;ve already used subagents and commands a lot. But I haven&amp;rsquo;t found a killing scenario for hooks yet.&lt;/p&gt;
 &lt;h3 id="best-practice-claude-code"&gt;Best practice Claude Code
-&lt;/h3&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png"
-width="2613"
-height="1149"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_6f1f8b4de9bcdaad.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_bd247f1e483fdf39.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="227"
-data-flex-basis="545px"
-&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="545px" data-flex-grow="227" height="1149" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_574a2baf64272748.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_fc011015d2d7bfb.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_319cb85588317976.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png 2613w" width="2613"&gt;&lt;/p&gt;
 &lt;p&gt;What I want to say is to use subagents as much as possible to avoid the &amp;ldquo;lost in the middle&amp;rdquo; phenomenon.&lt;/p&gt;
 &lt;h3 id="claude-code-cli"&gt;&lt;a class="link" href="https://docs.google.com/presentation/d/1bv7Zozn6z45CAh-IyX99dMPMyXCHC7zj95UfwErBYQ8/edit?slide=id.g35e8acebb8e_0_106#slide=id.g35e8acebb8e_0_106" target="_blank" rel="noopener"
-&gt;Claude Code CLI&lt;/a&gt;
-&lt;/h3&gt;&lt;blockquote&gt;
-&lt;p&gt;Why did I buy Claude Code?&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png"
-width="2850"
-height="1659"
-srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_970bdc1680b37577.png 480w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e272c05700bf0f37.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="171"
-data-flex-basis="412px"
-&gt;&lt;/p&gt;
+ &gt;Claude Code CLI&lt;/a&gt;
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;Why did I buy Claude Code?&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="412px" data-flex-grow="171" height="1659" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e361b65ffeb93560.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_806232c626ef33.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8f5cfe6cd461537f.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png 2850w" width="2850"&gt;&lt;/p&gt;
 &lt;p&gt;We can do more things through the SDK:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1282,8 +1224,8 @@ data-flex-basis="412px"
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;claude -p &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;what did i do this week?&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; --allowedTools Bash&lt;span class="o"&gt;(&lt;/span&gt;git log:*&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;what did i do this week?&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --allowedTools Bash&lt;span class="o"&gt;(&lt;/span&gt;git log:*&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --output-format stream-json
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -1293,9 +1235,9 @@ data-flex-basis="412px"
 &lt;p&gt;Typical issues include:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Not using available &lt;a class="link" href="https://docs.claude.com/en/docs/claude-code/sub-agents#example-subagents" target="_blank" rel="noopener"
-&gt;agents&lt;/a&gt;.&lt;/li&gt;
+ &gt;agents&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;Not using available &lt;a class="link" href="https://docs.claude.com/en/docs/agents-and-tools/mcp-connector#mcp-server-configuration" target="_blank" rel="noopener"
-&gt;MCP&lt;/a&gt;.&lt;/li&gt;
+ &gt;MCP&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Tool calls are infrequent and require manual prompting. As a user, I generally don&amp;rsquo;t deliberately memorize which agents are available.&lt;/p&gt;
 &lt;p&gt;More importantly, it impacts efficiency.&lt;/p&gt;
@@ -1304,20 +1246,14 @@ data-flex-basis="412px"
 &lt;li&gt;Plugins often don&amp;rsquo;t improve the tool usage experience; they can actually degrade it. This is because MCP tools and plugins increase the input token count, forcing the model to process more context. Since the computational complexity of transformers is O(n²), any increase in length has a significant negative impact.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;In summary, it&amp;rsquo;s not recommended for use at this time.&lt;/p&gt;</description></item><item><title>Several Issues with Zhipu GLM-4.5 in Programming</title><link>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</link><pubDate>Tue, 23 Sep 2025 10:24:43 +0800</pubDate><guid>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</guid><description>&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/featured_20250924_145011.png" alt="Featured image of post Several Issues with Zhipu GLM-4.5 in Programming" /&gt;&lt;p&gt;Through some leaderboards and the &lt;a class="link" href="https://arxiv.org/abs/2508.06471" target="_blank" rel="noopener"
-&gt;report&lt;/a&gt;, I saw that glm-4.5 received high scores, so I gritted my teeth and subscribed to the annual coding plan.&lt;/p&gt;
+ &gt;report&lt;/a&gt;, I saw that glm-4.5 received high scores, so I gritted my teeth and subscribed to the annual coding plan.&lt;/p&gt;
 &lt;p&gt;However, while using the Zhipu glm4.5 coding plan, I encountered several issues that severely impacted my work efficiency.&lt;/p&gt;
 &lt;h2 id="cline"&gt;Cline
 &lt;/h2&gt;&lt;p&gt;In cline, there are roughly a few problems.&lt;/p&gt;
 &lt;p&gt;Problem One: Simple diff tool calls fail to output correctly.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/img/prob1.png"
-loading="lazy"
-alt="diff prob"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="diff prob" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="img/prob1.png"&gt;&lt;/p&gt;
 &lt;p&gt;Problem Two: The task list tool is unusable.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/img/prob.png"
-loading="lazy"
-alt="tasklist prob"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="tasklist prob" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="img/prob.png"&gt;&lt;/p&gt;
 &lt;p&gt;I once suspected it was a cline issue. But then I thought, deepseek, gpt-5, and claude-4-opus all work fine.&lt;/p&gt;
 &lt;p&gt;The prompt doesn&amp;rsquo;t change because of these. It&amp;rsquo;s most likely an issue with Zhipu glm-4.5.&lt;/p&gt;
 &lt;h2 id="claude-code"&gt;Claude Code
@@ -1329,10 +1265,7 @@ alt="tasklist prob"
 &lt;p&gt;There&amp;rsquo;s also a common issue: obsequiousness.&lt;/p&gt;
 &lt;h3 id="stopped-responding"&gt;Stopped Responding
 &lt;/h3&gt;&lt;p&gt;A new problem encountered on 2025-10-03: it stopped providing feedback while answering a question and terminated the process.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/img/bug-3.png"
-loading="lazy"
-alt="stop responsing"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="stop responsing" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="img/bug-3.png"&gt;&lt;/p&gt;
 &lt;p&gt;The most likely cause of this problem is a lack of adaptation to the thinking interface, resulting in it thinking but not displaying the content.&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;Based on my current experience, among domestic AIs, apart from DeepSeek, the other major players tend to have unstable model outputs.&lt;/p&gt;
@@ -1351,18 +1284,18 @@ alt="stop responsing"
 &lt;/h2&gt;&lt;p&gt;If you&amp;rsquo;re interested in experiences with other AI coding plans, you can read my other articles:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/" target="_blank" rel="noopener"
-&gt;I Bought the Kimi Coding Plan Again&lt;/a&gt; - Experience and configuration methods for the Kimi monthly plan.&lt;/li&gt;
+ &gt;I Bought the Kimi Coding Plan Again&lt;/a&gt; - Experience and configuration methods for the Kimi monthly plan.&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/" target="_blank" rel="noopener"
-&gt;Doubao doubao-seed-code Test&lt;/a&gt; - In-depth testing of ByteDance&amp;rsquo;s Doubao coding plan.&lt;/li&gt;
+ &gt;Doubao doubao-seed-code Test&lt;/a&gt; - In-depth testing of ByteDance&amp;rsquo;s Doubao coding plan.&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://svtter.cn/p/how-to-use-claude-code-with-deepseek/pics/bg.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;Sometimes we cannot directly use the Anthropic API. However, the Claude Code (CC) experience is excellent, and we still want to use CC.&lt;/p&gt;
 &lt;p&gt;In such cases, you can try using the API provided by DeepSeek to access CC.&lt;/p&gt;
 &lt;p&gt;DeepSeek has already provided the corresponding interface: &lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/guides/anthropic_api" target="_blank" rel="noopener"
-&gt;How to Use the Claude Code + DeepSeek Combination?&lt;/a&gt;&lt;/p&gt;
+ &gt;How to Use the Claude Code + DeepSeek Combination?&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Currently, there are two mainstream LLM APIs: one is OpenAI, and the other is Anthropic. Anthropic has gained a certain level of influence through CC.&lt;/p&gt;
 &lt;p&gt;If you want to learn more about the use cases for CC, I recommend reading &lt;a class="link" href="https://www.anthropic.com/news/how-anthropic-teams-use-claude-code" target="_blank" rel="noopener"
-&gt;Anthropic&amp;rsquo;s Official Blog&lt;/a&gt;.&lt;/p&gt;
+ &gt;Anthropic&amp;rsquo;s Official Blog&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Additionally, here are some supplementary resources:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg" target="_blank" rel="noopener"
-&gt;https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg&lt;/a&gt;&lt;/li&gt;
+ &gt;https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item></channel></rss>

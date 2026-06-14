@@ -3,35 +3,35 @@
 &lt;h2 id="overview"&gt;Overview
 &lt;/h2&gt;&lt;p&gt;The 27 workflows can be divided into four categories:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Category&lt;/th&gt;
-&lt;th&gt;Count&lt;/th&gt;
-&lt;th&gt;Purpose&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;CI/Testing&lt;/td&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Release/Delivery&lt;/td&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Automation/Bot&lt;/td&gt;
-&lt;td&gt;16&lt;/td&gt;
-&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Docs/Other&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Category&lt;/th&gt;
+					&lt;th&gt;Count&lt;/th&gt;
+					&lt;th&gt;Purpose&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CI/Testing&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Release/Delivery&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Automation/Bot&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+					&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Docs/Other&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;16 automation workflows account for 60% of the total. opencode doesn&amp;rsquo;t just use Actions to run tests and releases—it also entrusts community governance and code quality review to the automation system.&lt;/p&gt;
 &lt;h2 id="citesting-solid-but-restrained"&gt;CI/Testing: Solid but Restrained
@@ -45,7 +45,7 @@
 &lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;: Multiple workflows use this pattern so the same PR doesn&amp;rsquo;t stack multiple runs. For a project receiving lots of community PRs, this saves significant CI resources.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Path triggering&lt;/strong&gt;: containers.yml only runs when container files change, storybook.yml only runs when UI changes. Not everything runs on all commits.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Mixed Runner Strategy&lt;/strong&gt;: Most workflows use &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
-&gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
+ &gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="releasedelivery-full-platform-coverage"&gt;Release/Delivery: Full Platform Coverage
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; is the most complex workflow, handling the complete release process in a single file:&lt;/p&gt;
@@ -132,7 +132,7 @@
 &lt;li&gt;&lt;strong&gt;Add on demand&lt;/strong&gt;: Add automation only when you have pain points. opencode&amp;rsquo;s 27 workflows weren&amp;rsquo;t built in a day, but gradually added as community scale grew.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="summary"&gt;Summary
-&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
 &lt;p&gt;Currently, it provides two main features: one is review, and the other is using the runner to execute opencode (directly running opencode&amp;rsquo;s prompts on the runner) to handle other functionalities. For example, modifying code, creating new issues, creating PRs based on issues, etc.&lt;/p&gt;
 &lt;h2 id="how-stable-is-it"&gt;How stable is it?
 &lt;/h2&gt;&lt;ul&gt;
@@ -165,78 +165,70 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Currently, this action mainly supports Z.AI, ZHIPU, and OPENCODE GO subscriptions. Therefore, if using ZHIPU, simply add your ZHIPU_API_KEY to the project&amp;rsquo;s secrets. If using the opencode go subscription, you need to add OPENCODE_GO_API_KEY.&lt;/p&gt;
 &lt;p&gt;Everything else can use the default configuration. The default model is &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;. For more configuration requirements, I recommend checking the original repository&amp;rsquo;s &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;README&lt;/a&gt;.&lt;/p&gt;
+ &gt;README&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I previously covered this quick review script in my &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
-&gt;code review article&lt;/a&gt;.&lt;/p&gt;
+ &gt;code review article&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="differences"&gt;Differences
 &lt;/h2&gt;&lt;p&gt;Actually, opencode has its own actions, so why did I build another one?&lt;/p&gt;
 &lt;p&gt;The differences from the official version are mainly reflected in several aspects:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Feature&lt;/th&gt;
-&lt;th&gt;Upstream Status&lt;/th&gt;
-&lt;th&gt;This Repository&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Model default fallback&lt;/td&gt;
-&lt;td&gt;Only required input&lt;/td&gt;
-&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider convenience fields&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Review prompt template&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Retry logic&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Execution timeout&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;timeout-seconds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Version check&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Installation retry&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;install-attempts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;XDG cache caching&lt;/td&gt;
-&lt;td&gt;Only caches bin&lt;/td&gt;
-&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Feature&lt;/th&gt;
+					&lt;th&gt;Upstream Status&lt;/th&gt;
+					&lt;th&gt;This Repository&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model default fallback&lt;/td&gt;
+					&lt;td&gt;Only required input&lt;/td&gt;
+					&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider convenience fields&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Review prompt template&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Retry logic&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Execution timeout&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;timeout-seconds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Version check&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Installation retry&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;install-attempts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;XDG cache caching&lt;/td&gt;
+					&lt;td&gt;Only caches bin&lt;/td&gt;
+					&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Detailed explanations are available in &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
-&gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
+ &gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="review-effectiveness"&gt;Review effectiveness
 &lt;/h2&gt;&lt;p&gt;You can see the results from the repo&amp;rsquo;s own PR at &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
-&gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+ &gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The effect looks like this:&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png"
-width="1407"
-height="1208"
-srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_2bf58faf91a7a9d.png 480w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_6740bc1877d53b60.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="116"
-data-flex-basis="279px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="279px" data-flex-grow="116" height="1208" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png" srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_da6eced56b414cb0.png 800w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png 1407w" width="1407"&gt;&lt;/p&gt;
 &lt;h2 id="future"&gt;Future
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Try integrating gemini cli. Google&amp;rsquo;s GEM 3.1 PRO model currently offers great value for money, with the highest intelligence per unit.&lt;/li&gt;

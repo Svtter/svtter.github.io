@@ -3,30 +3,30 @@
 &lt;h2 id="1-原生-kimi-provider非通用-openai-兼容层"&gt;1. 原生 Kimi Provider（非通用 OpenAI 兼容层）
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; 没有直接把 Kimi 当&amp;quot;又一个 OpenAI 兼容接口&amp;quot;处理，而是实现了专门的 &lt;code&gt;kimi&lt;/code&gt; provider 类型：&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;特性&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider 类型&lt;/td&gt;
-&lt;td&gt;专门的 &lt;code&gt;'kimi'&lt;/code&gt; 类型，独立适配&lt;/td&gt;
-&lt;td&gt;通过 OpenAI/Anthropic 通用 bridge 访问&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;专有字段&lt;/td&gt;
-&lt;td&gt;原生处理 &lt;code&gt;reasoning_content&lt;/code&gt;、&lt;code&gt;thinking&lt;/code&gt;、&lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;bridge 层常丢失 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;认证头&lt;/td&gt;
-&lt;td&gt;支持 &lt;code&gt;kimiRequestHeaders&lt;/code&gt; 和 &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt; 等 Moonshot 专有 header&lt;/td&gt;
-&lt;td&gt;通用 header 转发&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;特性&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider 类型&lt;/td&gt;
+					&lt;td&gt;专门的 &lt;code&gt;'kimi'&lt;/code&gt; 类型，独立适配&lt;/td&gt;
+					&lt;td&gt;通过 OpenAI/Anthropic 通用 bridge 访问&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;专有字段&lt;/td&gt;
+					&lt;td&gt;原生处理 &lt;code&gt;reasoning_content&lt;/code&gt;、&lt;code&gt;thinking&lt;/code&gt;、&lt;code&gt;generationKwargs&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;bridge 层常丢失 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;认证头&lt;/td&gt;
+					&lt;td&gt;支持 &lt;code&gt;kimiRequestHeaders&lt;/code&gt; 和 &lt;code&gt;X-Msh-Tool-Call-Id&lt;/code&gt; 等 Moonshot 专有 header&lt;/td&gt;
+					&lt;td&gt;通用 header 转发&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="2-reasoning_content-的全生命周期处理"&gt;2. &lt;code&gt;reasoning_content&lt;/code&gt; 的全生命周期处理
 &lt;/h2&gt;&lt;p&gt;kimi-k2.6 默认开启 thinking，且&lt;strong&gt;要求多轮对话历史中保留 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/strong&gt;，否则工具调用后会报 400 错误。&lt;/p&gt;
@@ -139,7 +139,7 @@
 &lt;p&gt;&lt;strong&gt;结论：kimi-code 从一开始就把 Kimi API 当作一等公民设计，不是后期打补丁适配。&lt;/strong&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;d95b013&lt;/code&gt; fix(catalog): preserve reasoning fields in custom model (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
-&gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+ &gt;#70&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;这个 commit 修复了一个很隐蔽的问题。models.dev 用 &lt;code&gt;interleaved&lt;/code&gt; 字段标记 reasoning 支持，但早期代码把 &lt;code&gt;interleaved=true&lt;/code&gt; 当作 undefined 处理，导致通过 &lt;code&gt;/connect&lt;/code&gt; 选择的模型静默丢失 reasoning 能力。&lt;/p&gt;
 &lt;p&gt;修复内容：&lt;/p&gt;
 &lt;ul&gt;
@@ -148,7 +148,7 @@
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;61f7d0e&lt;/code&gt; fix(kosong): make openai-compatible thinking work without reasoning_key (&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
-&gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+ &gt;#78&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;这是 reasoning 处理的核心 commit&lt;/strong&gt;，展示了 kimi-code 对兼容性的深层思考。diff 显示了三层关键设计：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -193,8 +193,11 @@
 &lt;/ol&gt;
 &lt;p&gt;边界情况也处理得很细：blank &lt;code&gt;reasoning_key&lt;/code&gt;（&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;）被 normalize 为 &lt;code&gt;undefined&lt;/code&gt;；caller 通过 &lt;code&gt;withGenerationKwargs&lt;/code&gt; 显式设置的值&lt;strong&gt;不会被自动注入覆盖&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;验证目标明确写的是：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Manually verified end-to-end against the real DeepSeek API with a hand-written config.toml that does not set reasoning_key: thinking content renders, no 400, multi-turn conversations work.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;hr&gt;
 &lt;h3 id="opencode通用层设计openai-centric"&gt;OpenCode：通用层设计，OpenAI-centric
 &lt;/h3&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;eb84f46&lt;/code&gt; fix(llm): split OpenAI reasoning summary blocks (#29000)&lt;/strong&gt;&lt;/p&gt;
@@ -209,96 +212,99 @@
 &lt;h3 id="一个残酷的事实"&gt;一个残酷的事实
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
-&gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;状态：至今仍是 open&lt;/strong&gt;&lt;/li&gt;
+ &gt;OpenCode Issue #26331&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;Bug: OpenCode Go bridge layer incompatible with kimi-k2.6 tool calls&amp;rdquo; — &lt;strong&gt;状态：至今仍是 open&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/27054" target="_blank" rel="noopener"
-&gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;状态：closed，但关闭方式是禁用 MCP（workaround）&lt;/strong&gt;&lt;/li&gt;
+ &gt;OpenCode Issue #27054&lt;/a&gt;&lt;/strong&gt; &amp;ldquo;KIMI K2.6 showing error in Opencode GO&amp;rdquo; — &lt;strong&gt;状态：closed，但关闭方式是禁用 MCP（workaround）&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;#27054 的最后一个 comment：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;The workaround is to disable your MCP and then initiate the session&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;这不是修复，这是回避问题。&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id="commit-历史对比总结"&gt;Commit 历史对比总结
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;维度&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;初始设计&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;初始提交即包含完整 Kimi provider + schema 规范化 + 文件服务&lt;/td&gt;
-&lt;td&gt;通用多模型架构，后期通过 bridge 适配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;reasoning 机制&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;围绕 &lt;code&gt;reasoning_content&lt;/code&gt; 字段设计，自动扫描/回写/注入 effort&lt;/td&gt;
-&lt;td&gt;围绕 OpenAI Responses 的 &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt; 设计&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;schema 处理&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;，解引用 &lt;code&gt;$ref&lt;/code&gt; + 补全 &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;通用 schema 验证，友好错误提示为主&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;配置哲学&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;让 OpenAI-compatible 网关&amp;quot;零配置工作&amp;quot;，自动推断所有字段&lt;/td&gt;
-&lt;td&gt;依赖用户通过 bridge/config 手动适配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;issue 状态&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;持续发布 reasoning 相关 patch（&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
-&gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
-&gt;#78&lt;/a&gt;）&lt;/td&gt;
-&lt;td&gt;kimi-k2.6 兼容性问题 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
-&gt;#26331&lt;/a&gt; 至今 open&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;初始设计&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;初始提交即包含完整 Kimi provider + schema 规范化 + 文件服务&lt;/td&gt;
+					&lt;td&gt;通用多模型架构，后期通过 bridge 适配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;reasoning 机制&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;围绕 &lt;code&gt;reasoning_content&lt;/code&gt; 字段设计，自动扫描/回写/注入 effort&lt;/td&gt;
+					&lt;td&gt;围绕 OpenAI Responses 的 &lt;code&gt;encrypted_content&lt;/code&gt; + &lt;code&gt;item_reference&lt;/code&gt; 设计&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;schema 处理&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt;，解引用 &lt;code&gt;$ref&lt;/code&gt; + 补全 &lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;通用 schema 验证，友好错误提示为主&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;配置哲学&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;让 OpenAI-compatible 网关&amp;quot;零配置工作&amp;quot;，自动推断所有字段&lt;/td&gt;
+					&lt;td&gt;依赖用户通过 bridge/config 手动适配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;issue 状态&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;持续发布 reasoning 相关 patch（&lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/70" target="_blank" rel="noopener"
+ &gt;#70&lt;/a&gt;, &lt;a class="link" href="https://github.com/MoonshotAI/kimi-code/pull/78" target="_blank" rel="noopener"
+ &gt;#78&lt;/a&gt;）&lt;/td&gt;
+					&lt;td&gt;kimi-k2.6 兼容性问题 &lt;a class="link" href="https://github.com/anomalyco/opencode/issues/26331" target="_blank" rel="noopener"
+ &gt;#26331&lt;/a&gt; 至今 open&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id="总结核心差异"&gt;总结：核心差异
 &lt;/h2&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;维度&lt;/th&gt;
-&lt;th&gt;kimi-code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;架构定位&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;原生为 Kimi/Moonshot 设计，专用 provider&lt;/td&gt;
-&lt;td&gt;通用多模型代理，通过 bridge 适配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;原生支持，全链路保留 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;bridge 层易丢失，导致 400&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; 做解引用和类型补全&lt;/td&gt;
-&lt;td&gt;通用 schema 生成，不符合 Kimi 验证器要求&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;API 格式&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;直接生成 Moonshot 原生格式（含 &lt;code&gt;thinking&lt;/code&gt; 配置、&lt;code&gt;$defs&lt;/code&gt; 规范等）&lt;/td&gt;
-&lt;td&gt;经 OpenAI/Anthropic 协议转换，产生格式不匹配&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;服务集成&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;内置 Moonshot fetch/search/file 服务&lt;/td&gt;
-&lt;td&gt;使用通用本地工具&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;strong&gt;核心依赖&lt;/strong&gt;&lt;/td&gt;
-&lt;td&gt;CLI 核心不直接依赖 vendor SDK，通过自研 kosong 包隔离&lt;/td&gt;
-&lt;td&gt;核心包直接耦合 &lt;code&gt;@ai-sdk/openai&lt;/code&gt; 等十余个 vendor SDK&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;kimi-code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;架构定位&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;原生为 Kimi/Moonshot 设计，专用 provider&lt;/td&gt;
+					&lt;td&gt;通用多模型代理，通过 bridge 适配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Thinking/Reasoning&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;原生支持，全链路保留 &lt;code&gt;reasoning_content&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;bridge 层易丢失，导致 400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;JSON Schema&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;专用 &lt;code&gt;normalizeKimiToolSchema&lt;/code&gt; 做解引用和类型补全&lt;/td&gt;
+					&lt;td&gt;通用 schema 生成，不符合 Kimi 验证器要求&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;API 格式&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;直接生成 Moonshot 原生格式（含 &lt;code&gt;thinking&lt;/code&gt; 配置、&lt;code&gt;$defs&lt;/code&gt; 规范等）&lt;/td&gt;
+					&lt;td&gt;经 OpenAI/Anthropic 协议转换，产生格式不匹配&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;服务集成&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;内置 Moonshot fetch/search/file 服务&lt;/td&gt;
+					&lt;td&gt;使用通用本地工具&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;核心依赖&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;CLI 核心不直接依赖 vendor SDK，通过自研 kosong 包隔离&lt;/td&gt;
+					&lt;td&gt;核心包直接耦合 &lt;code&gt;@ai-sdk/openai&lt;/code&gt; 等十余个 vendor SDK&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;从 commit 历史看，kimi-code 的演进方向是&lt;strong&gt;持续消除用户配置负担&lt;/strong&gt;（&lt;code&gt;reasoning_key&lt;/code&gt; 从必填 → 可选覆盖 → 自动推断；&lt;code&gt;interleaved&lt;/code&gt; 从被过滤 → 正确映射），而 OpenCode 的演进方向是&lt;strong&gt;持续深化 OpenAI 生态集成&lt;/strong&gt;（Responses API、encrypted reasoning、item reference），对 Kimi 的适配停留在通用 bridge 层。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;这就是 commit 层面的真相：一个是原生演进，一个是 bridge 间隙。&lt;/strong&gt;&lt;/p&gt;</description></item></channel></rss>

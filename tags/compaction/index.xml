@@ -3,27 +3,9 @@
 &lt;p&gt;我觉得这个点挺有意思。不是说&amp;quot;压缩上下文&amp;quot;这件事本身有多新鲜，而是它把这件事放在服务端做，并且写进了文档。也就是说，上下文管理不是用户自己在提示词层面想办法，而是产品本身就内建了一套机制。&lt;/p&gt;
 &lt;p&gt;顺手我又去看了一下 OpenCode 的 compaction。两边都叫 &lt;code&gt;compaction&lt;/code&gt;，但不是一回事。&lt;/p&gt;
 &lt;p&gt;Codex 这边强调的是：服务端在上下文达到阈值时，会把前面的交互压缩成一个更短的表示，后续请求继续带着这个压缩后的状态跑。文档里写得很清楚，&lt;code&gt;server-side compaction&lt;/code&gt; 会用更少的 tokens 携带之前的关键状态。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp"
-width="2752"
-height="1536"
-srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_f03edb827bd032dc.webp 480w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_556f88c4a4052352.webp 1024w"
-loading="lazy"
-alt="Codex server-side compaction 示意图"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Codex server-side compaction 示意图" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="1536" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp" srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_6d5987fbb044e914.webp 800w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_1ca3d9392bdcda35.webp 1600w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow_hu_38db872c637a7e19.webp 2400w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/compaction-flow.webp 2752w" width="2752"&gt;&lt;/p&gt;
 &lt;p&gt;OpenCode 这边，我看了一下源码，它也有 compaction，但更像应用层的会话压缩：上下文快满时，调用一个隐藏的 &lt;code&gt;compaction&lt;/code&gt; agent 生成 summary，后续请求不再带完整旧历史，而是保留这段 summary 继续。还有 &lt;code&gt;prune&lt;/code&gt; 会把旧的工具输出清掉，只保留占位文本。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp"
-width="2752"
-height="1536"
-srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_ce8a676aa70786e6.webp 480w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_3701a87c6e58bf7c.webp 1024w"
-loading="lazy"
-alt="OpenCode 应用层 compaction 示意图"
-class="gallery-image"
-data-flex-grow="179"
-data-flex-basis="430px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="OpenCode 应用层 compaction 示意图" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="1536" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp" srcset="https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_508f88412aee6495.webp 800w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_acb9a2b759b0eea2.webp 1600w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction_hu_848096c2d257866e.webp 2400w, https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/agent-compaction.webp 2752w" width="2752"&gt;&lt;/p&gt;
 &lt;p&gt;所以两边虽然名字一样，但关注点不一样：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Codex：服务端的上下文管理能力&lt;/li&gt;
@@ -33,7 +15,7 @@ data-flex-basis="430px"
 &lt;h2 id="参考"&gt;参考
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://developers.openai.com/api/docs/guides/compaction" target="_blank" rel="noopener"
-&gt;OpenAI Compaction 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenAI Compaction 文档&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/config/" target="_blank" rel="noopener"
-&gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
+ &gt;OpenCode Config 文档&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item></channel></rss>

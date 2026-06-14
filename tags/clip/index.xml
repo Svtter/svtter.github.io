@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CLIP on Svtter's Blog</title><link>https://svtter.cn/tags/clip/</link><description>Recent content in CLIP on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 19 Mar 2025 13:23:50 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/clip/index.xml" rel="self" type="application/rss+xml"/><item><title>Read Code of CLIP.md</title><link>https://svtter.cn/p/read-code-of-clip.md/</link><pubDate>Wed, 19 Mar 2025 13:23:50 +0800</pubDate><guid>https://svtter.cn/p/read-code-of-clip.md/</guid><description>&lt;img src="https://svtter.cn/p/read-code-of-clip.md/image.png" alt="Featured image of post Read Code of CLIP.md" /&gt;&lt;p&gt;Contrastive Language-Image Pre-Training (CLIP) 是 openai 的经典工作之一。出自论文&lt;a class="link" href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener"
-&gt;&lt;/a&gt;&lt;/p&gt;
+ &gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;为了能够在 CLIP 上完成我的新 idea，我尝试阅读 &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
-&gt;openai/clip&lt;/a&gt; 来理解 clip 在 classifier 上的基本工作原理。&lt;/p&gt;
+ &gt;openai/clip&lt;/a&gt; 来理解 clip 在 classifier 上的基本工作原理。&lt;/p&gt;
 &lt;p&gt;这是 &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
-&gt;openai/clip&lt;/a&gt; 给出的 python 样例代码&lt;/p&gt;
+ &gt;openai/clip&lt;/a&gt; 给出的 python 样例代码&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
@@ -101,19 +101,25 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;也不是很复杂，预处理&lt;code&gt;Normalize&lt;/code&gt;参数虽然不太明白。似乎是用的 ViT 同样的预处理参数。&lt;/p&gt;
 &lt;p&gt;然后进入模型加载阶段，我们可以看到，如果不是 &lt;a class="link" href="https://chenglu.me/blogs/pytorch-jit" target="_blank" rel="noopener"
-&gt;jit 加载&lt;/a&gt; ，那么模型会选择 state_dict 的模式。
+ &gt;jit 加载&lt;/a&gt; ，那么模型会选择 state_dict 的模式。
 通过加载 state_dict 的过程，我们可以看到 build_model 函数用于加载权重，将权重赋值给已有的模型结构。&lt;/p&gt;
 &lt;p&gt;这个模型结构的文件是&lt;a class="link" href="https://github.com/openai/CLIP/blob/main/clip/model.py" target="_blank" rel="noopener"
-&gt;model.py&lt;/a&gt;。
+ &gt;model.py&lt;/a&gt;。
 因此，CLIP 的主要代码位于&lt;a class="link" href="https://github.com/openai/CLIP/blob/main/clip/model.py#L243" target="_blank" rel="noopener"
-&gt;model.py#L243&lt;/a&gt;。&lt;/p&gt;
+ &gt;model.py#L243&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;image_encoder 和 text_encoder 的输出，分别是两个不同的特征 tensor。&lt;/p&gt;
 &lt;p&gt;将两个 tensor 进行矩阵乘积，分别得到一个相似性矩阵。这个相似性矩阵的大小是 &lt;code&gt;(batch_size, batch_size)&lt;/code&gt;。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;TIPS: 如果说 batch-size 太小，为1，那么对比学习的性能可能就大打折扣了。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;TIPS: 如果说 batch-size 太小，为1，那么对比学习的性能可能就大打折扣了。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;这两个 tensor 使用 symmetric cross-entropy loss 进行计算，来用于更新网络权重。&lt;/p&gt;
 &lt;p&gt;专门做智能指标的提升，不太在意计算量。不追求最新最高的智能指标，更加关注模型计算的运行效率。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;trick: 给参数加一个 log 来使得权重更新没有那么剧烈，计算起来没有那么大。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;trick: 给参数加一个 log 来使得权重更新没有那么剧烈，计算起来没有那么大。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
-&gt;CLIP&lt;/a&gt; 代码中没有给出能够直接进行训练的代码。下一篇文章，尝试阅读一下 openclip。&lt;/p&gt;</description></item></channel></rss>
+ &gt;CLIP&lt;/a&gt; 代码中没有给出能够直接进行训练的代码。下一篇文章，尝试阅读一下 openclip。&lt;/p&gt;</description></item></channel></rss>

@@ -1,36 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vmware on Svtter's Blog</title><link>https://svtter.cn/tags/vmware/</link><description>Recent content in Vmware on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 24 Apr 2025 17:00:29 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/vmware/index.xml" rel="self" type="application/rss+xml"/><item><title>vsphere 6.5 Problem.md</title><link>https://svtter.cn/p/vsphere-6.5-problem.md/</link><pubDate>Thu, 24 Apr 2025 17:00:29 +0800</pubDate><guid>https://svtter.cn/p/vsphere-6.5-problem.md/</guid><description>&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/bg.png" alt="Featured image of post vsphere 6.5 Problem.md" /&gt;&lt;blockquote&gt;
-&lt;p&gt;系统版本: vmware esxi 6.5&lt;/p&gt;&lt;/blockquote&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vmware on Svtter's Blog</title><link>https://svtter.cn/tags/vmware/</link><description>Recent content in Vmware on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 24 Apr 2025 17:00:29 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/vmware/index.xml" rel="self" type="application/rss+xml"/><item><title>vsphere 6.5 Problem.md</title><link>https://svtter.cn/p/vsphere-6.5-problem.md/</link><pubDate>Thu, 24 Apr 2025 17:00:29 +0800</pubDate><guid>https://svtter.cn/p/vsphere-6.5-problem.md/</guid><description>&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/bg.png" alt="Featured image of post vsphere 6.5 Problem.md" /&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;系统版本: vmware esxi 6.5&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;这两天在配置 k8s 内网，发现一个奇怪的问题，ovf 镜像导出之后，再导入启动不了了。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/p1.png"
-width="972"
-height="234"
-srcset="https://svtter.cn/p/vsphere-6.5-problem.md/p1_hu_a53e32b20b0e0dc4.png 480w, https://svtter.cn/p/vsphere-6.5-problem.md/p1_hu_24a9b1d7440deca4.png 1024w"
-loading="lazy"
-alt="p1"
-class="gallery-image"
-data-flex-grow="415"
-data-flex-basis="996px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="p1" class="gallery-image" data-flex-basis="996px" data-flex-grow="415" height="234" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/vsphere-6.5-problem.md/p1.png" srcset="https://svtter.cn/p/vsphere-6.5-problem.md/p1_hu_3e028206297a56c5.png 800w, https://svtter.cn/p/vsphere-6.5-problem.md/p1.png 972w" width="972"&gt;&lt;/p&gt;
 &lt;p&gt;试着跟 kimi 沟通了一下，不太行，这是个笨蛋。&lt;/p&gt;
 &lt;p&gt;起初我也认为是 BIOS 和 EFI 切换的问题。但是我检查了一下导出的虚拟机，导入导出都在一个平台上，引导选项也没改变。因此并非如此。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;补充知识&lt;/p&gt;
-&lt;p&gt;EFI（Extensible Firmware Interface，可扩展固件接口）是一种由英特尔（Intel）开发的接口标准，用于计算机硬件和操作系统之间的通信。它主要用于替代传统的BIOS（Basic Input/Output System，基本输入输出系统）。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;补充知识&lt;/p&gt;
+&lt;p&gt;EFI（Extensible Firmware Interface，可扩展固件接口）是一种由英特尔（Intel）开发的接口标准，用于计算机硬件和操作系统之间的通信。它主要用于替代传统的BIOS（Basic Input/Output System，基本输入输出系统）。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;img src="https://svtter.cn/memos/si.jpg" /&gt;
 &lt;p&gt;这就很奇怪了。（用 esxi 6.5 这种上古版本的我可能也奇怪）&lt;/p&gt;
 &lt;p&gt;实际上我的操作是没有问题的，问题在于 esxi 在导出的时候会丢失了引导信息。&lt;/p&gt;
 &lt;h2 id="修复方法"&gt;修复方法
 &lt;/h2&gt;&lt;p&gt;首先改一下 SCSI 控制器。&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/vsphere-6.5-problem.md/p2.png"
-width="1552"
-height="1104"
-srcset="https://svtter.cn/p/vsphere-6.5-problem.md/p2_hu_f937415408f77410.png 480w, https://svtter.cn/p/vsphere-6.5-problem.md/p2_hu_8981899833e9cfa0.png 1024w"
-loading="lazy"
-alt="p2"
-class="gallery-image"
-data-flex-grow="140"
-data-flex-basis="337px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="p2" class="gallery-image" data-flex-basis="337px" data-flex-grow="140" height="1104" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/vsphere-6.5-problem.md/p2.png" srcset="https://svtter.cn/p/vsphere-6.5-problem.md/p2_hu_bdce6a7128299a98.png 800w, https://svtter.cn/p/vsphere-6.5-problem.md/p2.png 1552w" width="1552"&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;找到 SCSI 控制器 0
 &lt;ul&gt;
@@ -60,5 +48,5 @@ data-flex-basis="337px"
 &lt;h2 id="资源声明"&gt;资源声明
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;背景图来自 &lt;a class="link" href="https://www.iperiusbackup.net/en/benefits-virtualization-administrator-would-get-from-using-vmware-esxi/" target="_blank" rel="noopener"
-&gt;link&lt;/a&gt;&lt;/li&gt;
+ &gt;link&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item></channel></rss>

@@ -39,11 +39,11 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description></item><item><title>Read Code of CLIP</title><link>https://svtter.cn/en/p/read-code-of-clip/</link><pubDate>Wed, 19 Mar 2025 13:23:50 +0800</pubDate><guid>https://svtter.cn/en/p/read-code-of-clip/</guid><description>&lt;img src="https://svtter.cn/p/read-code-of-clip.md/image.png" alt="Featured image of post Read Code of CLIP" /&gt;&lt;p&gt;Contrastive Language-Image Pre-Training (CLIP) is one of the classic works from OpenAI, originating from the paper &lt;a class="link" href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener"
-&gt;&lt;/a&gt;.&lt;/p&gt;
+ &gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;To implement my new idea based on CLIP, I attempted to read &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
-&gt;openai/clip&lt;/a&gt; to understand the fundamental working principles of CLIP in classification.&lt;/p&gt;
+ &gt;openai/clip&lt;/a&gt; to understand the fundamental working principles of CLIP in classification.&lt;/p&gt;
 &lt;p&gt;Here is the Python sample code provided by &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
-&gt;openai/clip&lt;/a&gt;:&lt;/p&gt;
+ &gt;openai/clip&lt;/a&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
@@ -141,22 +141,28 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;It&amp;rsquo;s not overly complex, though the preprocessing &lt;code&gt;Normalize&lt;/code&gt; parameters are not entirely clear. It seems to use the same preprocessing parameters as ViT.&lt;/p&gt;
 &lt;p&gt;Then, moving into the model loading phase, we can see that if it&amp;rsquo;s not &lt;a class="link" href="https://chenglu.me/blogs/pytorch-jit" target="_blank" rel="noopener"
-&gt;jit loading&lt;/a&gt;, the model will opt for the state_dict mode.&lt;br&gt;
+ &gt;jit loading&lt;/a&gt;, the model will opt for the state_dict mode.&lt;br&gt;
 Through the process of loading the state_dict, we can observe that the &lt;code&gt;build_model&lt;/code&gt; function is used to load the weights and assign them to the existing model structure.&lt;/p&gt;
 &lt;p&gt;The file for this model structure is &lt;a class="link" href="https://github.com/openai/CLIP/blob/main/clip/model.py" target="_blank" rel="noopener"
-&gt;model.py&lt;/a&gt;.&lt;br&gt;
+ &gt;model.py&lt;/a&gt;.&lt;br&gt;
 Therefore, the main code for CLIP is located at &lt;a class="link" href="https://github.com/openai/CLIP/blob/main/clip/model.py#L243" target="_blank" rel="noopener"
-&gt;model.py#L243&lt;/a&gt;.&lt;/p&gt;
+ &gt;model.py#L243&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The outputs of the &lt;code&gt;image_encoder&lt;/code&gt; and &lt;code&gt;text_encoder&lt;/code&gt; are two distinct feature tensors.&lt;/p&gt;
 &lt;p&gt;Performing a matrix multiplication on these two tensors yields a similarity matrix. The size of this similarity matrix is &lt;code&gt;(batch_size, batch_size)&lt;/code&gt;.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;TIPS: If the batch size is too small, such as 1, the performance of contrastive learning may be significantly diminished.&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;TIPS: If the batch size is too small, such as 1, the performance of contrastive learning may be significantly diminished.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;These two tensors are computed using symmetric cross-entropy loss to update the network weights.&lt;/p&gt;
 &lt;p&gt;Specifically focused on improving intelligence metrics, without much concern for computational cost. Not pursuing the latest or highest intelligence metrics, but more focused on the computational efficiency of the model.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Trick: Adding a log to the parameters to make weight updates less drastic and reduce computational intensity.&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Trick: Adding a log to the parameters to make weight updates less drastic and reduce computational intensity.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;The &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
-&gt;CLIP&lt;/a&gt; code does not provide directly trainable code. In the next article, we&amp;rsquo;ll attempt to read openclip.&lt;/p&gt;</description></item><item><title>Browsing and Storing Image Datasets</title><link>https://svtter.cn/en/p/browsing-and-storing-image-datasets/</link><pubDate>Sun, 12 Jan 2025 18:31:12 +0800</pubDate><guid>https://svtter.cn/en/p/browsing-and-storing-image-datasets/</guid><description>&lt;p&gt;Browsing datasets can be quite troublesome, especially when the dataset is large.&lt;/p&gt;
+ &gt;CLIP&lt;/a&gt; code does not provide directly trainable code. In the next article, we&amp;rsquo;ll attempt to read openclip.&lt;/p&gt;</description></item><item><title>Browsing and Storing Image Datasets</title><link>https://svtter.cn/en/p/browsing-and-storing-image-datasets/</link><pubDate>Sun, 12 Jan 2025 18:31:12 +0800</pubDate><guid>https://svtter.cn/en/p/browsing-and-storing-image-datasets/</guid><description>&lt;p&gt;Browsing datasets can be quite troublesome, especially when the dataset is large.&lt;/p&gt;
 &lt;p&gt;npy (numpy array) and h5 files are two common data storage formats.&lt;br&gt;
 The drawback of h5 files is that they are prone to data corruption. I have encountered issues multiple times where h5 files could not be opened.&lt;br&gt;
 npy files have clear advantages in terms of read speed and file transfer. However, they are loaded entirely into memory at once, which can easily cause memory overflow if the server is not powerful enough.&lt;/p&gt;

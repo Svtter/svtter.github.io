@@ -85,7 +85,7 @@ of the built-in catalog, with no bun-global dependency, and which &lt;code&gt;om
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# MiniMax M3 Code Plan&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Set MINIMAX_API_KEY in ~/.zshenv first&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Set MINIMAX_API_KEY in ~/.zshenv first&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;minimax&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;baseUrl&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://api.minimaxi.com/anthropic&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;apiKey&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;MINIMAX_API_KEY&lt;/span&gt;&lt;span class="w"&gt;
@@ -145,35 +145,35 @@ find an official M3 number. &lt;code&gt;cost&lt;/code&gt; is all zero because th
 &lt;/div&gt;&lt;p&gt;After the switch, &lt;code&gt;/status&lt;/code&gt; should show &lt;code&gt;ANTHROPIC_BASE_URL&lt;/code&gt; pointing at &lt;code&gt;api.minimaxi.com/anthropic&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id="how-the-two-routes-compose"&gt;How the two routes compose
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Dimension&lt;/th&gt;
-&lt;th&gt;pi-ai bundled &lt;code&gt;models.json&lt;/code&gt; patch&lt;/th&gt;
-&lt;th&gt;&lt;code&gt;models.yml&lt;/code&gt; custom provider&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Persistence&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;omp update&lt;/code&gt; wipes it&lt;/td&gt;
-&lt;td&gt;Persistent&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Cross-machine sync&lt;/td&gt;
-&lt;td&gt;No (bun-global path)&lt;/td&gt;
-&lt;td&gt;Yes (dotfile in git)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Upgrade cost&lt;/td&gt;
-&lt;td&gt;Re-apply patch&lt;/td&gt;
-&lt;td&gt;OMP merges automatically&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Merge with built-in&lt;/td&gt;
-&lt;td&gt;Yes&lt;/td&gt;
-&lt;td&gt;Yes, last-write-wins&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Dimension&lt;/th&gt;
+					&lt;th&gt;pi-ai bundled &lt;code&gt;models.json&lt;/code&gt; patch&lt;/th&gt;
+					&lt;th&gt;&lt;code&gt;models.yml&lt;/code&gt; custom provider&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Persistence&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;omp update&lt;/code&gt; wipes it&lt;/td&gt;
+					&lt;td&gt;Persistent&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Cross-machine sync&lt;/td&gt;
+					&lt;td&gt;No (bun-global path)&lt;/td&gt;
+					&lt;td&gt;Yes (dotfile in git)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Upgrade cost&lt;/td&gt;
+					&lt;td&gt;Re-apply patch&lt;/td&gt;
+					&lt;td&gt;OMP merges automatically&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Merge with built-in&lt;/td&gt;
+					&lt;td&gt;Yes&lt;/td&gt;
+					&lt;td&gt;Yes, last-write-wins&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;The two compose. &lt;code&gt;models.yml&lt;/code&gt; providers enter through OMP&amp;rsquo;s &amp;ldquo;custom&amp;rdquo; channel; whatever
 pi-ai later ships in its bundled list (if M3 lands upstream) enters through the &amp;ldquo;built-in&amp;rdquo;
@@ -184,35 +184,35 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>OpenCode'
 &lt;h2 id="overview"&gt;Overview
 &lt;/h2&gt;&lt;p&gt;The 27 workflows can be divided into four categories:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Category&lt;/th&gt;
-&lt;th&gt;Count&lt;/th&gt;
-&lt;th&gt;Purpose&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;CI/Testing&lt;/td&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Release/Delivery&lt;/td&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Automation/Bot&lt;/td&gt;
-&lt;td&gt;16&lt;/td&gt;
-&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Docs/Other&lt;/td&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Category&lt;/th&gt;
+					&lt;th&gt;Count&lt;/th&gt;
+					&lt;th&gt;Purpose&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CI/Testing&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;typecheck, unit tests, e2e, Nix builds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Release/Delivery&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;CLI release, container builds, VS Code extension, GitHub Action release&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Automation/Bot&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+					&lt;td&gt;issue governance, PR compliance, AI code review, documentation updates&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Docs/Other&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;statistics, Discord notifications&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;16 automation workflows account for 60% of the total. opencode doesn&amp;rsquo;t just use Actions to run tests and releases—it also entrusts community governance and code quality review to the automation system.&lt;/p&gt;
 &lt;h2 id="citesting-solid-but-restrained"&gt;CI/Testing: Solid but Restrained
@@ -226,7 +226,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>OpenCode'
 &lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;: Multiple workflows use this pattern so the same PR doesn&amp;rsquo;t stack multiple runs. For a project receiving lots of community PRs, this saves significant CI resources.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Path triggering&lt;/strong&gt;: containers.yml only runs when container files change, storybook.yml only runs when UI changes. Not everything runs on all commits.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Mixed Runner Strategy&lt;/strong&gt;: Most workflows use &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
-&gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
+ &gt;Blacksmith&lt;/a&gt;&amp;rsquo;s third-party hosted runners (&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;, &lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;). Blacksmith is a GitHub Actions API-compatible accelerated runner service using custom infrastructure, significantly faster than GitHub&amp;rsquo;s free runners. Only lightweight bot tasks (close-issues, close-prs, compliance-close, pr-standards, deploy) stay on GitHub&amp;rsquo;s native &lt;code&gt;ubuntu-latest&lt;/code&gt;. Compute-intensive compilation, testing, and releases all go through Blacksmith, simple script tasks use GitHub&amp;rsquo;s native runners, allocating resources by task load.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="releasedelivery-full-platform-coverage"&gt;Release/Delivery: Full Platform Coverage
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; is the most complex workflow, handling the complete release process in a single file:&lt;/p&gt;
@@ -314,7 +314,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>OpenCode'
 &lt;/ol&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
-&gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
+ &gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;What it does is simple: it provides an HTTP service that lets you register locally generated HTML files and preview them in a browser.&lt;/p&gt;
 &lt;h2 id="why-this-tool-is-needed"&gt;Why This Tool Is Needed
 &lt;/h2&gt;&lt;p&gt;The problem stems from AI Agent output.&lt;/p&gt;
@@ -404,8 +404,8 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>OpenCode'
 &lt;p&gt;It&amp;rsquo;s just that simple, no unnecessary dependencies.&lt;/p&gt;
 &lt;h2 id="open-source"&gt;Open Source
 &lt;/h2&gt;&lt;p&gt;This tool was previously a private repo, but I just made it public today: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
-&gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:36:34 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
+ &gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
 &lt;p&gt;Currently, it provides two main features: one is review, and the other is using the runner to execute opencode (directly running opencode&amp;rsquo;s prompts on the runner) to handle other functionalities. For example, modifying code, creating new issues, creating PRs based on issues, etc.&lt;/p&gt;
 &lt;h2 id="how-stable-is-it"&gt;How stable is it?
 &lt;/h2&gt;&lt;ul&gt;
@@ -438,78 +438,70 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>OpenCode'
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Currently, this action mainly supports Z.AI, ZHIPU, and OPENCODE GO subscriptions. Therefore, if using ZHIPU, simply add your ZHIPU_API_KEY to the project&amp;rsquo;s secrets. If using the opencode go subscription, you need to add OPENCODE_GO_API_KEY.&lt;/p&gt;
 &lt;p&gt;Everything else can use the default configuration. The default model is &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;. For more configuration requirements, I recommend checking the original repository&amp;rsquo;s &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
-&gt;README&lt;/a&gt;.&lt;/p&gt;
+ &gt;README&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I previously covered this quick review script in my &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
-&gt;code review article&lt;/a&gt;.&lt;/p&gt;
+ &gt;code review article&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="differences"&gt;Differences
 &lt;/h2&gt;&lt;p&gt;Actually, opencode has its own actions, so why did I build another one?&lt;/p&gt;
 &lt;p&gt;The differences from the official version are mainly reflected in several aspects:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Feature&lt;/th&gt;
-&lt;th&gt;Upstream Status&lt;/th&gt;
-&lt;th&gt;This Repository&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Model default fallback&lt;/td&gt;
-&lt;td&gt;Only required input&lt;/td&gt;
-&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Provider convenience fields&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Review prompt template&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Retry logic&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Execution timeout&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;timeout-seconds&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Version check&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Installation retry&lt;/td&gt;
-&lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;install-attempts&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;XDG cache caching&lt;/td&gt;
-&lt;td&gt;Only caches bin&lt;/td&gt;
-&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Feature&lt;/th&gt;
+					&lt;th&gt;Upstream Status&lt;/th&gt;
+					&lt;th&gt;This Repository&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model default fallback&lt;/td&gt;
+					&lt;td&gt;Only required input&lt;/td&gt;
+					&lt;td&gt;Three-level fallback (input → MODEL_NAME → hardcoded default)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider convenience fields&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;, &lt;code&gt;opencode-go-api-key&lt;/code&gt;, etc.&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Review prompt template&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;Chinese-formatted review (mergeable/conditionally mergeable/not mergeable)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Retry logic&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Execution timeout&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;timeout-seconds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Version check&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Installation retry&lt;/td&gt;
+					&lt;td&gt;None&lt;/td&gt;
+					&lt;td&gt;install-attempts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;XDG cache caching&lt;/td&gt;
+					&lt;td&gt;Only caches bin&lt;/td&gt;
+					&lt;td&gt;Caches both bin + XDG cache&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Detailed explanations are available in &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
-&gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
+ &gt;sun-praise/opencode-actions#29&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="review-effectiveness"&gt;Review effectiveness
 &lt;/h2&gt;&lt;p&gt;You can see the results from the repo&amp;rsquo;s own PR at &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
-&gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+ &gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The effect looks like this:&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png"
-width="1407"
-height="1208"
-srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_2bf58faf91a7a9d.png 480w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_6740bc1877d53b60.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="116"
-data-flex-basis="279px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="279px" data-flex-grow="116" height="1208" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png" srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_da6eced56b414cb0.png 800w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png 1407w" width="1407"&gt;&lt;/p&gt;
 &lt;h2 id="future"&gt;Future
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Try integrating gemini cli. Google&amp;rsquo;s GEM 3.1 PRO model currently offers great value for money, with the highest intelligence per unit.&lt;/li&gt;
@@ -601,8 +593,11 @@ data-flex-basis="279px"
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl restart xrdp
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: Don&amp;rsquo;t log in to the desktop locally before connecting, otherwise the same user will see a black screen.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;/div&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: Don&amp;rsquo;t log in to the desktop locally before connecting, otherwise the same user will see a black screen.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;h4 id="adjust-resolutiondpi"&gt;Adjust Resolution/DPI
 &lt;/h4&gt;&lt;ul&gt;
 &lt;li&gt;Before Windows remote desktop connection, lower the resolution in &amp;ldquo;Display Options&amp;rdquo; (e.g., 1920×1080)&lt;/li&gt;
@@ -649,26 +644,26 @@ data-flex-basis="279px"
 &lt;h2 id="automated-testing-workflow-mcp-configuration"&gt;Automated Testing Workflow: MCP Configuration
 &lt;/h2&gt;&lt;h3 id="playwright-mcp"&gt;Playwright MCP
 &lt;/h3&gt;&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;MCP&lt;/th&gt;
-&lt;th&gt;Features&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (Microsoft official)&lt;/td&gt;
-&lt;td&gt;Lightweight, based on accessibility tree&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (community)&lt;/td&gt;
-&lt;td&gt;More complete features, supports screenshots, JS execution&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Console log monitoring, Lighthouse performance analysis&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;MCP&lt;/th&gt;
+					&lt;th&gt;Features&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@playwright/mcp&lt;/code&gt; (Microsoft official)&lt;/td&gt;
+					&lt;td&gt;Lightweight, based on accessibility tree&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@executeautomation/playwright-mcp-server&lt;/code&gt; (community)&lt;/td&gt;
+					&lt;td&gt;More complete features, supports screenshots, JS execution&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@agentdeskai/browser-tools-mcp&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Console log monitoring, Lighthouse performance analysis&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="claude-code-configuration"&gt;Claude Code Configuration
 &lt;/h3&gt;&lt;p&gt;Create &lt;code&gt;.mcp.json&lt;/code&gt; in project root:&lt;/p&gt;
@@ -751,30 +746,30 @@ data-flex-basis="279px"
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;strong&gt;Configuration Comparison&lt;/strong&gt;:&lt;/p&gt;
 &lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration Item&lt;/th&gt;
-&lt;th&gt;Claude Code&lt;/th&gt;
-&lt;th&gt;OpenCode&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Top-level key&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;type&lt;/td&gt;
-&lt;td&gt;Not needed&lt;/td&gt;
-&lt;td&gt;Required (&lt;code&gt;local&lt;/code&gt;)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;command&lt;/td&gt;
-&lt;td&gt;String&lt;/td&gt;
-&lt;td&gt;Array&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Configuration Item&lt;/th&gt;
+					&lt;th&gt;Claude Code&lt;/th&gt;
+					&lt;th&gt;OpenCode&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Top-level key&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;mcpServers&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;mcp&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;type&lt;/td&gt;
+					&lt;td&gt;Not needed&lt;/td&gt;
+					&lt;td&gt;Required (&lt;code&gt;local&lt;/code&gt;)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;command&lt;/td&gt;
+					&lt;td&gt;String&lt;/td&gt;
+					&lt;td&gt;Array&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id="usage-example"&gt;Usage Example
 &lt;/h3&gt;&lt;p&gt;After configuration, you can drive tests with natural language:&lt;/p&gt;
@@ -795,16 +790,7 @@ data-flex-basis="279px"
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="results-display"&gt;Results Display
-&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png"
-width="2892"
-height="1848"
-srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_25ead07efadeb176.png 480w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_a8ec1f00bb2f829d.png 1024w"
-loading="lazy"
-alt="VM remote desktop running Claude Code"
-class="gallery-image"
-data-flex-grow="156"
-data-flex-basis="375px"
-&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="VM remote desktop running Claude Code" class="gallery-image" data-flex-basis="375px" data-flex-grow="156" height="1848" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png" srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_ee616737bb9471dd.png 800w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_91ab0046ef956a88.png 1600w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_1e8fe676864afc67.png 2400w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png 2892w" width="2892"&gt;&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;The VM + Claude Code + Playwright MCP combination provides an isolated, reproducible automated development testing environment. The entire process:&lt;/p&gt;
 &lt;ol&gt;
@@ -814,7 +800,7 @@ data-flex-basis="375px"
 &lt;li&gt;Configure Playwright MCP&lt;/li&gt;
 &lt;li&gt;Drive automated testing with natural language&lt;/li&gt;
 &lt;/ol&gt;</description></item><item><title>Hugo Admin - A Lightweight Hugo Blog Management Interface</title><link>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</link><pubDate>Tue, 23 Dec 2025 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</guid><description>&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/featured.png" alt="Featured image of post Hugo Admin - A Lightweight Hugo Blog Management Interface" /&gt;&lt;p&gt;When managing a Hugo blog, you often need to switch back and forth between the terminal and editor. To simplify this process, I developed &lt;a class="link" href="https://github.com/Svtter/hugo-admin" target="_blank" rel="noopener"
-&gt;hugo-admin&lt;/a&gt;, a lightweight web management interface based on Flask.&lt;/p&gt;
+ &gt;hugo-admin&lt;/a&gt;, a lightweight web management interface based on Flask.&lt;/p&gt;
 &lt;h2 id="why-its-needed"&gt;Why It&amp;rsquo;s Needed
 &lt;/h2&gt;&lt;p&gt;The typical workflow for writing Hugo blogs is:&lt;/p&gt;
 &lt;ol&gt;
@@ -835,16 +821,7 @@ data-flex-basis="375px"
 &lt;li&gt;&lt;strong&gt;Image Management&lt;/strong&gt;: Upload and manage article images&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="interface-display"&gt;Interface Display
-&lt;/h2&gt;&lt;p&gt;&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png"
-width="1920"
-height="1080"
-srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_eb1747e0ec7106ec.png 480w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_f1b2609be5f2d5a2.png 1024w"
-loading="lazy"
-alt="hugo-admin interface"
-class="gallery-image"
-data-flex-grow="177"
-data-flex-basis="426px"
-&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="hugo-admin interface" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="1080" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png" srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_97d032cd1dac853b.png 800w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_1120089bfaa65cd2.png 1600w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png 1920w" width="1920"&gt;&lt;/p&gt;
 &lt;h2 id="tech-stack"&gt;Tech Stack
 &lt;/h2&gt;&lt;p&gt;Backend uses Flask + Flask-SocketIO, frontend uses Tailwind CSS + Alpine.js. Real-time log pushing is implemented based on WebSocket.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -932,7 +909,7 @@ data-flex-basis="426px"
 &lt;li&gt;&lt;strong&gt;Direct Hugo API usage&lt;/strong&gt;: No need for SQLite3 cache, directly calls Hugo API to get article information, more lightweight and efficient&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The advanced version is priced at $10 USD. &lt;a class="link" href="https://ko-fi.com/s/57009bf884" target="_blank" rel="noopener"
-&gt;Click here to purchase&lt;/a&gt; to get complete source code. If you have higher requirements for performance and deployment convenience, consider the advanced version.&lt;/p&gt;
+ &gt;Click here to purchase&lt;/a&gt; to get complete source code. If you have higher requirements for performance and deployment convenience, consider the advanced version.&lt;/p&gt;
 &lt;h2 id="future-plans"&gt;Future Plans
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Git operations interface&lt;/li&gt;
@@ -940,18 +917,12 @@ data-flex-basis="426px"
 &lt;li&gt;Docker deployment&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The project is open source, welcome to Star and PR.&lt;/p&gt;
+
+
 &lt;div class="repo-card" data-repo="Svtter/hugo-admin"&gt;&lt;/div&gt;</description></item><item><title>Use Emerging Open Source Software with Caution</title><link>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</guid><description>&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/background.png" alt="Featured image of post Use Emerging Open Source Software with Caution" /&gt;&lt;p&gt;Recently, I had an incident with Dify/Langchain and reached this conclusion.&lt;/p&gt;
 &lt;h2 id="retrospective"&gt;Retrospective
 &lt;/h2&gt;&lt;p&gt;About 7 months ago, I deployed the open-source Dify to the server and started an instance through the official docker compose. However, recently, due to a sandbox escape vulnerability in Dify&amp;rsquo;s code node (CVE-2025-3466), I was privilege-escalated via webshell and had a Monero mining program implanted.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png"
-width="2553"
-height="462"
-srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_6b9d32fdd11c794d.png 480w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_1cc30a9f8660048.png 1024w"
-loading="lazy"
-class="gallery-image"
-data-flex-grow="552"
-data-flex-basis="1326px"
-&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="1326px" data-flex-grow="552" height="462" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png" srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_a5cdbf798e8121ac.png 800w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_68dcb0fffe2da99.png 1600w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_156460a4ea5b2da4.png 2400w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png 2553w" width="2553"&gt;&lt;/p&gt;
 &lt;p&gt;Fortunately, after this privilege escalation, the intruder didn&amp;rsquo;t do much, and the intrusion was in the docker container, with limited damage.&lt;/p&gt;
 &lt;h2 id="cve-2025-3466-details"&gt;CVE-2025-3466 Details
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;CVE ID&lt;/strong&gt;: CVE-2025-3466
@@ -979,9 +950,9 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;p&gt;&lt;strong&gt;Related Links&lt;/strong&gt;:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://nvd.nist.gov/vuln/detail/cve-2025-3466" target="_blank" rel="noopener"
-&gt;NVD Details&lt;/a&gt;&lt;/li&gt;
+ &gt;NVD Details&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/advisories/GHSA-x53g-q9xm-rf4m" target="_blank" rel="noopener"
-&gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
+ &gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;From this perspective, several key factors are indispensable for protecting server security.&lt;/p&gt;
 &lt;h2 id="personal-server-security"&gt;Personal Server Security
@@ -1071,23 +1042,23 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-Dockerfile" data-lang="Dockerfile"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Change to your desired pytorch version&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;pytorch/pytorch:2.4.1-cuda11.8-cudnn9-devel&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;pytorch/pytorch:2.4.1-cuda11.8-cudnn9-devel&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="c"&gt;# These are commonly used packages&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get install git zsh ffmpeg libsm6 libxext6 -y &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get clean &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; rm -rf /var/lib/apt/lists/*&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# These are commonly used packages&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get install git zsh ffmpeg libsm6 libxext6 -y &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get clean &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; rm -rf /var/lib/apt/lists/*&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;WORKDIR&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;/app&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WORKDIR&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;/app&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Place at the root of the codebase to install requirements.txt&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;COPY&lt;/span&gt; requirements.txt .&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; pip install -r requirements.txt&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Place at the root of the codebase to install requirements.txt&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;COPY&lt;/span&gt; requirements.txt .&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; pip install -r requirements.txt&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="c"&gt;# install jupyterlab&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; pip install jupyterlab&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="c"&gt;# COPY . .&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# install jupyterlab&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; pip install jupyterlab&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# COPY . .&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="c"&gt;# Use jupyterlab to host, can start quickly, token is `yourtoken`. If you use it on the public network, consider using a more complex token.&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;CMD&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;jupyter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lab&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--port=8888&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--no-browser&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--allow-root&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--NotebookApp.token=yourtoken&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Use jupyterlab to host, can start quickly, token is `yourtoken`. If you use it on the public network, consider using a more complex token.&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CMD&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;jupyter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lab&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--port=8888&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--no-browser&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--allow-root&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--NotebookApp.token=yourtoken&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1152,7 +1123,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;h2 id="using-on-runpod"&gt;Using on Runpod
 &lt;/h2&gt;&lt;p&gt;For everyone&amp;rsquo;s convenience, I have created a template on Runpod.&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://console.runpod.io/deploy?template=m0shpm3vgg&amp;amp;ref=g5qp1x9x" target="_blank" rel="noopener"
-&gt;https://console.runpod.io/deploy?template=m0shpm3vgg&amp;ref=g5qp1x9x&lt;/a&gt;&lt;/p&gt;
+ &gt;https://console.runpod.io/deploy?template=m0shpm3vgg&amp;ref=g5qp1x9x&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;You can directly use this image by using this template.&lt;/p&gt;</description></item><item><title>Create a Never Stop Container</title><link>https://svtter.cn/en/p/create-a-never-stop-container/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/en/p/create-a-never-stop-container/</guid><description>&lt;img src="https://svtter.cn/p/create-a-never-stop-container.md/background.png" alt="Featured image of post Create a Never Stop Container" /&gt;&lt;p&gt;Sometimes we need to start a container that does not stop, for debugging our application or using devcontainer.&lt;/p&gt;
 &lt;p&gt;If we want to accomplish this in the &lt;code&gt;Dockerfile&lt;/code&gt;, we can add the following:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1166,9 +1137,9 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-Dockerfile" data-lang="Dockerfile"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="c"&gt;# 其他内容&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 其他内容&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;&lt;/span&gt;&lt;span class="k"&gt;ENTRYPOINT&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;tail&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;-f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;/dev/null&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="err"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ENTRYPOINT&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;tail&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;-f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;/dev/null&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;If it&amp;rsquo;s &lt;code&gt;docker-compose.yml&lt;/code&gt;, we can do it like this&lt;/p&gt;

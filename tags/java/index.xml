@@ -5,7 +5,7 @@
 java:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://developer.aliyun.com/article/754038" target="_blank" rel="noopener"
-&gt;maven mirror&lt;/a&gt;, edit &lt;code&gt;~/.m2/settings.xml&lt;/code&gt;&lt;/li&gt;
+ &gt;maven mirror&lt;/a&gt;, edit &lt;code&gt;~/.m2/settings.xml&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -26,7 +26,7 @@ java:&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;ruby: &lt;a class="link" href="https://gems.ruby-china.com/" target="_blank" rel="noopener"
-&gt;gem mirror&lt;/a&gt;&lt;/p&gt;
+ &gt;gem mirror&lt;/a&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -48,7 +48,7 @@ java:&lt;/p&gt;
 &lt;p&gt;python:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://mirrors.tuna.tsinghua.edu.cn/help/pypi/" target="_blank" rel="noopener"
-&gt;tsinghua - pypi&lt;/a&gt;&lt;/li&gt;
+ &gt;tsinghua - pypi&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;nodejs (javascript):&lt;/p&gt;
@@ -56,34 +56,36 @@ java:&lt;/p&gt;
 &lt;li&gt;cnpm: &lt;code&gt;npm install -g cnpm --registry=http://registry.npm.taobao.org&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;tyarn: &lt;code&gt;npm install -g tyarn&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;</description></item><item><title>Maven小记</title><link>https://svtter.cn/p/maven%E5%B0%8F%E8%AE%B0/</link><pubDate>Thu, 14 Jun 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/maven%E5%B0%8F%E8%AE%B0/</guid><description>&lt;blockquote&gt;
-&lt;p&gt;发现maven与Java，别有一番乐趣&lt;/p&gt;&lt;/blockquote&gt;
+ &lt;p&gt;发现maven与Java，别有一番乐趣&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;入门建议：&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html" target="_blank" rel="noopener"
-&gt;https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html&lt;/a&gt;&lt;/p&gt;
+ &gt;https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;现在很多文章其实写的都不如官方的文章，但是人们总是习惯性的从百度获取自己想要的某些资源。&lt;/p&gt;
 &lt;h2 id="maven编译依赖"&gt;maven编译依赖
 &lt;/h2&gt;&lt;p&gt;一般情况下，maven不会把依赖的包编译到自己的&lt;code&gt;jar&lt;/code&gt;包里面，我猜和&lt;code&gt;dll&lt;/code&gt;的出发点是一样的，减少内存的占用（减少相同内容在内存中的冗余）。&lt;/p&gt;
 &lt;p&gt;但是有时候我们不能确保宿主的机器也有同样的东西，因此有时候需要把依赖编译进去。&lt;/p&gt;
 &lt;p&gt;我们可以这样做，在&lt;code&gt;pom.xml&lt;/code&gt;中，添加字段：&lt;/p&gt;
 &lt;div class="codehilite"&gt;
-&lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="c"&gt;&amp;lt;!--构建依赖--&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;build&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;plugins&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;plugin&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.apache.maven.plugins&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;maven-shade-plugin&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.6&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;executions&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;execution&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;phase&amp;gt;&lt;/span&gt;package&lt;span class="nt"&gt;&amp;lt;/phase&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;goals&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;goal&amp;gt;&lt;/span&gt;shade&lt;span class="nt"&gt;&amp;lt;/goal&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/goals&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/execution&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/executions&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/plugin&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/plugins&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/build&amp;gt;&lt;/span&gt;
+ &lt;pre&gt;&lt;span&gt;&lt;/span&gt; &lt;span class="c"&gt;&amp;lt;!--构建依赖--&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;build&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;plugins&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;plugin&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.apache.maven.plugins&lt;span class="nt"&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;maven-shade-plugin&lt;span class="nt"&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;version&amp;gt;&lt;/span&gt;1.6&lt;span class="nt"&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;executions&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;execution&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;phase&amp;gt;&lt;/span&gt;package&lt;span class="nt"&gt;&amp;lt;/phase&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;goals&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;goal&amp;gt;&lt;/span&gt;shade&lt;span class="nt"&gt;&amp;lt;/goal&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;/goals&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;/execution&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;/executions&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;/plugin&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;/plugins&amp;gt;&lt;/span&gt;
+ &lt;span class="nt"&gt;&amp;lt;/build&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;由此，就可以把需要的依赖包同时编译进去了。&lt;/p&gt;
@@ -93,10 +95,16 @@ java:&lt;/p&gt;
 &lt;p&gt;需要我来深刻的讲讲这个问题了 — 国外也有一些开发者写过类似的文章，不过国外的开发者没有深层&lt;/p&gt;
 &lt;p&gt;的讲讲具体如何配置，仅仅是比较简单的说了一下应该用什么。&lt;/p&gt;
 &lt;p&gt;闲话少说，我们开始吧。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;本文的作者认为，本文的读者已经学会使用vim的初步，至于安装，启动之类的东西作者不再赘述，&lt;/p&gt;&lt;/blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;望读者海涵。&lt;/p&gt;&lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;本文的作者认为，本文的读者已经学会使用vim的初步，至于安装，启动之类的东西作者不再赘述，&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;望读者海涵。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;h2 id="vimrc的配置"&gt;Vimrc的配置
 &lt;/h2&gt;&lt;p&gt;如果想要用Vim撸Java，首先一个问题就是许多IDE自带的查错功能，这个笔者希望使用Syntastic来实现。&lt;/p&gt;
 &lt;p&gt;具体的方法是，安装Vundle（vim的插件配置工具，用于安装组合各类插件）。其实这个地方也可以不用&lt;/p&gt;
@@ -110,8 +118,11 @@ java:&lt;/p&gt;
 &lt;p&gt;学习了Ant，另外eclipse里面的ant等等 — 如果想要探究一下，可以查看一下这篇文章&lt;/p&gt;
 &lt;p&gt;这里面说了一点笔者在ant上面的一点东西，还有ant学习的链接。&lt;/p&gt;
 &lt;h2 id="配置syntastic"&gt;配置Syntastic
-&lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;PS: 期末周这么悠闲的写博客真的好吗！！&lt;/p&gt;&lt;/blockquote&gt;
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;PS: 期末周这么悠闲的写博客真的好吗！！&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;说是配置Syntastic，更不如说是配置Syntastic的Java配置文件。&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;首先你需要在你的&lt;code&gt;.vimrc&lt;/code&gt;中，添加 &lt;code&gt;let g:syntastic_java_javac_config_file_enabled = 1&lt;/code&gt;&lt;/li&gt;
@@ -148,7 +159,7 @@ java:&lt;/p&gt;
 &lt;p&gt;另外，Eclipse导出Java项目的时候，一个不错的方法就是&lt;code&gt;Export Ant Buildfiles&lt;/code&gt;，这就是ant文件。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="http://www.blogjava.net/amigoxie/archive/2007/11/09/159413.html" target="_blank" rel="noopener"
-&gt;Ant学习简单教程&lt;/a&gt;&lt;/li&gt;
+ &gt;Ant学习简单教程&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Maven我没有好好学，但是看wiki似乎Synastic对maven的支持比ant的支持更加优秀，也可能是mvn的构&lt;/p&gt;
 &lt;p&gt;建方法上存在优势？这个我不清楚。有时间写一篇文章来好好的研究下。&lt;/p&gt;
@@ -159,9 +170,11 @@ java:&lt;/p&gt;
 &lt;p&gt;就是这样。。更多的是吐槽吧。&lt;/p&gt;
 &lt;p&gt;对于上一篇文章提到的问题可以用设置classpath来解决。具体方法是将classpath添加到syntastic。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;use :SyntasticJavacEditClasspath and add workpath.&lt;/code&gt;&lt;/p&gt;</description></item><item><title>Java-import和package的用法</title><link>https://svtter.cn/p/java-import%E5%92%8Cpackage%E7%9A%84%E7%94%A8%E6%B3%95/</link><pubDate>Sun, 28 Dec 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/java-import%E5%92%8Cpackage%E7%9A%84%E7%94%A8%E6%B3%95/</guid><description>&lt;blockquote&gt;
-&lt;p&gt;本文出自&lt;a class="link" href="http://svtter.github.io" target="_blank" rel="noopener"
-&gt;svtter.github.io&lt;/a&gt;
-本文可以随意转载，但是转载请保留本信息.&lt;/p&gt;&lt;/blockquote&gt;
+ &lt;p&gt;本文出自&lt;a class="link" href="http://svtter.github.io" target="_blank" rel="noopener"
+ &gt;svtter.github.io&lt;/a&gt;
+本文可以随意转载，但是转载请保留本信息.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
 &lt;p&gt;之前一直都是用eclipse开发Java，Vim修炼到今日，本来想要拉出来溜溜Java，奈何package和import的机制以及 synastic[自动检查代码的插件] 没有对于eclipse对java包类似的支持，所以只得滚回eclipse，然后使用vrapper了。&lt;/p&gt;
 &lt;p&gt;闲话少说，听我细细道来package和import;&lt;/p&gt;
 &lt;p&gt;这篇文章主要是说明类似这种情况，即不同包但是文件路径一部分相同，即:&lt;/p&gt;
@@ -206,7 +219,7 @@ java:&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;joking&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;joking&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="na"&gt;test&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;ul&gt;
@@ -267,13 +280,13 @@ java:&lt;/p&gt;
 &lt;h2 id="另一种编译方法"&gt;另一种编译方法
 &lt;/h2&gt;&lt;p&gt;退出到temp的上级目录，然后进行编译&lt;/p&gt;
 &lt;div class="codehilite"&gt;
-&lt;pre&gt;&lt;span&gt;&lt;/span&gt;javac -d . temp/tests/joking.class
+ &lt;pre&gt;&lt;span&gt;&lt;/span&gt;javac -d . temp/tests/joking.class
 javac -d . temp/test.java
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;然后这样运行:&lt;/p&gt;
 &lt;div class="codehilite"&gt;
-&lt;pre&gt;&lt;span&gt;&lt;/span&gt;java temp.test
+ &lt;pre&gt;&lt;span&gt;&lt;/span&gt;java temp.test
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;可是这个时候我们打开temp.java, 利用synastic检查，报错。&lt;/p&gt;
@@ -281,5 +294,8 @@ javac -d . temp/test.java
 &lt;/h2&gt;&lt;p&gt;最后还是自己对synastic依赖性太强了。但是自己不会写= =，也是无奈了。开个issue求支持吧= =&lt;/p&gt;
 &lt;h2 id="后记"&gt;后记
 &lt;/h2&gt;&lt;p&gt;找到方法了 — 使用ant来构建项目。不过synastic的官方文档并没有说的很清楚，issue看起来又比较&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;费劲，饿死了，吃饭去。。&lt;/p&gt;&lt;/blockquote&gt;</description></item></channel></rss>
+
+ &lt;blockquote&gt;
+ &lt;p&gt;费劲，饿死了，吃饭去。。&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item></channel></rss>
