@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Advisor on Svtter's Blog</title><link>https://svtter.cn/tags/advisor/</link><description>Recent content in Advisor on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 16 Jun 2026 12:45:01 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/advisor/index.xml" rel="self" type="application/rss+xml"/><item><title>Advisor：挂在主会话上的只读审查 Agent</title><link>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</link><pubDate>Tue, 16 Jun 2026 13:27:40 +0800</pubDate><guid>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</guid><description>&lt;img src="https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/pics/cover_1781585134.png" alt="Featured image of post Advisor：挂在主会话上的只读审查 Agent" /&gt;&lt;blockquote&gt;
  &lt;p&gt;这篇文章我们还是聊 OMP（oh my pi）。
-实现细节、配置项与 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现机制见 &lt;a class="link" href="./advisor-watchdog.md" &gt;&lt;code&gt;advisor-watchdog.md&lt;/code&gt;&lt;/a&gt;。&lt;/p&gt;
+实现细节、配置项与 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现机制见 &lt;a class="link" href="./advisor-watchdog.md" &gt;&lt;code&gt;advisor-watchdog.md&lt;/code&gt;&lt;/a&gt;。
+赞美创新。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;h2 id="tldr"&gt;TL;DR
@@ -14,7 +15,7 @@
 &lt;p&gt;OMP 的主会话已包含完整 transcript、assistant 私有 thinking、工具调用及结果，足以让一个旁观者判断「当前这一步是否值得继续」。缺少的不是更强的执行者，而是一个独立的、只读的、能在 turn 边界给出意见的角色。&lt;/p&gt;
 &lt;p&gt;我想正是因为如此，从引入 Advisor：挂载在主会话上的第二模型，&lt;strong&gt;默认关闭&lt;/strong&gt;，开启后每个 turn 结束时自动接收 transcript 增量，用只读工具核查，再把建议&lt;strong&gt;注入回主会话&lt;/strong&gt;。边界是只读、不执行、不直接改状态。&lt;/p&gt;
 &lt;h3 id="callback"&gt;Callback
-&lt;/h3&gt;&lt;p&gt;我之前有说 https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/。但是实际跑下来发现两个问题：&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;我之前有说 &lt;a class="link" href="https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/" &gt;本地review便宜方案&lt;/a&gt;。但是实际跑下来发现两个问题：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;占用 token 资源。daemon 还是太昂贵了。&lt;/li&gt;
 &lt;li&gt;没有很好的交互机制。不如 omp。&lt;/li&gt;
