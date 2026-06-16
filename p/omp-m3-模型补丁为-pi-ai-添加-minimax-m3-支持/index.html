@@ -96,7 +96,7 @@ contextWindow 取 1M 是按 OpenRouter 上 <code>minimax/minimax-m3-20260531</co
 </span></span></code></pre></td></tr></table></div></div><p>切到 M3 后，<code>/status</code> 里应该能看到 <code>ANTHROPIC_BASE_URL</code>（OMP 内部字段名）指向 <code>api.minimaxi.com/anthropic</code>。</p><h3 id=两条路的关系>两条路的关系</h3><div class=table-wrapper><table><thead><tr><th>维度</th><th>pi-ai 内置 models.json 补丁</th><th>models.yml 自定义 provider</th></tr></thead><tbody><tr><td>持久性</td><td><code>omp update</code> 覆盖</td><td>持久</td></tr><tr><td>多机同步</td><td>否（路径依赖 bun 全局）</td><td>是（dotfile 走 git）</td></tr><tr><td>升级成本</td><td>重新打补丁</td><td>OMP 自动 merge</td></tr><tr><td>优先级</td><td>与内置合并</td><td>与内置合并，后写覆盖</td></tr></tbody></table></div><p>两者是叠加关系，不冲突。<code>models.yml</code> 加的 provider 走 OMP 的「自定义」通道，
 pi-ai 后续合并的 M3 条目（如果官方补上）走「内置」通道。如果两条都对同一个
 <code>provider/model</code> 写了不同 <code>baseUrl</code>，OMP 用 last-write-wins 规则——
-所以 <code>models.yml</code> 永远会赢内置。</p></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/omp/>Omp</a>
+所以 <code>models.yml</code> 永远会赢内置。</p></section><footer class="article-meta article-footer"><section class=article-tags><a href=/tags/omp/>OMP</a>
 <a href=/tags/minimax/>Minimax</a>
 <a href=/tags/m3/>M3</a>
 <a href=/tags/llm/>LLM</a>
