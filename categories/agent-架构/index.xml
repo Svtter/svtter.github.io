@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent 架构 on Svtter's Blog</title><link>https://svtter.cn/categories/agent-%E6%9E%B6%E6%9E%84/</link><description>Recent content in Agent 架构 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 16 Jun 2026 12:45:01 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/agent-%E6%9E%B6%E6%9E%84/index.xml" rel="self" type="application/rss+xml"/><item><title>Advisor：挂在主会话上的只读审查 Agent</title><link>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</link><pubDate>Tue, 16 Jun 2026 13:27:40 +0800</pubDate><guid>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</guid><description>&lt;img src="https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/pics/cover_1781585134.png" alt="Featured image of post Advisor：挂在主会话上的只读审查 Agent" /&gt;&lt;blockquote&gt;
+ &lt;p&gt;这篇文章我们还是聊 OMP（oh my pi）。
+实现细节、配置项与 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现机制见 &lt;a class="link" href="./advisor-watchdog.md" &gt;&lt;code&gt;advisor-watchdog.md&lt;/code&gt;&lt;/a&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;p&gt;强烈建议直接打开用。Claude Code 已经内置这个功能。（Auto mode）。通过 &lt;code&gt;/advisor&lt;/code&gt; 来启用。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;术语：turn 指的是一轮操作；可以是 bash 命令，也可以是一次对话。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;coding agent 在长任务中常反复出现一类问题：走错方向、遗漏边界条件、调用不存在的 API、在错误的抽象上继续投入。这些问题事后 review 时容易发现，但在当前的 turn 中很难被 LLM 自己察觉。&lt;/p&gt;
+&lt;p&gt;OMP 的主会话已包含完整 transcript、assistant 私有 thinking、工具调用及结果，足以让一个旁观者判断「当前这一步是否值得继续」。缺少的不是更强的执行者，而是一个独立的、只读的、能在 turn 边界给出意见的角色。&lt;/p&gt;
+&lt;p&gt;我想正是因为如此，从引入 Advisor：挂载在主会话上的第二模型，&lt;strong&gt;默认关闭&lt;/strong&gt;，开启后每个 turn 结束时自动接收 transcript 增量，用只读工具核查，再把建议&lt;strong&gt;注入回主会话&lt;/strong&gt;。边界是只读、不执行、不直接改状态。&lt;/p&gt;
+&lt;h3 id="callback"&gt;Callback
+&lt;/h3&gt;&lt;p&gt;我之前有说 https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/。但是实际跑下来发现两个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;占用 token 资源。daemon 还是太昂贵了。&lt;/li&gt;
+&lt;li&gt;没有很好的交互机制。不如 omp。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以下是机制分析，不读也可以。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="角色边界"&gt;角色边界
+&lt;/h2&gt;&lt;p&gt;OMP 如何定义 advisor。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;只读，不是第二执行者。&lt;/strong&gt; Advisor 不能编辑文件、不能跑命令、不能批准操作、不能改 session 状态（&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 明确「It is not a second executor」）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;建议可被主 agent 读到，私有上下文读不到。&lt;/strong&gt; Advisor 给出的 &lt;code&gt;note&lt;/code&gt; 会注入主会话 transcript 或 steering channel；但 Advisor 自己的 system prompt、私有 thinking、&lt;code&gt;WATCHDOG.md&lt;/code&gt; 不进主 agent 上下文。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不审查自己。&lt;/strong&gt; 渲染下一轮增量前，已注入的 &lt;code&gt;advisor&lt;/code&gt; 类型消息会被过滤掉，避免递归审查。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这三条决定了 Advisor 的形态：一个能说话、但不能动手的旁观者。&lt;/p&gt;
+&lt;p&gt;就像是你的结对编程伙伴。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="运行机制"&gt;运行机制
+&lt;/h2&gt;&lt;p&gt;Advisor 的触发不是主 agent 主动调用，而是 &lt;strong&gt;turn-end 驱动的后台运行&lt;/strong&gt;。一次完整循环落在 &lt;code&gt;AdvisorRuntime&lt;/code&gt;（&lt;code&gt;src/advisor/runtime.ts&lt;/code&gt;）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;主&lt;/span&gt; &lt;span class="n"&gt;agent&lt;/span&gt; &lt;span class="n"&gt;turn&lt;/span&gt; &lt;span class="err"&gt;结束&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;onTurnEnd&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="err"&gt;：取自上次以来的&lt;/span&gt; &lt;span class="n"&gt;transcript&lt;/span&gt; &lt;span class="err"&gt;增量&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;（过滤掉&lt;/span&gt; &lt;span class="n"&gt;advisor&lt;/span&gt; &lt;span class="err"&gt;自身消息，含&lt;/span&gt; &lt;span class="n"&gt;thinking&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="err"&gt;意图）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;#pending 入队，#backlog++&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;#drain() 后台循环：把增量 markdown 发给 advisor 模型&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;advisor&lt;/span&gt; &lt;span class="err"&gt;自行决定是否调用&lt;/span&gt; &lt;span class="n"&gt;advise&lt;/span&gt; &lt;span class="err"&gt;工具&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;├─&lt;/span&gt; &lt;span class="err"&gt;不调用&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="err"&gt;静默（&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="n"&gt;prompt&lt;/span&gt;&lt;span class="err"&gt;：「&lt;/span&gt;&lt;span class="n"&gt;Prefer&lt;/span&gt; &lt;span class="n"&gt;silence&lt;/span&gt; &lt;span class="n"&gt;when&lt;/span&gt; &lt;span class="n"&gt;on&lt;/span&gt; &lt;span class="n"&gt;track&lt;/span&gt;&lt;span class="err"&gt;」）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;└─&lt;/span&gt; &lt;span class="err"&gt;调用&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="n"&gt;onAdvice&lt;/span&gt; &lt;span class="err"&gt;回调&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="err"&gt;注入主会话&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;几个关键设计点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;增量而非全量。&lt;/strong&gt; &lt;code&gt;#renderDelta&lt;/code&gt; 只取自上次以来新增的消息（&lt;code&gt;runtime.ts:149-162&lt;/code&gt;）。Advisor 是 append-only 上下文，省 token。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;独立上下文维护。&lt;/strong&gt; Advisor 有自己的上下文窗口；接近上限时，&lt;code&gt;AgentSession&lt;/code&gt; 会按顺序尝试：模型升级（promote）→ 压缩自己的历史 → 仍放不下就 re-prime（清空后回放当前 bounded transcript）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;失败降级。&lt;/strong&gt; 单次 advisor prompt 失败会重试；连续失败 3 次后丢弃 backlog、记 warning、放行主会话（&lt;code&gt;runtime.ts:229-236&lt;/code&gt;）。Advisor 的故障不阻塞主链路。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="工具与隔离"&gt;工具与隔离
+&lt;/h3&gt;&lt;p&gt;Advisor 拿到的是一个&lt;strong&gt;硬隔离的只读工具集&lt;/strong&gt;：&lt;code&gt;read&lt;/code&gt;、&lt;code&gt;search&lt;/code&gt;、&lt;code&gt;find&lt;/code&gt;、&lt;code&gt;advise&lt;/code&gt;（&lt;code&gt;advise-tool.ts:62&lt;/code&gt;）。前三个跑在一个 session id 带 &lt;code&gt;-advisor&lt;/code&gt; 后缀的独立 &lt;code&gt;ToolSession&lt;/code&gt; 上，不共享主 agent 的文件快照、编辑能力或冲突状态。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;advise&lt;/code&gt; 工具本身的返回对 Advisor 是 &lt;code&gt;useless: true&lt;/code&gt; + &lt;code&gt;&amp;quot;Recorded.&amp;quot;&lt;/code&gt;，真正的副作用是触发 &lt;code&gt;onAdvice&lt;/code&gt; 回调——所以 Advisor 调一次工具，等于往主会话送一条建议。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="feature-与用户感官"&gt;Feature 与用户感官
+&lt;/h2&gt;&lt;h3 id="三档-severity两种交付方式"&gt;三档 severity，两种交付方式
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;advise&lt;/code&gt; 工具接受一个 &lt;code&gt;note&lt;/code&gt; 和可选的 &lt;code&gt;severity&lt;/code&gt;（&lt;code&gt;advise-tool.ts:5-13&lt;/code&gt;）。severity 决定&lt;strong&gt;是否打断主 agent&lt;/strong&gt;：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;severity&lt;/th&gt;
+					&lt;th&gt;交付方式&lt;/th&gt;
+					&lt;th&gt;语义&lt;/th&gt;
+					&lt;th&gt;颜色（终端 badge）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;省略 / &lt;code&gt;nit&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;非打断，批次化成一张 transcript 卡片，落点在下个 step boundary&lt;/td&gt;
+					&lt;td&gt;清理、简化、低风险边界&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;muted&lt;/code&gt;（灰）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;concern&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打断式 steering message&lt;/td&gt;
+					&lt;td&gt;方向可能错、漏了关键约束、疑似幻觉 API&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;warning&lt;/code&gt;（黄）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;blocker&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打断式 steering message&lt;/td&gt;
+					&lt;td&gt;继续下去会浪费这个 turn / 产出破损结果&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;error&lt;/code&gt;（红）&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;判定逻辑见 &lt;code&gt;isInterruptingSeverity&lt;/code&gt;（&lt;code&gt;advise-tool.ts:53-55&lt;/code&gt;）：&lt;code&gt;concern&lt;/code&gt; 和 &lt;code&gt;blocker&lt;/code&gt; 打断，&lt;code&gt;nit&lt;/code&gt; 排队。打断式建议走 steering channel，能在下个 steering boundary 中止正在执行的工具。&lt;/p&gt;
+&lt;p&gt;非打断的 &lt;code&gt;nit&lt;/code&gt; 会批次化，卡片正文带固定前缀：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Advisor (a senior reviewer watching your work — weigh it, don&amp;#39;t blindly obey):
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个前缀刻意写成「weigh it, don&amp;rsquo;t blindly obey」——主 agent 被告知这只是一个 senior reviewer 的意见，不是命令。&lt;/p&gt;
+&lt;h3 id="终端里长什么样"&gt;终端里长什么样
+&lt;/h3&gt;&lt;p&gt;Advisor 的建议渲染成一张独立的 transcript 卡片（&lt;code&gt;src/modes/components/advisor-message.ts&lt;/code&gt;），复用 IRC 卡片的 glyph + 引用边框约定，让它读起来像「一段旁白」，而不是一轮用户输入：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ℹ Advisor — 2 notes, 1 blocker
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ [blocker] 这里继续写会引用到已被 compaction 删掉的 session entry，先停下确认
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ [nit] 用 map 替代 forEach 更贴合返回值约定
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ … +2 more notes
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;渲染细节：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;标题行带 meta：&lt;code&gt;N notes&lt;/code&gt;，有 blocker 时额外标 &lt;code&gt;N blocker&lt;/code&gt;（红色）。&lt;/li&gt;
+&lt;li&gt;每条 note 前是按 severity 着色的 badge（&lt;code&gt;blocker=error&lt;/code&gt; / &lt;code&gt;concern=warning&lt;/code&gt; / &lt;code&gt;nit=muted&lt;/code&gt;，&lt;code&gt;advisor-message.ts:32-41&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;正文走引用边框（quote border），换行而非两行截断（&lt;code&gt;ecccff62&lt;/code&gt; 修过这个折叠 bug）。&lt;/li&gt;
+&lt;li&gt;默认折叠，只显示前 3 条，多出来的折叠成 &lt;code&gt;… +N more notes&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="状态栏的--标志"&gt;状态栏的 &lt;code&gt;++&lt;/code&gt; 标志
+&lt;/h3&gt;&lt;p&gt;Advisor 活跃时，状态栏会出现一个 &lt;code&gt;++&lt;/code&gt; badge，提示主会话背后有一个 reviewer 在跑（&lt;code&gt;src/modes/components/status-line/segments.ts:90&lt;/code&gt;）。它和模型名一起作为 &lt;code&gt;statusLineModel&lt;/code&gt; 着色显示。&lt;/p&gt;
+&lt;h3 id="advisor-命令"&gt;&lt;code&gt;/advisor&lt;/code&gt; 命令
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;命令&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;切换持久化的 &lt;code&gt;advisor.enabled&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor on&lt;/code&gt; / &lt;code&gt;off&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;开/关，并启停 runtime&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor status&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;显示 Advisor 的模型、上下文用量、token、cost&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor dump&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打印 Advisor 的精简 transcript&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor dump raw&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打印含 system prompt、工具、thinking、调用的完整 dump&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="配置"&gt;配置
+&lt;/h2&gt;&lt;p&gt;启用需要同时满足两个条件（&lt;code&gt;advisor-watchdog.md:22-35&lt;/code&gt;）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;modelRoles&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;advisor&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;anthropic/claude-sonnet-4-5:medium&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;advisor&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enabled&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;modelRoles.advisor&lt;/code&gt; 走正常的 model-role 解析（支持 provider 前缀、canonical id、thinking 后缀）。光开 &lt;code&gt;enabled&lt;/code&gt; 但没分配 advisor 模型，status 会报告「已启用但没有 advisor model」。&lt;/p&gt;
+&lt;p&gt;其他开关：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;advisor.subagents&lt;/code&gt;&lt;/strong&gt;（默认 &lt;code&gt;false&lt;/code&gt;）：是否给派生出的 task/eval subagent 也挂 Advisor。开了之后每个 subagent 会建自己的 Advisor runtime，并在该 subagent 的 cwd 重新跑 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;advisor.syncBacklog&lt;/code&gt;&lt;/strong&gt;（&lt;code&gt;off&lt;/code&gt; / &lt;code&gt;1&lt;/code&gt; / &lt;code&gt;3&lt;/code&gt; / &lt;code&gt;5&lt;/code&gt;，默认偏向吞吐）：turn 结束时主 agent 是否、等多久让 Advisor 追平。&lt;code&gt;off&lt;/code&gt; 完全不等；&lt;code&gt;1&lt;/code&gt; 最接近「每步同步审查」（30 秒上限）。注意它&lt;strong&gt;不是&lt;/strong&gt;让主 agent 等建议内容，而是等 Advisor 处理完增量；建议本身始终异步送达。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="设计边界与降级"&gt;设计边界与降级
+&lt;/h2&gt;&lt;p&gt;把容易踩的几条边界收在一起：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;用户主动中断时，Advisor 停止自动 resume。&lt;/strong&gt; Esc、collab / ACP / RPC / SDK / extension 的 cancel 都算。一条 &lt;code&gt;concern&lt;/code&gt;/&lt;code&gt;blocker&lt;/code&gt; 在 run 已停止时只会记成可见卡片，不会强行重启 turn；这条建议会在下次 resume 时（新消息、&lt;code&gt;.&lt;/code&gt;/&lt;code&gt;c&lt;/code&gt; 续接、steer）重新进入上下文（&lt;code&gt;advisor-watchdog.md:94&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;历史重写会重置 Advisor。&lt;/strong&gt; compaction、session 切换/resume、branch/fork 这类 history 替换，以及上下文维护的 re-prime，都会清空 Advisor 私有上下文、回卷游标，下一轮回放当前 bounded transcript。这样 Advisor 不会停留在过时上下文里（&lt;code&gt;runtime.ts:125-134&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;mid-session 启用不会重放全史。&lt;/strong&gt; 开启时游标 seed 到当前 transcript 长度，避免第一次就把整段旧对话塞给 Advisor（&lt;code&gt;runtime.ts:136-147&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;独立计费。&lt;/strong&gt; Advisor 的 token 和 cost 是单独统计的，&lt;code&gt;/advisor status&lt;/code&gt; 报的是 Advisor 自己 transcript 的用量，不和主 agent 混算。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="收束"&gt;收束
+&lt;/h2&gt;&lt;p&gt;Advisor 把「事后 review 能发现的问题」前移到 turn 边界。它解决的不是「主 agent 不够强」，而是「同一个执行者难以在执行中审视自己」——因此它被设计成只读、可被主 agent 读到建议、且不参与执行的独立角色。&lt;/p&gt;
+&lt;p&gt;实现上值得注意的取舍是&lt;strong&gt;隔离&lt;/strong&gt;与&lt;strong&gt;异步&lt;/strong&gt;：Advisor 跑在隔离的工具会话里、用增量 transcript、后台 drain、失败即降级，保证它给主链路带来的只有收益（意见）而不引入新的阻塞或竞态。&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 里有完整的配置、发现机制与上下文维护说明，本文不再重复。&lt;/p&gt;</description></item></channel></rss>
