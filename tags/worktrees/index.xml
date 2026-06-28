@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Worktrees on Svtter's Blog</title><link>https://svtter.cn/tags/worktrees/</link><description>Recent content in Worktrees on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 28 Jun 2026 22:08:01 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/worktrees/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 CC 时计算机卡死可能是 IO 问题</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 28 Jun 2026 22:40:46 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/pics/cover_1782657689.png" alt="Featured image of post 使用 CC 时计算机卡死可能是 IO 问题" /&gt;&lt;p&gt;我的习惯是在 Linux 上运行 OMP (oh my pi) 以及 Claude Code，还有 OpenCode。&lt;/p&gt;
+&lt;p&gt;最近发现服务端经常死掉。从监控日志中查，发现是 IO 频繁写入 500MB/s。&lt;/p&gt;
+&lt;p&gt;如果你也遇到了类似的问题，可以读一下这篇文章。&lt;/p&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;p&gt;清理掉你项目下大量的 &lt;code&gt;.worktrees&lt;/code&gt; 目录，他们会拖慢你的系统。会疯狂消耗你的 SSD 寿命。&lt;/p&gt;
+&lt;h2 id="分析过程"&gt;分析过程
+&lt;/h2&gt;&lt;p&gt;最近我经常遇到 IO 爆掉的情况。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="监控图" class="gallery-image" data-flex-basis="509px" data-flex-grow="212" height="1446" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/28/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2.png" srcset="https://svtter.cn/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2_4241163169795564912_hu_cdbb33b69d460f61.png 800w, https://svtter.cn/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2_4241163169795564912_hu_99d8f46d0e6721c9.png 1600w, https://svtter.cn/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2_4241163169795564912_hu_fc93602907e5b242.png 2400w, https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/28/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2.png 3072w" width="3072"&gt;&lt;/p&gt;
+&lt;p&gt;但实际上内存和CPU占用量还好。这让我有些困惑。&lt;/p&gt;
+&lt;p&gt;后来尝试了几次，发现是 Claude 每次 &lt;code&gt;/resume&lt;/code&gt; 的时候整个系统都会卡死。逐步怀疑到是不是 sqlite + WAL 随机读取问题。&lt;/p&gt;
+&lt;p&gt;以为是 session 太多，数量太庞大导致的，因此暂且停了 Claude Code。&lt;/p&gt;
+&lt;h3 id="不对劲"&gt;不对劲
+&lt;/h3&gt;&lt;p&gt;随后我继续使用 opencode 进行 vibe。然后 Opencode 又出现了同样的问题。我甚至都没有执行 &lt;code&gt;/session&lt;/code&gt;。让我相当困惑。&lt;/p&gt;
+&lt;p&gt;随后我部署了 systemd 服务来监控 IO 情况。发现 OpenCode 也出现了类似的问题。多开 4 个 instance，就会卡死服务器。&lt;/p&gt;
+&lt;p&gt;iotop 显示 top-5 READ 是 OpenCode。后来 OMP 也出现了类似的问题。&lt;/p&gt;
+&lt;h3 id="继续排查"&gt;继续排查
+&lt;/h3&gt;&lt;p&gt;那么现在观察看基本上不是 sqlite3 的读写问题。更可能是其他的原因。我发现 omp 也有类似的表现。&lt;/p&gt;
+&lt;p&gt;如果 opencode 没有进行 session，是不会读取自己的 sqlite3 db 的。那么问题只可能出现在别的地方。&lt;/p&gt;
+&lt;p&gt;既然三个 agent 都出现了类似的问题，说明问题是共性的。&lt;/p&gt;
+&lt;h3 id="尝试解决"&gt;尝试解决
+&lt;/h3&gt;&lt;p&gt;我一开始怀疑是系统病毒或者挖矿病毒。因此我短暂停留了一段时间，没有使用 coding agent。然后发现 IO 没有上升。&lt;/p&gt;
+&lt;p&gt;所以排除了病毒的问题。然后重复使用不用的 agent，发现都能触发这个问题。那么大概率问题出现在我的工作的代码库下面。&lt;/p&gt;
+&lt;p&gt;为了保险起见，我首先处理了 swap。将 swap 扩展到了 16GB。（我之前关闭了 swap）。看看在这种读取的情况下，能否获得较好的性能。&lt;/p&gt;
+&lt;p&gt;其次，通过 coding agent 排查到 opencode major page 频繁切换。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- majflt 6000–10000/分（每秒 100–167 次缺页）
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- %wait sum 970–1378%——10+ 个 CPU 核全卡 D 状态等 I
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;存在CPU/内核锁开销 + page cache 抖动 + 冷读 IOPS 累积。&lt;/p&gt;
+&lt;p&gt;我们已经知道，没有进行 resume，服务器性能也会下降，磁盘也会大量的 IO。那么，现在最大的可能性，就是 coding agent 在分析当前项目的过程中产生了较多的 IO。那么项目中最大、最零碎的是什么呢？&lt;code&gt;node_modules&lt;/code&gt;。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;开玩笑的。随手黑一把文件系统破伤风病毒 &lt;code&gt;node_modules&lt;/code&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;最大的可能就是大量的 worktree（300个）影响了 opencode/claude code 加载速度。omp 也受影响。因此，我大量清理了 worktree，从 300 降低到 76 个。&lt;/p&gt;
+&lt;p&gt;然后我通过编写 systemd 服务 + cgroup-v2 限制了 opencode/claude code的最大 IO 读取量。&lt;/p&gt;
+&lt;p&gt;27 号后，问题解决。&lt;/p&gt;</description></item></channel></rss>
