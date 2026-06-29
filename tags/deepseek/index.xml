@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DeepSeek on Svtter's Blog</title><link>https://svtter.cn/tags/deepseek/</link><description>Recent content in DeepSeek on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 28 Jun 2026 23:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/deepseek/index.xml" rel="self" type="application/rss+xml"/><item><title>pi-review-agent 是怎么"记住"上一次 review 的</title><link>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</link><pubDate>Sun, 28 Jun 2026 23:10:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</guid><description>&lt;p&gt;AI code review 的 GitHub Action 里，&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deepseek on Svtter's Blog</title><link>https://svtter.cn/tags/deepseek/</link><description>Recent content in Deepseek on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 28 Jun 2026 23:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/deepseek/index.xml" rel="self" type="application/rss+xml"/><item><title>pi-review-agent 是怎么"记住"上一次 review 的</title><link>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</link><pubDate>Sun, 28 Jun 2026 23:10:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</guid><description>&lt;p&gt;AI code review 的 GitHub Action 里，&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; 有一个不太显眼但很关键的设计——&lt;strong&gt;跨 CI run 续接每个 reviewer 的会话&lt;/strong&gt;：同一个 PR 第二次推送时，reviewer 知道&amp;quot;上次我提了什么、作者改了什么、哪些 issue 还没解决&amp;quot;，而不是每次从零开始。&lt;/p&gt;
 &lt;p&gt;这篇文章拆开它的实现：上一次的对话记录落在哪、下一次 run 怎么加载回来、新 diff 怎么接进去，以及最关键的——为什么非要这么折腾。&lt;/p&gt;
 &lt;h2 id="为什么需要记住上一次"&gt;为什么需要&amp;quot;记住上一次&amp;quot;
@@ -12,7 +12,7 @@
  subgraph "CI run #1 (PR #42, 第一次推送)"
  A1[gh pr diff] --&gt; B1[prepareDiff 过滤]
  B1 --&gt; C1[runReview]
- C1 --&gt;|新建 Agent, messages=[]| D1[DeepSeek]
+ C1 --&gt;|"新建 Agent, messages=[]"| D1[DeepSeek]
  D1 --&gt; E1["appendTranscript
  42/quality.jsonl"]
  end
