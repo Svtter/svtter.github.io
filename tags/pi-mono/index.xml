@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pi-Mono on Svtter's Blog</title><link>https://svtter.cn/tags/pi-mono/</link><description>Recent content in Pi-Mono on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 30 Jun 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/pi-mono/index.xml" rel="self" type="application/rss+xml"/><item><title>oh-my-pi 用到了哪些基础组件？以及它和 pi 到底是什么关系</title><link>https://svtter.cn/p/oh-my-pi-%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-pi-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/</link><pubDate>Tue, 30 Jun 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/oh-my-pi-%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-pi-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/</guid><description>&lt;img src="https://svtter.cn/p/oh-my-pi-%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-pi-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/pics/cover_1782813112.png" alt="Featured image of post oh-my-pi 用到了哪些基础组件？以及它和 pi 到底是什么关系" /&gt;&lt;p&gt;最近在给团队内部做 omp 技术栈分享，被问到三个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;oh-my-pi 用了哪些基础组件？&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;pi-coding-agent&amp;rdquo; 和 &amp;ldquo;pi-sdk&amp;rdquo; 是两个东西吗？&lt;/li&gt;
+&lt;li&gt;它和上游 pi 是什么关系？fork 了多少？自创了多少？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;翻完 monorepo 之后发现这三个问题其实是同一件事的不同切面。这篇文章把它们合并回答。&lt;/p&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;依赖栈&lt;/strong&gt;：Bun runtime + TypeScript + Rust（~55k 行）+ 自研 19 个 workspace 包 + 第三方覆盖 LLM/TUI/协议/前端/浏览器自动化/本地推理/文档解析。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;ldquo;pi-sdk&amp;rdquo; 不是独立包&lt;/strong&gt;：它就是 &lt;code&gt;pi-coding-agent&lt;/code&gt; 自己的程序化 API 表面（&lt;code&gt;./sdk&lt;/code&gt;、&lt;code&gt;./session/*&lt;/code&gt;、&lt;code&gt;./modes/*&lt;/code&gt;、&lt;code&gt;./main&lt;/code&gt;），CLI 和 SDK 是同一个包。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;oh-my-pi 是 pi-mono 的 fork + selective backport&lt;/strong&gt;：上游 7 个 npm 包里 fork 了 5 个（&lt;code&gt;pi-ai&lt;/code&gt;、&lt;code&gt;pi-agent-core&lt;/code&gt;、&lt;code&gt;pi-tui&lt;/code&gt;、&lt;code&gt;pi-coding-agent&lt;/code&gt;、&lt;code&gt;pi-utils&lt;/code&gt;），丢了 3 个（&lt;code&gt;pi-mom&lt;/code&gt;、&lt;code&gt;pi-web-ui&lt;/code&gt;、&lt;code&gt;pi-pods&lt;/code&gt;），并自创了一整套独占层（&lt;code&gt;pi-natives&lt;/code&gt;、&lt;code&gt;pi-catalog&lt;/code&gt;、&lt;code&gt;pi-mnemopi&lt;/code&gt;、&lt;code&gt;pi-wire&lt;/code&gt;、&lt;code&gt;hashline&lt;/code&gt;、&lt;code&gt;omp-stats&lt;/code&gt;、&lt;code&gt;snapcompact&lt;/code&gt;、&lt;code&gt;swarm-extension&lt;/code&gt; + &lt;code&gt;pi-shell&lt;/code&gt; Rust 内核）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;三 scope 等价&lt;/strong&gt;：&lt;code&gt;@oh-my-pi/*&lt;/code&gt;（canonical）、&lt;code&gt;@mariozechner/*&lt;/code&gt;（上游原名）、&lt;code&gt;@earendil-works/*&lt;/code&gt;（中间 fork）写哪个都解析到同一份宿主内置代码。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="一依赖栈全景"&gt;一、依赖栈全景
+&lt;/h2&gt;&lt;h3 id="11-运行时--构建"&gt;1.1 运行时 / 构建
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;组件&lt;/th&gt;
+					&lt;th&gt;用途&lt;/th&gt;
+					&lt;th&gt;证据&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Bun 1.3.14+&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;包管理 + 运行时 + 测试 + 打包 + 单文件编译&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;packageManager: bun@1.3.14&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;TypeScript 6&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;类型检查（用 &lt;code&gt;bun check&lt;/code&gt;，不用 &lt;code&gt;tsc&lt;/code&gt;）&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@typescript/native-preview: 7.0.0-dev...&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Vite 8&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;collab-web 开发/构建&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;catalog: vite ^8.0.16&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;Biome 2.4&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Lint + 格式（取代 ESLint+Prettier）&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@biomejs/biome: ^2.4.16&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;ts-morph 28&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;代码生成&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;ts-morph: ^28.0.0&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;@babel/&lt;/strong&gt;*&lt;/td&gt;
+					&lt;td&gt;AST 解析/转换（parser/traverse/generator/types）&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;^7.29.7&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="12-自研-monorepo-包19-个统一-v1627"&gt;1.2 自研 monorepo 包（19 个，统一 v16.2.7）
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;packages/coding-agent/AGENTS.md&lt;/code&gt; 明确 &lt;code&gt;coding-agent/&lt;/code&gt; 是 primary focus。其余 18 个按职责：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;包&lt;/th&gt;
+					&lt;th&gt;职责&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-coding-agent&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;主 CLI（焦点）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-ai&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;多 provider LLM 客户端（流式）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-agent-core&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;agent runtime + 工具调用 + 状态管理&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-catalog&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;模型目录（&lt;code&gt;models.json&lt;/code&gt; + 解析器）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-tui&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;TUI 库（差分渲染）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-utils&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;logger / streams / 环境变量 / 临时文件&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-natives&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Node 端原生绑定&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-wire&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;wire 协议（protobuf）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-mnemopi&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;记忆子系统（Hindsight）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;hashline&lt;/code&gt; / &lt;code&gt;snapcompact&lt;/code&gt; / &lt;code&gt;omp-stats&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;工具包&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;swarm-extension&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;多 agent 协作&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;collab-web&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Solid+React Web 协作 UI&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;terminal-bench&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;基准测试&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;typescript-edit-benchmark&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;TS edit benchmark&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="13-rust-内核55k-行"&gt;1.3 Rust 内核（~55k 行）
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Cargo.toml&lt;/code&gt; workspace 包含 &lt;code&gt;crates/pi-*&lt;/code&gt; + &lt;code&gt;crates/vendor/*&lt;/code&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;pi-natives&lt;/code&gt;&lt;/strong&gt; — &lt;code&gt;napi-rs&lt;/code&gt; 原生绑定，JS 可调用的 grep / 文本 / 图像操作&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;pi-shell&lt;/code&gt;&lt;/strong&gt; — &lt;code&gt;crates/vendor/brush-core&lt;/code&gt; + &lt;code&gt;brush-builtins&lt;/code&gt;（POSIX shell，vendored &lt;code&gt;uutils/brush&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;release profile 严格：&lt;code&gt;opt-level=3&lt;/code&gt;、&lt;code&gt;lto=fat&lt;/code&gt;、&lt;code&gt;panic=unwind&lt;/code&gt;（napi-rs 需要捕获 panic 转 JS error）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="14-tui--终端"&gt;1.4 TUI / 终端
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@xterm/headless&lt;/code&gt; 6.0 — 终端模拟器&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ghostty-web&lt;/code&gt; 0.4 — Web 终端&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;chalk&lt;/code&gt; 5.6 — 颜色&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;winston&lt;/code&gt; 3.19 + &lt;code&gt;winston-daily-rotate-file&lt;/code&gt; 5.0 — 日志（写到 &lt;code&gt;~/.omp/logs/&lt;/code&gt;）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="15-协议--schema"&gt;1.5 协议 / Schema
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;@bufbuild/protobuf&lt;/code&gt; + &lt;code&gt;protoc-gen-es&lt;/code&gt; 2.12&lt;/strong&gt; — pi-wire 协议（&lt;code&gt;.proto&lt;/code&gt; → TS）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;zod&lt;/code&gt; 4&lt;/strong&gt; + &lt;strong&gt;&lt;code&gt;arktype&lt;/code&gt; 2.2&lt;/strong&gt; — 运行时 schema 校验&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;@agentclientprotocol/sdk&lt;/code&gt; 0.25&lt;/strong&gt; — Agent Client Protocol（让 Zed 等编辑器驱动 omp）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="16-本地模型--ai"&gt;1.6 本地模型 / AI
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;@huggingface/transformers&lt;/code&gt; 4.2&lt;/strong&gt; — 本地 transformer 模型&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;onnxruntime-node&lt;/code&gt; 1.26&lt;/strong&gt; — ONNX 推理&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;fastembed&lt;/code&gt; 2.1&lt;/strong&gt; — 本地 embedding&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;sherpa-onnx&lt;/code&gt; 1.13&lt;/strong&gt; + 平台包 — 本地 ASR（whisper）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;@opentelemetry/*&lt;/code&gt; 2.x&lt;/strong&gt; — 链路追踪（OTLP）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="17-文档--内容解析"&gt;1.7 文档 / 内容解析
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;库&lt;/th&gt;
+					&lt;th&gt;用途&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;mammoth&lt;/code&gt; 1.12&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;.docx&lt;/code&gt; → HTML&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;mupdf&lt;/code&gt; 1.27&lt;/td&gt;
+					&lt;td&gt;PDF 解析/渲染&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;marked&lt;/code&gt; 18&lt;/td&gt;
+					&lt;td&gt;Markdown 渲染&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;turndown&lt;/code&gt; 7.2 + &lt;code&gt;turndown-plugin-gfm&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;HTML → MD&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mozilla/readability&lt;/code&gt; 0.6&lt;/td&gt;
+					&lt;td&gt;文章正文提取&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;fast-xml-parser&lt;/code&gt; 5.9&lt;/td&gt;
+					&lt;td&gt;XML&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;linkedom&lt;/code&gt; 0.18&lt;/td&gt;
+					&lt;td&gt;DOM 解析&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="18-文件编辑--工具"&gt;1.8 文件编辑 / 工具
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;@oh-my-pi/hashline&lt;/code&gt;&lt;/strong&gt; — 基于 hashline 文件寻址的 edit（README 章节 &amp;ldquo;11 · Hashline: edit by content hash&amp;rdquo;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;diff&lt;/code&gt; 9.0&lt;/strong&gt; — diff 算法&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;regexp-tree&lt;/code&gt; 0.1.27&lt;/strong&gt; — 正则 AST&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;handlebars&lt;/code&gt; 4.7&lt;/strong&gt; — prompt 模板（&lt;code&gt;.md&lt;/code&gt; + hbs，永不内联字符串）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;lru-cache&lt;/code&gt; 11.5&lt;/strong&gt; — 缓存&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;fflate&lt;/code&gt; 0.8.3&lt;/strong&gt; — 压缩&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="19-浏览器自动化"&gt;1.9 浏览器自动化
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;puppeteer-core&lt;/code&gt; 25.1&lt;/strong&gt;（打了 &lt;code&gt;patches/puppeteer-core@25.1.0.patch&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;@puppeteer/browsers&lt;/code&gt; 3.0.4&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="110-前端collab-web"&gt;1.10 前端（collab-web）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;React 19.2.7&lt;/strong&gt; + &lt;code&gt;react-dom&lt;/code&gt; + &lt;code&gt;react-chartjs-2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Solid.js 1.9&lt;/strong&gt; + &lt;code&gt;vite-plugin-solid&lt;/code&gt;（部分页面）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tailwind CSS 4.3&lt;/strong&gt;（&lt;code&gt;@tailwindcss/vite&lt;/code&gt; + &lt;code&gt;@tailwindcss/node&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;chart.js 4.5&lt;/strong&gt; — 图表&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;lucide-react&lt;/code&gt; 1.17&lt;/strong&gt; — 图标&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;date-fns&lt;/code&gt; 4.4&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="111-关键设计约定来自-agentsmd"&gt;1.11 关键设计约定（来自 &lt;code&gt;AGENTS.md&lt;/code&gt;）
+&lt;/h3&gt;&lt;p&gt;这些不是依赖、但影响整个技术栈：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;无 &lt;code&gt;any&lt;/code&gt;&lt;/strong&gt;；无 inline imports；ES &lt;code&gt;#private&lt;/code&gt; 字段&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;prompts 走 &lt;code&gt;.md&lt;/code&gt; + Handlebars&lt;/strong&gt;，永不内联字符串&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;日志用 &lt;code&gt;logger&lt;/code&gt;，禁 &lt;code&gt;console.*&lt;/code&gt;&lt;/strong&gt;（保护 TUI 渲染）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Worker 通过 &lt;code&gt;cli.ts&lt;/code&gt; 单入口&lt;/strong&gt;（&lt;code&gt;__omp_worker_*&lt;/code&gt; 隐藏 argv 派发）— 无独立 worker entry，二进制不会断&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;所有依赖集中在 &lt;code&gt;package.json&lt;/code&gt; 的 &lt;code&gt;workspaces.catalog&lt;/code&gt;&lt;/strong&gt;（Bun catalog）— 一处升级，全 workspace 同步&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="二关于-pi-sdk-的误解"&gt;二、关于 &amp;ldquo;pi-sdk&amp;rdquo; 的误解
+&lt;/h2&gt;&lt;h3 id="21-真相没有-pi-sdk-这个包"&gt;2.1 真相：没有 &lt;code&gt;pi-sdk&lt;/code&gt; 这个包
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;grep pi-sdk&lt;/code&gt; 全仓库，结果是 &lt;code&gt;packages/coding-agent/test/sdk-*.test.ts&lt;/code&gt; 文件名前缀，里面 &amp;ldquo;sdk&amp;rdquo; 是 &amp;ldquo;以 SDK 方式测试 pi-coding-agent&amp;rdquo; 的简称，&lt;strong&gt;不是包名&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;真正的入口是 &lt;code&gt;packages/coding-agent/src/index.ts&lt;/code&gt; —— &lt;code&gt;pi-coding-agent&lt;/code&gt; 自己就是 SDK，&lt;strong&gt;SDK 和 CLI 是同一个包&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// packages/coding-agent/src/index.ts:39-41
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// SDK for programmatic usage
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="kr"&gt;from&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;./sdk&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="kr"&gt;from&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;./session/agent-session&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="22-你可能在想的是这三个"&gt;2.2 你可能在想的是这三个
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;名字&lt;/th&gt;
+					&lt;th&gt;实际是什么&lt;/th&gt;
+					&lt;th&gt;在哪&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-coding-agent&lt;/code&gt; (16.2.7)&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;CLI + SDK 二合一&lt;/strong&gt;。&lt;code&gt;bin.omp&lt;/code&gt; 是 CLI；&lt;code&gt;./sdk&lt;/code&gt;、&lt;code&gt;./session/*&lt;/code&gt;、&lt;code&gt;./modes/*&lt;/code&gt; 是程序化 API&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;packages/coding-agent/&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-agent-core&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;纯 runtime SDK（无 CLI / 无 I/O）— &lt;code&gt;pi-coding-agent&lt;/code&gt; 自己用它，也对外暴露&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;packages/agent/&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@agentclientprotocol/sdk&lt;/code&gt; (0.25.0)&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;第三方&lt;/strong&gt; ACP 协议 SDK，不是 &lt;code&gt;pi-*&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;npm 上游&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="23-pi-coding-agent-作为-sdk-的入口长这样"&gt;2.3 &lt;code&gt;pi-coding-agent&lt;/code&gt; 作为 SDK 的入口长这样
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;packages/coding-agent/examples/sdk/&lt;/code&gt; 有 15 个示例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;01-minimal.ts 入门
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;02-custom-model.ts 自定义模型
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;03-custom-prompt.ts 自定义 prompt
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;04-skills.ts skills 系统
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;06-extensions.ts ← ExtensionAPI
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;06-hooks.ts ← HookAPI
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;07-context-files.ts 上下文文件
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;08-prompt-templates.ts 模板
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;08-slash-commands.ts slash 命令
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;09-api-keys-and-oauth.ts 鉴权
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;11-sessions.ts session 管理
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;12-redis-sessions.ts Redis 持久化
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;13-sql-sessions.ts SQLite 持久化
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;另外 &lt;code&gt;examples/extensions/&lt;/code&gt; 和 &lt;code&gt;examples/hooks/&lt;/code&gt; 是写 &lt;strong&gt;Extension / Hook 插件&lt;/strong&gt; 的入口，用的是 &lt;code&gt;CustomToolFactory&lt;/code&gt;、&lt;code&gt;ExtensionAPI&lt;/code&gt;、&lt;code&gt;HookAPI&lt;/code&gt; 类型。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;strong&gt;结论&lt;/strong&gt;：之前以为 &amp;ldquo;pi-sdk&amp;rdquo; 是和 pi-coding-agent 并列的另一个包，&lt;strong&gt;顺序反了&lt;/strong&gt;。&lt;code&gt;pi-coding-agent&lt;/code&gt; 包本身就是 SDK，只是顺带也提供了 &lt;code&gt;omp&lt;/code&gt; CLI 入口。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="三oh-my-pi-与-pi-的血缘"&gt;三、oh-my-pi 与 pi 的血缘
+&lt;/h2&gt;&lt;h3 id="31-pi-是什么"&gt;3.1 pi 是什么
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;pi-mono&lt;/strong&gt; = &lt;code&gt;badlogic/pi-mono&lt;/code&gt;，作者 &lt;code&gt;@mariozechner&lt;/code&gt;（Mario Zechner）。一个 modular 的 LLM agent toolkit，最初发布 scope 是 &lt;code&gt;@mariozechner/*&lt;/code&gt;，后来也有 &lt;code&gt;@earendil-works/*&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;上游 monorepo 公开 &lt;strong&gt;7 个 npm 包&lt;/strong&gt;（来源：&lt;code&gt;badlogic-pi-mono.mintlify.app/concepts/packages&lt;/code&gt;）：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;上游包&lt;/th&gt;
+					&lt;th&gt;职责&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-ai&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;多 provider LLM 统一 API（OpenAI/Anthropic/Google/Vertex/Bedrock + 50+ 模型）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-agent-core&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;有状态 agent runtime + 工具调用 + 事件流&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-tui&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;差分渲染的 TUI 框架（line-diff / box-diff / full）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-coding-agent&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;交互式 coding agent CLI&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-mom&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Slack bot&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-web-ui&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Web chat 组件&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-pods&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;vLLM GPU pod 管理&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="32-single-source-of-truthlegacy-pi-compatts"&gt;3.2 Single Source of Truth：legacy-pi-compat.ts
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;packages/coding-agent/src/extensibility/plugins/legacy-pi-compat.ts:161-178&lt;/code&gt; 是事实源头：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;PI_SCOPE_ALIASES&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;oh-my-pi&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;mariozechner&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;earendil-works&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="kr"&gt;as&lt;/span&gt; &lt;span class="kr"&gt;const&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;PI_PACKAGE_NAMES&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;pi-agent-core&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-ai&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-coding-agent&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-natives&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-tui&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-utils&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="kr"&gt;as&lt;/span&gt; &lt;span class="kr"&gt;const&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 部分 subpath 在上游换过目录，这里把旧路径重写到新路径
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;PI_SUBPATH_REMAPS&lt;/span&gt;: &lt;span class="kt"&gt;ReadonlyMap&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;string&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;string&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;([&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;pi-ai/utils/oauth&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-ai/oauth&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;pi-ai/utils/oauth/&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;pi-ai/oauth/&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;含义：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;插件无论写 &lt;code&gt;@mariozechner/pi-coding-agent&lt;/code&gt; 还是 &lt;code&gt;@earendil-works/pi-coding-agent&lt;/code&gt;，都被 shim 重写到宿主内置的同一份 &lt;code&gt;@oh-my-pi/pi-coding-agent&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PI_PACKAGE_NAMES&lt;/code&gt; 里 6 个包&lt;strong&gt;都是宿主内置&lt;/strong&gt;（plugin 即使在 &lt;code&gt;node_modules&lt;/code&gt; 里装了同名包，也不会真正用它的代码）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="33-血缘分类"&gt;3.3 血缘分类
+&lt;/h3&gt;&lt;h4 id="-直接-fork-上游的-pi--包"&gt;✅ 直接 fork 上游的 pi-* 包
+&lt;/h4&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;oh-my-pi 包&lt;/th&gt;
+					&lt;th&gt;上游来源&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-ai&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-ai&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-agent-core&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-agent-core&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-tui&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-tui&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-coding-agent&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-coding-agent&lt;/code&gt;（主包）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-utils&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;@mariozechner/pi-utils&lt;/code&gt;（上游文档没列在 7 个主包里但存在，&lt;code&gt;porting-from-pi-mono.md:50&lt;/code&gt; 显式列入映射表）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-natives&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;omp 自创&lt;/strong&gt;——Rust napi-rs 绑定（上游没有），但 shim 也把它放进 &lt;code&gt;PI_PACKAGE_NAMES&lt;/code&gt;，兼容老插件的 import&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="-omp-自创的-pi--命名包shim-不重写"&gt;➕ omp 自创的 pi-* 命名包（shim 不重写）
+&lt;/h4&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;包&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+					&lt;th&gt;对应 README 章节&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-catalog&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;模型目录扩展（40+ providers vs 上游 50 模型）&lt;/td&gt;
+					&lt;td&gt;隐含在 README &amp;ldquo;40+ providers&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-mnemopi&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;Hindsight 记忆子系统（&lt;code&gt;retain&lt;/code&gt; / &lt;code&gt;recall&lt;/code&gt; / 压缩会话）&lt;/td&gt;
+					&lt;td&gt;&amp;ldquo;13 · Hindsight&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/pi-wire&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;protobuf 协议层，collab relay 用&lt;/td&gt;
+					&lt;td&gt;隐含在 &amp;ldquo;07 · /collab&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="-omp-自创的非-pi--命名包"&gt;➕ omp 自创的非 &lt;code&gt;pi-&lt;/code&gt; 命名包
+&lt;/h4&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;包&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/hashline&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&amp;ldquo;11 · Hashline: edit by content hash&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/omp-stats&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;本地 &lt;code&gt;omp stats&lt;/code&gt; 可观测性面板&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/snapcompact&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;上下文 snap-compact&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;@oh-my-pi/swarm-extension&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;subagent 协作（05 · First-class subagents）&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="-上游有但-omp-没继承"&gt;❌ 上游有但 omp 没继承
+&lt;/h4&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;上游包&lt;/th&gt;
+					&lt;th&gt;omp 的替代方案&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-mom&lt;/code&gt;（Slack bot）&lt;/td&gt;
+					&lt;td&gt;无 —— omp 不做 Slack 集成&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-web-ui&lt;/code&gt;（Web chat UI）&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;collab-web&lt;/code&gt;&lt;/strong&gt; workspace 包替代（Solid+React，omp 自建，带 relay + QR）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;pi-pods&lt;/code&gt;（vLLM pod 管理）&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id="-rust-内核--omp-独有"&gt;🦀 Rust 内核 —— omp 独有
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;Cargo.toml:1&lt;/code&gt; workspace 包含 &lt;code&gt;crates/pi-*&lt;/code&gt; + &lt;code&gt;crates/vendor/*&lt;/code&gt;，&lt;strong&gt;不是&lt;/strong&gt; pi-mono 的一部分：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;pi-natives&lt;/code&gt;（napi-rs 绑定，导出给 JS）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;pi-shell&lt;/code&gt; = vendored &lt;code&gt;brush-core&lt;/code&gt; + &lt;code&gt;brush-builtins&lt;/code&gt;（POSIX shell，替代 bash）—— 来自 &lt;code&gt;uutils/brush&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;~55k 行 Rust（README 数字）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="34-同步策略"&gt;3.4 同步策略
+&lt;/h3&gt;&lt;p&gt;omp 与上游是 &lt;strong&gt;fork + selective backport&lt;/strong&gt;，不是完全 cherry-pick：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;docs/porting-from-pi-mono.md&lt;/code&gt; 是合并手册，带上次同步锚点 commit &lt;code&gt;b21b42d0&lt;/code&gt;（2026-03-22）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;packages/*/CHANGELOG.md&lt;/code&gt; 大量条目形如 &lt;code&gt;Switched from local @oh-my-pi/pi-ai to upstream @mariozechner/pi-ai&lt;/code&gt; 或 &lt;code&gt;backported pi-mono changes (...)&lt;/code&gt;，证明持续同步&lt;/li&gt;
+&lt;li&gt;上游改 SDK → omp 同步并保留自己的扩展（session / extensions / hooks 体系）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="四一图概括依赖血缘"&gt;四、一图概括依赖血缘
+&lt;/h2&gt;&lt;pre class="mermaid" style="visibility:hidden"&gt;flowchart TB
+ subgraph Upstream["pi-mono upstream (badlogic/pi-mono, @mariozechner/*)"]
+ UA["pi-ai"]
+ UB["pi-agent-core"]
+ UC["pi-tui"]
+ UD["pi-coding-agent"]
+ UE["pi-utils"]
+ UF["pi-mom"]
+ UG["pi-web-ui"]
+ UH["pi-pods"]
+ end
+
+ subgraph Forked["oh-my-pi: 直接 fork 的 pi-* 包"]
+ FA["@oh-my-pi/pi-ai"]
+ FB["@oh-my-pi/pi-agent-core"]
+ FC["@oh-my-pi/pi-tui"]
+ FD["@oh-my-pi/pi-coding-agent"]
+ FE["@oh-my-pi/pi-utils"]
+ FN["@oh-my-pi/pi-natives (omp 自创但 shim 兼容)"]
+ end
+
+ subgraph NativeAdded["oh-my-pi: 自创 pi-* 包 (shim 不重写)"]
+ NA1["@oh-my-pi/pi-catalog"]
+ NA2["@oh-my-pi/pi-mnemopi"]
+ NA3["@oh-my-pi/pi-wire"]
+ end
+
+ subgraph OtherAdded["oh-my-pi: 自创非 pi- 包"]
+ OA1["@oh-my-pi/hashline"]
+ OA2["@oh-my-pi/omp-stats"]
+ OA3["@oh-my-pi/snapcompact"]
+ OA4["@oh-my-pi/swarm-extension"]
+ OA5["collab-web (workspace)"]
+ end
+
+ subgraph Rust["Rust 内核 (omp 独有)"]
+ R1["pi-natives (napi-rs)"]
+ R2["pi-shell (vendored brush)"]
+ end
+
+ UA --&gt; FA
+ UB --&gt; FB
+ UC --&gt; FC
+ UD --&gt; FD
+ UE --&gt; FE
+
+ UF -. "❌ 丢弃" .-&gt; FD
+ UG -. "❌ 替换为 collab-web" .-&gt; OA5
+ UH -. "❌ 丢弃" .-&gt; FD
+
+ R1 --&gt; FN
+ FA --&gt; FD
+ FB --&gt; FD
+ FC --&gt; FD
+ FE --&gt; FD
+ FN --&gt; FD&lt;/pre&gt;&lt;h2 id="五关键证据文件"&gt;五、关键证据文件
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;文件&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;packages/coding-agent/src/extensibility/plugins/legacy-pi-compat.ts:161-178&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;scope + subpath 重写规则（single source of truth）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;packages/coding-agent/test/pi-scope-aliases.test.ts&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;三 scope 等价的回归测试&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;packages/coding-agent/test/issue-973-legacy-pi-plugin.test.ts&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;老 plugin 兼容的回归测试（issue #973）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;docs/porting-from-pi-mono.md:46-51&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;上游 → oh-my-pi 包映射表 + sync 锚点 commit&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;README.md:21-22, 469, 485&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;显式声明 &amp;ldquo;fork of pi-mono by @mariozechner&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;package.json&lt;/code&gt; 的 &lt;code&gt;workspaces.catalog&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;所有第三方依赖集中点&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;oh-my-pi = pi-mono fork + 自创层 + Rust 内核。fork 占大头（5 个核心 pi-* 包），自创层集中在 &amp;ldquo;omp 独有功能&amp;rdquo;（hindsight / hashline / collab / swarm / natives）。&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;pi-sdk&amp;rdquo; 不存在，&lt;code&gt;pi-coding-agent&lt;/code&gt; 同时是 CLI 和 SDK。&lt;/li&gt;
+&lt;li&gt;上游 7 个包里丢了 3 个（&lt;code&gt;pi-mom&lt;/code&gt; / &lt;code&gt;pi-web-ui&lt;/code&gt; / &lt;code&gt;pi-pods&lt;/code&gt;），替换了 1 个（&lt;code&gt;pi-web-ui&lt;/code&gt; → &lt;code&gt;collab-web&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;三 scope（&lt;code&gt;@mariozechner&lt;/code&gt; / &lt;code&gt;@earendil-works&lt;/code&gt; / &lt;code&gt;@oh-my-pi&lt;/code&gt;）通过 shim 等价，老 plugin 不用改一行代码就能跑在 omp 上。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果想看具体的 &amp;ldquo;哪些 pi-mono PR/issue 被 backport 进来&amp;rdquo;，可以翻 &lt;code&gt;packages/*/CHANGELOG.md&lt;/code&gt; 里那些 &lt;code&gt;backported pi-mono changes (...)&lt;/code&gt; 条目，或者 &lt;code&gt;git log --grep=&amp;quot;backport&amp;quot;&lt;/code&gt;。&lt;/p&gt;</description></item></channel></rss>
