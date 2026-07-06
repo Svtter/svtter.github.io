@@ -847,7 +847,7 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; — 项目仓库&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Token Plan 不够了怎么办</title><link>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</link><pubDate>Fri, 26 Jun 2026 14:53:13 +0800</pubDate><guid>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</guid><description>&lt;p&gt;我现在订阅了多个 token plan，除了高可用（笑）以外，最大的好处是高并发。&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Token Plan 不够了怎么办</title><link>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</link><pubDate>Fri, 26 Jun 2026 14:53:13 +0800</pubDate><guid>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</guid><description>&lt;img src="https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/pics/cover_1783342870.png" alt="Featured image of post Token Plan 不够了怎么办" /&gt;&lt;p&gt;我现在订阅了多个 token plan，除了高可用（笑）以外，最大的好处是高并发。&lt;/p&gt;
 &lt;p&gt;问题是有时候用量到了切换起来比较麻烦。例如 claude code，配置的时候一般是通过配置 &lt;code&gt;OPUS_MODEL&lt;/code&gt; 等来实现的。需要退出 claude，然后加载新的 plan，然后继续工作。这样速度比较慢。目前我试过体验最好的方案是用 &lt;code&gt;/export&lt;/code&gt; 命令来导出文件。这个命令在不同的 coding agent 中都可以使用。opencode，kimi-code，以及 omp 都可以。&lt;/p&gt;
 &lt;p&gt;基于此，我们可以在 token plan 用光后，直接 export，然后可以在新的 agent 里输入：&lt;code&gt;加载上下文 @&amp;lt;file-name&amp;gt;&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>迁移到 Gitea Actions：kill-PAT 完整方案</title><link>https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/</link><pubDate>Wed, 17 Jun 2026 23:55:31 +0800</pubDate><guid>https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/</guid><description>&lt;img src="https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/pics/cover_1781711699.png" alt="Featured image of post 迁移到 Gitea Actions：kill-PAT 完整方案" /&gt;&lt;blockquote&gt;
  &lt;p&gt;由于 GitHub 近期的不稳定，以及自建的 runner 消耗比较多的上下行流量，我尝试将代码仓库迁移到 gitea。在这个过程中，我踩了不少 runner 的坑。这里记录一下。&lt;/p&gt;
@@ -1278,7 +1278,7 @@
 
  &lt;/blockquote&gt;
 &lt;h2 id="tldr"&gt;TL;DR
-&lt;/h2&gt;&lt;p&gt;强烈建议直接打开用。Claude Code 已经内置这个功能。（Auto mode）。通过 &lt;code&gt;/advisor&lt;/code&gt; 来启用。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;Claude Code 似乎已经内置这个功能。（Auto mode），但是介入的时机和 OMP 有区别。OMP 通过 &lt;code&gt;/advisor&lt;/code&gt; 来启用。&lt;/p&gt;
 
  &lt;blockquote&gt;
  &lt;p&gt;术语：turn 指的是一轮操作；可以是 bash 命令，也可以是一次对话。&lt;/p&gt;
@@ -1494,7 +1494,7 @@
 &lt;li&gt;&lt;strong&gt;独立计费。&lt;/strong&gt; Advisor 的 token 和 cost 是单独统计的，&lt;code&gt;/advisor status&lt;/code&gt; 报的是 Advisor 自己 transcript 的用量，不和主 agent 混算。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;hr&gt;
-&lt;h2 id="收束"&gt;收束
+&lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;Advisor 把「事后 review 能发现的问题」前移到 turn 边界。它解决的不是「主 agent 不够强」，而是「同一个执行者难以在执行中审视自己」——因此它被设计成只读、可被主 agent 读到建议、且不参与执行的独立角色。&lt;/p&gt;
 &lt;p&gt;实现上值得注意的取舍是&lt;strong&gt;隔离&lt;/strong&gt;与&lt;strong&gt;异步&lt;/strong&gt;：Advisor 跑在隔离的工具会话里、用增量 transcript、后台 drain、失败即降级，保证它给主链路带来的只有收益（意见）而不引入新的阻塞或竞态。&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 里有完整的配置、发现机制与上下文维护说明，本文不再重复。&lt;/p&gt;</description></item><item><title>糟糕的 token plan 隐私保护现状</title><link>https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/</link><pubDate>Mon, 15 Jun 2026 00:28:33 +0800</pubDate><guid>https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/</guid><description>&lt;img src="https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/pics/cover_1781356998.png" alt="Featured image of post 糟糕的 token plan 隐私保护现状" /&gt;&lt;p&gt;这篇文章是 AI Coding 数据训练政策对比（2026年6月）&lt;/p&gt;
 
