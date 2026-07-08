@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Claude on Svtter's Blog</title><link>https://svtter.cn/en/tags/claude/</link><description>Recent content in Claude on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 08 Jul 2026 11:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/claude/index.xml" rel="self" type="application/rss+xml"/><item><title>oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4</title><link>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</link><pubDate>Wed, 08 Jul 2026 11:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</guid><description>&lt;p&gt;Someone on X shared Claude&amp;rsquo;s official &lt;em&gt;Loop Engineering&lt;/em&gt; intro post, summarizing that the article splits loops into four types. A natural follow-up question: &lt;strong&gt;oh-my-pi (omp), the open-source Claude Code competitor — which of those does it actually implement?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This post is not about the concept itself (the tweet and the official article already cover that). It does exactly one thing: &lt;strong&gt;take the locally installed omp 16.3.11 and verify each type, with evidence.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="aligning-on-the-four-types-first"&gt;Aligning on the four types first
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;#&lt;/th&gt;
+					&lt;th&gt;Type&lt;/th&gt;
+					&lt;th&gt;In one line&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Single-turn Loop&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;The basic working method: gather context → act → check → repeat, until the task is done or a human is needed&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Goal-oriented Loop&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Given a large goal, the system iterates until it is reached (autonomous / headless mode)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Time-based Loop&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Tasks triggered on a schedule — Claude Code&amp;rsquo;s &lt;code&gt;/loop&lt;/code&gt; (cron-like)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;Active Loop&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Event-driven, e.g. a new Issue/PR automatically has the AI review/record it&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="the-answer-up-front-2-of-4"&gt;The answer up front: 2 of 4
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;#&lt;/th&gt;
+					&lt;th&gt;Type&lt;/th&gt;
+					&lt;th&gt;In omp?&lt;/th&gt;
+					&lt;th&gt;Key evidence&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1&lt;/td&gt;
+					&lt;td&gt;Single-turn Loop&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+					&lt;td&gt;This is the baseline of any coding agent; omp&amp;rsquo;s core agent loop is exactly this&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;Goal-oriented Loop&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+					&lt;td&gt;Built-in &lt;code&gt;/goal&lt;/code&gt; command + goal mode; a full &lt;code&gt;goals/&lt;/code&gt; submodule ships in the package&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;3&lt;/td&gt;
+					&lt;td&gt;Time-based Loop&lt;/td&gt;
+					&lt;td&gt;❌&lt;/td&gt;
+					&lt;td&gt;No native scheduler; it&amp;rsquo;s an open feature request&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;Active Loop&lt;/td&gt;
+					&lt;td&gt;❌&lt;/td&gt;
+					&lt;td&gt;It&amp;rsquo;s a terminal agent; no webhook / event-driven auto-trigger capability&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Evidence for each, below.&lt;/p&gt;
+&lt;h2 id="type-1-single-turn-loop--implemented"&gt;Type 1: Single-turn Loop — implemented
+&lt;/h2&gt;&lt;p&gt;Nothing to argue about here. Single-turn loop is the baseline working method of every agentic coding agent: each input triggers a round of &amp;ldquo;gather context → call tools → inspect results → decide next step&amp;rdquo;, looping until the task is done or a human is needed.&lt;/p&gt;
+&lt;p&gt;omp&amp;rsquo;s own README describes its agent loop (retry loops, auto-compaction of long tool chains, etc.). This is the foundation — without it, the other three types don&amp;rsquo;t exist.&lt;/p&gt;
+&lt;h2 id="type-2-goal-oriented-loop--implemented-the-strongest-evidence"&gt;Type 2: Goal-oriented Loop — implemented (the strongest evidence)
+&lt;/h2&gt;&lt;p&gt;This is a &lt;strong&gt;first-class feature&lt;/strong&gt; omp explicitly has: a built-in &lt;strong&gt;&lt;code&gt;/goal&lt;/code&gt; command and goal mode&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;From the locally installed &lt;code&gt;pi-coding-agent@16.3.11&lt;/code&gt; package, the corresponding modules are right there:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;dist&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;goals&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;runtime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;dist&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;goals&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;dist&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;goals&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;tools&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;goal&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;tool&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;dist&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;modes&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ts&lt;/span&gt; &lt;span class="c1"&gt;# contains goalMode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;dist&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;modes&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;interactive&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;mode&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;So goal mode is not a third-party plugin — it ships &lt;strong&gt;with&lt;/strong&gt; omp: a dedicated runtime, persistent state, a &lt;code&gt;goal&lt;/code&gt; tool, treated as its own run mode inside interactive mode. The corresponding official PR is literally &lt;code&gt;feat: built-in /goal command for persistent autonomous goals&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The essence of this type is &amp;ldquo;iterate multiple times until a goal is met&amp;rdquo;, and omp&amp;rsquo;s &lt;code&gt;/goal&lt;/code&gt; fits exactly: after you set a goal, it keeps driving the agent loop toward it until done (with goal-mode-specific auto-compaction along the way, so long loops don&amp;rsquo;t blow the context window).&lt;/p&gt;
+&lt;h2 id="type-3-time-based-loop--not-implemented-open-feature-request"&gt;Type 3: Time-based Loop — NOT implemented (open feature request)
+&lt;/h2&gt;&lt;p&gt;This type corresponds to Claude Code&amp;rsquo;s &lt;code&gt;/loop&lt;/code&gt;: &lt;strong&gt;triggering tasks on a schedule&lt;/strong&gt;, e.g. &amp;ldquo;run this prompt every 10 minutes&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;omp &lt;strong&gt;has no native scheduler&lt;/strong&gt;. This isn&amp;rsquo;t a guess — it&amp;rsquo;s an explicit feature request the community is pushing:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;code&gt;[FR] First-class recurring/scheduled task (&amp;quot;run X every N minutes&amp;quot;) — cron-like, prior art Copilot CLI&lt;/code&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;The request itself admits:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&lt;em&gt;&amp;ldquo;There is no native scheduler. The only way to get periodic, hands-free reporting today is a self-re-arming background-job chain: each cycle is sleep…&amp;rdquo;&lt;/em&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;In other words, today the only way to get scheduled looping is a workaround: a self-re-arming sleep loop you run in the background. No first-class support.&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Note: there&amp;rsquo;s an omp issue mentioning &lt;code&gt;/loop&lt;/code&gt; (about modifying its prompt mid-loop) — that refers to the &lt;strong&gt;goal-mode continuation loop&lt;/strong&gt;, not a scheduled timer. Don&amp;rsquo;t conflate them.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="type-4-active-loop--not-implemented"&gt;Type 4: Active Loop — NOT implemented
+&lt;/h2&gt;&lt;p&gt;This type is &lt;strong&gt;event-driven&lt;/strong&gt;: you set up an event (new Issue, new PR, webhook callback…), and when it fires it auto-triggers an agent loop, with no human in the loop.&lt;/p&gt;
+&lt;p&gt;omp is a &lt;strong&gt;terminal coding agent&lt;/strong&gt; — by positioning it is not an event-driven automation server. No webhook receiver, no GitHub App auto-listening.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The closest feature is &lt;code&gt;robomp&lt;/code&gt; (code review), but it&amp;rsquo;s a subagent &lt;strong&gt;invoked on demand inside a session&lt;/strong&gt;, not &amp;ldquo;new PR automatically triggers it&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;The Pi ecosystem (upstream Pi, not omp) has a GitHub Action on the Marketplace for PR review, but that&amp;rsquo;s an Action wrapper, not an omp-built Active Loop.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I went through every issue-tracker hit for &lt;code&gt;webhook&lt;/code&gt; / &lt;code&gt;event-driven&lt;/code&gt; / &lt;code&gt;auto-trigger&lt;/code&gt; — all false positives (autocomplete triggers, token hyperlinks, CPU overhead, etc.). None describe an event-driven auto loop.&lt;/p&gt;
+&lt;h2 id="one-open-item-worth-watching"&gt;One open item worth watching
+&lt;/h2&gt;&lt;p&gt;There&amp;rsquo;s a broader issue in the repo: &lt;code&gt;Add loop engineering runtime&lt;/code&gt;. From the name, omp seems to want to build types 3 and 4 into a fuller Loop Engineering subsystem. But it hasn&amp;rsquo;t landed yet — &lt;strong&gt;what&amp;rsquo;s shipped today is Type 1 + Type 2&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id="in-one-sentence"&gt;In one sentence
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Of Claude Loop Engineering&amp;rsquo;s four loop types, oh-my-pi implements two&lt;/strong&gt;: the baseline single-turn loop (Type 1) and the goal-oriented &lt;code&gt;/goal&lt;/code&gt; mode (Type 2). The time-based loop (Type 3) and the event-driven active loop (Type 4) are not there yet — the former tracks to open feature request #2763, the latter still lives under the broader #3534.&lt;/p&gt;
+&lt;p&gt;Put differently: omp polishes the &amp;ldquo;&lt;strong&gt;a human sits at the terminal, hands it a goal, and it runs to completion&lt;/strong&gt;&amp;rdquo; path very well, but the &amp;ldquo;&lt;strong&gt;no one watching, auto-running on time or on events&lt;/strong&gt;&amp;rdquo; paths aren&amp;rsquo;t filled in yet.&lt;/p&gt;</description></item></channel></rss>
