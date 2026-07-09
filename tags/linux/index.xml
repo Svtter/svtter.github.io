@@ -1,4 +1,191 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on Svtter's Blog</title><link>https://svtter.cn/tags/linux/</link><description>Recent content in Linux on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 14 Mar 2025 16:45:58 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Create a Never Stop Container.md</title><link>https://svtter.cn/p/create-a-never-stop-container.md/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/p/create-a-never-stop-container.md/</guid><description>&lt;img src="https://svtter.cn/p/create-a-never-stop-container.md/background.png" alt="Featured image of post Create a Never Stop Container.md" /&gt;&lt;p&gt;有时候我们需要启动一个不停止的容器，来调试我们的应用，或者使用 devcontainer。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on Svtter's Blog</title><link>https://svtter.cn/tags/linux/</link><description>Recent content in Linux on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 28 Jun 2026 22:08:01 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 CC 时计算机卡死可能是 IO 问题</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/</link><pubDate>Sun, 28 Jun 2026 22:40:46 +0800</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/</guid><description>&lt;img src="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/pics/cover_1782657689.png" alt="Featured image of post 使用 CC 时计算机卡死可能是 IO 问题" /&gt;&lt;p&gt;我的习惯是在 Linux 上运行 OMP (oh my pi) 以及 Claude Code，还有 OpenCode。&lt;/p&gt;
+&lt;p&gt;最近发现服务端经常死掉。从监控日志中查，发现是 IO 频繁写入 500MB/s。&lt;/p&gt;
+&lt;p&gt;如果你也遇到了类似的问题，可以读一下这篇文章。&lt;/p&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;元凶不是 sqlite/WAL，是 code agent 冷缓存预热触发 major page fault 风暴：&lt;code&gt;%util &amp;lt; 10%&lt;/code&gt; 但 majflt 6000–10000/分，10+ 核卡 D 状态。看 &lt;code&gt;%util&lt;/code&gt;/iowait 看不出来，要看 &lt;code&gt;majflt/s&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;治标：&lt;code&gt;iogo&lt;/code&gt; 用 cgroup v2 &lt;code&gt;io.max&lt;/code&gt; 把重活限到 30MB/s + 200 IOPS。设备号要从 rootfs 自动探测——写死会在 virtio↔scsi 切换后静默 no-op。&lt;/li&gt;
+&lt;li&gt;治本：工作集瘦身（清 worktree + 旧 .venv/node_modules，124G→74G）+ swap/zswap + 关 LSP plugin。&lt;/li&gt;
+&lt;li&gt;架构共性：node + 巨大 node_modules + 随机遍历 + 多实例 + 每 worktree 独立 cache key，工作集 ≫ page cache 就会互害。这不是某一个 agent 的 bug。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="分析过程"&gt;分析过程
+&lt;/h2&gt;&lt;p&gt;最近我经常遇到 IO 爆掉的情况。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="监控图" class="gallery-image" data-flex-basis="509px" data-flex-grow="212" height="1446" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/28/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2.png" srcset="https://svtter.cn/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2_4241163169795564912_hu_cdbb33b69d460f61.png 800w, https://svtter.cn/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2_4241163169795564912_hu_99d8f46d0e6721c9.png 1600w, https://svtter.cn/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2_4241163169795564912_hu_fc93602907e5b242.png 2400w, https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/28/eb1aacf6-47d6-4f7c-aede-c1c9a1d6d3e2.png 3072w" width="3072"&gt;&lt;/p&gt;
+&lt;p&gt;但实际上内存和CPU占用量还好。这让我有些困惑。&lt;/p&gt;
+&lt;p&gt;后来尝试了几次，发现是 Claude 每次 &lt;code&gt;/resume&lt;/code&gt; 的时候整个系统都会卡死。逐步怀疑到是不是 sqlite + WAL 随机读取问题。&lt;/p&gt;
+&lt;p&gt;以为是 session 太多，数量太庞大导致的，因此暂且停了 Claude Code。&lt;/p&gt;
+&lt;h3 id="不对劲"&gt;不对劲
+&lt;/h3&gt;&lt;p&gt;随后我继续使用 opencode 进行 vibe。然后 Opencode 又出现了同样的问题。我甚至都没有执行 &lt;code&gt;/session&lt;/code&gt;。让我相当困惑。&lt;/p&gt;
+&lt;p&gt;随后我部署了 systemd 服务来监控 IO 情况。发现 OpenCode 也出现了类似的问题。多开 4 个 instance，就会卡死服务器。&lt;/p&gt;
+&lt;p&gt;iotop 显示 top-5 READ 是 OpenCode。后来 OMP 也出现了类似的问题。&lt;/p&gt;
+&lt;h3 id="继续排查"&gt;继续排查
+&lt;/h3&gt;&lt;p&gt;那么现在观察看基本上不是 sqlite3 的读写问题。更可能是其他的原因。我发现 omp 也有类似的表现。&lt;/p&gt;
+&lt;p&gt;如果 opencode 没有进行 session，是不会读取自己的 sqlite3 db 的。那么问题只可能出现在别的地方。&lt;/p&gt;
+&lt;p&gt;既然三个 agent 都出现了类似的问题，说明问题是共性的。&lt;/p&gt;
+&lt;h3 id="尝试解决"&gt;尝试解决
+&lt;/h3&gt;&lt;p&gt;我一开始怀疑是系统病毒或者挖矿病毒。因此我短暂停留了一段时间，没有使用 coding agent。然后发现 IO 没有上升。&lt;/p&gt;
+&lt;p&gt;所以排除了病毒的问题。然后重复使用不用的 agent，发现都能触发这个问题。那么大概率问题出现在我的工作的代码库下面。&lt;/p&gt;
+&lt;p&gt;为了保险起见，我首先处理了 swap。将 swap 扩展到了 16GB。（我之前关闭了 swap）。看看在这种读取的情况下，能否获得较好的性能。&lt;/p&gt;
+&lt;p&gt;其次，通过 coding agent 排查到 opencode major page 频繁切换。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- majflt 6000–10000/分（每秒 100–167 次缺页）
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- %wait sum 970–1378%——10+ 个 CPU 核全卡 D 状态等 IO
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;存在CPU/内核锁开销 + page cache 抖动 + 冷读 IOPS 累积。&lt;/p&gt;
+&lt;p&gt;我们已经知道，没有进行 resume，服务器性能也会下降，磁盘也会大量的 IO。那么，现在最大的可能性，就是 coding agent 在分析当前项目的过程中产生了较多的 IO。那么项目中最大、最零碎的是什么呢？&lt;code&gt;node_modules&lt;/code&gt;。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;开玩笑的。随手黑一把文件系统破伤风病毒 &lt;code&gt;node_modules&lt;/code&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;最大的可能就是大量的 worktree（300个）影响了 opencode/claude code 加载速度。omp 也受影响。因此，我大量清理了 worktree，从 300 降低到 76 个。&lt;/p&gt;
+&lt;p&gt;然后我通过编写 systemd 服务 + cgroup-v2 限制了 opencode/claude code的最大 IO 读取量。&lt;/p&gt;
+&lt;h2 id="还是不对"&gt;还是不对
+&lt;/h2&gt;&lt;p&gt;我发现启动了6个omp实例后系统速度还是很慢。仍然会卡死系统。&lt;/p&gt;
+&lt;p&gt;于是怀疑是其他系统的问题。&lt;/p&gt;
+&lt;h2 id="进程级记账点名元凶"&gt;进程级记账：点名元凶
+&lt;/h2&gt;&lt;p&gt;前面的排查都停在&amp;quot;特征推断&amp;quot;——IO 高、整机卡死，但到底是哪个进程在猛读，journal 里只剩 autossh 心跳，内核也没记 OOM / hung task。因为 &lt;code&gt;%util&lt;/code&gt; 才 12.4%，内核觉得天下太平。&lt;/p&gt;
+&lt;p&gt;于是我部署了 &lt;code&gt;pidstat-io.service&lt;/code&gt;：root 跑，每 60 秒把全进程的磁盘读写、CPU、内存记到 &lt;code&gt;/var/log/pidstat-io.log&lt;/code&gt;，配 logrotate 日切保留 7 天。目的就一个——下次风暴能秒级点名进程。&lt;/p&gt;
+&lt;p&gt;第二天就复现了。三轮 IO 风暴，每轮都逼我手动重启。复盘 pidstat log，元凶清清楚楚：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;窗口&lt;/th&gt;
+					&lt;th&gt;opencode 读&lt;/th&gt;
+					&lt;th&gt;全机读&lt;/th&gt;
+					&lt;th&gt;majflt/分&lt;/th&gt;
+					&lt;th&gt;sum %wait&lt;/th&gt;
+					&lt;th&gt;结局&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;10:53–11:20&lt;/td&gt;
+					&lt;td&gt;175–213 MB/s&lt;/td&gt;
+					&lt;td&gt;480–498 MB/s&lt;/td&gt;
+					&lt;td&gt;6000–7700&lt;/td&gt;
+					&lt;td&gt;970–1378%&lt;/td&gt;
+					&lt;td&gt;重启&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;11:43–11:52&lt;/td&gt;
+					&lt;td&gt;318–346 MB/s&lt;/td&gt;
+					&lt;td&gt;475–507 MB/s&lt;/td&gt;
+					&lt;td&gt;7800–10011&lt;/td&gt;
+					&lt;td&gt;平&lt;/td&gt;
+					&lt;td&gt;重启&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;15:21–15:27&lt;/td&gt;
+					&lt;td&gt;78–91 MB/s&lt;/td&gt;
+					&lt;td&gt;472–486 MB/s&lt;/td&gt;
+					&lt;td&gt;5900–6700&lt;/td&gt;
+					&lt;td&gt;平&lt;/td&gt;
+					&lt;td&gt;重启&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;opencode，多实例，启动 / 会话恢复时加载大量代码文件（node_modules、源码、索引），第一次访问全是 major page fault。单进程读 175–346 MB/s，持续 5–10 分钟。OMP、Claude Code 同理——三个 agent 全中，说明是共性问题。&lt;/p&gt;
+&lt;h2 id="真正的机制不是磁盘满是缺页风暴"&gt;真正的机制：不是磁盘满，是缺页风暴
+&lt;/h2&gt;&lt;p&gt;这里有个关键认知反转。&lt;/p&gt;
+&lt;p&gt;磁盘 &lt;code&gt;%util &amp;lt; 10%&lt;/code&gt;——根本不是容量瓶颈。vda 本来就是 SSD，单 IO 是 μs 级的，介质不是问题。真正拖死整机的是 &lt;strong&gt;major page fault 风暴&lt;/strong&gt;：majflt 6000–10000/分（每秒 100–167 次缺页），10+ 个 CPU 核全卡在 D 状态等 IO，&lt;code&gt;%wait&lt;/code&gt; sum 970–1378%。SSH、&lt;code&gt;cc resume&lt;/code&gt; 全部超时。&lt;/p&gt;
+&lt;p&gt;而内核呢？一看 &lt;code&gt;%util&lt;/code&gt; 不高、没 OOM、没 hung task，觉得没事，journal 里啥也不记。这就是为什么这问题&lt;strong&gt;极易漏诊&lt;/strong&gt;——监控看 &lt;code&gt;%util&lt;/code&gt; / iowait 根本看不出来，得看 &lt;code&gt;majflt/s&lt;/code&gt;。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;顺带订正一个我自己的误判：之前看 &lt;code&gt;lsblk&lt;/code&gt; 里 vda 的 &lt;code&gt;ROTA=1&lt;/code&gt;，以为是机械盘，还想换 SSD。其实 virtio-blk 默认 &lt;code&gt;ROTA=1&lt;/code&gt; 不反映底层介质，vda 本来就是 SSD。换盘无效，治本得限速 + 控工作集。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;机制串起来：工作集（数十 GB mapped）远大于 page cache（2G 左右）→ 持续 majflt → 多个 agent 互相挤掉对方的 page cache 页 → majflt 洪水 → 内核 page cache 锁热点 + D 状态阻塞 → 整机拖死。这不是某一个 agent 的 bug，是 node + 巨大的 node_modules + 随机遍历 + 多实例 + 每个 worktree 独立 cache key 的架构共性。&lt;/p&gt;
+&lt;h2 id="限速iogo--cgroup-iomax"&gt;限速：iogo + cgroup io.max
+&lt;/h2&gt;&lt;p&gt;既然是冷读 majflt 拖死的，就从源头限速。我写了 &lt;code&gt;iogo&lt;/code&gt;——一个包装器，用 &lt;code&gt;systemd-run --user --scope&lt;/code&gt; 建一个 transient scope，往 cgroup v2 的 &lt;code&gt;io.max&lt;/code&gt; 里手写带宽上限，命令退出 scope 自动清理。然后把 &lt;code&gt;cc&lt;/code&gt; 和 &lt;code&gt;opencode&lt;/code&gt; 的 alias 都包进去：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;cc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;iogo -- claude ...&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;opencode&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;iogo -- /home/svtter/.opencode/bin/opencode&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;默认限 30 MB/s + 200 IOPS。dd 实测：写 841 MB/s → 31.7 MB/s，读 970 MB/s → 31.4 MB/s，限速确实生效。冷启动时间从 ~3 分钟拉长到 ~15–30 分钟，但整机不卡死——这是我要的取舍。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;200 IOPS 的依据：majflt 风暴本质是 4–16KB 随机小读。30MB/s ÷ 4KB = 7680 IOPS 仍可能打满队列，加 riops=200 双保险。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="但-iogo-坑了我四天"&gt;但 iogo 坑了我四天
+&lt;/h3&gt;&lt;p&gt;这是整个排查里最恶心的一段。iogo 的保护反复失效，而且两种截然不同的失效模式叠在一起：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;loud&lt;/strong&gt;：&lt;code&gt;tee: .../iogo-*.scope/io.max: Permission denied&lt;/code&gt;——io 控制器没委托下去，io.max 文件不存在。这个有报错，看得见。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;silent&lt;/strong&gt;：io.max 能写、没报错，但限速作用在一个零 IO 的空设备上 → no-op，opencode 完全裸奔。&lt;strong&gt;这个更危险，整整四天没被发现。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;根因有两个独立的 bug。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;根因 A（loud，Permission denied）&lt;/strong&gt;：cgroup v2 的 &lt;code&gt;io&lt;/code&gt; 控制器必须在链路每一层 &lt;code&gt;cgroup.subtree_control&lt;/code&gt; 显式启用，子 cgroup 才有 io.max。systemd 的 &lt;code&gt;Delegate=&lt;/code&gt; 默认只有 &lt;code&gt;pids memory cpu&lt;/code&gt; 不含 io，每次 unit start 还按 &lt;code&gt;Delegate=&lt;/code&gt; 重建 subtree_control 把 io 清掉；而且 &lt;code&gt;Delegate=&lt;/code&gt; 只在 start 时生效，运行期间 subtree_control 也可能被悄悄清掉（systemd cgroup 事件、scope 生命周期，还没有日志）。&lt;/p&gt;
+&lt;p&gt;修复三件套：① &lt;code&gt;user@1000.service&lt;/code&gt; 加 &lt;code&gt;Delegate=...io&lt;/code&gt; drop-in（systemd 自动委托）② 外部 &lt;code&gt;io-delegate.service&lt;/code&gt; 补 app.slice / session.slice 两层 ③ iogo 内加 &lt;code&gt;ensure_io()&lt;/code&gt;，每次运行前自检链路、缺 io 就补，~5ms 自愈。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;根因 B（silent no-op，主导）⭐&lt;/strong&gt;：iogo 默认 &lt;code&gt;IOGO_DEV=254:0&lt;/code&gt;——这是 virtio-blk &lt;code&gt;/dev/vda&lt;/code&gt; 的假设。但我之前一个 PR 把 dev 从 virtio 改成了 virtio-scsi，磁盘从 &lt;code&gt;vda(254)&lt;/code&gt; 变成了 &lt;code&gt;sda(8)&lt;/code&gt;。cgroup &lt;code&gt;io.stat&lt;/code&gt; 里真实 IO 全在 &lt;code&gt;8:0&lt;/code&gt;，&lt;code&gt;254:0&lt;/code&gt; 是空的。于是 iogo 写进 io.max 的 &lt;code&gt;254:0 rbps=30MB/s&lt;/code&gt; 限制了一个零 IO 的空设备 → opencode 裸奔，设备读飙到 500MB/s、SSH 卡死、手动重启。&lt;/p&gt;
+&lt;p&gt;更恶心的是——根因 B 从那个 PR 应用起就存在，但被根因 A 的 loud 报错掩盖了。我反复修 Permission denied，修好报错就以为修好了，&lt;strong&gt;根本没回头验证限速是不是真作用在产生 IO 的设备上&lt;/strong&gt;。silent no-op 就这么拖了四天，直到把机器读死。&lt;/p&gt;
+&lt;p&gt;修复：iogo 的 &lt;code&gt;DEV&lt;/code&gt; 不再写死，改成从 rootfs 自动探测（&lt;code&gt;findmnt&lt;/code&gt; → &lt;code&gt;stat&lt;/code&gt; → major:minor → &lt;code&gt;8:0&lt;/code&gt;），对以后 virtio↔scsi / nvme 切换免疫。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;教训：「io.max 可写」≠「限速生效」。修完 loud bug 必须回归实测吞吐。定位真设备读要看 &lt;code&gt;majflt/s&lt;/code&gt;（major fault = 真设备读），别看含 cache 命中的 &lt;code&gt;kB_rd/s&lt;/code&gt;——后者会骗你。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="叠加的几层缓解"&gt;叠加的几层缓解
+&lt;/h2&gt;&lt;p&gt;光限速不够——限速是&amp;quot;拖慢启动换不卡死&amp;quot;，治标。又叠了几层：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;swap + zswap(zstd) 压缩缓冲&lt;/strong&gt;：冷数据先压缩留 RAM，majflt 不直接打盘。在已有的 swap 上开 zswap，GRUB cmdline 持久化 &lt;code&gt;zswap.enabled=1 zswap.compressor=zstd&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;vfs_cache_pressure=50&lt;/code&gt;&lt;/strong&gt;：保留更多 dentry/inode cache，缓解 agent 反复 stat 同一项目树时的 cache 抖动。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工作集瘦身（最治本的一步）&lt;/strong&gt;：清理 &lt;code&gt;~/work&lt;/code&gt; 下 332 个 &amp;gt;30d 的 worktree + 97 个 &amp;gt;60d 的 .venv/node_modules，释放 57G。工作集 124G → ~74G，冷读总量直接下降，majflt 基数减小。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;iothread + rotational + scheduler&lt;/strong&gt;：PVE 端 &lt;code&gt;iothread=1&lt;/code&gt;，guest 内 &lt;code&gt;rotational=0&lt;/code&gt;（纠正内核 readahead 启发式）+ &lt;code&gt;scheduler=none&lt;/code&gt;（16 hw queue + SSD 后端直通），udev 固化。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关掉 Claude Code 的 LSP plugin&lt;/strong&gt;：typescript-lsp / pyright-lsp / gopls-lsp / serena 四个全 disable。language server 索引 node_modules 也是 majflt 大户——opencode 内置 LSP 本来就是禁用的，真正起 language server 的是 Claude Code 的 plugin。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="第四次复发iogo-够不着的地方"&gt;第四次复发：iogo 够不着的地方
+&lt;/h2&gt;&lt;p&gt;7 月 8 号又复发了第四次。这次元凶换了——zcode + next-server，5 个进程 majflt 合计 ~9000/s。问题在于这些进程在 &lt;code&gt;session-*.scope&lt;/code&gt;（logind 登录会话），而 iogo 的 scope 在 app.slice 下，&lt;strong&gt;够不着&lt;/strong&gt;。这是我之前列的&amp;quot;未覆盖缺口&amp;quot;第一次被实测确认——iogo 本身没坏，是覆盖范围不够。&lt;/p&gt;
+&lt;p&gt;这次清了 latex-agent 的 130 个 worktree → 3，释放 ~36G。根治得把限速扩到 session-*.scope（systemd 原生 &lt;code&gt;IOReadBandwidthMax=&lt;/code&gt; unit property，或 logind 会话级配置），以及 pnpm node_modules 软连共享，让多个 worktree 不再各存一份 cache key。&lt;/p&gt;
+&lt;h2 id="清了-worktree为什么还会复发"&gt;清了 worktree，为什么还会复发
+&lt;/h2&gt;&lt;p&gt;写完上面那段没几个小时，又复发了。我的第一反应和你一样：worktree 不是清了吗？还来？&lt;/p&gt;
+&lt;p&gt;这次我不再凭感觉，直接看现场。&lt;code&gt;ps&lt;/code&gt; 里 zcode 已经退场了——&amp;ldquo;似乎还是 zcode&amp;quot;是直觉，现场抓不到。真正的 majflt 大户是两个 next-server：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;PID&lt;/th&gt;
+					&lt;th&gt;cgroup scope&lt;/th&gt;
+					&lt;th&gt;cwd&lt;/th&gt;
+					&lt;th&gt;majflt 累计&lt;/th&gt;
+					&lt;th&gt;RSS&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;960400&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;session-9919.scope&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;latex-agent/.worktrees/fix-merged-view-ai-resize-direction/v0-latex-editor&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;309116&lt;/td&gt;
+					&lt;td&gt;2.1G&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1539622&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;session-4.scope&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;explore-cath/cathodic-next&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;266090&lt;/td&gt;
+					&lt;td&gt;112M&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;答案就在第一行。latex-agent 的 worktree 我确实从 130 清到了 3，但 &lt;code&gt;fix-merged-view-ai-resize-direction&lt;/code&gt; 是留下来的 3 个之一，&lt;strong&gt;它还活着、还在跑 &lt;code&gt;next dev&lt;/code&gt;&lt;/strong&gt;，独立的一份 &lt;code&gt;node_modules&lt;/code&gt; cache key 照样触发 majflt 风暴。&lt;/p&gt;
+&lt;p&gt;所以「清 worktree」清的是死的、不跑的 worktree，把磁盘占用和冷读基数压下来；但&lt;strong&gt;活着的、在跑 node dev server 的 worktree 才是 majflt 源&lt;/strong&gt;，清数量治不到它。只要这种 worktree 还在，工作集 ≫ page cache 的条件就还在，风暴随时来。&lt;/p&gt;
+&lt;p&gt;而且两个 next-server 全在 &lt;code&gt;session-*.scope&lt;/code&gt;——iogo 的 app.slice scope 一个都够不着。这把上面那个「未覆盖缺口」从&amp;quot;理论上够不着&amp;quot;坐实成了&amp;quot;实测就是这么漏的&amp;rdquo;。&lt;/p&gt;
+&lt;p&gt;治本只有两条路：要么把限速扩到 &lt;code&gt;session-*.scope&lt;/code&gt;（systemd 原生 &lt;code&gt;IOReadBandwidthMax=&lt;/code&gt; unit property，或 logind 会话级配置），要么从根上让多个 worktree 共享同一份 &lt;code&gt;node_modules&lt;/code&gt;（pnpm 软连），消灭&amp;quot;每个 worktree 独立 cache key&amp;quot;这个放大器。光清数量，不够。&lt;/p&gt;
+&lt;h2 id="写在最后"&gt;写在最后
+&lt;/h2&gt;&lt;p&gt;回头看，这趟排查走了不少弯路：先是怀疑 sqlite/WAL，停了 Claude Code；又怀疑病毒，停了所有 agent；再怀疑机械盘想换 SSD。真正卡住诊断的是两个认知盲区——&lt;code&gt;%util&lt;/code&gt; 低不代表没 IO 问题（majflt 才是信号），以及&amp;quot;限速工具没报错&amp;quot;不代表&amp;quot;限速生效&amp;quot;（设备号静默 no-op 坑了四天）。&lt;/p&gt;
+&lt;p&gt;治本是工作集瘦身 + swap/zswap + 关 LSP，治标是 iogo 限速。但架构共性还在——只要 node + 巨大 node_modules + 多实例 + worktree 独立 cache key 这套组合在，工作集 ≫ page cache 就会互害。这不是某一个 coding agent 的 bug，是它们共同的运行模式踩中了同一个坑。&lt;/p&gt;</description></item><item><title>Create a Never Stop Container.md</title><link>https://svtter.cn/p/create-a-never-stop-container.md/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/p/create-a-never-stop-container.md/</guid><description>&lt;img src="https://svtter.cn/p/create-a-never-stop-container.md/background.png" alt="Featured image of post Create a Never Stop Container.md" /&gt;&lt;p&gt;有时候我们需要启动一个不停止的容器，来调试我们的应用，或者使用 devcontainer。&lt;/p&gt;
 &lt;p&gt;如果我们想在 &lt;code&gt;Dockerfile&lt;/code&gt; 中完成这个事情，我们可以添加这个&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
