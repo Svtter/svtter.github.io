@@ -1,4 +1,182 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/en/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 08 Jul 2026 11:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/index.xml" rel="self" type="application/rss+xml"/><item><title>oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4</title><link>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</link><pubDate>Wed, 08 Jul 2026 11:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</guid><description>&lt;img src="https://svtter.cn/p/oh-my-pi-%E5%AE%9E%E7%8E%B0%E4%BA%86-claude-loop-engineering-%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BE%AA%E7%8E%AF4-%E7%A7%8D%E9%87%8C-2-%E7%A7%8D/pics/cover_20260708.jpg" alt="Featured image of post oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4" /&gt;&lt;p&gt;Someone on X shared Claude&amp;rsquo;s official &lt;em&gt;Loop Engineering&lt;/em&gt; intro post, summarizing that the article splits loops into four types. A natural follow-up question: &lt;strong&gt;oh-my-pi (omp), the open-source Claude Code competitor — which of those does it actually implement?&lt;/strong&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/en/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 10 Jul 2026 11:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/index.xml" rel="self" type="application/rss+xml"/><item><title>Let's Talk About BigCode</title><link>https://svtter.cn/en/p/lets-talk-about-bigcode/</link><pubDate>Fri, 10 Jul 2026 11:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/lets-talk-about-bigcode/</guid><description>&lt;img src="https://svtter.cn/p/%E8%81%8A%E8%81%8A-bigcode/pics/bigcode-cover.svg" alt="Featured image of post Let's Talk About BigCode" /&gt;&lt;p&gt;While researching LLMs trained with &amp;ldquo;open architecture + open data,&amp;rdquo; one name kept coming up: &lt;strong&gt;BigCode&lt;/strong&gt;. It built some of the first fully open-source code models, and has since become the referee that scores everyone else&amp;rsquo;s code models. This post covers the whole picture — from model builder to benchmark author.&lt;/p&gt;
+&lt;h2 id="what-it-is"&gt;What It Is
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;BigCode&lt;/strong&gt; is an open scientific collaboration with a pure goal: &lt;strong&gt;responsibly train large language models for code&lt;/strong&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Launched&lt;/strong&gt;: September 2022&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Stewards&lt;/strong&gt;: Hugging Face + ServiceNow Research (NVIDIA joined for StarCoder2)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Governance&lt;/strong&gt;: Co-led by Leandro von Werra (HF) and Harm de Vries (ServiceNow), with Loubna Ben Allal as a core researcher&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Scale&lt;/strong&gt;: 1,200+ community members&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Distinctive&lt;/strong&gt;: It doesn&amp;rsquo;t just ship models — it publishes a &lt;a class="link" href="https://arxiv.org/html/2312.03872v1" target="_blank" rel="noopener"
+ &gt;Governance Card&lt;/a&gt; documenting data governance, environmental impact, and legal compliance. That&amp;rsquo;s rare among LLM projects.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="a-two-phase-history"&gt;A Two-Phase History
+&lt;/h2&gt;&lt;p&gt;The key to understanding BigCode is to read its history in two phases.&lt;/p&gt;
+&lt;h3 id="phase-1-building-open-code-models-20222024"&gt;Phase 1: Building Open Code Models (2022–2024)
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Time&lt;/th&gt;
+					&lt;th&gt;Output&lt;/th&gt;
+					&lt;th&gt;Notes&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2022&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;The Stack v1&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;6.4 TB, 358 languages, open code dataset&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2023.05&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;StarCoder&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;15.5B, 80+ languages, first large-scale open code LLM&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2024.02&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;The Stack v2&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;67.5 TB, 600+ languages, 7× v1&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2024.02&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;StarCoder2&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;3B / 7B / 15B, trained on Stack v2&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2024 H2&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;StarCoder2-15B-Instruct&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Self-aligned via SelfCodeAlign — the first code instruct model with zero GPT-4 distillation&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The core philosophy of this phase was &lt;strong&gt;full transparency&lt;/strong&gt;: traceable data (via Software Heritage persistent SWHIDs), open-source code, OpenRAIL-licensed weights, and even recorded training carbon footprint. This is what sets BigCode apart from CodeLlama / DeepSeek-Coder — those only open their weights while keeping training data closed.&lt;/p&gt;
+&lt;h3 id="phase-2-pivoting-to-evaluation-late-2024present"&gt;Phase 2: Pivoting to Evaluation (Late 2024–Present)
+&lt;/h3&gt;&lt;p&gt;The model line stalled, but the project didn&amp;rsquo;t — it pivoted to &lt;strong&gt;building evaluations for code models&lt;/strong&gt;:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Time&lt;/th&gt;
+					&lt;th&gt;Output&lt;/th&gt;
+					&lt;th&gt;What it is&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2024.06 paper / ICLR 2025&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;BigCodeBench&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Static benchmark of 1,140 real programming tasks&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2025.02&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;BigCodeArena&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Chatbot Arena with real code execution&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;2025.10&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;BigCodeReward&lt;/strong&gt; + AutoCodeArena&lt;/td&gt;
+					&lt;td&gt;Evaluating reward models on code judgment&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="current-pillars-three-evaluation-efforts"&gt;Current Pillars: Three Evaluation Efforts
+&lt;/h2&gt;&lt;h3 id="1-bigcodebench--static-benchmark"&gt;1. BigCodeBench — Static Benchmark
+&lt;/h3&gt;&lt;p&gt;Designed to &lt;strong&gt;go beyond HumanEval&lt;/strong&gt;. HumanEval / MBPP are saturated (strong models hit 90%+), so they no longer differentiate models. BigCodeBench&amp;rsquo;s design:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;1,140 function-level tasks&lt;/strong&gt; requiring calls to &lt;strong&gt;723 functions across 139 Python libraries&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Spanning 7 domains&lt;/li&gt;
+&lt;li&gt;Two splits: Complete (code completion) and Instruct (plain natural language)&lt;/li&gt;
+&lt;li&gt;Execution-based verification — it actually runs tests rather than asking humans to read code&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;How hard is it? Even top models score barely above 30% Pass@1:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Model&lt;/th&gt;
+					&lt;th&gt;BigCodeBench Pass@1&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DeepSeek-V3&lt;/td&gt;
+					&lt;td&gt;~33–34&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;GPT-4.1&lt;/td&gt;
+					&lt;td&gt;32.8&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Qwen2.5-Max&lt;/td&gt;
+					&lt;td&gt;32.5&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Qwen2.5-Coder-32B&lt;/td&gt;
+					&lt;td&gt;30.8&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Claude-3.5-Sonnet&lt;/td&gt;
+					&lt;td&gt;30.4&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;On the Instruct split, 278 tasks are &lt;strong&gt;unsolved by any model&lt;/strong&gt; and only 14 are solved by all — high ceiling, good discriminative power.&lt;/p&gt;
+&lt;h3 id="2-bigcodearena--human-combat-arena"&gt;2. BigCodeArena — Human Combat Arena
+&lt;/h3&gt;&lt;p&gt;Similar to LMSYS Chatbot Arena, but with a key difference: it &lt;strong&gt;actually executes the code&lt;/strong&gt; before asking humans to vote. It supports multiple languages, frameworks, multi-turn dialogue, and interactive testing. This solves the old problem that &amp;ldquo;HumanEval is too easy, but humans reading code is unreliable.&amp;rdquo;&lt;/p&gt;
+&lt;h3 id="3-bigcodereward--autocodearena--automated-evaluation"&gt;3. BigCodeReward / AutoCodeArena — Automated Evaluation
+&lt;/h3&gt;&lt;p&gt;Evaluates how well reward models judge code (analogous to RewardBench for general RMs). The core finding: &lt;strong&gt;adding execution results dramatically improves a reward model&amp;rsquo;s judgment&lt;/strong&gt; — reading code alone is unreliable. AutoCodeArena builds an automated benchmark on this insight, replacing costly human arenas.&lt;/p&gt;
+&lt;h2 id="a-notable-phenomenon"&gt;A Notable Phenomenon
+&lt;/h2&gt;&lt;p&gt;The BigCodeArena leaderboard features GPT, Claude, Qwen, DeepSeek, GLM, and Kimi — closed / open-weights models — while &lt;strong&gt;StarCoder2 itself is essentially absent from the top rankings&lt;/strong&gt;. BigCode completed the transition from &amp;ldquo;the player being evaluated&amp;rdquo; to &amp;ldquo;the referee scoring everyone.&amp;rdquo;&lt;/p&gt;
+&lt;h2 id="why-the-pivot-to-evaluation"&gt;Why the Pivot to Evaluation
+&lt;/h2&gt;&lt;p&gt;Based on public information, my read:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;The open-source code-model space got crushed.&lt;/strong&gt; Qwen-Coder and DeepSeek-Coder, despite closed data, far outperform what an academic collaboration can sustain in both performance and iteration speed. Chasing StarCoder3 SOTA had poor ROI.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Code evaluation was a genuine gap.&lt;/strong&gt; HumanEval is saturated; SWE-bench is repo-level and heavy. The middle ground — &lt;strong&gt;function-level + multi-tool calls + execution verification&lt;/strong&gt; — was unoccupied, and BigCode seized it.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;It fits the team&amp;rsquo;s strengths.&lt;/strong&gt; BigCode&amp;rsquo;s evaluation-harness was already the de facto community standard for code evaluation. Building evaluations suited the team better than competing on training compute.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="historical-contribution-and-current-position"&gt;Historical Contribution and Current Position
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Dimension&lt;/th&gt;
+					&lt;th&gt;Assessment&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Open code model pioneer&lt;/td&gt;
+					&lt;td&gt;StarCoder / StarCoder2 were the first large-scale fully open code LLMs — foundational work&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Data transparency benchmark&lt;/td&gt;
+					&lt;td&gt;The Stack v1/v2 + SWHID tracing — still unmatched&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Current model line&lt;/td&gt;
+					&lt;td&gt;Stalled; StarCoder2 has fallen behind open-weights rivals&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Current evaluation line&lt;/td&gt;
+					&lt;td&gt;Active and leading; BigCodeBench is now a de facto code-eval standard&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="further-reading"&gt;Further Reading
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.bigcode-project.org/" target="_blank" rel="noopener"
+ &gt;BigCode official site&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2402.19173" target="_blank" rel="noopener"
+ &gt;StarCoder2 paper (arXiv 2402.19173)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2406.15877" target="_blank" rel="noopener"
+ &gt;BigCodeBench paper (arXiv 2406.15877, ICLR 2025)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://bigcode-bench.github.io/" target="_blank" rel="noopener"
+ &gt;BigCodeBench leaderboard&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://huggingface.co/blog/bigcode/arena" target="_blank" rel="noopener"
+ &gt;BigCodeArena blog&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4</title><link>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</link><pubDate>Wed, 08 Jul 2026 11:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</guid><description>&lt;img src="https://svtter.cn/p/oh-my-pi-%E5%AE%9E%E7%8E%B0%E4%BA%86-claude-loop-engineering-%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BE%AA%E7%8E%AF4-%E7%A7%8D%E9%87%8C-2-%E7%A7%8D/pics/cover_20260708.jpg" alt="Featured image of post oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4" /&gt;&lt;p&gt;Someone on X shared Claude&amp;rsquo;s official &lt;em&gt;Loop Engineering&lt;/em&gt; intro post, summarizing that the article splits loops into four types. A natural follow-up question: &lt;strong&gt;oh-my-pi (omp), the open-source Claude Code competitor — which of those does it actually implement?&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;This post is not about the concept itself (the tweet and the official article already cover that). It does exactly one thing: &lt;strong&gt;take the locally installed omp 16.3.11 and verify each type, with evidence.&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="aligning-on-the-four-types-first"&gt;Aligning on the four types first
 &lt;/h2&gt;&lt;table&gt;
