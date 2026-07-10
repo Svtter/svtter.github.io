@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>文件监控 on Svtter's Blog</title><link>https://svtter.cn/tags/%E6%96%87%E4%BB%B6%E7%9B%91%E6%8E%A7/</link><description>Recent content in 文件监控 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 10 Jul 2026 20:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/%E6%96%87%E4%BB%B6%E7%9B%91%E6%8E%A7/index.xml" rel="self" type="application/rss+xml"/><item><title>Linux 中的 inotify 是什么</title><link>https://svtter.cn/p/linux-%E4%B8%AD%E7%9A%84-inotify-%E6%98%AF%E4%BB%80%E4%B9%88/</link><pubDate>Fri, 10 Jul 2026 20:00:00 +0800</pubDate><guid>https://svtter.cn/p/linux-%E4%B8%AD%E7%9A%84-inotify-%E6%98%AF%E4%BB%80%E4%B9%88/</guid><description>&lt;p&gt;如果你做过开发工具的热重载、文件同步，或者写过日志实时监控的脚本，大概率绕不开一个东西——&lt;strong&gt;inotify&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;它是 Linux 内核给你的一个「文件系统变化订阅器」：注册一个文件描述符，告诉它盯着哪个目录，之后有任何风吹草动，它就通过这个 fd 把事件推送给你，免去了 busy polling。&lt;/p&gt;
+&lt;p&gt;本文聊聊它的原理、用法和踩坑点。&lt;/p&gt;
+&lt;h2 id="是什么"&gt;是什么
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;inotify&lt;/strong&gt;（inode notify）是 Linux 内核提供的一种&lt;strong&gt;文件系统事件监控机制&lt;/strong&gt;（kernel subsystem），自 Linux 2.6.13 起被引入。它允许应用程序&lt;strong&gt;实时监控文件或目录的变化&lt;/strong&gt;，而无需通过轮询（polling）这种低效方式。&lt;/p&gt;
+&lt;h2 id="核心概念"&gt;核心概念
+&lt;/h2&gt;&lt;p&gt;inotify 基于**文件描述符（fd）**工作，应用程序通过一组系统调用与它交互：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;系统调用&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;inotify_init()&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;创建一个 inotify 实例（旧接口，无 flags）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;inotify_init1()&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;创建一个 inotify 实例，可指定 &lt;code&gt;IN_NONBLOCK&lt;/code&gt;/&lt;code&gt;IN_CLOEXEC&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;inotify_add_watch()&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;把某个文件/目录加入监控，返回一个 watch 描述符（wd）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;read()&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;从 fd 读取发生的事件&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;inotify_rm_watch()&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;移除监控&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;close()&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;关闭 fd，自动清理所有监控&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="可监控的事件类型"&gt;可监控的事件类型
+&lt;/h2&gt;&lt;p&gt;常见的 event mask 包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;IN_CREATE&lt;/code&gt; / &lt;code&gt;IN_DELETE&lt;/code&gt; —— 文件/目录被创建、删除&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IN_MODIFY&lt;/code&gt; —— 文件内容被修改&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IN_MOVED_FROM&lt;/code&gt; / &lt;code&gt;IN_MOVED_TO&lt;/code&gt; —— 移动（重命名）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IN_ATTRIB&lt;/code&gt; —— 属性变化（权限、属主、时间戳等）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IN_ACCESS&lt;/code&gt; / &lt;code&gt;IN_CLOSE_WRITE&lt;/code&gt; / &lt;code&gt;IN_OPEN&lt;/code&gt; —— 访问、打开、关闭&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IN_DELETE_SELF&lt;/code&gt; / &lt;code&gt;IN_MOVE_SELF&lt;/code&gt; —— 被监控对象自身被删除/移动&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;还可以组合 &lt;code&gt;IN_ALL_EVENTS&lt;/code&gt;、&lt;code&gt;IN_ONLYDIR&lt;/code&gt;、&lt;code&gt;IN_DONT_FOLLOW&lt;/code&gt; 等控制标志。&lt;/p&gt;
+&lt;h2 id="一个最小示例c"&gt;一个最小示例（C）
+&lt;/h2&gt;&lt;p&gt;阻塞模式下，&lt;code&gt;read()&lt;/code&gt; 会一直等到有事件才返回（教学场景最直观）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-c" data-lang="c"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;sys/inotify.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;stdlib.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 0 = 阻塞模式；要非阻塞请传 IN_NONBLOCK，但需配合 poll/select + 循环使用
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;fd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;inotify_init1&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nf"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;inotify_init1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="nf"&gt;exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 监控当前目录；换成你想监控的路径即可
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;wd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;inotify_add_watch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;.&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;IN_CREATE&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;IN_MODIFY&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;IN_DELETE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;wd&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nf"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;inotify_add_watch&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="nf"&gt;exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4096&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 阻塞读，直到有事件到来
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;ssize_t&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nf"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nf"&gt;perror&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;read&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="nf"&gt;exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// read 读出来的是变长的 inotify_event 数组
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;buf&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;len&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;inotify_event&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ev&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;inotify_event&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nf"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;wd=%d mask=%u name=%s&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;wd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nf"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;wd=%d mask=%u (no name)&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;wd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;inotify_event&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;ev&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nf"&gt;inotify_rm_watch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;wd&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nf"&gt;close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fd&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;关键点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;read()&lt;/code&gt; 读出来的是变长的 &lt;code&gt;inotify_event&lt;/code&gt; 结构体数组，按 &lt;code&gt;sizeof(struct inotify_event) + ev-&amp;gt;len&lt;/code&gt; 步进解析。&lt;/li&gt;
+&lt;li&gt;当 &lt;code&gt;ev-&amp;gt;len == 0&lt;/code&gt;（如 &lt;code&gt;IN_DELETE_SELF&lt;/code&gt; 这类被监控对象自身的事件）时 &lt;code&gt;name&lt;/code&gt; 无效，要单独处理。&lt;/li&gt;
+&lt;li&gt;示例用阻塞模式 + 单次 &lt;code&gt;read()&lt;/code&gt; 演示「等到一个事件就处理」；生产代码里通常会包一层 &lt;code&gt;while&lt;/code&gt; 循环持续读，或非阻塞 fd 配合 &lt;code&gt;poll&lt;/code&gt;/&lt;code&gt;select&lt;/code&gt;/&lt;code&gt;epoll&lt;/code&gt; 做事件循环。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="命令行工具"&gt;命令行工具
+&lt;/h2&gt;&lt;p&gt;不想写代码也能用，&lt;code&gt;inotify-tools&lt;/code&gt; 提供了两个好用的命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 安装&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo apt install inotify-tools
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 监控某个目录的所有事件&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;inotifywait -m -r /path/to/dir
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 只关心修改和创建&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;inotifywait -m -e modify,create /var/log
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;排障、写临时脚本时非常顺手。&lt;/p&gt;
+&lt;h2 id="典型使用场景"&gt;典型使用场景
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;开发工具热重载&lt;/strong&gt; —— 监控源码变化自动重启服务，比如 &lt;code&gt;nodemon&lt;/code&gt;、&lt;code&gt;vite&lt;/code&gt;、&lt;code&gt;webpack-dev-server&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;守护进程 / 同步工具&lt;/strong&gt; —— &lt;code&gt;rsync&lt;/code&gt; 类增量同步、Dropbox / 网盘客户端的文件变动检测。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;桌面环境&lt;/strong&gt; —— 文件管理器（Nautilus、Dolphin）自动刷新目录视图。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;日志监控&lt;/strong&gt; —— 实时 tail 日志文件，新行写入即推送。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;安全审计 / 入侵检测&lt;/strong&gt; —— 监控关键配置目录是否被篡改。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="使用注意与限制"&gt;使用注意与限制
+&lt;/h2&gt;&lt;p&gt;这一节是真正值钱的部分，实际项目里踩过的坑基本都在这。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;不递归。&lt;/strong&gt; 监控目录时，inotify 只报告直接子项的变化。要监控整棵目录树，你得自己递归 &lt;code&gt;inotify_add_watch&lt;/code&gt;。好在主流库都帮你封装了这点。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;资源上限。&lt;/strong&gt; 受内核参数约束，单实例能加的 watch 数量是有限的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 查看当前上限&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cat /proc/sys/fs/inotify/max_user_watches &lt;span class="c1"&gt;# 默认常为 8192 或 524288&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 调大&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo sysctl fs.inotify.max_user_watches&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;524288&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;超出会报 &lt;code&gt;ENOSPC&lt;/code&gt;（注意是 ENOSPC 不是 EMFILE，第一次遇到很容易懵）。在大项目里用 VSCode、WebStorm 时报这个错很常见，根因就是 watch 数被打满了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;事件可能被合并。&lt;/strong&gt; 内核不保证每个字节写入都对应一个 &lt;code&gt;IN_MODIFY&lt;/code&gt; 事件，短时间内多次修改可能被合并成一条。事件读取跟不上时队列还会溢出，此时内核会发一个 &lt;code&gt;IN_Q_OVERFLOW&lt;/code&gt; 事件（mask 中带这个位、wd 为 -1）提醒你「有事件丢了」，这也是为什么在生产代码里要尽快消费事件，别让 read 长时间不读。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;非 Linux 系统要适配。&lt;/strong&gt; macOS 用 &lt;code&gt;kqueue&lt;/code&gt; / FSEvents，Windows 用 &lt;code&gt;ReadDirectoryChangesW&lt;/code&gt;。跨平台时别直接裸调 inotify，用封装库更省心。&lt;/p&gt;
+&lt;h2 id="跨平台封装库"&gt;跨平台封装库
+&lt;/h2&gt;&lt;p&gt;注意 C/C++ 这块：&lt;code&gt;libinotify&lt;/code&gt; / &lt;code&gt;inotify-tools&lt;/code&gt; 本质是 Linux inotify 的便利封装，并不跨平台。要真正在 macOS/Windows 之间统一，用 &lt;code&gt;libuv&lt;/code&gt;、&lt;code&gt;boost::asio&lt;/code&gt; 这类事件循环库更合适。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;语言&lt;/th&gt;
+					&lt;th&gt;Linux 原生封装&lt;/th&gt;
+					&lt;th&gt;跨平台方案&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;C/C++&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;libinotify&lt;/code&gt;、&lt;code&gt;inotify-tools&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;libuv&lt;/code&gt;、&lt;code&gt;boost::asio&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Node.js&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;fs.watch&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;chokidar&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Python&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;pyinotify&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;watchdog&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Go&lt;/td&gt;
+					&lt;td&gt;—&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;fsnotify/fsnotify&lt;/code&gt;（内部按平台分派）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Rust&lt;/td&gt;
+					&lt;td&gt;—&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;notify&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;理解了 inotify 的原理，再去看 &lt;code&gt;chokidar&lt;/code&gt;、&lt;code&gt;fsnotify&lt;/code&gt;、&lt;code&gt;notify&lt;/code&gt; 这类库的实现就会顺畅很多——它们在不同平台上分别落到 inotify（Linux）、kqueue/FSEvents（macOS）、&lt;code&gt;ReadDirectoryChangesW&lt;/code&gt;（Windows），抽象层之下就是这套机制。&lt;/p&gt;
+&lt;h2 id="小结"&gt;小结
+&lt;/h2&gt;&lt;p&gt;一句话：&lt;strong&gt;inotify 是 Linux 内核内置的「文件系统变化订阅器」&lt;/strong&gt;——注册一个 fd，告诉它盯着哪里，之后的变化就以事件形式推送过来，免去了 busy polling。&lt;/p&gt;
+&lt;p&gt;它是几乎所有文件热重载、实时同步工具在 Linux 上的底层基石。&lt;/p&gt;</description></item></channel></rss>
