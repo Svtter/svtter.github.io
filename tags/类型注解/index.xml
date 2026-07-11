@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>类型注解 on Svtter's Blog</title><link>https://svtter.cn/tags/%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3/</link><description>Recent content in 类型注解 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 11 Jul 2026 12:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3/index.xml" rel="self" type="application/rss+xml"/><item><title>Python 类型注解：object 和 Any 不是一回事</title><link>https://svtter.cn/p/python-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3object-%E5%92%8C-any-%E4%B8%8D%E6%98%AF%E4%B8%80%E5%9B%9E%E4%BA%8B/</link><pubDate>Sat, 11 Jul 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/p/python-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3object-%E5%92%8C-any-%E4%B8%8D%E6%98%AF%E4%B8%80%E5%9B%9E%E4%BA%8B/</guid><description>&lt;p&gt;在做项目的 mypy strict 模式升级时，遇到一个微妙的类型选择：函数需要接受任意类型的输入，再用 &lt;code&gt;isinstance&lt;/code&gt; 做防御性检查。参数该标 &lt;code&gt;object&lt;/code&gt; 还是 &lt;code&gt;Any&lt;/code&gt;？&lt;/p&gt;
+&lt;p&gt;看起来差不多，实际上差别很大。&lt;/p&gt;
+&lt;h2 id="一句话总结"&gt;一句话总结
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;object&lt;/code&gt;&lt;/strong&gt; = 接受任何类型，但你必须先 &lt;code&gt;isinstance&lt;/code&gt; 收窄才能用。mypy 会&lt;strong&gt;强制&lt;/strong&gt;保护后续操作。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;Any&lt;/code&gt;&lt;/strong&gt; = 完全关掉这个变量的类型检查。等于在每个访问点加了 &lt;code&gt;# type: ignore&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="代码对比"&gt;代码对比
+&lt;/h2&gt;&lt;h3 id="用-object"&gt;用 &lt;code&gt;object&lt;/code&gt;
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;should_require_draft&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="nb"&gt;isinstance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;False&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# mypy 知道这里 query_text 已经收窄为 str&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# .strip() / .lower() 都有类型保护&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;normalized&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strip&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;mypy 行为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;query_text.strip()&lt;/code&gt; 在 isinstance 之前写 → ❌ 报错 &lt;code&gt;object has no attribute strip&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;query_text.strip()&lt;/code&gt; 在 isinstance 之后写 → ✅ 安全，mypy 知道是 &lt;code&gt;str&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="用-any"&gt;用 &lt;code&gt;Any&lt;/code&gt;
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;should_require_draft&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Any&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# mypy 对 query_text 完全放弃检查&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 下面这行即使方法不存在也不报错：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;normalized&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;nonexistent_method&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 运行时炸 AttributeError，但 mypy 静默放行&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;Any&lt;/code&gt; 本质上是类型系统的逃生舱（escape hatch）。&lt;code&gt;isinstance&lt;/code&gt; 收窄对 mypy 来说没有意义——因为它本来就不检查。&lt;/p&gt;
+&lt;h2 id="什么时候用哪个"&gt;什么时候用哪个
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;场景&lt;/th&gt;
+					&lt;th&gt;选择&lt;/th&gt;
+					&lt;th&gt;原因&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;接受任意输入 + isinstance 守卫 + 收窄后使用&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;object&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;isinstance 后获得类型保护&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;SDK 回调、动态 JSON、无法确定的第三方返回值&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;Any&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;真的无法标注，需要逃生舱&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;**kwargs&lt;/code&gt; 动态字段&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;Any&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;字典值类型不确定&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Mixin / Protocol 边界&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;Any&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;类型系统表达不了&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="真实案例"&gt;真实案例
+&lt;/h2&gt;&lt;p&gt;升级 mypy strict 时，有几个函数的参数标了 &lt;code&gt;str&lt;/code&gt;，mypy 的 &lt;code&gt;warn_unreachable&lt;/code&gt; 报里面的 &lt;code&gt;isinstance(x, str)&lt;/code&gt; 检查不可达（因为参数已经是 str 了）。最初的修复方案是&lt;strong&gt;删掉 isinstance 守卫&lt;/strong&gt;——但这破坏了运行时防御，测试变红。&lt;/p&gt;
+&lt;p&gt;正确做法是把参数类型从 &lt;code&gt;str&lt;/code&gt; 改成 &lt;code&gt;object&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 之前：参数标 str，isinstance 守卫被 mypy 判为 unreachable&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;should_require_draft&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;normalized&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strip&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 错误修复：删守卫 → 测试传 None/int 时崩溃&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 正确修复：放宽参数为 object，守卫恢复可达&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;should_require_draft&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="nb"&gt;isinstance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;False&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;normalized&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;query_text&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strip&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样既满足了 mypy strict（isinstance 检查可达），又保留了运行时防御（非 str 输入安全返回），还获得了 isinstance 后的类型保护。&lt;/p&gt;
+&lt;h2 id="深层原因"&gt;深层原因
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;object&lt;/code&gt; 是 Python 类型体系的&lt;strong&gt;顶端类型&lt;/strong&gt;（top type）——所有类型都是 &lt;code&gt;object&lt;/code&gt; 的子类型。mypy 知道 &lt;code&gt;object&lt;/code&gt; 只有 &lt;code&gt;__init__&lt;/code&gt;、&lt;code&gt;__str__&lt;/code&gt; 等所有对象共有的方法，其他都要收窄。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Any&lt;/code&gt; 是&lt;strong&gt;渐进类型检查&lt;/strong&gt;（gradual typing）的核心机制——它表示「这个边界处静态类型和动态类型交接」，mypy 会让 Any 污染传播：任何与 Any 交互的值都会被降级为 Any，类型保护就此中断。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="c1"&gt;# ❌ object 不支持 +&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;g&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Any&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="c1"&gt;# ✅ Any 放行（运行时 x 是 str 会 TypeError）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="结论"&gt;结论
+&lt;/h2&gt;&lt;p&gt;如果你刚开了 strict 模式，请默认用 &lt;code&gt;object&lt;/code&gt;。只在真正无法标注的边界（第三方 SDK、动态解析的 JSON）才用 &lt;code&gt;Any&lt;/code&gt;。用 &lt;code&gt;Any&lt;/code&gt; 的地方越多，strict 模式的价值就越低——等于花钱买了保险却不去理赔。&lt;/p&gt;</description></item></channel></rss>

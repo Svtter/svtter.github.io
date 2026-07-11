@@ -1,583 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/en/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 10 Jul 2026 16:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/index.xml" rel="self" type="application/rss+xml"/><item><title>OLMo vs LLM360: Two Routes to Open-Source LLMs</title><link>https://svtter.cn/en/p/olmo-vs-llm360-two-routes-to-open-source-llms/</link><pubDate>Fri, 10 Jul 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/olmo-vs-llm360-two-routes-to-open-source-llms/</guid><description>&lt;img src="https://svtter.cn/p/olmo-%E4%B8%8E-llm360%E5%BC%80%E6%BA%90%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%B8%A4%E6%9D%A1%E8%B7%AF%E7%BA%BF/pics/olmo-llm360-cover.svg" alt="Featured image of post OLMo vs LLM360: Two Routes to Open-Source LLMs" /&gt;&lt;p&gt;In the &amp;ldquo;fully open-source&amp;rdquo; LLM lane, two projects are almost always mentioned together: &lt;strong&gt;OLMo&lt;/strong&gt; (Allen Institute for AI, USA) and &lt;strong&gt;LLM360&lt;/strong&gt; (MBZUAI, UAE). Both advocate releasing training data, code, weights, and even intermediate checkpoints — yet they differ in generation, scale, performance, and iteration cadence. This post lays them side by side so newcomers can build a full picture quickly.&lt;/p&gt;
-&lt;h2 id="tldr"&gt;TL;DR
-&lt;/h2&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Dimension&lt;/th&gt;
-					&lt;th&gt;OLMo family&lt;/th&gt;
-					&lt;th&gt;LLM360&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Lead org&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;Allen Institute for AI (AI2)&lt;/strong&gt;, US nonprofit&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;MBZUAI&lt;/strong&gt; (+ Petuum + Cerebras), UAE academic&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Key figure&lt;/td&gt;
-					&lt;td&gt;Dirk Groeneveld, Matt Gardner, et al.&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;Eric Xing&lt;/strong&gt; — MBZUAI President / Petuum founder&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Latest version&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;OLMo 3 / 3.1&lt;/strong&gt; (2025-11/12)&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;K2-V2&lt;/strong&gt; (early 2026, 70B dense)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Scale range&lt;/td&gt;
-					&lt;td&gt;7B / 13B / 32B (+ multimodal Molmo)&lt;/td&gt;
-					&lt;td&gt;7B (Amber/CrystalCoder) → 70B (K2-V2)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Performance&lt;/td&gt;
-					&lt;td&gt;Strongest in the fully-open camp, approaching Qwen 3 at same size&lt;/td&gt;
-					&lt;td&gt;Gen-1 was weak; K2-V2 catches up at 70B&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Transparency&lt;/td&gt;
-					&lt;td&gt;Fully open (data + code + checkpoints)&lt;/td&gt;
-					&lt;td&gt;Fully open — the &amp;ldquo;360°&amp;rdquo; slogan goes further&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;One-liner: &lt;strong&gt;for benchmark performance pick OLMo; for studying the training process both work, and LLM360&amp;rsquo;s K2-V2 is a single-point flagship at 70B.&lt;/strong&gt;&lt;/p&gt;
-&lt;h2 id="the-olmo-family-ai2"&gt;The OLMo Family (AI2)
-&lt;/h2&gt;&lt;h3 id="one-liner-positioning"&gt;One-liner positioning
-&lt;/h3&gt;&lt;p&gt;The best-known fully-open LLM family in academia. Every generation releases pretraining data, code, and intermediate checkpoints. It has iterated from OLMo 1 (2024-02) to OLMo 3 (2025-11), and expanded into vision/multimodal (Molmo / OLMoVision).&lt;/p&gt;
-&lt;h3 id="olmo-2-7b--13b-2024-11"&gt;OLMo 2 (7B / 13B, 2024-11)
-&lt;/h3&gt;&lt;p&gt;Officially positioned as &amp;ldquo;the best fully-open model to date,&amp;rdquo; benchmarked against Llama 3.1, Gemma 2, and Qwen 2.5 at the same size. Core evaluations span 11 academic benchmarks: Average / ARC-C / HellaSwag / WinoGrande / MMLU / DROP / NQ / AGIEval / GSM8k / MMLUPro / TriviaQA.&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Model&lt;/th&gt;
-					&lt;th&gt;Avg&lt;/th&gt;
-					&lt;th&gt;ARC-C&lt;/th&gt;
-					&lt;th&gt;HellaSwag&lt;/th&gt;
-					&lt;th&gt;MMLU&lt;/th&gt;
-					&lt;th&gt;DROP&lt;/th&gt;
-					&lt;th&gt;GSM8k&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;OLMo-2-1124-7B&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;62.9&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;79.8&lt;/td&gt;
-					&lt;td&gt;83.8&lt;/td&gt;
-					&lt;td&gt;63.7&lt;/td&gt;
-					&lt;td&gt;60.8&lt;/td&gt;
-					&lt;td&gt;67.5&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;OLMo-2-1124-13B&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;68.3&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;83.5&lt;/td&gt;
-					&lt;td&gt;86.4&lt;/td&gt;
-					&lt;td&gt;67.5&lt;/td&gt;
-					&lt;td&gt;70.7&lt;/td&gt;
-					&lt;td&gt;75.1&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Llama-3.1-8B&lt;/td&gt;
-					&lt;td&gt;61.8&lt;/td&gt;
-					&lt;td&gt;79.5&lt;/td&gt;
-					&lt;td&gt;81.6&lt;/td&gt;
-					&lt;td&gt;66.9&lt;/td&gt;
-					&lt;td&gt;56.4&lt;/td&gt;
-					&lt;td&gt;56.5&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Qwen-2.5-7B&lt;/td&gt;
-					&lt;td&gt;67.4&lt;/td&gt;
-					&lt;td&gt;89.5&lt;/td&gt;
-					&lt;td&gt;89.7&lt;/td&gt;
-					&lt;td&gt;74.4&lt;/td&gt;
-					&lt;td&gt;55.8&lt;/td&gt;
-					&lt;td&gt;81.5&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Gemma-2-9B&lt;/td&gt;
-					&lt;td&gt;67.8&lt;/td&gt;
-					&lt;td&gt;89.5&lt;/td&gt;
-					&lt;td&gt;87.3&lt;/td&gt;
-					&lt;td&gt;70.6&lt;/td&gt;
-					&lt;td&gt;63.0&lt;/td&gt;
-					&lt;td&gt;70.1&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;A few key observations:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;vs Llama-3.1-8B&lt;/strong&gt;: OLMo-2-7B averages 62.9 vs 61.8 — roughly tied or slightly ahead, but at only ~1/4 the training FLOPs. Better compute efficiency.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;vs Qwen-2.5-7B&lt;/strong&gt;: trails by ~4-5 points (Qwen is clearly stronger on MMLU, ARC-C, GSM8k), but Qwen also uses ~4.5× the FLOPs.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Generational leap&lt;/strong&gt;: nearly every benchmark doubled vs the original OLMo-7B (GSM8k 9.2 → 67.5, MMLU 28.3 → 63.7).&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Weak spots&lt;/strong&gt;: MMLUPro (31-35) and NQ (factual QA) are on the weaker side.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id="olmo-3--31-2025-11--2025-12"&gt;OLMo 3 / 3.1 (2025-11 / 2025-12)
-&lt;/h3&gt;&lt;p&gt;This is OLMo&amp;rsquo;s biggest generational jump yet. It&amp;rsquo;s no longer just &amp;ldquo;a set of weights&amp;rdquo; — it open-sources the &lt;strong&gt;entire model flow&lt;/strong&gt;: data, code, and checkpoints at every stage, all forkable.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Four product lines&lt;/strong&gt;:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Line&lt;/th&gt;
-					&lt;th&gt;Size&lt;/th&gt;
-					&lt;th&gt;Purpose&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;OLMo 3-Base&lt;/td&gt;
-					&lt;td&gt;7B / 32B&lt;/td&gt;
-					&lt;td&gt;Base model — strongest fully-open base&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;OLMo 3-Think&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;7B / 32B&lt;/td&gt;
-					&lt;td&gt;Flagship reasoning model with inspectable reasoning traces&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;OLMo 3-Instruct&lt;/td&gt;
-					&lt;td&gt;7B&lt;/td&gt;
-					&lt;td&gt;Chat / tool use&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;OLMo 3-RL Zero&lt;/td&gt;
-					&lt;td&gt;7B&lt;/td&gt;
-					&lt;td&gt;Starting point for RL research&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;OLMo 3-Think 32B core benchmarks&lt;/strong&gt;:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Benchmark&lt;/th&gt;
-					&lt;th&gt;OLMo 3-Think 32B&lt;/th&gt;
-					&lt;th&gt;Qwen 3 32B&lt;/th&gt;
-					&lt;th&gt;DeepSeek R1 Distill 32B&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;MATH&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;96.1&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;95.4&lt;/td&gt;
-					&lt;td&gt;92.6&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;AIME 2024&lt;/td&gt;
-					&lt;td&gt;76.8&lt;/td&gt;
-					&lt;td&gt;80.8&lt;/td&gt;
-					&lt;td&gt;70.3&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;AIME 2025&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;72.5&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;70.9&lt;/td&gt;
-					&lt;td&gt;56.3&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;MMLU-Pro&lt;/td&gt;
-					&lt;td&gt;75.9&lt;/td&gt;
-					&lt;td&gt;—&lt;/td&gt;
-					&lt;td&gt;—&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;GPQA (Diamond)&lt;/td&gt;
-					&lt;td&gt;61.0&lt;/td&gt;
-					&lt;td&gt;67.3&lt;/td&gt;
-					&lt;td&gt;61.8&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;IFEval&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;89.0&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;86.5&lt;/td&gt;
-					&lt;td&gt;78.7&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;HumanEvalPlus&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;91.4&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;91.2&lt;/td&gt;
-					&lt;td&gt;92.3&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;OLMo 3-Think 7B&lt;/strong&gt;: MATH 94.4 ties Qwen 3 8B; AIME 2024/2025 within a few points. Instruct 7B even beats Qwen 3 8B on Safety (87.3 vs 78.0).&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The 2025-12-12 (3.1) update&lt;/strong&gt;: extended the 32B Think&amp;rsquo;s RL training by another 21 days, yielding AIME +5, IFEval +4, IFBench +20, plus the first large-size Instruct (32B).&lt;/p&gt;
-&lt;h3 id="olmo-hybrid-2026-03-an-architecture-research-branch"&gt;OLMo Hybrid (2026-03, an architecture-research branch)
-&lt;/h3&gt;&lt;p&gt;Note this is &lt;strong&gt;not&lt;/strong&gt; OLMo 4 (OLMo 4 is &lt;strong&gt;unannounced&lt;/strong&gt;). It&amp;rsquo;s a controlled experiment: take the OLMo 3 7B recipe as the control, &lt;strong&gt;change only the architecture&lt;/strong&gt; (transformer layers → hybrid SSM/attention, Mamba-style), keeping all data/code/hyperparams identical.&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Metric&lt;/th&gt;
-					&lt;th&gt;Result&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Data efficiency&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;~2×&lt;/strong&gt; — reaches the same accuracy as OLMo 3 with 49% fewer tokens&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Compute equivalence&lt;/td&gt;
-					&lt;td&gt;1.25×&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Positioning&lt;/td&gt;
-					&lt;td&gt;Architecture research, not a product line&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;It&amp;rsquo;s the first time hybrid SSM architecture entered the mainstream open-source LLM roadmap, providing controlled evidence that hybrid models scale more efficiently than pure transformers — alongside NVIDIA Nemotron-3 and Jamba, marking &amp;ldquo;hybrid architectures moving from paper to production.&amp;rdquo;&lt;/p&gt;
-&lt;h2 id="llm360-mbzuai--petuum--cerebras"&gt;LLM360 (MBZUAI + Petuum + Cerebras)
-&lt;/h2&gt;&lt;h3 id="lead-org--positioning"&gt;Lead org &amp;amp; positioning
-&lt;/h3&gt;&lt;p&gt;LLM360 is an open research initiative co-founded by three institutions:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Org&lt;/th&gt;
-					&lt;th&gt;Role&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;MBZUAI&lt;/strong&gt; (Mohammed bin Zayed University of AI)&lt;/td&gt;
-					&lt;td&gt;Lead — Abu Dhabi, UAE, the world&amp;rsquo;s first graduate-level AI university. The K2 series is built by its Institute of Foundation Models (IFM)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;Petuum, Inc.&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;Co-founder — an AI startup founded by Eric Xing&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;Cerebras Systems&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;Compute / hardware support (wafer-scale chips)&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;The key figure is &lt;strong&gt;Eric Xing&lt;/strong&gt;: MBZUAI President, Petuum founder, former CMU professor. LLM360 and OLMo form an East/West contrast of the two academic open-source camps.&lt;/p&gt;
-&lt;p&gt;⚠️ &lt;strong&gt;Important clarification&lt;/strong&gt;: the &amp;ldquo;K2 trillion-parameter, SWE-Bench 65.8%&amp;rdquo; you often see in search results refers to &lt;strong&gt;Moonshot AI&amp;rsquo;s Kimi K2&lt;/strong&gt; (a commercial open-weight MoE, 1T total params) — &lt;strong&gt;not&lt;/strong&gt; an LLM360 product. They just share a name.&lt;/p&gt;
-&lt;h3 id="generation-1-amber--crystalcoder-both-7b-2023-12"&gt;Generation 1: Amber &amp;amp; CrystalCoder (both 7B, 2023-12)
-&lt;/h3&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Model&lt;/th&gt;
-					&lt;th&gt;Strength&lt;/th&gt;
-					&lt;th&gt;Performance&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;Amber-7B&lt;/strong&gt; (general base)&lt;/td&gt;
-					&lt;td&gt;Relatively competitive on MMLU&lt;/td&gt;
-					&lt;td&gt;ARC clearly behind peers; MT-Bench only 2.49 (weak)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;AmberChat / AmberSafe&lt;/td&gt;
-					&lt;td&gt;Chat / safety finetunes&lt;/td&gt;
-					&lt;td&gt;MT-Bench 4.95 / 4.97&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;&lt;strong&gt;CrystalCoder-7B&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;Code&lt;/td&gt;
-					&lt;td&gt;Clearly beats Amber on MMLU / HumanEval / MBPP; coding is the highlight&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Honestly, Gen-1 LLM360 was on the weak side at 7B — its value was &amp;ldquo;transparency,&amp;rdquo; not &amp;ldquo;performance.&amp;rdquo;&lt;/p&gt;
-&lt;h3 id="new-generation-k2-v2-early-2026-70b-dense"&gt;New generation: K2-V2 (early 2026, 70B dense)
-&lt;/h3&gt;&lt;p&gt;LLM360&amp;rsquo;s most important update since 2024:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Item&lt;/th&gt;
-					&lt;th&gt;Detail&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Release&lt;/td&gt;
-					&lt;td&gt;Early 2026 (marking LLM360&amp;rsquo;s 2nd anniversary)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Params&lt;/td&gt;
-					&lt;td&gt;~65–70B (dense)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;License&lt;/td&gt;
-					&lt;td&gt;Apache 2.0 (free commercial use worldwide)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Positioning&lt;/td&gt;
-					&lt;td&gt;A &amp;ldquo;360-open&amp;rdquo; fully-transparent LLM, focused as a superior base for reasoning adaptation&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;Key benchmarks (mid-4 checkpoint)&lt;/strong&gt;:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Benchmark&lt;/th&gt;
-					&lt;th&gt;K2-V2 (mid-4)&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;GPQA-Diamond&lt;/td&gt;
-					&lt;td&gt;55.1&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;GSM8K&lt;/td&gt;
-					&lt;td&gt;93.6&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;MATH&lt;/td&gt;
-					&lt;td&gt;94.7&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;There&amp;rsquo;s also &lt;strong&gt;K2 Think V2&lt;/strong&gt; (an end-to-end reasoning system built on K2-V2, positioned as &amp;ldquo;the UAE&amp;rsquo;s first fully sovereign reasoning system,&amp;rdquo; with partners including G42 and Cerebras).&lt;/p&gt;
-&lt;p&gt;⚠️ Important: K2-V2&amp;rsquo;s GPQA-Diamond 55.1 / MATH 94.7 (mid-4 checkpoint) &lt;strong&gt;can&amp;rsquo;t be directly compared&lt;/strong&gt; with OLMo 3-Think 32B — eval setups, checkpoint stages, and whether reasoning mode is on all differ. Always cite each project&amp;rsquo;s own technical report.&lt;/p&gt;
-&lt;h2 id="side-by-side-how-to-choose"&gt;Side-by-side: how to choose
-&lt;/h2&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;You want&amp;hellip;&lt;/th&gt;
-					&lt;th&gt;Recommendation&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Strongest base + reasoning model in the fully-open camp&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;OLMo 3-Think 32B&lt;/strong&gt;&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;A high-efficiency 7B at the same compute budget&lt;/td&gt;
-					&lt;td&gt;OLMo 3-Think 7B&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;A single-point 70B fully-transparent research flagship&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;LLM360 K2-V2&lt;/strong&gt;&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Pure &lt;strong&gt;coding&lt;/strong&gt; tasks with a small model&lt;/td&gt;
-					&lt;td&gt;OLMo 3 family overall (HumanEvalPlus 91.4 leads; Gen-1 CrystalCoder is outdated)&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;To &lt;strong&gt;study the training process itself&lt;/strong&gt; / do RL experiments&lt;/td&gt;
-					&lt;td&gt;Both release checkpoints; OLMo 3-Think 32B is officially &amp;ldquo;the workhorse for RL research&amp;rdquo;&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Just the absolute highest score&lt;/td&gt;
-					&lt;td&gt;Look elsewhere — Qwen 3 / DeepSeek open-weights are stronger&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id="my-take"&gt;My take
-&lt;/h2&gt;&lt;p&gt;Both projects are benchmarks of open-science spirit, but differ clearly in engineering investment and iteration cadence:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;OLMo&amp;rsquo;s generational progress is visible to the naked eye.&lt;/strong&gt; From 1 → 2 → 3, each generation raises the ceiling of the fully-open camp by a big margin, and Gen-3 has begun catching Qwen 3. AI2&amp;rsquo;s pace feels more like a product team.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;LLM360&amp;rsquo;s value is &amp;ldquo;the whole process is researchable.&amp;rdquo;&lt;/strong&gt; Gen-1 Amber/CrystalCoder was genuinely weak, but K2-V2 jumping to 70B gives it real competitive teeth. The &amp;ldquo;360°&amp;rdquo; slogan isn&amp;rsquo;t marketing — even training logs are open, making it excellent reproduction/teaching material.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Both share a weak spot: general knowledge.&lt;/strong&gt; Both lose to the strongest open-weights on MMLU / GPQA. That&amp;rsquo;s the price of full-open (including data): you can&amp;rsquo;t use high-quality proprietary data.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If you&amp;rsquo;re doing research reproduction or teaching, OLMo 2/3 + LLM360 K2-V2 are currently the two most complete textbook-grade open LLM stacks.&lt;/p&gt;
-&lt;h2 id="further-reading"&gt;Further reading
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a class="link" href="https://allenai.org/blog/olmo3" target="_blank" rel="noopener"
- &gt;OLMo 3 official blog — AI2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2501.00656" target="_blank" rel="noopener"
- &gt;&amp;ldquo;2 OLMo 2 Furious&amp;rdquo; technical report (arXiv:2501.00656)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://allenai.org/blog/olmohybrid" target="_blank" rel="noopener"
- &gt;Introducing OLMo Hybrid — AI2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://huggingface.co/allenai/OLMo-2-1124-7B" target="_blank" rel="noopener"
- &gt;OLMo-2-1124-7B · Hugging Face&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://www.llm360.ai/" target="_blank" rel="noopener"
- &gt;LLM360 official site&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2512.06201" target="_blank" rel="noopener"
- &gt;K2-V2 paper (arXiv:2512.06201)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/html/2312.06550v1" target="_blank" rel="noopener"
- &gt;LLM360 original paper (arXiv:2312.06550)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://mbzuai.ac.ae/news/large-language-model-k2-65b-launches-globally-setting-a-new-standard-for-sustainable-performance/" target="_blank" rel="noopener"
- &gt;MBZUAI: K2-65B launch&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Let's Talk About BigCode</title><link>https://svtter.cn/en/p/lets-talk-about-bigcode/</link><pubDate>Fri, 10 Jul 2026 11:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/lets-talk-about-bigcode/</guid><description>&lt;img src="https://svtter.cn/p/%E8%81%8A%E8%81%8A-bigcode/pics/bigcode-cover.svg" alt="Featured image of post Let's Talk About BigCode" /&gt;&lt;p&gt;While researching LLMs trained with &amp;ldquo;open architecture + open data,&amp;rdquo; one name kept coming up: &lt;strong&gt;BigCode&lt;/strong&gt;. It built some of the first fully open-source code models, and has since become the referee that scores everyone else&amp;rsquo;s code models. This post covers the whole picture — from model builder to benchmark author.&lt;/p&gt;
-&lt;h2 id="what-it-is"&gt;What It Is
-&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;BigCode&lt;/strong&gt; is an open scientific collaboration with a pure goal: &lt;strong&gt;responsibly train large language models for code&lt;/strong&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Launched&lt;/strong&gt;: September 2022&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Stewards&lt;/strong&gt;: Hugging Face + ServiceNow Research (NVIDIA joined for StarCoder2)&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Governance&lt;/strong&gt;: Co-led by Leandro von Werra (HF) and Harm de Vries (ServiceNow), with Loubna Ben Allal as a core researcher&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Scale&lt;/strong&gt;: 1,200+ community members&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Distinctive&lt;/strong&gt;: It doesn&amp;rsquo;t just ship models — it publishes a &lt;a class="link" href="https://arxiv.org/html/2312.03872v1" target="_blank" rel="noopener"
- &gt;Governance Card&lt;/a&gt; documenting data governance, environmental impact, and legal compliance. That&amp;rsquo;s rare among LLM projects.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="a-two-phase-history"&gt;A Two-Phase History
-&lt;/h2&gt;&lt;p&gt;The key to understanding BigCode is to read its history in two phases.&lt;/p&gt;
-&lt;h3 id="phase-1-building-open-code-models-20222024"&gt;Phase 1: Building Open Code Models (2022–2024)
-&lt;/h3&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Time&lt;/th&gt;
-					&lt;th&gt;Output&lt;/th&gt;
-					&lt;th&gt;Notes&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2022&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;The Stack v1&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;6.4 TB, 358 languages, open code dataset&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2023.05&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;StarCoder&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;15.5B, 80+ languages, first large-scale open code LLM&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024.02&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;The Stack v2&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;67.5 TB, 600+ languages, 7× v1&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024.02&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;StarCoder2&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;3B / 7B / 15B, trained on Stack v2&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024 H2&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;StarCoder2-15B-Instruct&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;Self-aligned via SelfCodeAlign — the first code instruct model with zero GPT-4 distillation&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;The core philosophy of this phase was &lt;strong&gt;full transparency&lt;/strong&gt;: traceable data (via Software Heritage persistent SWHIDs), open-source code, OpenRAIL-licensed weights, and even recorded training carbon footprint. This is what sets BigCode apart from CodeLlama / DeepSeek-Coder — those only open their weights while keeping training data closed.&lt;/p&gt;
-&lt;h3 id="phase-2-pivoting-to-evaluation-late-2024present"&gt;Phase 2: Pivoting to Evaluation (Late 2024–Present)
-&lt;/h3&gt;&lt;p&gt;The model line stalled, but the project didn&amp;rsquo;t — it pivoted to &lt;strong&gt;building evaluations for code models&lt;/strong&gt;:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Time&lt;/th&gt;
-					&lt;th&gt;Output&lt;/th&gt;
-					&lt;th&gt;What it is&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024.06 paper / ICLR 2025&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;BigCodeBench&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;Static benchmark of 1,140 real programming tasks&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2025.02&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;BigCodeArena&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;Chatbot Arena with real code execution&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2025.10&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;BigCodeReward&lt;/strong&gt; + AutoCodeArena&lt;/td&gt;
-					&lt;td&gt;Evaluating reward models on code judgment&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id="current-pillars-three-evaluation-efforts"&gt;Current Pillars: Three Evaluation Efforts
-&lt;/h2&gt;&lt;h3 id="1-bigcodebench--static-benchmark"&gt;1. BigCodeBench — Static Benchmark
-&lt;/h3&gt;&lt;p&gt;Designed to &lt;strong&gt;go beyond HumanEval&lt;/strong&gt;. HumanEval / MBPP are saturated (strong models hit 90%+), so they no longer differentiate models. BigCodeBench&amp;rsquo;s design:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;1,140 function-level tasks&lt;/strong&gt; requiring calls to &lt;strong&gt;723 functions across 139 Python libraries&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Spanning 7 domains&lt;/li&gt;
-&lt;li&gt;Two splits: Complete (code completion) and Instruct (plain natural language)&lt;/li&gt;
-&lt;li&gt;Execution-based verification — it actually runs tests rather than asking humans to read code&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;How hard is it? Even top models score barely above 30% Pass@1:&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Model&lt;/th&gt;
-					&lt;th&gt;BigCodeBench Pass@1&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;DeepSeek-V3&lt;/td&gt;
-					&lt;td&gt;~33–34&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;GPT-4.1&lt;/td&gt;
-					&lt;td&gt;32.8&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Qwen2.5-Max&lt;/td&gt;
-					&lt;td&gt;32.5&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Qwen2.5-Coder-32B&lt;/td&gt;
-					&lt;td&gt;30.8&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Claude-3.5-Sonnet&lt;/td&gt;
-					&lt;td&gt;30.4&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;On the Instruct split, 278 tasks are &lt;strong&gt;unsolved by any model&lt;/strong&gt; and only 14 are solved by all — high ceiling, good discriminative power.&lt;/p&gt;
-&lt;h3 id="2-bigcodearena--human-combat-arena"&gt;2. BigCodeArena — Human Combat Arena
-&lt;/h3&gt;&lt;p&gt;Similar to LMSYS Chatbot Arena, but with a key difference: it &lt;strong&gt;actually executes the code&lt;/strong&gt; before asking humans to vote. It supports multiple languages, frameworks, multi-turn dialogue, and interactive testing. This solves the old problem that &amp;ldquo;HumanEval is too easy, but humans reading code is unreliable.&amp;rdquo;&lt;/p&gt;
-&lt;h3 id="3-bigcodereward--autocodearena--automated-evaluation"&gt;3. BigCodeReward / AutoCodeArena — Automated Evaluation
-&lt;/h3&gt;&lt;p&gt;Evaluates how well reward models judge code (analogous to RewardBench for general RMs). The core finding: &lt;strong&gt;adding execution results dramatically improves a reward model&amp;rsquo;s judgment&lt;/strong&gt; — reading code alone is unreliable. AutoCodeArena builds an automated benchmark on this insight, replacing costly human arenas.&lt;/p&gt;
-&lt;h2 id="a-notable-phenomenon"&gt;A Notable Phenomenon
-&lt;/h2&gt;&lt;p&gt;The BigCodeArena leaderboard features GPT, Claude, Qwen, DeepSeek, GLM, and Kimi — closed / open-weights models — while &lt;strong&gt;StarCoder2 itself is essentially absent from the top rankings&lt;/strong&gt;. BigCode completed the transition from &amp;ldquo;the player being evaluated&amp;rdquo; to &amp;ldquo;the referee scoring everyone.&amp;rdquo;&lt;/p&gt;
-&lt;h2 id="why-the-pivot-to-evaluation"&gt;Why the Pivot to Evaluation
-&lt;/h2&gt;&lt;p&gt;Based on public information, my read:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The open-source code-model space got crushed.&lt;/strong&gt; Qwen-Coder and DeepSeek-Coder, despite closed data, far outperform what an academic collaboration can sustain in both performance and iteration speed. Chasing StarCoder3 SOTA had poor ROI.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Code evaluation was a genuine gap.&lt;/strong&gt; HumanEval is saturated; SWE-bench is repo-level and heavy. The middle ground — &lt;strong&gt;function-level + multi-tool calls + execution verification&lt;/strong&gt; — was unoccupied, and BigCode seized it.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;It fits the team&amp;rsquo;s strengths.&lt;/strong&gt; BigCode&amp;rsquo;s evaluation-harness was already the de facto community standard for code evaluation. Building evaluations suited the team better than competing on training compute.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id="historical-contribution-and-current-position"&gt;Historical Contribution and Current Position
-&lt;/h2&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;Dimension&lt;/th&gt;
-					&lt;th&gt;Assessment&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Open code model pioneer&lt;/td&gt;
-					&lt;td&gt;StarCoder / StarCoder2 were the first large-scale fully open code LLMs — foundational work&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Data transparency benchmark&lt;/td&gt;
-					&lt;td&gt;The Stack v1/v2 + SWHID tracing — still unmatched&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Current model line&lt;/td&gt;
-					&lt;td&gt;Stalled; StarCoder2 has fallen behind open-weights rivals&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Current evaluation line&lt;/td&gt;
-					&lt;td&gt;Active and leading; BigCodeBench is now a de facto code-eval standard&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id="further-reading"&gt;Further Reading
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a class="link" href="https://www.bigcode-project.org/" target="_blank" rel="noopener"
- &gt;BigCode official site&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2402.19173" target="_blank" rel="noopener"
- &gt;StarCoder2 paper (arXiv 2402.19173)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2406.15877" target="_blank" rel="noopener"
- &gt;BigCodeBench paper (arXiv 2406.15877, ICLR 2025)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://bigcode-bench.github.io/" target="_blank" rel="noopener"
- &gt;BigCodeBench leaderboard&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://huggingface.co/blog/bigcode/arena" target="_blank" rel="noopener"
- &gt;BigCodeArena blog&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4</title><link>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</link><pubDate>Wed, 08 Jul 2026 11:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</guid><description>&lt;img src="https://svtter.cn/p/oh-my-pi-%E5%AE%9E%E7%8E%B0%E4%BA%86-claude-loop-engineering-%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BE%AA%E7%8E%AF4-%E7%A7%8D%E9%87%8C-2-%E7%A7%8D/pics/cover_20260708.jpg" alt="Featured image of post oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4" /&gt;&lt;p&gt;Someone on X shared Claude&amp;rsquo;s official &lt;em&gt;Loop Engineering&lt;/em&gt; intro post, summarizing that the article splits loops into four types. A natural follow-up question: &lt;strong&gt;oh-my-pi (omp), the open-source Claude Code competitor — which of those does it actually implement?&lt;/strong&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/en/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 08 Jul 2026 11:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/index.xml" rel="self" type="application/rss+xml"/><item><title>oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4</title><link>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</link><pubDate>Wed, 08 Jul 2026 11:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/oh-my-pi-implements-which-of-claudes-loop-engineering-loops-2-of-4/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3510a632fd5975a3.jpg" alt="Featured image of post oh-my-pi implements which of Claude's Loop Engineering loops? 2 of 4" /&gt;&lt;p&gt;Someone on X shared Claude&amp;rsquo;s official &lt;em&gt;Loop Engineering&lt;/em&gt; intro post, summarizing that the article splits loops into four types. A natural follow-up question: &lt;strong&gt;oh-my-pi (omp), the open-source Claude Code competitor — which of those does it actually implement?&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;This post is not about the concept itself (the tweet and the official article already cover that). It does exactly one thing: &lt;strong&gt;take the locally installed omp 16.3.11 and verify each type, with evidence.&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="aligning-on-the-four-types-first"&gt;Aligning on the four types first
 &lt;/h2&gt;&lt;table&gt;
@@ -705,7 +126,7 @@
 &lt;/h2&gt;&lt;p&gt;There&amp;rsquo;s a broader issue in the repo: &lt;code&gt;Add loop engineering runtime&lt;/code&gt;. From the name, omp seems to want to build types 3 and 4 into a fuller Loop Engineering subsystem. But it hasn&amp;rsquo;t landed yet — &lt;strong&gt;what&amp;rsquo;s shipped today is Type 1 + Type 2&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 id="in-one-sentence"&gt;In one sentence
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Of Claude Loop Engineering&amp;rsquo;s four loop types, oh-my-pi implements two&lt;/strong&gt;: the baseline single-turn loop (Type 1) and the goal-oriented &lt;code&gt;/goal&lt;/code&gt; mode (Type 2). The time-based loop (Type 3) and the event-driven active loop (Type 4) are not there yet — the former tracks to open feature request #2763, the latter still lives under the broader #3534.&lt;/p&gt;
-&lt;p&gt;Put differently: omp polishes the &amp;ldquo;&lt;strong&gt;a human sits at the terminal, hands it a goal, and it runs to completion&lt;/strong&gt;&amp;rdquo; path very well, but the &amp;ldquo;&lt;strong&gt;no one watching, auto-running on time or on events&lt;/strong&gt;&amp;rdquo; paths aren&amp;rsquo;t filled in yet.&lt;/p&gt;</description></item><item><title>OMP M3 Model Patch: Adding MiniMax M3 to pi-ai</title><link>https://svtter.cn/en/p/omp-m3-model-patch-adding-minimax-m3-to-pi-ai/</link><pubDate>Mon, 01 Jun 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/omp-m3-model-patch-adding-minimax-m3-to-pi-ai/</guid><description>&lt;img src="https://svtter.cn/p/omp-m3-%E6%A8%A1%E5%9E%8B%E8%A1%A5%E4%B8%81%E4%B8%BA-pi-ai-%E6%B7%BB%E5%8A%A0-minimax-m3-%E6%94%AF%E6%8C%81/cover.png" alt="Featured image of post OMP M3 Model Patch: Adding MiniMax M3 to pi-ai" /&gt;&lt;p&gt;MiniMax released M3 on 2026-06-01 (&lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt; on OpenRouter), but the upstream &lt;code&gt;models.json&lt;/code&gt; shipped by &lt;code&gt;@oh-my-pi/pi-ai@15.7.3&lt;/code&gt; hadn&amp;rsquo;t been updated to include it. This post documents the patch I applied to add M3 support across all five provider endpoints.&lt;/p&gt;
+&lt;p&gt;Put differently: omp polishes the &amp;ldquo;&lt;strong&gt;a human sits at the terminal, hands it a goal, and it runs to completion&lt;/strong&gt;&amp;rdquo; path very well, but the &amp;ldquo;&lt;strong&gt;no one watching, auto-running on time or on events&lt;/strong&gt;&amp;rdquo; paths aren&amp;rsquo;t filled in yet.&lt;/p&gt;</description></item><item><title>OMP M3 Model Patch: Adding MiniMax M3 to pi-ai</title><link>https://svtter.cn/en/p/omp-m3-model-patch-adding-minimax-m3-to-pi-ai/</link><pubDate>Mon, 01 Jun 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/omp-m3-model-patch-adding-minimax-m3-to-pi-ai/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/95ddc4e0a32acedf.png" alt="Featured image of post OMP M3 Model Patch: Adding MiniMax M3 to pi-ai" /&gt;&lt;p&gt;MiniMax released M3 on 2026-06-01 (&lt;code&gt;minimax/minimax-m3-20260531&lt;/code&gt; on OpenRouter), but the upstream &lt;code&gt;models.json&lt;/code&gt; shipped by &lt;code&gt;@oh-my-pi/pi-ai@15.7.3&lt;/code&gt; hadn&amp;rsquo;t been updated to include it. This post documents the patch I applied to add M3 support across all five provider endpoints.&lt;/p&gt;
 &lt;h2 id="target-file"&gt;Target File
 &lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -886,7 +307,7 @@ find an official M3 number. &lt;code&gt;cost&lt;/code&gt; is all zero because th
 pi-ai later ships in its bundled list (if M3 lands upstream) enters through the &amp;ldquo;built-in&amp;rdquo;
 channel. When both define the same &lt;code&gt;provider/model&lt;/code&gt; with different &lt;code&gt;baseUrl&lt;/code&gt;, OMP&amp;rsquo;s
 last-write-wins rule means &lt;code&gt;models.yml&lt;/code&gt; always wins — which is exactly what you want
-for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/featured-image.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
+for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-code Handles kimi-k2.6: A Comparison with OpenCode</title><link>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</link><pubDate>Wed, 27 May 2026 10:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/how-kimi-code-handles-kimi-k2.6-a-comparison-with-opencode/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/7c49e8bbcabb28dc.png" alt="Featured image of post How kimi-code Handles kimi-k2.6: A Comparison with OpenCode" /&gt;&lt;p&gt;Recently, kimi-code migrated from Python to TypeScript. Here&amp;rsquo;s a quick analysis.&lt;/p&gt;
 &lt;p&gt;Based on my review of the &lt;strong&gt;kimi-code&lt;/strong&gt; source code (particularly &lt;code&gt;packages/kosong/src/providers/kimi.ts&lt;/code&gt;, &lt;code&gt;kimi-schema.ts&lt;/code&gt;, &lt;code&gt;kimi-files.ts&lt;/code&gt;, etc.) and relevant OpenCode compatibility issues, here are the kimi-k2.6-specific optimizations in kimi-code and how they differ from OpenCode.&lt;/p&gt;
 &lt;h2 id="1-native-kimi-provider-not-a-generic-openai-compatible-layer"&gt;1. Native Kimi Provider (Not a Generic OpenAI-compatible Layer)
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;kimi-code&lt;/strong&gt; does not treat Kimi as &amp;ldquo;just another OpenAI-compatible endpoint.&amp;rdquo; Instead, it implements a dedicated &lt;code&gt;kimi&lt;/code&gt; provider type:&lt;/p&gt;
@@ -1195,7 +616,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Looking at commit history, kimi-code&amp;rsquo;s evolution is directed at &lt;strong&gt;continuously eliminating user configuration burden&lt;/strong&gt; (&lt;code&gt;reasoning_key&lt;/code&gt; went from required → optional override → auto-inferred; &lt;code&gt;interleaved&lt;/code&gt; went from filtered → correctly mapped), while OpenCode&amp;rsquo;s evolution is directed at &lt;strong&gt;deepening OpenAI ecosystem integration&lt;/strong&gt; (Responses API, encrypted reasoning, item reference), leaving Kimi adaptation stuck at the generic bridge layer.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;That&amp;rsquo;s the truth at the commit level: one is native evolution, the other is a bridge gap.&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>RoboOmp: An AI Bot That Creates Its Own Pull Requests</title><link>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</link><pubDate>Sat, 23 May 2026 18:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/cover.jpg" alt="Featured image of post RoboOmp: An AI Bot That Creates Its Own Pull Requests" /&gt;&lt;p&gt;Yesterday at the Oh My Pi (OMP) repository, I experienced something shocking: an AI bot didn&amp;rsquo;t just reply to my issue—it understood the problem, &lt;strong&gt;dug through the source code on its own, and opened a precise PR to fix the bug&lt;/strong&gt;. The entire process took less than 5 minutes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;That&amp;rsquo;s the truth at the commit level: one is native evolution, the other is a bridge gap.&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>RoboOmp: An AI Bot That Creates Its Own Pull Requests</title><link>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</link><pubDate>Sat, 23 May 2026 18:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/roboomp-an-ai-bot-that-creates-its-own-pull-requests/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/20be79a56e3ba764.jpg" alt="Featured image of post RoboOmp: An AI Bot That Creates Its Own Pull Requests" /&gt;&lt;p&gt;Yesterday at the Oh My Pi (OMP) repository, I experienced something shocking: an AI bot didn&amp;rsquo;t just reply to my issue—it understood the problem, &lt;strong&gt;dug through the source code on its own, and opened a precise PR to fix the bug&lt;/strong&gt;. The entire process took less than 5 minutes.&lt;/p&gt;
 &lt;h2 id="the-origin"&gt;The Origin
 &lt;/h2&gt;&lt;p&gt;When using OMP (a terminal AI coding agent), I discovered a UX issue: &lt;code&gt;Ctrl+T&lt;/code&gt; can hide thinking blocks, but hiding them simultaneously turns off extended thinking entirely—not just hiding the display, but the model stops thinking altogether. Users assume they&amp;rsquo;re just &amp;ldquo;turning off the display,&amp;rdquo; but the actual effect is &amp;ldquo;turning off the brain.&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;So I went to the &lt;a class="link" href="https://github.com/can1357/oh-my-pi" target="_blank" rel="noopener"
@@ -1284,7 +705,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;/h2&gt;&lt;p&gt;This made me realize that the capability boundaries of AI coding agents are expanding rapidly. A year ago we were discussing &amp;ldquo;can AI write correct code,&amp;rdquo; now the question is &amp;ldquo;can AI be a maintainer in open source communities.&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;The capabilities roboomp demonstrated—reading code, understanding context, participating in discussions, making minimal fixes—are essentially what a junior maintainer does. If this capability continues to improve, the maintenance model of open source projects could undergo fundamental changes.&lt;/p&gt;
 &lt;p&gt;Think about it: what does an open source maintainer spend the most time on every day? Replying to issues, triaging bugs, writing small fixes. These are exactly what roboomp excels at. If every open source project could deploy such a bot, maintainers could focus their time on architectural decisions and community building.&lt;/p&gt;
-&lt;p&gt;Of course, current limitations are obvious—it can only handle problems with clear boundaries and well-defined scope. But this experience makes me believe that &amp;ldquo;AI maintainer&amp;rdquo; is not a distant future scenario, but something happening right now.&lt;/p&gt;</description></item><item><title>OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows</title><link>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</link><pubDate>Fri, 22 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/cover.jpg" alt="Featured image of post OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows" /&gt;&lt;p&gt;opencode is a 160k-star AI coding tool with 27 workflow files in its &lt;code&gt;.github/workflows/&lt;/code&gt; directory. This number is not uncommon for open source projects, but what&amp;rsquo;s truly interesting is not the quantity, but the scope these workflows cover: from conventional CI/CD to AI-driven community governance, they&amp;rsquo;ve done almost everything GitHub Actions can do.&lt;/p&gt;
+&lt;p&gt;Of course, current limitations are obvious—it can only handle problems with clear boundaries and well-defined scope. But this experience makes me believe that &amp;ldquo;AI maintainer&amp;rdquo; is not a distant future scenario, but something happening right now.&lt;/p&gt;</description></item><item><title>OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows</title><link>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</link><pubDate>Fri, 22 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencodes-github-actions-automation-system-engineering-practices-behind-27-workflows/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3000903cf560f83f.jpg" alt="Featured image of post OpenCode's GitHub Actions Automation System: Engineering Practices Behind 27 Workflows" /&gt;&lt;p&gt;opencode is a 160k-star AI coding tool with 27 workflow files in its &lt;code&gt;.github/workflows/&lt;/code&gt; directory. This number is not uncommon for open source projects, but what&amp;rsquo;s truly interesting is not the quantity, but the scope these workflows cover: from conventional CI/CD to AI-driven community governance, they&amp;rsquo;ve done almost everything GitHub Actions can do.&lt;/p&gt;
 &lt;p&gt;This article analyzes the design of these workflows by category, discusses the pros and cons of this level of automation, and shares insights for our own projects.&lt;/p&gt;
 &lt;h2 id="overview"&gt;Overview
 &lt;/h2&gt;&lt;p&gt;The 27 workflows can be divided into four categories:&lt;/p&gt;
@@ -1418,7 +839,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;li&gt;&lt;strong&gt;Add on demand&lt;/strong&gt;: Add automation only when you have pain points. opencode&amp;rsquo;s 27 workflows weren&amp;rsquo;t built in a day, but gradually added as community scale grew.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="summary"&gt;Summary
-&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>OpenCode Optimization Beyond Configuration — Plugin-Based Optimization</title><link>https://svtter.cn/en/p/opencode-optimization-beyond-configuration-plugin-based-optimization/</link><pubDate>Tue, 19 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-optimization-beyond-configuration-plugin-based-optimization/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/cover.png" alt="Featured image of post OpenCode Optimization Beyond Configuration — Plugin-Based Optimization" /&gt;&lt;p&gt;I previously wrote an article &lt;a class="link" href="https://svtter.cn/p/opencode-%e9%85%8d%e7%bd%ae%e4%bc%98%e5%8c%96%e8%ae%b0%e5%bd%95/" &gt;OpenCode Configuration Optimization Record&lt;/a&gt;, which addressed token consumption and context management issues. However, configuration optimization handles &amp;ldquo;how the model runs,&amp;rdquo; while &amp;ldquo;the quality of code when it&amp;rsquo;s half-written&amp;rdquo; is something configuration cannot manage. This article starts from my development process of the opencode-review plugin, discussing how opencode-review helps an agent review and improve its own code within a session, resulting in higher quality code entering the PR.&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;opencode&amp;rsquo;s GitHub Actions system demonstrates automation practices for large-scale open source projects: CI/CD covers full platform releases, community governance uses multi-workflow relay processing, AI is applied to decision points like triage and review. The core of this system is not technical complexity, but three principles: &amp;ldquo;layered, grace periods, explicit triggers&amp;rdquo;. For our own projects, we don&amp;rsquo;t need to copy all 27 workflows, but these principles can be directly applied.&lt;/p&gt;</description></item><item><title>OpenCode Optimization Beyond Configuration — Plugin-Based Optimization</title><link>https://svtter.cn/en/p/opencode-optimization-beyond-configuration-plugin-based-optimization/</link><pubDate>Tue, 19 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-optimization-beyond-configuration-plugin-based-optimization/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4153a7e57393fec3.png" alt="Featured image of post OpenCode Optimization Beyond Configuration — Plugin-Based Optimization" /&gt;&lt;p&gt;I previously wrote an article &lt;a class="link" href="https://svtter.cn/p/opencode-%e9%85%8d%e7%bd%ae%e4%bc%98%e5%8c%96%e8%ae%b0%e5%bd%95/" &gt;OpenCode Configuration Optimization Record&lt;/a&gt;, which addressed token consumption and context management issues. However, configuration optimization handles &amp;ldquo;how the model runs,&amp;rdquo; while &amp;ldquo;the quality of code when it&amp;rsquo;s half-written&amp;rdquo; is something configuration cannot manage. This article starts from my development process of the opencode-review plugin, discussing how opencode-review helps an agent review and improve its own code within a session, resulting in higher quality code entering the PR.&lt;/p&gt;
 &lt;h2 id="problem-who-guards-code-quality-within-a-session"&gt;Problem: Who Guards Code Quality Within a Session?
 &lt;/h2&gt;&lt;p&gt;When using OpenCode to write code, a typical workflow is: the agent completes coding within a session, then I review the diff and create a PR. But I discovered a recurring problem: &lt;strong&gt;code written by agents often enters PRs with &amp;ldquo;first draft&amp;rdquo; quality issues&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;These issues include: missing error handling, security vulnerabilities, poorly performing queries, and missing tests. If the agent could perform a self-review within the session—before the code is committed to the PR—many problems wouldn&amp;rsquo;t exist at the PR stage.&lt;/p&gt;
@@ -1440,7 +861,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
  &gt;Modern Code Review (MCR) Survey&lt;/a&gt; collected code review research from 2013-2025, proposing a classification system covering multiple task dimensions including defect detection, security review, performance analysis, and maintainability assessment. Ericsson&amp;rsquo;s research team also verified in &lt;a class="link" href="https://arxiv.org/html/2507.19115v2" target="_blank" rel="noopener"
  &gt;Automated Code Review Using Large Language Models at Ericsson&lt;/a&gt; that dimension-specific review is more effective in industrial scenarios than general review.&lt;/p&gt;
 &lt;p&gt;opencode-review&amp;rsquo;s five dimensions—code-quality, security, performance, testing, documentation—correspond to the core review dimensions identified in these studies. Each dimension can be independently toggled because different projects focus on different priorities: an internal tool may not need documentation review, but a security-sensitive service cannot skip the security dimension.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Five review dimensions" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions_hu_6ad3154bf9d83639.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/dimensions.png 1376w" width="1376"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Five review dimensions" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/896a4b5dcb40a26c.png"&gt;&lt;/p&gt;
 &lt;h3 id="severity-grading"&gt;Severity Grading
 &lt;/h3&gt;&lt;p&gt;The second design decision is &lt;strong&gt;why divide into three severity levels&lt;/strong&gt; (critical / suggestion / highlight).&lt;/p&gt;
 &lt;p&gt;This comes from lessons learned in the static analysis tool domain. Security tools and linters have long faced a problem: &lt;strong&gt;alert fatigue&lt;/strong&gt;. When all issues are marked as equally important, developers start ignoring them. &lt;a class="link" href="https://www.veracode.com/blog/breaking-the-cycle-of-alert-fatigue/" target="_blank" rel="noopener"
@@ -1457,7 +878,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;p&gt;This is a controversial design. Traditional review tools typically &amp;ldquo;report but don&amp;rsquo;t fix,&amp;rdquo; leaving fixes to developers. But opencode-review&amp;rsquo;s scenario is different—the code it reviews is itself just written by an AI agent, so having another agent fix it is reasonable.&lt;/p&gt;
 &lt;p&gt;Academically, this belongs to the &lt;strong&gt;Automated Program Repair (APR)&lt;/strong&gt; domain. &lt;a class="link" href="https://arxiv.org/html/2506.23749v1" target="_blank" rel="noopener"
  &gt;A Survey of LLM-based Automated Program Repair (arXiv 2506.23749)&lt;/a&gt; reviewed 63 LLM-based APR systems from 2022-2025, divided into four paradigms. Among them, the &amp;ldquo;analysis-augmented&amp;rdquo; paradigm—using static analysis to locate problems first, then using LLMs to generate fixes—was proven most effective. opencode-review&amp;rsquo;s auto-fix chain is essentially this paradigm: reviewer discovers critical issue → locates problem position → spawns fixer sub-agent → generates minimal fix.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Auto-fix chain" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain_hu_cc477bedddea60c3.png 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/auto-fix-chain.png 1376w" width="1376"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Auto-fix chain" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/b3f77249c7f5ca7c.png"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://dl.acm.org/doi/10.1109/ICSE55347.2025.00169" target="_blank" rel="noopener"
  &gt;An ICSE 2025 paper&lt;/a&gt; also points out that a key challenge for LLMs in APR is objective alignment—the goal of fixing is not &amp;ldquo;generate code that looks reasonable,&amp;rdquo; but &amp;ldquo;precisely solve the reported problem.&amp;rdquo; This is why opencode-review&amp;rsquo;s fixer is designed as &lt;strong&gt;minimal fix&lt;/strong&gt;—making only the minimal modifications to solve the problem, no rewriting, no refactoring, no &amp;ldquo;convenient&amp;rdquo; other changes.&lt;/p&gt;
 &lt;h3 id="hidden-benefit-of-auto-review-continuous-improvement-of-code-quality-baseline"&gt;Hidden Benefit of Auto-Review: Continuous Improvement of Code Quality Baseline
@@ -1467,7 +888,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
  &gt;FSE 2022 research&lt;/a&gt; found in two years of industrial practice that when developers know their code will be automatically reviewed, they consciously follow standards more during the coding phase—because the cost of being pointed out afterward becomes lower, and the benefit of writing well upfront becomes higher. This is a &lt;strong&gt;nudge effect&lt;/strong&gt;. In the AI agent scenario, this effect is stronger: the agent writes code in a session, gets reviewed and pointed out issues, fixes them, gets reviewed again—this cycle can complete multiple rounds within the same session. Each round of feedback corrects the agent&amp;rsquo;s output tendency, equivalent to an implicit fine-tuning process.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Second, direct quality accumulation from automatic fixes.&lt;/strong&gt; Critical issues being automatically fixed means the code quality of each commit is higher than without review. This isn&amp;rsquo;t a one-time improvement, but continuous. Like lint rules in a codebase—at first they only prohibit obvious errors, but as rules accumulate, the overall style and quality of the codebase is unconsciously raised. The auto-fix chain does something similar: security vulnerabilities are automatically patched, resource leaks are automatically fixed, missing tests are automatically added. Over time, the codebase&amp;rsquo;s quality baseline naturally becomes higher than without auto-review.&lt;/p&gt;
 &lt;p&gt;Simply put: &lt;strong&gt;review is not the goal, quality improvement is. Auto-review turns &amp;ldquo;post-hoc inspection&amp;rdquo; into &amp;ldquo;in-process improvement.&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Code quality baseline improvement" class="gallery-image" data-flex-basis="430px" data-flex-grow="179" height="768" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg" srcset="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline_hu_9988531fb89c4458.jpg 800w, https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/quality-baseline.jpg 1376w" width="1376"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Code quality baseline improvement" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/13ca807745a9e6a7.jpg"&gt;&lt;/p&gt;
 &lt;h3 id="cooldown-mechanism"&gt;Cooldown Mechanism
 &lt;/h3&gt;&lt;p&gt;There&amp;rsquo;s one more design detail: &lt;strong&gt;cooldown_seconds&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;auto-review triggers when the session is idle, but idle events can trigger frequently (for example, when the agent is waiting for user confirmation, it also idles). Without cooldown, the same code might be reviewed several times, wasting tokens. The default 120-second cooldown period is an empirical value—enough for one round of modifications to complete, without waiting too long.&lt;/p&gt;
@@ -1645,7 +1066,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;p&gt;I&amp;rsquo;ll be publishing more articles like this in the future. These articles are co-created with AI, and the reading experience is somewhat better than plain text.&lt;/p&gt;
 &lt;p&gt;I typically store HTML files in &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
  &gt;static-html&lt;/a&gt; for unified management. I recommend you give it a try. The introduction article is here &lt;a class="link" href="https://svtter.cn/p/sth-an-html-preview-server-for-ai-agents/" target="_blank" rel="noopener"
- &gt;sth: An HTML Preview Server for AI Agents&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/cover.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
+ &gt;sth: An HTML Preview Server for AI Agents&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>sth: An HTML Preview Server for AI Agents</title><link>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</link><pubDate>Sat, 09 May 2026 12:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/sth-an-html-preview-server-for-ai-agents/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/fc124dc021b4e367.jpg" alt="Featured image of post sth: An HTML Preview Server for AI Agents" /&gt;&lt;p&gt;I&amp;rsquo;ve open sourced a small tool: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
  &gt;static-html&lt;/a&gt;, with the command-line name &lt;code&gt;sth&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;What it does is simple: it provides an HTTP service that lets you register locally generated HTML files and preview them in a browser.&lt;/p&gt;
 &lt;h2 id="why-this-tool-is-needed"&gt;Why This Tool Is Needed
@@ -1737,7 +1158,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;h2 id="open-source"&gt;Open Source
 &lt;/h2&gt;&lt;p&gt;This tool was previously a private repo, but I just made it public today: &lt;a class="link" href="https://github.com/sun-praise/static-html" target="_blank" rel="noopener"
  &gt;sun-praise/static-html&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/cover.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
+&lt;p&gt;If you&amp;rsquo;re also using AI Agents for daily development work and have encountered the problem where &amp;ldquo;complex agent output can&amp;rsquo;t be read in chat tools,&amp;rdquo; give &lt;code&gt;sth&lt;/code&gt; a try. It&amp;rsquo;s lightweight enough and does what it needs to do.&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block Compatibility Analysis</title><link>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/en/p/deepseek--claude-code-thinking-block-compatibility-analysis/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6fb1856fb50dd9a3.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block Compatibility Analysis" /&gt;&lt;h2 id="problem-description"&gt;Problem Description
 &lt;/h2&gt;&lt;p&gt;When using DeepSeek models (such as &lt;code&gt;deepseek-v4-flash&lt;/code&gt;) directly in Claude Code with extended thinking enabled, multi-turn conversations trigger a 400 error:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1940,7 +1361,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 					&lt;td&gt;Open&lt;/td&gt;
 			&lt;/tr&gt;
 	&lt;/tbody&gt;
-&lt;/table&gt;</description></item><item><title>How to Fix DeepSeek Model Reasoning Issues in OpenCode</title><link>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</link><pubDate>Fri, 24 Apr 2026 12:29:42 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/cover.png" alt="Featured image of post How to Fix DeepSeek Model Reasoning Issues in OpenCode" /&gt;&lt;p&gt;When using deepseek-reasoner, we often encounter this problem:&lt;/p&gt;
+&lt;/table&gt;</description></item><item><title>How to Fix DeepSeek Model Reasoning Issues in OpenCode</title><link>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</link><pubDate>Fri, 24 Apr 2026 12:29:42 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-fix-deepseek-model-reasoning-issues-in-opencode/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/9901fb77da484ac5.png" alt="Featured image of post How to Fix DeepSeek Model Reasoning Issues in OpenCode" /&gt;&lt;p&gt;When using deepseek-reasoner, we often encounter this problem:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -2065,14 +1486,14 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="how-to-use"&gt;How to Use
 &lt;/h2&gt;&lt;p&gt;Select the deepseek model.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="626px" data-flex-grow="261" height="441" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883_hu_c7ff8778ebe43d8c.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007449883.png 1152w" width="1152"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/08be2c4cbfa06a62.png"&gt;&lt;/p&gt;
 &lt;p&gt;The result.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="640px" data-flex-grow="266" height="510" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png" srcset="https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107_hu_f7d35540372ceb17.png 800w, https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/pics/clipboard-1777007433107.png 1361w" width="1361"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4258a7f79a3641d0.png"&gt;&lt;/p&gt;
 &lt;h2 id="supplement"&gt;Supplement
 &lt;/h2&gt;&lt;p&gt;This method cannot solve this problem&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Bad Request: {&amp;quot;error&amp;quot;:{&amp;quot;message&amp;quot;:&amp;quot;The content[].thinking in the thinking mode must be passed back to the API.&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;invalid_request_error&amp;quot;,&amp;quot;param&amp;quot;:null,&amp;quot;code&amp;quot;:&amp;quot;invalid_request_error&amp;quot;}}&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;If you encounter this problem, you need to wait for opencode to fix it.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Related article&lt;/strong&gt;: &lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block Compatibility Issue Analysis&lt;/a&gt; — Analyzes the root cause of 400 errors triggered by multi-turn conversations in extended thinking mode when using DeepSeek with Claude Code, along with community solutions.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/cover.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Related article&lt;/strong&gt;: &lt;a class="link" href="../../deepseek-cc-thinking-block-issue/" &gt;DeepSeek + Claude Code: Thinking Block Compatibility Issue Analysis&lt;/a&gt; — Analyzes the root cause of 400 errors triggered by multi-turn conversations in extended thinking mode when using DeepSeek with Claude Code, along with community solutions.&lt;/p&gt;</description></item><item><title>opencode-actions - A Code Review Agent</title><link>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/en/p/opencode-actions-a-code-review-agent/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/69d2f962b6f77f8e.jpg" alt="Featured image of post opencode-actions - A Code Review Agent" /&gt;&lt;p&gt;To make it easier to integrate opencode for code review, I built a GitHub Action repository. Working with opencode to implement this was straightforward.&lt;/p&gt;
 &lt;p&gt;Currently, it provides two main features: one is review, and the other is using the runner to execute opencode (directly running opencode&amp;rsquo;s prompts on the runner) to handle other functionalities. For example, modifying code, creating new issues, creating PRs based on issues, etc.&lt;/p&gt;
 &lt;h2 id="how-stable-is-it"&gt;How stable is it?
 &lt;/h2&gt;&lt;ul&gt;
@@ -2168,13 +1589,13 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;/h2&gt;&lt;p&gt;You can see the results from the repo&amp;rsquo;s own PR at &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
  &gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;The effect looks like this:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="279px" data-flex-grow="116" height="1208" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png" srcset="https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946_hu_da6eced56b414cb0.png 800w, https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/pics/clipboard-1776916692946.png 1407w" width="1407"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/9f8b42c4e5623fb4.png"&gt;&lt;/p&gt;
 &lt;h2 id="future"&gt;Future
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Try integrating gemini cli. Google&amp;rsquo;s GEM 3.1 PRO model currently offers great value for money, with the highest intelligence per unit.&lt;/li&gt;
 &lt;li&gt;Integrate MCP plugin functionality. If MCP is available during opencode review, it may bring better review results.&lt;/li&gt;
 &lt;li&gt;Integration of commercial plugin features&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>I'm Writing Articles Myself Again, and Some Thoughts on GPT-5.4</title><link>https://svtter.cn/en/p/im-writing-articles-myself-again-and-some-thoughts-on-gpt-5.4/</link><pubDate>Mon, 06 Apr 2026 22:05:42 +0800</pubDate><guid>https://svtter.cn/en/p/im-writing-articles-myself-again-and-some-thoughts-on-gpt-5.4/</guid><description>&lt;img src="https://svtter.cn/p/%E6%88%91%E8%BF%98%E6%98%AF%E8%87%AA%E5%B7%B1%E5%86%99%E6%96%87%E7%AB%A0%E4%BB%A5%E5%8F%8A%E5%AF%B9-gpt-5.4-%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/cover.jpg" alt="Featured image of post I'm Writing Articles Myself Again, and Some Thoughts on GPT-5.4" /&gt;&lt;p&gt;I&amp;rsquo;ve gone back to writing articles &amp;ldquo;myself&amp;rdquo; again. The reason I say &amp;ldquo;myself&amp;rdquo; is:&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>I'm Writing Articles Myself Again, and Some Thoughts on GPT-5.4</title><link>https://svtter.cn/en/p/im-writing-articles-myself-again-and-some-thoughts-on-gpt-5.4/</link><pubDate>Mon, 06 Apr 2026 22:05:42 +0800</pubDate><guid>https://svtter.cn/en/p/im-writing-articles-myself-again-and-some-thoughts-on-gpt-5.4/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a0d5dff251d74d12.jpg" alt="Featured image of post I'm Writing Articles Myself Again, and Some Thoughts on GPT-5.4" /&gt;&lt;p&gt;I&amp;rsquo;ve gone back to writing articles &amp;ldquo;myself&amp;rdquo; again. The reason I say &amp;ldquo;myself&amp;rdquo; is:&lt;/p&gt;
 &lt;p&gt;Actually, my recent articles were all written through conversations with DeepSeek, where I had DeepSeek generate the output.&lt;/p&gt;
 &lt;p&gt;After generating the articles, I&amp;rsquo;d have Codex polish them. (But Codex&amp;rsquo;s polishing was absolute crap.)&lt;/p&gt;
 &lt;p&gt;In between, I also tried having GPT-5.4 generate output—that is, communicate with me + write the first draft.&lt;/p&gt;
@@ -2204,7 +1625,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;/h2&gt;&lt;p&gt;Happened to see Old Feng from Cloud Numbers also discussing this problem. &lt;a class="link" href="https://mp.weixin.qq.com/s/TINtWWri5ghccVnJ9BIEPw" target="_blank" rel="noopener"
  &gt;&lt;em&gt;Yes, I Use AI to Write Articles&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;His articles don&amp;rsquo;t look as heavily AI-flavored. Maybe Opus is more suitable for writing.&lt;/p&gt;
-&lt;p&gt;Additionally, if you include your own writing style in the prompt, it might further reduce the AI feeling.&lt;/p&gt;</description></item><item><title>Does Self-Hosting an LLM Really Let You Use It Without Limits?</title><link>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</link><pubDate>Thu, 19 Mar 2026 12:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/cover.jpg" alt="Featured image of post Does Self-Hosting an LLM Really Let You Use It Without Limits?" /&gt;&lt;p&gt;Many people start thinking seriously about self-hosting an LLM not because of technical romance, but because API bills, rate limits, or compliance requirements have started to collide with real business constraints.&lt;/p&gt;
+&lt;p&gt;Additionally, if you include your own writing style in the prompt, it might further reduce the AI feeling.&lt;/p&gt;</description></item><item><title>Does Self-Hosting an LLM Really Let You Use It Without Limits?</title><link>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</link><pubDate>Thu, 19 Mar 2026 12:30:00 +0800</pubDate><guid>https://svtter.cn/en/p/does-self-hosting-an-llm-really-let-you-use-it-without-limits/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4a64517893352df2.jpg" alt="Featured image of post Does Self-Hosting an LLM Really Let You Use It Without Limits?" /&gt;&lt;p&gt;Many people start thinking seriously about self-hosting an LLM not because of technical romance, but because API bills, rate limits, or compliance requirements have started to collide with real business constraints.&lt;/p&gt;
 &lt;p&gt;So a very natural question shows up: if the model runs on your own machine, does that mean you can finally use it without limits?&lt;/p&gt;
 &lt;p&gt;My answer is: &lt;strong&gt;no.&lt;/strong&gt; Self-hosting a model does not mean unlimited freedom. It mostly means that many of the constraints and costs previously absorbed by the platform are now transferred to you.&lt;/p&gt;
 &lt;p&gt;But there is a more useful second question: once usage gets large enough, can self-hosting actually become cheaper?&lt;/p&gt;
@@ -2301,7 +1722,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 			&lt;/tr&gt;
 	&lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;&lt;img alt="An illustration showing how the balance shifts from API costs to local hardware investment as LLM usage grows from light to heavy" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" height="3584" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg" srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_1e76f86f86236802.jpg 800w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_ddbf892da5b45dea.jpg 1600w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01_hu_ea605a4b361fedd2.jpg 2400w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-01.jpg 4800w" width="4800"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="An illustration showing how the balance shifts from API costs to local hardware investment as LLM usage grows from light to heavy" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/cc222e2018d1bf2a.jpg"&gt;&lt;/p&gt;
 &lt;p&gt;If you want local quality to get as close as possible to top-tier closed models, this table usually moves upward again, because stronger models, more VRAM, and higher availability targets all push infrastructure and operations costs higher.&lt;/p&gt;
 &lt;p&gt;This table points to three things.&lt;/p&gt;
 &lt;ol&gt;
@@ -2320,7 +1741,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;/ul&gt;
 &lt;p&gt;Put differently, &lt;strong&gt;many people think they are calculating deployment cost when they are actually accepting a capability downgrade first.&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;There is nothing wrong with that trade-off, but it should be stated clearly.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="An illustration showing that a closed cloud model and a local open-weight model are not fully equivalent in capability, cost, and operational burden" class="gallery-image" data-flex-basis="321px" data-flex-grow="133" height="3584" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg" srcset="https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_ab315000c6186654.jpg 800w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_822abea868b8c446.jpg 1600w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02_hu_a7fc6f60a607179b.jpg 2400w, https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/pics/inline-02.jpg 4800w" width="4800"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="An illustration showing that a closed cloud model and a local open-weight model are not fully equivalent in capability, cost, and operational burden" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/78c2bd6bec6220c2.jpg"&gt;&lt;/p&gt;
 &lt;h2 id="what-self-hosting-gives-you-besides-cost-savings"&gt;What self-hosting gives you besides cost savings
 &lt;/h2&gt;&lt;p&gt;If a company still chooses to self-host after doing the math, it is usually not only about saving API money.&lt;/p&gt;
 &lt;ul&gt;
@@ -2348,7 +1769,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;li&gt;data control, internal deployment, or predictable cost ceilings matter to you&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;If you are an individual, a small team, or just an occasional heavy user, APIs are still usually the more practical answer: less effort, less operational burden, and lower cost of experimentation.&lt;/p&gt;
-&lt;p&gt;If you are already in the phase where you burn tokens steadily every day, then it is worth calculating the full picture instead of staring only at API unit prices. Very often the answer is not &amp;ldquo;now I can use it without limits,&amp;rdquo; but a more grounded question that matters more: &lt;strong&gt;is this worth owning yourself?&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?</title><link>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</guid><description>&lt;img src="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/cover.png" alt="Featured image of post The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?" /&gt;&lt;h2 id="preface"&gt;Preface
+&lt;p&gt;If you are already in the phase where you burn tokens steadily every day, then it is worth calculating the full picture instead of staring only at API unit prices. Very often the answer is not &amp;ldquo;now I can use it without limits,&amp;rdquo; but a more grounded question that matters more: &lt;strong&gt;is this worth owning yourself?&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?</title><link>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/en/p/the-mathematical-trap-of-big-model-coding-plan-packages-can-promised-usage-be-delivered-under-concurrency-limits/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/55138db755d62d4e.png" alt="Featured image of post The Mathematical Trap of Big Model Coding Plan Packages: Can Promised Usage Be Delivered Under Concurrency Limits?" /&gt;&lt;h2 id="preface"&gt;Preface
 &lt;/h2&gt;&lt;p&gt;Recently, several domestic big model manufacturers have launched Coding Plan subscription packages for developers, promoting &amp;ldquo;low prices for massive usage,&amp;rdquo; claiming that for just tens to hundreds of RMB per month, you can get &amp;ldquo;hundreds of billions of tokens&amp;rdquo; of usage quota.&lt;/p&gt;
 &lt;p&gt;It sounds wonderful, but as a developer accustomed to speaking with data, I decided to do some calculations: &lt;strong&gt;Under concurrency limits, can these promised usage amounts really be consumed?&lt;/strong&gt;&lt;/p&gt;
 &lt;h2 id="typical-package-structure"&gt;Typical Package Structure
@@ -2619,7 +2040,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;/ol&gt;
 &lt;p&gt;After all, &lt;strong&gt;promised usage that can&amp;rsquo;t be consumed equals a disguised price increase.&lt;/strong&gt;&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;&lt;em&gt;This article is based on public information and mathematical derivation; specific values may vary due to manufacturer adjustments. Readers are advised to verify through actual measurements.&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Private Cloud for Small Companies</title><link>https://svtter.cn/en/p/private-cloud-for-small-companies/</link><pubDate>Sun, 18 Jan 2026 09:06:31 +0800</pubDate><guid>https://svtter.cn/en/p/private-cloud-for-small-companies/</guid><description>&lt;img src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/bg.png" alt="Featured image of post Private Cloud for Small Companies" /&gt;&lt;p&gt;Many friends want to know: What is the internal server situation and infrastructure of our small software development company?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This article is based on public information and mathematical derivation; specific values may vary due to manufacturer adjustments. Readers are advised to verify through actual measurements.&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Private Cloud for Small Companies</title><link>https://svtter.cn/en/p/private-cloud-for-small-companies/</link><pubDate>Sun, 18 Jan 2026 09:06:31 +0800</pubDate><guid>https://svtter.cn/en/p/private-cloud-for-small-companies/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/7ec8e031ebee67fc.png" alt="Featured image of post Private Cloud for Small Companies" /&gt;&lt;p&gt;Many friends want to know: What is the internal server situation and infrastructure of our small software development company?&lt;/p&gt;
 &lt;p&gt;Internal development clusters essentially solve the following issues:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Git code management&lt;/li&gt;
@@ -2634,8 +2055,8 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;li&gt;Second-hand Dell mini hosts&lt;/li&gt;
 &lt;li&gt;Thunderobot MIX hosts&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="351px" data-flex-grow="146" height="912" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775.png" srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775_hu_6150e89dafee2c19.png 800w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904259775.png 1334w" width="1334"&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="746px" data-flex-grow="311" height="666" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438.png" srcset="https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_67256f80c4ebd874.png 800w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438_hu_9405a09a258b4f7b.png 1600w, https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/pics/clipboard-1768904280438.png 2072w" width="2072"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/99308eee1688fb4f.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/c6cf1fd9ba754c59.png"&gt;&lt;/p&gt;
 &lt;h2 id="why-not-use-entry-level-or-mid-range-servers"&gt;Why Not Use Entry-Level or Mid-Range Servers?
 &lt;/h2&gt;&lt;p&gt;The biggest reason is &lt;strong&gt;unnecessary&lt;/strong&gt;. Power consumption comparison:&lt;/p&gt;
 &lt;table&gt;
@@ -2669,7 +2090,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;li&gt;Engineer development environments&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="finally"&gt;Finally
-&lt;/h2&gt;&lt;p&gt;However, recently, as we need to develop some services on Kubernetes, the current configuration has become somewhat inadequate.&lt;/p&gt;</description></item><item><title>Recently Discovered Useful MCP Tools</title><link>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</guid><description>&lt;img src="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/bg.png" alt="Featured image of post Recently Discovered Useful MCP Tools" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve been extensively using the opencode/claude code combination for development and have explored three particularly useful tools.&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;However, recently, as we need to develop some services on Kubernetes, the current configuration has become somewhat inadequate.&lt;/p&gt;</description></item><item><title>Recently Discovered Useful MCP Tools</title><link>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/en/p/recently-discovered-useful-mcp-tools/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/f07e83aca0f96906.png" alt="Featured image of post Recently Discovered Useful MCP Tools" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve been extensively using the opencode/claude code combination for development and have explored three particularly useful tools.&lt;/p&gt;
 &lt;p&gt;They address several issues:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Parallel development on a single server; controlling tmux: &lt;code&gt;tmux&lt;/code&gt; and &lt;code&gt;tmux-mcp&lt;/code&gt;&lt;/li&gt;
@@ -2724,7 +2145,7 @@ for a CN endpoint override.&lt;/p&gt;</description></item><item><title>How kimi-
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;As LLMs become increasingly powerful, numerous MCPs that rely on LLM capabilities naturally gain improvements. Tools that weren&amp;rsquo;t very useful before become more effective. This aligns with the saying: &amp;ldquo;Don&amp;rsquo;t build things that become meaningless after large model capability enhancements.&amp;rdquo;
 Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&gt;
-&lt;p&gt;I believe the next step is to bridge interactions between different modalities and tools, as well as endowing tools with large model capabilities, which is one of the inevitable development directions for agent engineers.&lt;/p&gt;</description></item><item><title>Efficient and Cost-Effective: My AI Agent Workflow Choice</title><link>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</link><pubDate>Mon, 05 Jan 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</guid><description>&lt;img src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/featured-image.jpg" alt="Featured image of post Efficient and Cost-Effective: My AI Agent Workflow Choice" /&gt;&lt;p&gt;Claude Code&amp;rsquo;s $100/month price tag is a bit steep for many. To address this, I&amp;rsquo;ve been experimenting with a more practical and affordable workflow.&lt;/p&gt;
+&lt;p&gt;I believe the next step is to bridge interactions between different modalities and tools, as well as endowing tools with large model capabilities, which is one of the inevitable development directions for agent engineers.&lt;/p&gt;</description></item><item><title>Efficient and Cost-Effective: My AI Agent Workflow Choice</title><link>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</link><pubDate>Mon, 05 Jan 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/efficient-and-cost-effective-my-ai-agent-workflow-choice/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/0b75f5015946d434.jpg" alt="Featured image of post Efficient and Cost-Effective: My AI Agent Workflow Choice" /&gt;&lt;p&gt;Claude Code&amp;rsquo;s $100/month price tag is a bit steep for many. To address this, I&amp;rsquo;ve been experimenting with a more practical and affordable workflow.&lt;/p&gt;
 &lt;p&gt;In terms of models, my recommendation is to use &lt;strong&gt;Gemini 3 Flash&lt;/strong&gt; on an as-needed (pay-as-you-go) basis as a replacement.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Why?&lt;/strong&gt; Gemini 3 Flash offers incredible value. It&amp;rsquo;s fast, efficient, and costs a fraction of what you&amp;rsquo;d pay for Opus or Sonnet. For the vast majority of tasks, Flash is more than enough.&lt;/p&gt;
 &lt;h2 id="the-cost-saving-workflow"&gt;The Cost-Saving Workflow
@@ -2735,7 +2156,7 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;/ul&gt;
 &lt;p&gt;Speaking of Gemini 3, we have to talk about &lt;strong&gt;GPT-5.2&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Many engineers still rely on ChatGPT.com directly instead of using a proper coding agent. Regardless of the efficiency debate, the reliability is concerning. From my experience, GPT-5.2&amp;rsquo;s default tone has been tuned to be overly &amp;ldquo;people-pleasing,&amp;rdquo; which might not be ideal for professional developers seeking direct technical feedback.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="GPT-5.2 Response Tone" class="gallery-image" data-flex-basis="264px" data-flex-grow="110" height="930" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png" srcset="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0_hu_c4a365684620f3ba.png 800w, https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/pics/image_1767597061665_0.png 1023w" width="1023"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="GPT-5.2 Response Tone" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3fe5432d540fbf72.png"&gt;&lt;/p&gt;
 &lt;p&gt;Furthermore, while GPT-5.2 scored impressively on &lt;strong&gt;SWE-bench Verified&lt;/strong&gt;, my real-world experience has been mixed. It&amp;rsquo;s worth looking at the history of SWE-bench:&lt;/p&gt;
 &lt;p&gt;Originally proposed by a team from &lt;strong&gt;Princeton University&lt;/strong&gt; (ICLR 2024), it evaluates a model&amp;rsquo;s ability to solve real GitHub issues. However, in August 2024, OpenAI&amp;rsquo;s Preparedness team collaborated with the original authors to create &lt;strong&gt;SWE-bench Verified&lt;/strong&gt; (a subset of 500 manually verified issues). Since OpenAI was involved in the design of this benchmark, their models&amp;rsquo; performance on it should be taken with a grain of salt. While not necessarily a deliberate manipulation, the risk of inherent bias is significant.&lt;/p&gt;
 &lt;p&gt;Ultimately, as I often say, &amp;ldquo;Codex&amp;rdquo; models don&amp;rsquo;t always deliver the most practical results in everyday coding.&lt;/p&gt;
@@ -2770,12 +2191,12 @@ Large model capabilities continue to improve, and prices keep decreasing.&lt;/p&
 &lt;li&gt;Execution is becoming faster.&lt;/li&gt;
 &lt;li&gt;Prices are dropping.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;While these trends are promising, we still need to balance speed, cost, and quality for every task. We might soon see agent systems that automate this balancing act, but for now, it&amp;rsquo;s a crucial part of the engineer&amp;rsquo;s role.&lt;/p&gt;</description></item><item><title>Coding Performance and Model Cost-Effectiveness Analysis</title><link>https://svtter.cn/en/p/coding-performance-and-model-cost-effectiveness-analysis/</link><pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/en/p/coding-performance-and-model-cost-effectiveness-analysis/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BC%96%E7%A0%81%E6%80%A7%E8%83%BD%E4%B8%8E%E6%A8%A1%E5%9E%8B%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/pics/bg-new-v2.jpg" alt="Featured image of post Coding Performance and Model Cost-Effectiveness Analysis" /&gt;&lt;p&gt;This is my analysis report on the coding performance and cost-effectiveness of several models, used to compare the performance and cost efficiency of different models in coding tasks, in order to select the most suitable model.&lt;/p&gt;
+&lt;p&gt;While these trends are promising, we still need to balance speed, cost, and quality for every task. We might soon see agent systems that automate this balancing act, but for now, it&amp;rsquo;s a crucial part of the engineer&amp;rsquo;s role.&lt;/p&gt;</description></item><item><title>Coding Performance and Model Cost-Effectiveness Analysis</title><link>https://svtter.cn/en/p/coding-performance-and-model-cost-effectiveness-analysis/</link><pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/en/p/coding-performance-and-model-cost-effectiveness-analysis/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d38cf763c5816b00.jpg" alt="Featured image of post Coding Performance and Model Cost-Effectiveness Analysis" /&gt;&lt;p&gt;This is my analysis report on the coding performance and cost-effectiveness of several models, used to compare the performance and cost efficiency of different models in coding tasks, in order to select the most suitable model.&lt;/p&gt;
 &lt;iframe src="model-comparison.pdf" style="width:100%; height:85vh; border:0;"&gt;&lt;/iframe&gt;
 
 &lt;p&gt;For Chinese language tasks, using GLM 4.7 is clearly more cost-effective. The price of 2000 RMB basically covers a year of usage.
 The downside is that during peak hours, even the enterprise MAX version can be very slow.&lt;/p&gt;
-&lt;p&gt;From my practical experience, the capabilities of minimax m2.1 far exceed those of GLM 4.7.&lt;/p&gt;</description></item><item><title>Configuring Claude Code Python UV Hooks and Skills</title><link>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</guid><description>&lt;img src="https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/pics/bg.svg" alt="Featured image of post Configuring Claude Code Python UV Hooks and Skills" /&gt;&lt;p&gt;My project uses &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
+&lt;p&gt;From my practical experience, the capabilities of minimax m2.1 far exceed those of GLM 4.7.&lt;/p&gt;</description></item><item><title>Configuring Claude Code Python UV Hooks and Skills</title><link>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</link><pubDate>Tue, 30 Dec 2025 10:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/configuring-claude-code-python-uv-hooks-and-skills/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/e8bc4990070c40d0.svg" alt="Featured image of post Configuring Claude Code Python UV Hooks and Skills" /&gt;&lt;p&gt;My project uses &lt;a class="link" href="https://github.com/astral-sh/uv" target="_blank" rel="noopener"
  &gt;uv&lt;/a&gt; to manage Python dependencies, but Claude Code habitually defaults to &lt;code&gt;python&lt;/code&gt; or &lt;code&gt;pip install&lt;/code&gt;. I tried using Skills and Hooks to enforce this standard and encountered quite a few pitfalls.&lt;/p&gt;
 &lt;h2 id="goal"&gt;Goal
 &lt;/h2&gt;&lt;ul&gt;
@@ -3041,7 +2462,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
  &gt;Claude Code Hooks Documentation&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://docs.anthropic.com/claude/docs/claude-code-skills" target="_blank" rel="noopener"
  &gt;Claude Code Skills Documentation&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Running Claude Code in a VM for Automated Testing and Development</title><link>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</guid><description>&lt;img src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/cover_hd_upscaled.png" alt="Featured image of post Running Claude Code in a VM for Automated Testing and Development" /&gt;&lt;p&gt;Recently, I verified an effective AI development method that doesn&amp;rsquo;t affect the existing workflow. Here&amp;rsquo;s a summary.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Running Claude Code in a VM for Automated Testing and Development</title><link>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</link><pubDate>Thu, 25 Dec 2025 00:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/running-claude-code-in-a-vm-for-automated-testing-and-development/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/380e4240ebc1fe15.png" alt="Featured image of post Running Claude Code in a VM for Automated Testing and Development" /&gt;&lt;p&gt;Recently, I verified an effective AI development method that doesn&amp;rsquo;t affect the existing workflow. Here&amp;rsquo;s a summary.&lt;/p&gt;
 &lt;h2 id="why-choose-vm--claude-code"&gt;Why Choose VM + Claude Code
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Isolation&lt;/strong&gt;: Avoid polluting the main system, can snapshot and rollback&lt;/li&gt;
@@ -3324,7 +2745,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="results-display"&gt;Results Display
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="VM remote desktop running Claude Code" class="gallery-image" data-flex-basis="375px" data-flex-grow="156" height="1848" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png" srcset="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_ee616737bb9471dd.png 800w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_91ab0046ef956a88.png 1600w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen_hu_1e8fe676864afc67.png 2400w, https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/pics/vm-screen.png 2892w" width="2892"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="VM remote desktop running Claude Code" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6fba21856b599a03.png"&gt;&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;The VM + Claude Code + Playwright MCP combination provides an isolated, reproducible automated development testing environment. The entire process:&lt;/p&gt;
 &lt;ol&gt;
@@ -3333,7 +2754,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;li&gt;Install Claude Code / OpenCode&lt;/li&gt;
 &lt;li&gt;Configure Playwright MCP&lt;/li&gt;
 &lt;li&gt;Drive automated testing with natural language&lt;/li&gt;
-&lt;/ol&gt;</description></item><item><title>Hugo Admin - A Lightweight Hugo Blog Management Interface</title><link>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</link><pubDate>Tue, 23 Dec 2025 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</guid><description>&lt;img src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/featured.png" alt="Featured image of post Hugo Admin - A Lightweight Hugo Blog Management Interface" /&gt;&lt;p&gt;When managing a Hugo blog, you often need to switch back and forth between the terminal and editor. To simplify this process, I developed &lt;a class="link" href="https://github.com/Svtter/hugo-admin" target="_blank" rel="noopener"
+&lt;/ol&gt;</description></item><item><title>Hugo Admin - A Lightweight Hugo Blog Management Interface</title><link>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</link><pubDate>Tue, 23 Dec 2025 16:00:00 +0800</pubDate><guid>https://svtter.cn/en/p/hugo-admin-a-lightweight-hugo-blog-management-interface/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/403bf08a102d9151.png" alt="Featured image of post Hugo Admin - A Lightweight Hugo Blog Management Interface" /&gt;&lt;p&gt;When managing a Hugo blog, you often need to switch back and forth between the terminal and editor. To simplify this process, I developed &lt;a class="link" href="https://github.com/Svtter/hugo-admin" target="_blank" rel="noopener"
  &gt;hugo-admin&lt;/a&gt;, a lightweight web management interface based on Flask.&lt;/p&gt;
 &lt;h2 id="why-its-needed"&gt;Why It&amp;rsquo;s Needed
 &lt;/h2&gt;&lt;p&gt;The typical workflow for writing Hugo blogs is:&lt;/p&gt;
@@ -3355,7 +2776,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;li&gt;&lt;strong&gt;Image Management&lt;/strong&gt;: Upload and manage article images&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="interface-display"&gt;Interface Display
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="hugo-admin interface" class="gallery-image" data-flex-basis="426px" data-flex-grow="177" height="1080" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png" srcset="https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_97d032cd1dac853b.png 800w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot_hu_1120089bfaa65cd2.png 1600w, https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/pics/screenshot.png 1920w" width="1920"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="hugo-admin interface" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/df87673bbf87e083.png"&gt;&lt;/p&gt;
 &lt;h2 id="tech-stack"&gt;Tech Stack
 &lt;/h2&gt;&lt;p&gt;Backend uses Flask + Flask-SocketIO, frontend uses Tailwind CSS + Alpine.js. Real-time log pushing is implemented based on WebSocket.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -3453,7 +2874,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;p&gt;The project is open source, welcome to Star and PR.&lt;/p&gt;
 
 
-&lt;div class="repo-card" data-repo="Svtter/hugo-admin"&gt;&lt;/div&gt;</description></item><item><title>Developing Fried Rice Theme with Claude Code</title><link>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</link><pubDate>Tue, 23 Dec 2025 15:25:02 +0800</pubDate><guid>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</guid><description>&lt;img src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/bg.png" alt="Featured image of post Developing Fried Rice Theme with Claude Code" /&gt;&lt;p&gt;Recently, I used Claude Code to add some SEO features to my own blog theme &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
+&lt;div class="repo-card" data-repo="Svtter/hugo-admin"&gt;&lt;/div&gt;</description></item><item><title>Developing Fried Rice Theme with Claude Code</title><link>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</link><pubDate>Tue, 23 Dec 2025 15:25:02 +0800</pubDate><guid>https://svtter.cn/en/p/developing-fried-rice-theme-with-claude-code/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/304e19fa6090ca88.png" alt="Featured image of post Developing Fried Rice Theme with Claude Code" /&gt;&lt;p&gt;Recently, I used Claude Code to add some SEO features to my own blog theme &lt;a class="link" href="https://github.com/Svtter/Fried-Rice" target="_blank" rel="noopener"
  &gt;Fried Rice&lt;/a&gt;, and the overall experience was quite good.&lt;/p&gt;
 &lt;h2 id="background"&gt;Background
 &lt;/h2&gt;&lt;p&gt;Fried Rice is a theme forked from &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener"
@@ -3466,7 +2887,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;li&gt;FAQ schema (supports inline FAQ in articles)&lt;/li&gt;
 &lt;li&gt;Enhanced Article/BlogPosting schema (added accessibility metadata)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="Fried Rice Theme Preview" class="gallery-image" data-flex-basis="293px" data-flex-grow="122" height="1761" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png" srcset="https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_34a0682cecca2e83.png 800w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen_hu_96a51644e8634f65.png 1600w, https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/pics/screen.png 2153w" width="2153"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Fried Rice Theme Preview" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/e4e99b0723f6cc84.png"&gt;&lt;/p&gt;
 &lt;h2 id="claude-codes-performance"&gt;Claude Code&amp;rsquo;s Performance
 &lt;/h2&gt;&lt;p&gt;The entire development process took about 2 hours. Claude Code helped me:&lt;/p&gt;
 &lt;ol&gt;
@@ -3499,7 +2920,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 
 
 &lt;div class="repo-card" data-repo="CaiJimmy/hugo-theme-stack"&gt;&lt;/div&gt;
-</description></item><item><title>CS146S is a Good Course</title><link>https://svtter.cn/en/p/cs146s-is-a-good-course/</link><pubDate>Mon, 15 Dec 2025 21:27:41 +0800</pubDate><guid>https://svtter.cn/en/p/cs146s-is-a-good-course/</guid><description>&lt;img src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/bg.png" alt="Featured image of post CS146S is a Good Course" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
+</description></item><item><title>CS146S is a Good Course</title><link>https://svtter.cn/en/p/cs146s-is-a-good-course/</link><pubDate>Mon, 15 Dec 2025 21:27:41 +0800</pubDate><guid>https://svtter.cn/en/p/cs146s-is-a-good-course/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/cb5c1236a11c3b9b.png" alt="Featured image of post CS146S is a Good Course" /&gt;&lt;p&gt;&lt;a class="link" href="https://themodernsoftware.dev/" target="_blank" rel="noopener"
  &gt;CS146S&lt;/a&gt; is a good course, one of the reasons is that it teaches modern software engineers how to better collaborate with AI. Secondly, it basically covers all my modern coding capabilities. &lt;em&gt;(It&amp;rsquo;s a joke!)&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;In the following content, I will embed the slides from the course as hyperlinks in my text. If you&amp;rsquo;re interested, you can click the hyperlinks directly to open the corresponding slides.&lt;/p&gt;
 &lt;h2 id="basic-techniques"&gt;Basic Techniques
@@ -3512,7 +2933,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
  &gt;MCP services&lt;/a&gt;. I built &lt;a class="link" href="https://github.com/Svtter/git-mcp" target="_blank" rel="noopener"
  &gt;git-mcp&lt;/a&gt;, and there&amp;rsquo;s also an unopen-sourced experimental startup MCP.&lt;/p&gt;
 &lt;h3 id="mcp-a-bit-deeper-content-from-the-ppt"&gt;MCP a bit deeper (content from the PPT)
-&lt;/h3&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="462px" data-flex-grow="192" height="1268" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_7f4a2adac1c88db2.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_1dc9e72c00a99448.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231_hu_a307090cd0a1a8d3.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805054231.png 2442w" width="2442"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/b0ee2841f0fd1feb.png"&gt;&lt;/p&gt;
 &lt;p&gt;With MCP, it&amp;rsquo;s worth noting the Host/Server/Client concept. Many Hosts are not open-source. Deepchat&amp;rsquo;s Host can be referenced.&lt;/p&gt;
 &lt;p&gt;Limitations:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -3535,18 +2956,18 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
  &gt;Cognition&lt;/a&gt;&amp;rsquo;s &lt;a class="link" href="https://docs.google.com/presentation/d/1i0pRttHf72lgz8C-n7DSegcLBgncYZe_ppU7dB9zhUA/edit?usp=sharing" target="_blank" rel="noopener"
  &gt;slides&lt;/a&gt; are very powerful.&lt;/p&gt;
 &lt;p&gt;This summary diagram is awesome. &lt;code&gt;Is it really free to watch?&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="local-cloud/sync-async limitations" class="gallery-image" data-flex-basis="436px" data-flex-grow="181" height="1491" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_f3530b097ec2450c.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_582050af4b5abd8c.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis_hu_780be336b33f9765.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/axis.png 2709w" width="2709"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="local-cloud/sync-async limitations" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/47a9afc1a2e3892c.png"&gt;&lt;/p&gt;
 &lt;p&gt;This article also mentions the concept of parallel agents.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="458px" data-flex-grow="191" height="1428" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_ff1868994b889c81.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_7d7a353b0e292969.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync_hu_eac0959e63bed537.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/cloud-sync.png 2730w" width="2730"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d7c0ed081c6aaf31.png"&gt;&lt;/p&gt;
 &lt;p&gt;So for me, the next direction to improve is cloud + async.&lt;/p&gt;
 &lt;p&gt;This is Silas Alberti&amp;rsquo;s advice:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="410px" data-flex-grow="171" height="1596" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_59fc89f29a039744.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_7e23219e2737aa8e.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent_hu_cf334b8db0d07991.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/asyncagent.png 2730w" width="2730"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/1729c81bf755434c.png"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://devin.ai/" target="_blank" rel="noopener"
  &gt;devin&lt;/a&gt; and &lt;a class="link" href="https://claude.ai/code" target="_blank" rel="noopener"
  &gt;Claude Code Cloud&lt;/a&gt; are exactly the same. Actually, you can completely use Claude Code Cloud version for vibe coding.&lt;/p&gt;
 &lt;h2 id="agent-manager"&gt;Agent Manager
 &lt;/h2&gt;&lt;p&gt;Engineers need to become agent managers, not just software engineers.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="450px" data-flex-grow="187" height="1514" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_cb95e48ac85c561c.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_dfbab1d3d2e18ae9.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history_hu_15f7edc55f4cd954.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/history.png 2843w" width="2843"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/0087d44df805394f.png"&gt;&lt;/p&gt;
 &lt;p&gt;Under the Claude Code designer mindset, the software design process should be:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Provide high level requirements 🟩&lt;/li&gt;
@@ -3572,7 +2993,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/ul&gt;
 &lt;p&gt;I&amp;rsquo;ve already used subagents and commands a lot. But I haven&amp;rsquo;t found a killing scenario for hooks yet.&lt;/p&gt;
 &lt;h3 id="best-practice-claude-code"&gt;Best practice Claude Code
-&lt;/h3&gt;&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="545px" data-flex-grow="227" height="1149" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_574a2baf64272748.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_fc011015d2d7bfb.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc_hu_319cb85588317976.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/best-prac-cc.png 2613w" width="2613"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/7f8842928d3975d7.png"&gt;&lt;/p&gt;
 &lt;p&gt;What I want to say is to use subagents as much as possible to avoid the &amp;ldquo;lost in the middle&amp;rdquo; phenomenon.&lt;/p&gt;
 &lt;h3 id="claude-code-cli"&gt;&lt;a class="link" href="https://docs.google.com/presentation/d/1bv7Zozn6z45CAh-IyX99dMPMyXCHC7zj95UfwErBYQ8/edit?slide=id.g35e8acebb8e_0_106#slide=id.g35e8acebb8e_0_106" target="_blank" rel="noopener"
  &gt;Claude Code CLI&lt;/a&gt;
@@ -3581,7 +3002,7 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
  &lt;p&gt;Why did I buy Claude Code?&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="412px" data-flex-grow="171" height="1659" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png" srcset="https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_e361b65ffeb93560.png 800w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_806232c626ef33.png 1600w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031_hu_8f5cfe6cd461537f.png 2400w, https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/pics/clipboard-1765805228031.png 2850w" width="2850"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/7a431aab1ce3dea8.png"&gt;&lt;/p&gt;
 &lt;p&gt;We can do more things through the SDK:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -3598,10 +3019,10 @@ When asked &amp;ldquo;how to run Python scripts,&amp;rdquo; Claude will proactiv
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="conclusion"&gt;Conclusion
-&lt;/h2&gt;&lt;p&gt;This course is free, but the insights inside surpass most paid courses. If you can understand and quickly absorb it, don&amp;rsquo;t be stingy with your time, learn it.&lt;/p&gt;</description></item><item><title>Use Emerging Open Source Software with Caution</title><link>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</guid><description>&lt;img src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/background.png" alt="Featured image of post Use Emerging Open Source Software with Caution" /&gt;&lt;p&gt;Recently, I had an incident with Dify/Langchain and reached this conclusion.&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;This course is free, but the insights inside surpass most paid courses. If you can understand and quickly absorb it, don&amp;rsquo;t be stingy with your time, learn it.&lt;/p&gt;</description></item><item><title>Use Emerging Open Source Software with Caution</title><link>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/5406e826e1c3cde7.png" alt="Featured image of post Use Emerging Open Source Software with Caution" /&gt;&lt;p&gt;Recently, I had an incident with Dify/Langchain and reached this conclusion.&lt;/p&gt;
 &lt;h2 id="retrospective"&gt;Retrospective
 &lt;/h2&gt;&lt;p&gt;About 7 months ago, I deployed the open-source Dify to the server and started an instance through the official docker compose. However, recently, due to a sandbox escape vulnerability in Dify&amp;rsquo;s code node (CVE-2025-3466), I was privilege-escalated via webshell and had a Monero mining program implanted.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="1326px" data-flex-grow="552" height="462" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png" srcset="https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_a5cdbf798e8121ac.png 800w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_68dcb0fffe2da99.png 1600w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip_hu_156460a4ea5b2da4.png 2400w, https://svtter.cn/p/%E8%B0%A8%E6%85%8E%E4%BD%BF%E7%94%A8%E6%96%B0%E5%85%B4%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/pics/danger-ip.png 2553w" width="2553"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/307cd31d657d7799.png"&gt;&lt;/p&gt;
 &lt;p&gt;Fortunately, after this privilege escalation, the intruder didn&amp;rsquo;t do much, and the intrusion was in the docker container, with limited damage.&lt;/p&gt;
 &lt;h2 id="cve-2025-3466-details"&gt;CVE-2025-3466 Details
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;CVE ID&lt;/strong&gt;: CVE-2025-3466
@@ -3688,7 +3109,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;h2 id="conclusion"&gt;Conclusion
 &lt;/h2&gt;&lt;p&gt;Open source software provides us with great convenience, but also brings security risks. Although this incident didn&amp;rsquo;t cause much loss, it gave me an important lesson:&lt;/p&gt;
 &lt;p&gt;Don&amp;rsquo;t blindly trust any software, especially emerging open source projects. Do more investigation before use, give minimal permissions during use, and continuously monitor and update after use.&lt;/p&gt;
-&lt;p&gt;Server security is not a one-time solution, but requires continuous attention and maintenance.&lt;/p&gt;</description></item><item><title>Third-party Client Performance</title><link>https://svtter.cn/en/p/third-party-client-performance/</link><pubDate>Wed, 19 Nov 2025 17:03:18 +0800</pubDate><guid>https://svtter.cn/en/p/third-party-client-performance/</guid><description>&lt;img src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/bg.jpg" alt="Featured image of post Third-party Client Performance" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;p&gt;Server security is not a one-time solution, but requires continuous attention and maintenance.&lt;/p&gt;</description></item><item><title>Third-party Client Performance</title><link>https://svtter.cn/en/p/third-party-client-performance/</link><pubDate>Wed, 19 Nov 2025 17:03:18 +0800</pubDate><guid>https://svtter.cn/en/p/third-party-client-performance/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a0f709fd1700e18d.jpg" alt="Featured image of post Third-party Client Performance" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -3706,25 +3127,25 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;h2 id="test-questions"&gt;Test Questions
 &lt;/h2&gt;&lt;p&gt;I feel there are still some issues with context handling (within a single chat window). I briefly tested this question: &lt;code&gt;Which is the most expensive model on Silicon Flow?&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The answer is:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="346px" data-flex-grow="144" height="832" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ.png" srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ_hu_163f40866f3fb557.png 800w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/answ.png 1200w" width="1200"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/716511a310eb0f31.png"&gt;&lt;/p&gt;
 &lt;h2 id="kimi-k2-thinking-turbo"&gt;Kimi k2 thinking turbo
 &lt;/h2&gt;&lt;p&gt;First, deepchat:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="316px" data-flex-grow="131" height="1587" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032.png" srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032_hu_fe013ed36f2c9e27.png 800w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032_hu_b1228edd0e4dd6a6.png 1600w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171204_032.png 2091w" width="2091"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/acc2610e71e542f5.png"&gt;&lt;/p&gt;
 &lt;p&gt;Hmm, incorrect.&lt;/p&gt;
 &lt;p&gt;Then, kimi official:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="271px" data-flex-grow="113" height="1911" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940.png" srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940_hu_a7c05ac6101e4180.png 800w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940_hu_2b3fecb8b5e1caa.png 1600w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ScreenShot_2025-11-19_171256_940.png 2163w" width="2163"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a972ea1935ec0229.png"&gt;&lt;/p&gt;
 &lt;p&gt;Also incorrect.&lt;/p&gt;
 &lt;h2 id="trying-deepseek"&gt;Trying deepseek
 &lt;/h2&gt;&lt;p&gt;First, let&amp;rsquo;s try the client.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="318px" data-flex-grow="132" height="1509" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc.png" srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc_hu_d21cd41798b8c856.png 800w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc_hu_460a58b7b4f6e6b7.png 1600w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds-dc.png 2001w" width="2001"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/f77dcddf6ea55d9d.png"&gt;&lt;/p&gt;
 &lt;p&gt;Incorrect.&lt;/p&gt;
 &lt;p&gt;Then, deepseek official.&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="196px" data-flex-grow="81" height="1538" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds.png" srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds_hu_1803030c0a59f95f.png 800w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/ds.png 1260w" width="1260"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/b3d60a9313c57a5b.png"&gt;&lt;/p&gt;
 &lt;p&gt;Very close, and the answer seems reasonable. Unfortunately, it&amp;rsquo;s still incorrect.&lt;/p&gt;
 &lt;h2 id="if-we-ask-chatgpt-directly"&gt;If we ask ChatGPT directly
 &lt;/h2&gt;&lt;p&gt;Hiss, a bit off. Let&amp;rsquo;s try gpt-5.&lt;/p&gt;
 &lt;p&gt;Prompt:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="189px" data-flex-grow="78" height="1616" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131.png" srcset="https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131_hu_431759ed555a584a.png 800w, https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/pics/wechat_2025-11-19_171536_131.png 1275w" width="1275"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d2f4f19668e687fd.png"&gt;&lt;/p&gt;
 &lt;h2 id="inference---reasons-for-poor-performance"&gt;Inference - Reasons for Poor Performance
 &lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;Insufficient search capability. The Bocha API is to blame.&lt;/li&gt;
@@ -3734,7 +3155,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;For this specific problem, ChatGPT still performs better. Compared to before, the official search + model combination also seems to perform better. Therefore, unless the data is particularly sensitive, it&amp;rsquo;s better to use the official service.&lt;/li&gt;
 &lt;li&gt;This article is for reference only, just for fun.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Can GLM 4.6 Be Strengthened Through Spec-Kit</title><link>https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/</link><pubDate>Fri, 14 Nov 2025 22:53:57 +0800</pubDate><guid>https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/</guid><description>&lt;img src="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/bg.png" alt="Featured image of post Can GLM 4.6 Be Strengthened Through Spec-Kit" /&gt;
+&lt;/ul&gt;</description></item><item><title>Can GLM 4.6 Be Strengthened Through Spec-Kit</title><link>https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/</link><pubDate>Fri, 14 Nov 2025 22:53:57 +0800</pubDate><guid>https://svtter.cn/en/p/can-glm-4.6-be-strengthened-through-spec-kit/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/79cbf72d3435dd49.png" alt="Featured image of post Can GLM 4.6 Be Strengthened Through Spec-Kit" /&gt;
  &lt;blockquote&gt;
  &lt;p&gt;Another article on how to mitigate losses with glm4.6. Our old friend glm 4.6. The new friend doubao-seed-code has also arrived.&lt;/p&gt;
 
@@ -3742,7 +3163,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;p&gt;&lt;a class="link" href="https://github.com/github/spec-kit" target="_blank" rel="noopener"
  &gt;github spec-kit&lt;/a&gt; is a coding agent enhancement tool launched by GitHub, aimed at making engineering more standardized and easier.&lt;/p&gt;
 &lt;p&gt;I initially looked down on this, thinking I have the claude code max plan, so why bother using it? Then:&lt;/p&gt;
-&lt;p&gt;&lt;img class="gallery-image" data-flex-basis="4034px" data-flex-grow="1680" height="126" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit.png" srcset="https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_7b31c576b7ac0d4d.png 800w, https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit_hu_b83a61593790d092.png 1600w, https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/pics/limit.png 2118w" width="2118"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/21285f33a5aabd8b.png"&gt;&lt;/p&gt;
 &lt;p&gt;This is actually the result of using spec kit, leading to a huge token consumption. Otherwise, based on my usual usage, it should have been just right.&lt;/p&gt;
 &lt;p&gt;This means that cheaper models might be more cost-effective to use. Because they are less capable, constraining their behavior with extensive specs might lead to better performance than before.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s try out &lt;a class="link" href="https://github.com/github/spec-kit" target="_blank" rel="noopener"
@@ -3831,7 +3252,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
  &gt;spec-kit&lt;/a&gt; when working with Claude Code. This thing is a token hog—it essentially uses a sledgehammer to crack a nut.&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/github/spec-kit" target="_blank" rel="noopener"
  &gt;spec-kit&lt;/a&gt; does not support Trae, and Trae doesn&amp;rsquo;t need that support to perform well.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Claude Code Plugin Usage Experience</title><link>https://svtter.cn/en/p/claude-code-plugin-usage-experience/</link><pubDate>Tue, 14 Oct 2025 10:16:54 +0800</pubDate><guid>https://svtter.cn/en/p/claude-code-plugin-usage-experience/</guid><description>&lt;img src="https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/pics/bg.svg" alt="Featured image of post Claude Code Plugin Usage Experience" /&gt;&lt;p&gt;Overall, the experience was not good.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Claude Code Plugin Usage Experience</title><link>https://svtter.cn/en/p/claude-code-plugin-usage-experience/</link><pubDate>Tue, 14 Oct 2025 10:16:54 +0800</pubDate><guid>https://svtter.cn/en/p/claude-code-plugin-usage-experience/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d9d0e55a41a2a6bd.svg" alt="Featured image of post Claude Code Plugin Usage Experience" /&gt;&lt;p&gt;Overall, the experience was not good.&lt;/p&gt;
 &lt;p&gt;It&amp;rsquo;s likely because it&amp;rsquo;s newly launched and generally feels immature.&lt;/p&gt;
 &lt;p&gt;Typical issues include:&lt;/p&gt;
 &lt;ol&gt;
@@ -3846,7 +3267,7 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;li&gt;If using DeepSeek V3.2, its relatively short context length (128K) means it doesn&amp;rsquo;t perform well when there are many tools or MCP connections.&lt;/li&gt;
 &lt;li&gt;Plugins often don&amp;rsquo;t improve the tool usage experience; they can actually degrade it. This is because MCP tools and plugins increase the input token count, forcing the model to process more context. Since the computational complexity of transformers is O(n²), any increase in length has a significant negative impact.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;In summary, it&amp;rsquo;s not recommended for use at this time.&lt;/p&gt;</description></item><item><title>[Expired] I now use GLM 4.6 more often.</title><link>https://svtter.cn/en/p/expired-i-now-use-glm-4.6-more-often./</link><pubDate>Thu, 09 Oct 2025 15:36:00 +0800</pubDate><guid>https://svtter.cn/en/p/expired-i-now-use-glm-4.6-more-often./</guid><description>&lt;img src="https://svtter.cn/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/glm-vs-deepseek.svg" alt="Featured image of post [Expired] I now use GLM 4.6 more often." /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;p&gt;In summary, it&amp;rsquo;s not recommended for use at this time.&lt;/p&gt;</description></item><item><title>[Expired] I now use GLM 4.6 more often.</title><link>https://svtter.cn/en/p/expired-i-now-use-glm-4.6-more-often./</link><pubDate>Thu, 09 Oct 2025 15:36:00 +0800</pubDate><guid>https://svtter.cn/en/p/expired-i-now-use-glm-4.6-more-often./</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a42bb75209d1b5c5.svg" alt="Featured image of post [Expired] I now use GLM 4.6 more often." /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -3882,7 +3303,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
  &gt;Limited Budget, Maximized Efficiency: Why Kilo Code Became My Preferred Coding Agent&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://kilocode.ai/" target="_blank" rel="noopener"
  &gt;Kilo Code&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Why Agent</title><link>https://svtter.cn/en/p/why-agent/</link><pubDate>Tue, 30 Sep 2025 11:54:06 +0800</pubDate><guid>https://svtter.cn/en/p/why-agent/</guid><description>&lt;img src="https://svtter.cn/p/why-agent/pics/why-agent-background.svg" alt="Featured image of post Why Agent" /&gt;&lt;p&gt;I&amp;rsquo;ve always had a question: Why do we need agent frameworks? Aren&amp;rsquo;t large models enough on their own? This article reflects my current understanding of the subject.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Why Agent</title><link>https://svtter.cn/en/p/why-agent/</link><pubDate>Tue, 30 Sep 2025 11:54:06 +0800</pubDate><guid>https://svtter.cn/en/p/why-agent/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/67f29b9b7f9b9dc8.svg" alt="Featured image of post Why Agent" /&gt;&lt;p&gt;I&amp;rsquo;ve always had a question: Why do we need agent frameworks? Aren&amp;rsquo;t large models enough on their own? This article reflects my current understanding of the subject.&lt;/p&gt;
 &lt;p&gt;After using several tools extensively and participating in multiple agent projects recently, I&amp;rsquo;ve reached some conclusions.&lt;/p&gt;
 &lt;h2 id="the-limitations-of-llms"&gt;The Limitations of LLMs
 &lt;/h2&gt;&lt;p&gt;The primary reason for using agents is the inherent limitations of LLMs.&lt;/p&gt;
@@ -3918,15 +3339,15 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;li&gt;&lt;a class="link" href="https://www.langchain.com/" target="_blank" rel="noopener"
  &gt;LangChain&lt;/a&gt;: I haven&amp;rsquo;t used this in production, only for basic debugging. The API changes frequently, which can be challenging. One minor issue is prompt handling; &lt;a class="link" href="https://svtter.cn/p/string-template-in-prompt.md/" &gt;I used Jinja to solve this&lt;/a&gt;. Alternatively, the &amp;ldquo;LangChain way&amp;rdquo; involves using &lt;a class="link" href="https://python.langchain.com/docs/concepts/prompt_templates/#string-prompttemplates" target="_blank" rel="noopener"
  &gt;PromptTemplates&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Several Issues with Zhipu GLM-4.5 in Programming</title><link>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</link><pubDate>Tue, 23 Sep 2025 10:24:43 +0800</pubDate><guid>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</guid><description>&lt;img src="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/pics/featured_20250924_145011.png" alt="Featured image of post Several Issues with Zhipu GLM-4.5 in Programming" /&gt;&lt;p&gt;Through some leaderboards and the &lt;a class="link" href="https://arxiv.org/abs/2508.06471" target="_blank" rel="noopener"
+&lt;/ul&gt;</description></item><item><title>Several Issues with Zhipu GLM-4.5 in Programming</title><link>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</link><pubDate>Tue, 23 Sep 2025 10:24:43 +0800</pubDate><guid>https://svtter.cn/en/p/several-issues-with-zhipu-glm-4.5-in-programming/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/2052eb9206c3e9c4.png" alt="Featured image of post Several Issues with Zhipu GLM-4.5 in Programming" /&gt;&lt;p&gt;Through some leaderboards and the &lt;a class="link" href="https://arxiv.org/abs/2508.06471" target="_blank" rel="noopener"
  &gt;report&lt;/a&gt;, I saw that glm-4.5 received high scores, so I gritted my teeth and subscribed to the annual coding plan.&lt;/p&gt;
 &lt;p&gt;However, while using the Zhipu glm4.5 coding plan, I encountered several issues that severely impacted my work efficiency.&lt;/p&gt;
 &lt;h2 id="cline"&gt;Cline
 &lt;/h2&gt;&lt;p&gt;In cline, there are roughly a few problems.&lt;/p&gt;
 &lt;p&gt;Problem One: Simple diff tool calls fail to output correctly.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="diff prob" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="img/prob1.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="diff prob" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d4d602d4d42022d5.png"&gt;&lt;/p&gt;
 &lt;p&gt;Problem Two: The task list tool is unusable.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="tasklist prob" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="img/prob.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="tasklist prob" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a9126fc9e6e334d2.png"&gt;&lt;/p&gt;
 &lt;p&gt;I once suspected it was a cline issue. But then I thought, deepseek, gpt-5, and claude-4-opus all work fine.&lt;/p&gt;
 &lt;p&gt;The prompt doesn&amp;rsquo;t change because of these. It&amp;rsquo;s most likely an issue with Zhipu glm-4.5.&lt;/p&gt;
 &lt;h2 id="claude-code"&gt;Claude Code
@@ -3938,7 +3359,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;p&gt;There&amp;rsquo;s also a common issue: obsequiousness.&lt;/p&gt;
 &lt;h3 id="stopped-responding"&gt;Stopped Responding
 &lt;/h3&gt;&lt;p&gt;A new problem encountered on 2025-10-03: it stopped providing feedback while answering a question and terminated the process.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="stop responsing" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="img/bug-3.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="stop responsing" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/e5b4b35d3e2e5614.png"&gt;&lt;/p&gt;
 &lt;p&gt;The most likely cause of this problem is a lack of adaptation to the thinking interface, resulting in it thinking but not displaying the content.&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary
 &lt;/h2&gt;&lt;p&gt;Based on my current experience, among domestic AIs, apart from DeepSeek, the other major players tend to have unstable model outputs.&lt;/p&gt;
@@ -3960,7 +3381,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
  &gt;I Bought the Kimi Coding Plan Again&lt;/a&gt; - Experience and configuration methods for the Kimi monthly plan.&lt;/li&gt;
 &lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/" target="_blank" rel="noopener"
  &gt;Doubao doubao-seed-code Test&lt;/a&gt; - In-depth testing of ByteDance&amp;rsquo;s Doubao coding plan.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://svtter.cn/p/how-to-use-claude-code-with-deepseek/pics/bg.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;Sometimes we cannot directly use the Anthropic API. However, the Claude Code (CC) experience is excellent, and we still want to use CC.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>How to Use Claude Code With Deepseek</title><link>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</link><pubDate>Tue, 26 Aug 2025 14:42:54 +0800</pubDate><guid>https://svtter.cn/en/p/how-to-use-claude-code-with-deepseek/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/1bfb1e7b05773dcd.png" alt="Featured image of post How to Use Claude Code With Deepseek" /&gt;&lt;p&gt;Sometimes we cannot directly use the Anthropic API. However, the Claude Code (CC) experience is excellent, and we still want to use CC.&lt;/p&gt;
 &lt;p&gt;In such cases, you can try using the API provided by DeepSeek to access CC.&lt;/p&gt;
 &lt;p&gt;DeepSeek has already provided the corresponding interface: &lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/guides/anthropic_api" target="_blank" rel="noopener"
  &gt;How to Use the Claude Code + DeepSeek Combination?&lt;/a&gt;&lt;/p&gt;
@@ -3971,13 +3392,13 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg" target="_blank" rel="noopener"
  &gt;https://mp.weixin.qq.com/s/gk0tzMxWZ-NgsUWg5iLoSg&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Try Cline</title><link>https://svtter.cn/en/p/try-cline/</link><pubDate>Sun, 06 Jul 2025 10:29:43 +0800</pubDate><guid>https://svtter.cn/en/p/try-cline/</guid><description>&lt;img src="https://svtter.cn/p/try-cline/pics/bg.webp" alt="Featured image of post Try Cline" /&gt;&lt;p&gt;I&amp;rsquo;ve been a long-time user of Cursor, but I recently discovered that &lt;strong&gt;Cline&lt;/strong&gt; is also incredibly effective, especially when using its tool-calling capabilities via OpenRouter.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Try Cline</title><link>https://svtter.cn/en/p/try-cline/</link><pubDate>Sun, 06 Jul 2025 10:29:43 +0800</pubDate><guid>https://svtter.cn/en/p/try-cline/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/1c0009d9d415e5a6.webp" alt="Featured image of post Try Cline" /&gt;&lt;p&gt;I&amp;rsquo;ve been a long-time user of Cursor, but I recently discovered that &lt;strong&gt;Cline&lt;/strong&gt; is also incredibly effective, especially when using its tool-calling capabilities via OpenRouter.&lt;/p&gt;
 &lt;p&gt;Cline is a VSCode extension that performs operations similar to Cursor&amp;rsquo;s &amp;ldquo;Agent&amp;rdquo; mode. If you&amp;rsquo;re not familiar with Cursor yet, I recommend checking out this introductory video:&lt;/p&gt;
 &lt;iframe src="//player.bilibili.com/player.html?isOutside=true&amp;aid=114426116120045&amp;bvid=BV1WBG9zgECp&amp;cid=29714612433&amp;p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"&gt;&lt;/iframe&gt;
 &lt;p&gt;What sets Cline apart is the ability to choose your own underlying model. For instance, the popular Kimi K2 can be configured via API. Today (2025-07-06), I tested Cline&amp;rsquo;s editing capabilities, and the results were much more organized and powerful than I had anticipated.&lt;/p&gt;
 &lt;h2 id="transparency-and-context"&gt;Transparency and Context
 &lt;/h2&gt;&lt;p&gt;One major advantage of Cline over Cursor is transparency. You can clearly see exactly what context is being sent to the model.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Cline Interface" class="gallery-image" data-flex-basis="284px" data-flex-grow="118" height="465" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/try-cline/pics/cline-clip.png" width="552"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Cline Interface" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3c940957cc497efb.png"&gt;&lt;/p&gt;
 &lt;h2 id="the-test-task"&gt;The Test Task
 &lt;/h2&gt;&lt;p&gt;I assigned Cline a task involving Windows APIs and tool usage:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -3990,7 +3411,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="the-workflow"&gt;The Workflow
 &lt;/h2&gt;&lt;p&gt;The overall process was quite smooth, though I did hit one major roadblock: the application would crash immediately after initialization.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Interactive Session" class="gallery-image" data-flex-basis="70px" data-flex-grow="29" height="1780" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/try-cline/pics/interactive.png" width="523"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interactive Session" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/afbb16be8a491837.png"&gt;&lt;/p&gt;
 &lt;p&gt;The issue turned out to be null variables during application startup that weren&amp;rsquo;t properly loaded via the XML manifest.&lt;/p&gt;
 &lt;p&gt;Ultimately, I used a combination of Cursor and VSCode to fix it. Cursor suggested using Visual Studio&amp;rsquo;s specialized editor rather than just the &lt;code&gt;dotnet&lt;/code&gt; CLI, which allowed me to identify the null variable and resolve the crash.&lt;/p&gt;
 &lt;h2 id="the-cost-factor"&gt;The Cost Factor
@@ -3999,7 +3420,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;li&gt;In a single morning of work, I spent &lt;strong&gt;$3.17 USD&lt;/strong&gt; without even completing the task.&lt;/li&gt;
 &lt;li&gt;Given my usual programming schedule (about 4 days a week), two weeks of using Cline would already exceed the monthly subscription cost of Cursor.&lt;/li&gt;
 &lt;li&gt;Unless Cline can demonstrate a decisive advantage, Cursor remains the more economical choice for my workflow.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Poor Performance of Large Models on Specific Tasks</title><link>https://svtter.cn/en/p/poor-performance-of-large-models-on-specific-tasks/</link><pubDate>Thu, 19 Jun 2025 16:34:32 +0800</pubDate><guid>https://svtter.cn/en/p/poor-performance-of-large-models-on-specific-tasks/</guid><description>&lt;img src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/bg.png" alt="Featured image of post Poor Performance of Large Models on Specific Tasks" /&gt;&lt;p&gt;Vision large models perform poorly on some specific tasks but perform better with formatted text. Here, I use the localization of meter reading areas as an example to demonstrate the performance of large models.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Poor Performance of Large Models on Specific Tasks</title><link>https://svtter.cn/en/p/poor-performance-of-large-models-on-specific-tasks/</link><pubDate>Thu, 19 Jun 2025 16:34:32 +0800</pubDate><guid>https://svtter.cn/en/p/poor-performance-of-large-models-on-specific-tasks/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/9f22ddb575bcc110.png" alt="Featured image of post Poor Performance of Large Models on Specific Tasks" /&gt;&lt;p&gt;Vision large models perform poorly on some specific tasks but perform better with formatted text. Here, I use the localization of meter reading areas as an example to demonstrate the performance of large models.&lt;/p&gt;
 &lt;h2 id="source-code"&gt;Source Code
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/Svtter/vl-model/pull/4" target="_blank" rel="noopener"
  &gt;https://github.com/Svtter/vl-model/pull/4&lt;/a&gt;&lt;/p&gt;
@@ -4009,18 +3430,18 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;li&gt;Extract the meter reading area from the image.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id="test-file"&gt;Test File
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="Original Meter" class="gallery-image" data-flex-basis="179px" data-flex-grow="74" height="1707" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2.jpg" srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2_hu_bcbd419fdfe58b59.jpg 800w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/meter-2.jpg 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="Original Meter" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/fb5db1ccc4523e24.jpg"&gt;&lt;/p&gt;
 &lt;p&gt;We can observe the performance differences among various models from these test results:&lt;/p&gt;
 &lt;h2 id="test-results-comparison"&gt;Test Results Comparison
 &lt;/h2&gt;&lt;h3 id="results-using-bounding-boxes-as-prompts"&gt;Results Using Bounding Boxes as Prompts
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="Overall Test Results" class="gallery-image" data-flex-basis="179px" data-flex-grow="74" height="1707" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image.png" srcset="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_hu_5426c8ec02eb13dd.png 800w, https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image.png 1280w" width="1280"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="Overall Test Results" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/c710645e8d3cad78.png"&gt;&lt;/p&gt;
 &lt;h3 id="detailed-performance-of-each-model"&gt;Detailed Performance of Each Model
 &lt;/h3&gt;&lt;h4 id="anthropic-claude-35-sonnet"&gt;Anthropic Claude 3.5 Sonnet
-&lt;/h4&gt;&lt;p&gt;&lt;img alt="Claude 3.5 Sonnet Test Results" class="gallery-image" data-flex-basis="801px" data-flex-grow="333" height="56" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_anthropic_claude-3.5-sonnet.png" width="187"&gt;&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="Claude 3.5 Sonnet Test Results" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/9d217b7dca591b71.png"&gt;&lt;/p&gt;
 &lt;h4 id="google-gemini-25-pro"&gt;Google Gemini 2.5 Pro
-&lt;/h4&gt;&lt;p&gt;&lt;img alt="Gemini 2.5 Pro Test Results" class="gallery-image" data-flex-basis="1166px" data-flex-grow="485" height="142" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_google_gemini-2.5-pro.png" width="690"&gt;&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="Gemini 2.5 Pro Test Results" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/557af49760a22bf8.png"&gt;&lt;/p&gt;
 &lt;h4 id="openai-gpt-4o"&gt;OpenAI GPT-4o
-&lt;/h4&gt;&lt;p&gt;&lt;img alt="GPT-4o Test Results" class="gallery-image" data-flex-basis="480px" data-flex-grow="200" height="60" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/poor-performance-of-large-models-on-specific-tasks/pics/cropped_image_openai_gpt-4o.png" width="120"&gt;&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;img alt="GPT-4o Test Results" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d9df30f8f6d9f5c2.png"&gt;&lt;/p&gt;
 &lt;h2 id="analysis-summary"&gt;Analysis Summary
 &lt;/h2&gt;&lt;p&gt;From these test results, we can observe:&lt;/p&gt;
 &lt;ol&gt;
@@ -4099,7 +3520,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;p&gt;even&lt;/p&gt;
 &lt;h2 id="some-thoughts"&gt;Some Thoughts
 &lt;/h2&gt;&lt;p&gt;LLMs are already quite powerful. However, LLMs cannot guarantee the accuracy of generated content, requiring human verification. Therefore, the human who verifies the output is essential.&lt;/p&gt;
-&lt;p&gt;This code must be verified by a human to work. Of course, if it&amp;rsquo;s merely about modifying content, LLMs can collaborate with us, in the form of a cursor.&lt;/p&gt;</description></item><item><title>2025 Q1 Summary</title><link>https://svtter.cn/en/p/2025-q1-summary/</link><pubDate>Sat, 03 May 2025 10:56:16 +0800</pubDate><guid>https://svtter.cn/en/p/2025-q1-summary/</guid><description>&lt;img src="https://svtter.cn/p/2025-q1-%E6%80%BB%E7%BB%93/bg.png" alt="Featured image of post 2025 Q1 Summary" /&gt;&lt;p&gt;New Insights:&lt;/p&gt;
+&lt;p&gt;This code must be verified by a human to work. Of course, if it&amp;rsquo;s merely about modifying content, LLMs can collaborate with us, in the form of a cursor.&lt;/p&gt;</description></item><item><title>2025 Q1 Summary</title><link>https://svtter.cn/en/p/2025-q1-summary/</link><pubDate>Sat, 03 May 2025 10:56:16 +0800</pubDate><guid>https://svtter.cn/en/p/2025-q1-summary/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a561599bba73a901.png" alt="Featured image of post 2025 Q1 Summary" /&gt;&lt;p&gt;New Insights:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Connect knowledge into a network rather than isolated nodes; forming a graph structure allows you to gain new insights from each of your own insights.&lt;/li&gt;
 &lt;li&gt;Use tools appropriately, don&amp;rsquo;t blindly pursue programmability and reusability. This is a habit developed as a software engineer, but when solving problems, tailor the approach to the specific issue.&lt;/li&gt;
@@ -4165,7 +3586,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;li&gt;Attempt to publish a conference paper; the level is not important.&lt;/li&gt;
 &lt;li&gt;Refine the outline of the graduation thesis and write the details.&lt;/li&gt;
 &lt;li&gt;Write a new paper.&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Deployment of Dify 1.2.0</title><link>https://svtter.cn/en/p/deployment-of-dify-1.2.0/</link><pubDate>Tue, 22 Apr 2025 11:20:02 +0800</pubDate><guid>https://svtter.cn/en/p/deployment-of-dify-1.2.0/</guid><description>&lt;img src="https://svtter.cn/p/deployment-of-dify-1.2.0.md/image.png" alt="Featured image of post Deployment of Dify 1.2.0" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/ul&gt;</description></item><item><title>Deployment of Dify 1.2.0</title><link>https://svtter.cn/en/p/deployment-of-dify-1.2.0/</link><pubDate>Tue, 22 Apr 2025 11:20:02 +0800</pubDate><guid>https://svtter.cn/en/p/deployment-of-dify-1.2.0/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/8e12a0b664c79d55.png" alt="Featured image of post Deployment of Dify 1.2.0" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -4257,7 +3678,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- Images sourced from &lt;span class="o"&gt;[&lt;/span&gt;chatgpt-lab&lt;span class="o"&gt;](&lt;/span&gt;https://chatgpt-lab.com/n/n12d18abb26c8?gs&lt;span class="o"&gt;=&lt;/span&gt;a6ed475ccea2&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Work With Langfuse</title><link>https://svtter.cn/en/p/work-with-langfuse/</link><pubDate>Mon, 21 Apr 2025 14:51:38 +0800</pubDate><guid>https://svtter.cn/en/p/work-with-langfuse/</guid><description>&lt;img src="https://svtter.cn/p/work-with-langfuse.md/image.png" alt="Featured image of post Work With Langfuse" /&gt;&lt;p&gt;When developing LLM applications, we consider performance issues during LLM calls and monitor outputs during the process.&lt;/p&gt;
+&lt;/div&gt;</description></item><item><title>Work With Langfuse</title><link>https://svtter.cn/en/p/work-with-langfuse/</link><pubDate>Mon, 21 Apr 2025 14:51:38 +0800</pubDate><guid>https://svtter.cn/en/p/work-with-langfuse/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4e97dc7507ad64f2.png" alt="Featured image of post Work With Langfuse" /&gt;&lt;p&gt;When developing LLM applications, we consider performance issues during LLM calls and monitor outputs during the process.&lt;/p&gt;
 &lt;p&gt;At this point, tools like LangSmith and Langfuse become very useful.&lt;/p&gt;
 &lt;p&gt;However, sometimes we have local computing resources and prefer not to use cloud-based resources for LLM call monitoring, so we might not consider LangSmith.&lt;/p&gt;
 &lt;p&gt;In such cases, we can use Langfuse for this purpose.&lt;/p&gt;
@@ -4405,7 +3826,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;/div&gt;&lt;p&gt;Regarding this issue, I have opened a &lt;a class="link" href="https://github.com/orgs/langfuse/discussions/6529" target="_blank" rel="noopener"
  &gt;discussion&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Additionally, if you wish to view the original code, you can obtain it from &lt;a class="link" href="https://github.com/svtter/pdf-reader" target="_blank" rel="noopener"
- &gt;https://github.com/svtter/pdf-reader&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Draw Subfig and Making Subplot</title><link>https://svtter.cn/en/p/draw-subfig-and-making-subplot/</link><pubDate>Tue, 08 Apr 2025 10:17:09 +0800</pubDate><guid>https://svtter.cn/en/p/draw-subfig-and-making-subplot/</guid><description>&lt;img src="https://svtter.cn/p/draw-subfig-and-making-subplot.md/Figure_1.png" alt="Featured image of post Draw Subfig and Making Subplot" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+ &gt;https://github.com/svtter/pdf-reader&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Draw Subfig and Making Subplot</title><link>https://svtter.cn/en/p/draw-subfig-and-making-subplot/</link><pubDate>Tue, 08 Apr 2025 10:17:09 +0800</pubDate><guid>https://svtter.cn/en/p/draw-subfig-and-making-subplot/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/cd9e451def0e8384.png" alt="Featured image of post Draw Subfig and Making Subplot" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -4552,12 +3973,12 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Before&lt;/span&gt; &lt;span class="n"&gt;drawing&lt;/span&gt; &lt;span class="n"&gt;subplots&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;you&lt;/span&gt; &lt;span class="n"&gt;must&lt;/span&gt; &lt;span class="n"&gt;first&lt;/span&gt; &lt;span class="n"&gt;create&lt;/span&gt; &lt;span class="n"&gt;them&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="c1"&gt;## Example&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Next&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;here&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;complete&lt;/span&gt; &lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="c1"&gt;### Preview&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;!&lt;/span&gt;&lt;span class="p"&gt;[](&lt;/span&gt;&lt;span class="n"&gt;Figure_1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;png&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;!&lt;/span&gt;&lt;span class="p"&gt;[](&lt;/span&gt;&lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;pub&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;7004&lt;/span&gt;&lt;span class="n"&gt;adda461c45dfaa1f3ec95693b444&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;r2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;images&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;migrated&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;cd9e451def0e8384&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;png&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;If&lt;/span&gt; &lt;span class="n"&gt;you&lt;/span&gt; &lt;span class="n"&gt;want&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;view&lt;/span&gt; &lt;span class="n"&gt;images&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;shape&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;192&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;you&lt;/span&gt; &lt;span class="n"&gt;can&lt;/span&gt; &lt;span class="n"&gt;also&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;utility&lt;/span&gt; &lt;span class="n"&gt;functions&lt;/span&gt; &lt;span class="n"&gt;provided&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;torchvision&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Diffusion Model</title><link>https://svtter.cn/en/p/diffusion-model/</link><pubDate>Sat, 05 Apr 2025 21:51:38 +0800</pubDate><guid>https://svtter.cn/en/p/diffusion-model/</guid><description>&lt;img src="https://svtter.cn/p/diffusion-model.md/noise-dog.png" alt="Featured image of post Diffusion Model" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/div&gt;</description></item><item><title>Diffusion Model</title><link>https://svtter.cn/en/p/diffusion-model/</link><pubDate>Sat, 05 Apr 2025 21:51:38 +0800</pubDate><guid>https://svtter.cn/en/p/diffusion-model/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4a08e074ebe74fe4.png" alt="Featured image of post Diffusion Model" /&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -4592,12 +4013,12 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;By learning the reverse process of adding noise to images, the diffusion model acquires the ability to generate images from noise.
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;![noise-dog](noise-dog.png)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;![noise-dog](https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4a08e074ebe74fe4.png)
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;To enable the model to achieve better performance, the denoising step of the model is included as one of the inputs.
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Using uv</title><link>https://svtter.cn/en/p/using-uv/</link><pubDate>Sun, 30 Mar 2025 14:33:34 +0800</pubDate><guid>https://svtter.cn/en/p/using-uv/</guid><description>&lt;img src="https://svtter.cn/p/using-uv.md/image.png" alt="Featured image of post Using uv" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve started using uv extensively instead of pdm.&lt;/p&gt;
+&lt;/div&gt;</description></item><item><title>Using uv</title><link>https://svtter.cn/en/p/using-uv/</link><pubDate>Sun, 30 Mar 2025 14:33:34 +0800</pubDate><guid>https://svtter.cn/en/p/using-uv/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6ab93a13596c5995.png" alt="Featured image of post Using uv" /&gt;&lt;p&gt;Recently, I&amp;rsquo;ve started using uv extensively instead of pdm.&lt;/p&gt;
 &lt;h2 id="knowledge-piece"&gt;knowledge piece
 &lt;/h2&gt;&lt;p&gt;&lt;code&gt;uvx&lt;/code&gt; could replace &lt;code&gt;pipx&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The uvx command invokes a tool without installing it.&lt;/p&gt;
@@ -4610,7 +4031,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;uvx ruff
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>A Docker Image for Computer Vision</title><link>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</link><pubDate>Wed, 26 Mar 2025 19:57:22 +0800</pubDate><guid>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</guid><description>&lt;img src="https://svtter.cn/p/a-docker-image-for-computer-vision/image.png" alt="Featured image of post A Docker Image for Computer Vision" /&gt;&lt;p&gt;When debugging deep learning code, we often face headaches due to environment issues.&lt;/p&gt;
+&lt;/div&gt;</description></item><item><title>A Docker Image for Computer Vision</title><link>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</link><pubDate>Wed, 26 Mar 2025 19:57:22 +0800</pubDate><guid>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/2bdf0605f2e667f2.png" alt="Featured image of post A Docker Image for Computer Vision" /&gt;&lt;p&gt;When debugging deep learning code, we often face headaches due to environment issues.&lt;/p&gt;
 &lt;p&gt;To facilitate debugging, packaging environments like PyTorch and CUDA into a Docker image is an excellent choice.&lt;/p&gt;
 &lt;h2 id="why"&gt;Why?
 &lt;/h2&gt;&lt;ul&gt;
@@ -4725,7 +4146,7 @@ I only use glm4.6 for very simple tasks. In practical experience, minor issues f
 &lt;/h2&gt;&lt;p&gt;For everyone&amp;rsquo;s convenience, I have created a template on Runpod.&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://console.runpod.io/deploy?template=m0shpm3vgg&amp;amp;ref=g5qp1x9x" target="_blank" rel="noopener"
  &gt;https://console.runpod.io/deploy?template=m0shpm3vgg&amp;ref=g5qp1x9x&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;You can directly use this image by using this template.&lt;/p&gt;</description></item><item><title>Read Code of CLIP</title><link>https://svtter.cn/en/p/read-code-of-clip/</link><pubDate>Wed, 19 Mar 2025 13:23:50 +0800</pubDate><guid>https://svtter.cn/en/p/read-code-of-clip/</guid><description>&lt;img src="https://svtter.cn/p/read-code-of-clip.md/image.png" alt="Featured image of post Read Code of CLIP" /&gt;&lt;p&gt;Contrastive Language-Image Pre-Training (CLIP) is one of the classic works from OpenAI, originating from the paper &lt;a class="link" href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener"
+&lt;p&gt;You can directly use this image by using this template.&lt;/p&gt;</description></item><item><title>Read Code of CLIP</title><link>https://svtter.cn/en/p/read-code-of-clip/</link><pubDate>Wed, 19 Mar 2025 13:23:50 +0800</pubDate><guid>https://svtter.cn/en/p/read-code-of-clip/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/af7e5490ed1c4d8b.png" alt="Featured image of post Read Code of CLIP" /&gt;&lt;p&gt;Contrastive Language-Image Pre-Training (CLIP) is one of the classic works from OpenAI, originating from the paper &lt;a class="link" href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener"
  &gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;To implement my new idea based on CLIP, I attempted to read &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
  &gt;openai/clip&lt;/a&gt; to understand the fundamental working principles of CLIP in classification.&lt;/p&gt;
@@ -4849,7 +4270,7 @@ Therefore, the main code for CLIP is located at &lt;a class="link" href="https:/
 
  &lt;/blockquote&gt;
 &lt;p&gt;The &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
- &gt;CLIP&lt;/a&gt; code does not provide directly trainable code. In the next article, we&amp;rsquo;ll attempt to read openclip.&lt;/p&gt;</description></item><item><title>Create a Never Stop Container</title><link>https://svtter.cn/en/p/create-a-never-stop-container/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/en/p/create-a-never-stop-container/</guid><description>&lt;img src="https://svtter.cn/p/create-a-never-stop-container.md/background.png" alt="Featured image of post Create a Never Stop Container" /&gt;&lt;p&gt;Sometimes we need to start a container that does not stop, for debugging our application or using devcontainer.&lt;/p&gt;
+ &gt;CLIP&lt;/a&gt; code does not provide directly trainable code. In the next article, we&amp;rsquo;ll attempt to read openclip.&lt;/p&gt;</description></item><item><title>Create a Never Stop Container</title><link>https://svtter.cn/en/p/create-a-never-stop-container/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/en/p/create-a-never-stop-container/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/99395826a643cf57.png" alt="Featured image of post Create a Never Stop Container" /&gt;&lt;p&gt;Sometimes we need to start a container that does not stop, for debugging our application or using devcontainer.&lt;/p&gt;
 &lt;p&gt;If we want to accomplish this in the &lt;code&gt;Dockerfile&lt;/code&gt;, we can add the following:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -5109,7 +4530,7 @@ Therefore, the main code for CLIP is located at &lt;a class="link" href="https:/
 &lt;/div&gt;</description></item><item><title>Openrouter Usage</title><link>https://svtter.cn/en/p/openrouter-usage/</link><pubDate>Mon, 03 Mar 2025 11:45:12 +0800</pubDate><guid>https://svtter.cn/en/p/openrouter-usage/</guid><description>&lt;p&gt;Zhou Tian developed an application based on a large model using OpenRouter and encountered some issues, documenting a few insights.&lt;/p&gt;
 &lt;h2 id="no-support-for-embeddings"&gt;No Support for Embeddings
 &lt;/h2&gt;&lt;p&gt;The biggest issue is the lack of support for the embedding API. Although OpenRouter already supports API endpoints for various models like OpenAI, embeddings are crucial for developing RAG applications. The absence of embedding support renders OpenRouter ineffective in practical application development.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="prof" class="gallery-image" data-flex-basis="908px" data-flex-grow="378" height="211" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/openrouter-usage.md/pics/image.png" width="799"&gt;&lt;/p&gt;</description></item><item><title>Python Timezone</title><link>https://svtter.cn/en/p/python-timezone/</link><pubDate>Fri, 28 Feb 2025 17:46:29 +0800</pubDate><guid>https://svtter.cn/en/p/python-timezone/</guid><description>&lt;p&gt;Regardless of the current server settings, output the time in &lt;code&gt;Asia/Shanghai&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="prof" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/23afed9ab3009e9f.png"&gt;&lt;/p&gt;</description></item><item><title>Python Timezone</title><link>https://svtter.cn/en/p/python-timezone/</link><pubDate>Fri, 28 Feb 2025 17:46:29 +0800</pubDate><guid>https://svtter.cn/en/p/python-timezone/</guid><description>&lt;p&gt;Regardless of the current server settings, output the time in &lt;code&gt;Asia/Shanghai&lt;/code&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1

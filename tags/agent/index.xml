@@ -1,182 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent on Svtter's Blog</title><link>https://svtter.cn/tags/agent/</link><description>Recent content in Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 10 Jul 2026 11:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/agent/index.xml" rel="self" type="application/rss+xml"/><item><title>聊聊 BigCode</title><link>https://svtter.cn/p/%E8%81%8A%E8%81%8A-bigcode/</link><pubDate>Fri, 10 Jul 2026 11:30:00 +0800</pubDate><guid>https://svtter.cn/p/%E8%81%8A%E8%81%8A-bigcode/</guid><description>&lt;img src="https://svtter.cn/p/%E8%81%8A%E8%81%8A-bigcode/pics/bigcode-cover.svg" alt="Featured image of post 聊聊 BigCode" /&gt;&lt;p&gt;最近在调研&amp;quot;开源架构 + 开源数据&amp;quot;训练出来的大模型时，我反复碰到一个名字：&lt;strong&gt;BigCode&lt;/strong&gt;。它既是最早一批完全开源代码模型的缔造者，如今又变成了代码模型评测的裁判。这篇文章聊聊它的全貌——从造模型的人，到出题的人。&lt;/p&gt;
-&lt;h2 id="它是什么"&gt;它是什么
-&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;BigCode&lt;/strong&gt; 是一个开放科学协作项目，目标很纯粹：&lt;strong&gt;负责任地训练代码大模型&lt;/strong&gt;。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;启动&lt;/strong&gt;：2022 年 9 月&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;牵头方&lt;/strong&gt;：Hugging Face + ServiceNow Research（StarCoder2 起加入 NVIDIA）&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;治理&lt;/strong&gt;：双 steering committee，由 Leandro von Werra（HF）和 Harm de Vries（ServiceNow）共同领导，核心研究员包括 Loubna Ben Allal&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;规模&lt;/strong&gt;：1200+ 社区成员&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;特色&lt;/strong&gt;：不只发模型，还发布 &lt;a class="link" href="https://arxiv.org/html/2312.03872v1" target="_blank" rel="noopener"
- &gt;Governance Card&lt;/a&gt;，把数据治理、环境影响、法律合规都写进文档——这在 LLM 项目里相当罕见&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="两阶段历史"&gt;两阶段历史
-&lt;/h2&gt;&lt;p&gt;理解 BigCode 的关键，是把它分成两个阶段看。&lt;/p&gt;
-&lt;h3 id="阶段一造开源代码模型20222024"&gt;阶段一：造开源代码模型（2022–2024）
-&lt;/h3&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;时间&lt;/th&gt;
-					&lt;th&gt;产出&lt;/th&gt;
-					&lt;th&gt;说明&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2022&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;The Stack v1&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;6.4 TB，358 语言的开源代码数据集&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2023.05&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;StarCoder&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;15.5B，80+ 语言，首个大规模开源代码 LLM&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024.02&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;The Stack v2&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;67.5 TB，600+ 语言，是 v1 的 7 倍&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024.02&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;StarCoder2&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;3B / 7B / 15B，基于 Stack v2&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024 下半年&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;StarCoder2-15B-Instruct&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;用 SelfCodeAlign 自对齐，首个不依赖 GPT-4 蒸馏的代码指令模型&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;这一阶段的核心理念是&lt;strong&gt;完全透明&lt;/strong&gt;：数据可溯源（用 Software Heritage 的持久标识符 SWHIDs）、代码开源、权重用 OpenRAIL 许可、连训练的碳排放都记录在案。这是 BigCode 区别于 CodeLlama / DeepSeek-Coder 的根本点——后两者只开放权重，训练数据是闭源的。&lt;/p&gt;
-&lt;h3 id="阶段二转向评测2024-末至今"&gt;阶段二：转向评测（2024 末–至今）
-&lt;/h3&gt;&lt;p&gt;模型线停了，但项目没停，方向转向了&lt;strong&gt;做代码模型的评测&lt;/strong&gt;：&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;时间&lt;/th&gt;
-					&lt;th&gt;产出&lt;/th&gt;
-					&lt;th&gt;是什么&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2024.06 论文 / ICLR 2025&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;BigCodeBench&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;1140 个真实编程任务的静态基准&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2025.02&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;BigCodeArena&lt;/strong&gt;&lt;/td&gt;
-					&lt;td&gt;带真实代码执行的 Chatbot Arena&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;2025.10&lt;/td&gt;
-					&lt;td&gt;&lt;strong&gt;BigCodeReward&lt;/strong&gt; + AutoCodeArena&lt;/td&gt;
-					&lt;td&gt;评测 reward model 对代码的判断力&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id="当前主力三大评测工作"&gt;当前主力：三大评测工作
-&lt;/h2&gt;&lt;h3 id="1-bigcodebench--静态基准"&gt;1. BigCodeBench — 静态基准
-&lt;/h3&gt;&lt;p&gt;设计上是为了&lt;strong&gt;超越 HumanEval&lt;/strong&gt;。HumanEval / MBPP 这类基准早就饱和了（强模型 90%+），区分不出模型好坏。BigCodeBench 的设计是：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;1140 个函数级任务&lt;/strong&gt;，需要调用 &lt;strong&gt;139 个 Python 库的 723 个函数&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;覆盖 7 个领域&lt;/li&gt;
-&lt;li&gt;两个 split：Complete（代码补全）和 Instruct（纯自然语言指令从零写代码）&lt;/li&gt;
-&lt;li&gt;执行验证——真的跑测试，不是让人读代码打分&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;它有多难？连顶尖模型 Pass@1 也只有 30% 出头：&lt;/p&gt;
-&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;模型&lt;/th&gt;
-					&lt;th&gt;BigCodeBench Pass@1&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;DeepSeek-V3&lt;/td&gt;
-					&lt;td&gt;~33–34&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;GPT-4.1&lt;/td&gt;
-					&lt;td&gt;32.8&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Qwen2.5-Max&lt;/td&gt;
-					&lt;td&gt;32.5&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Qwen2.5-Coder-32B&lt;/td&gt;
-					&lt;td&gt;30.8&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Claude-3.5-Sonnet&lt;/td&gt;
-					&lt;td&gt;30.4&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Instruct split 有 278 个任务&lt;strong&gt;所有模型都解不出&lt;/strong&gt;，只有 14 个被全部模型解出——天花板还很高，区分度很好。&lt;/p&gt;
-&lt;h3 id="2-bigcodearena--人工对战平台"&gt;2. BigCodeArena — 人工对战平台
-&lt;/h3&gt;&lt;p&gt;类似 LMSYS Chatbot Arena，但关键区别是&lt;strong&gt;真实执行代码&lt;/strong&gt;后再让人投票。支持多语言、多框架、多轮对话、交互式测试。这解决了&amp;quot;HumanEval 太简单、人读代码又不准&amp;quot;的老问题。&lt;/p&gt;
-&lt;h3 id="3-bigcodereward--autocodearena--自动化评测"&gt;3. BigCodeReward / AutoCodeArena — 自动化评测
-&lt;/h3&gt;&lt;p&gt;评测 reward model 评判代码的能力（类似 RewardBench 之于通用 RM）。核心发现是：&lt;strong&gt;给 reward model 加上执行结果，判断准确率大幅提升&lt;/strong&gt;——纯靠读代码判断质量不可靠。AutoCodeArena 据此做了自动化评测，替代昂贵的人工 arena。&lt;/p&gt;
-&lt;h2 id="一个值得注意的现象"&gt;一个值得注意的现象
-&lt;/h2&gt;&lt;p&gt;BigCodeArena 的排行榜上跑的全是 GPT、Claude、Qwen、DeepSeek、GLM、Kimi 这些闭源 / open-weights 模型，&lt;strong&gt;StarCoder2 自己基本不在主力榜单&lt;/strong&gt;。BigCode 完成了从&amp;quot;被评测的选手&amp;quot;到&amp;quot;给所有人打分的裁判&amp;quot;的身份转换。&lt;/p&gt;
-&lt;h2 id="为什么转向评测"&gt;为什么转向评测
-&lt;/h2&gt;&lt;p&gt;综合公开信息，我的判断是：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;开源代码模型赛道被碾压&lt;/strong&gt;。Qwen-Coder、DeepSeek-Coder 虽然数据闭源，但性能和迭代速度远超一个学术合作项目能支撑的水平。继续刷 StarCoder3 的 SOTA 性价比很低。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;代码评测是真正的洼地&lt;/strong&gt;。HumanEval 已饱和，SWE-bench 偏 repo 级、太重。&lt;strong&gt;函数级 + 多工具调用 + 执行验证&lt;/strong&gt;这个中间地带没人做好，BigCode 抓住了。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;团队优势契合&lt;/strong&gt;。BigCode 的 evaluation-harness 早已是社区标准评测工具，做评测比拼算力训练更合适。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id="历史贡献与现状定位"&gt;历史贡献与现状定位
-&lt;/h2&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;维度&lt;/th&gt;
-					&lt;th&gt;评价&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;开源代码模型先驱&lt;/td&gt;
-					&lt;td&gt;StarCoder / StarCoder2 是最早的大规模完全开源代码 LLM，奠基性工作&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;数据透明标杆&lt;/td&gt;
-					&lt;td&gt;The Stack v1/v2 + SWHIDs 溯源，至今无人超越&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;当前模型线&lt;/td&gt;
-					&lt;td&gt;停滞，StarCoder2 性能已被 open-weights 模型拉开&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;当前评测线&lt;/td&gt;
-					&lt;td&gt;活跃且领先，BigCodeBench 已成代码评测事实标准之一&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id="拓展阅读"&gt;拓展阅读
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a class="link" href="https://www.bigcode-project.org/" target="_blank" rel="noopener"
- &gt;BigCode 官网&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2402.19173" target="_blank" rel="noopener"
- &gt;StarCoder2 论文 (arXiv 2402.19173)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://arxiv.org/abs/2406.15877" target="_blank" rel="noopener"
- &gt;BigCodeBench 论文 (arXiv 2406.15877, ICLR 2025)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://bigcode-bench.github.io/" target="_blank" rel="noopener"
- &gt;BigCodeBench 排行榜&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://huggingface.co/blog/bigcode/arena" target="_blank" rel="noopener"
- &gt;BigCodeArena 博客&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>pi-review-agent 是怎么"记住"上一次 review 的</title><link>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</link><pubDate>Sun, 28 Jun 2026 23:10:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</guid><description>&lt;img src="https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/pics/cover_1782813029.png" alt="Featured image of post pi-review-agent 是怎么"记住"上一次 review 的" /&gt;&lt;p&gt;AI code review 的 GitHub Action 里，&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Agent on Svtter's Blog</title><link>https://svtter.cn/tags/agent/</link><description>Recent content in Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 28 Jun 2026 23:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/agent/index.xml" rel="self" type="application/rss+xml"/><item><title>pi-review-agent 是怎么"记住"上一次 review 的</title><link>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</link><pubDate>Sun, 28 Jun 2026 23:10:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3001d2974b19c745.png" alt="Featured image of post pi-review-agent 是怎么"记住"上一次 review 的" /&gt;&lt;p&gt;AI code review 的 GitHub Action 里，&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; 有一个不太显眼但很关键的设计——&lt;strong&gt;跨 CI run 续接每个 reviewer 的会话&lt;/strong&gt;：同一个 PR 第二次推送时，reviewer 知道&amp;quot;上次我提了什么、作者改了什么、哪些 issue 还没解决&amp;quot;，而不是每次从零开始。&lt;/p&gt;
 &lt;p&gt;这篇文章拆开它的实现：上一次的对话记录落在哪、下一次 run 怎么加载回来、新 diff 怎么接进去，以及最关键的——为什么非要这么折腾。&lt;/p&gt;
 &lt;h2 id="为什么需要记住上一次"&gt;为什么需要&amp;quot;记住上一次&amp;quot;
@@ -420,7 +242,7 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; — 项目仓库&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Advisor：挂在主会话上的只读审查 Agent</title><link>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</link><pubDate>Tue, 16 Jun 2026 13:27:40 +0800</pubDate><guid>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</guid><description>&lt;img src="https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/pics/cover_1781585134.png" alt="Featured image of post Advisor：挂在主会话上的只读审查 Agent" /&gt;&lt;blockquote&gt;
+&lt;/ul&gt;</description></item><item><title>Advisor：挂在主会话上的只读审查 Agent</title><link>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</link><pubDate>Tue, 16 Jun 2026 13:27:40 +0800</pubDate><guid>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/87049b8bd48ccecd.png" alt="Featured image of post Advisor：挂在主会话上的只读审查 Agent" /&gt;&lt;blockquote&gt;
  &lt;p&gt;这篇文章我们还是聊 OMP（oh my pi）。
 实现细节、配置项与 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现机制见 &lt;a class="link" href="./advisor-watchdog.md" &gt;&lt;code&gt;advisor-watchdog.md&lt;/code&gt;&lt;/a&gt;。
 赞美创新。&lt;/p&gt;
@@ -645,7 +467,7 @@
 &lt;hr&gt;
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;Advisor 把「事后 review 能发现的问题」前移到 turn 边界。它解决的不是「主 agent 不够强」，而是「同一个执行者难以在执行中审视自己」——因此它被设计成只读、可被主 agent 读到建议、且不参与执行的独立角色。&lt;/p&gt;
-&lt;p&gt;实现上值得注意的取舍是&lt;strong&gt;隔离&lt;/strong&gt;与&lt;strong&gt;异步&lt;/strong&gt;：Advisor 跑在隔离的工具会话里、用增量 transcript、后台 drain、失败即降级，保证它给主链路带来的只有收益（意见）而不引入新的阻塞或竞态。&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 里有完整的配置、发现机制与上下文维护说明，本文不再重复。&lt;/p&gt;</description></item><item><title>最近发现好用的 MCP 工具</title><link>https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/</guid><description>&lt;img src="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/bg.png" alt="Featured image of post 最近发现好用的 MCP 工具" /&gt;&lt;p&gt;近期大量使用 opencode/claude code 组合来开发，探索了三个比较有用的工具。&lt;/p&gt;
+&lt;p&gt;实现上值得注意的取舍是&lt;strong&gt;隔离&lt;/strong&gt;与&lt;strong&gt;异步&lt;/strong&gt;：Advisor 跑在隔离的工具会话里、用增量 transcript、后台 drain、失败即降级，保证它给主链路带来的只有收益（意见）而不引入新的阻塞或竞态。&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 里有完整的配置、发现机制与上下文维护说明，本文不再重复。&lt;/p&gt;</description></item><item><title>最近发现好用的 MCP 工具</title><link>https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/</link><pubDate>Sat, 17 Jan 2026 22:18:33 +0800</pubDate><guid>https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/f07e83aca0f96906.png" alt="Featured image of post 最近发现好用的 MCP 工具" /&gt;&lt;p&gt;近期大量使用 opencode/claude code 组合来开发，探索了三个比较有用的工具。&lt;/p&gt;
 &lt;p&gt;他们分别解决了几个问题:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;在单服务器上并行开发；控制 tmux： &lt;code&gt;tmux&lt;/code&gt; 和 &lt;code&gt;tmux-mcp&lt;/code&gt;&lt;/li&gt;
@@ -700,7 +522,7 @@
 &lt;h2 id="总结"&gt;总结
 &lt;/h2&gt;&lt;p&gt;随着 LLM 越来越强，大量的 mcp，依赖于 LLM 能力的 MCP 自然而然的获得了提升。原本不怎么好用的工具变得更好用了。这也正是迎合了那句话：不要做大模型能力增强之后没有意义的东西。
 大模型的能力仍然在增强，并且价格在不断下降。&lt;/p&gt;
-&lt;p&gt;我认为下一步打通不同模态和工具之间的交互，以及给工具赋予大模型的能力，是 agent engineer 必然的发展方向之一。&lt;/p&gt;</description></item><item><title>Why Agent</title><link>https://svtter.cn/p/why-agent/</link><pubDate>Tue, 30 Sep 2025 11:54:06 +0800</pubDate><guid>https://svtter.cn/p/why-agent/</guid><description>&lt;img src="https://svtter.cn/p/why-agent/pics/why-agent-background.svg" alt="Featured image of post Why Agent" /&gt;&lt;p&gt;一直以来我都有一个问题，为什么我们需要 agent framework，大模型不够用吗？这篇文章是我粗浅的理解。&lt;/p&gt;
+&lt;p&gt;我认为下一步打通不同模态和工具之间的交互，以及给工具赋予大模型的能力，是 agent engineer 必然的发展方向之一。&lt;/p&gt;</description></item><item><title>Why Agent</title><link>https://svtter.cn/p/why-agent/</link><pubDate>Tue, 30 Sep 2025 11:54:06 +0800</pubDate><guid>https://svtter.cn/p/why-agent/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/67f29b9b7f9b9dc8.svg" alt="Featured image of post Why Agent" /&gt;&lt;p&gt;一直以来我都有一个问题，为什么我们需要 agent framework，大模型不够用吗？这篇文章是我粗浅的理解。&lt;/p&gt;
 &lt;p&gt;最近深度使用了几个工具，以及参与几个 agent 项目后，我得到了结论。&lt;/p&gt;
 &lt;h2 id="llm-的问题"&gt;LLM 的问题
 &lt;/h2&gt;&lt;p&gt;之所以要有 agent，最大的问题是，llm 本身的局限性。&lt;/p&gt;
@@ -739,7 +561,7 @@
 &lt;li&gt;&lt;a class="link" href="https://www.langchain.com/" target="_blank" rel="noopener"
  &gt;langchain&lt;/a&gt;: 没有在生产环境中使用过。开发环境中简单调试过。其 api 变化比较大。一个小的问题是 prompt 的处理，&lt;a class="link" href="https://svtter.cn/p/string-template-in-prompt.md/" &gt;我使用了 jinja 来解决&lt;/a&gt;。后来我了解到，如果是 LC way，开发者会用 &lt;a class="link" href="https://python.langchain.com/docs/concepts/prompt_templates/#string-prompttemplates" target="_blank" rel="noopener"
  &gt;PromptTemplates&lt;/a&gt; 来解决。&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Rewrite Code With Roo Code</title><link>https://svtter.cn/p/rewrite-code-with-roo-code/</link><pubDate>Sat, 12 Jul 2025 12:11:53 +0800</pubDate><guid>https://svtter.cn/p/rewrite-code-with-roo-code/</guid><description>&lt;img src="https://svtter.cn/p/rewrite-code-with-roo-code/pics/bg3.jpg" alt="Featured image of post Rewrite Code With Roo Code" /&gt;&lt;p&gt;&lt;a class="link" href="https://roocode.com/" target="_blank" rel="noopener"
+&lt;/ul&gt;</description></item><item><title>Rewrite Code With Roo Code</title><link>https://svtter.cn/p/rewrite-code-with-roo-code/</link><pubDate>Sat, 12 Jul 2025 12:11:53 +0800</pubDate><guid>https://svtter.cn/p/rewrite-code-with-roo-code/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/c1b9550fc24976c6.jpg" alt="Featured image of post Rewrite Code With Roo Code" /&gt;&lt;p&gt;&lt;a class="link" href="https://roocode.com/" target="_blank" rel="noopener"
  &gt;Roo Code&lt;/a&gt; 是 cline 的一个分支。&lt;/p&gt;
 &lt;p&gt;为了验证 roo code 是否好用，我尝试使用 roo code + deepseek v3 来重写 &lt;a class="link" href="https://meterhub.sun-praise.com" target="_blank" rel="noopener"
  &gt;meterhub&lt;/a&gt;。&lt;/p&gt;
@@ -821,7 +643,7 @@
 &lt;ul&gt;
 &lt;li&gt;微信输入法会重复输入标点符号。我不得不在使用 vscode 的时候切换为搜狗输入法。&lt;/li&gt;
 &lt;li&gt;火绒会截断不少使用 Admin 权限的安装程序，导致这些程序无法被被打开，但是火绒也不会有提示。&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Play With Openmanus.md</title><link>https://svtter.cn/p/play-with-openmanus.md/</link><pubDate>Mon, 10 Mar 2025 20:21:44 +0800</pubDate><guid>https://svtter.cn/p/play-with-openmanus.md/</guid><description>&lt;img src="https://svtter.cn/p/play-with-openmanus.md/pics/chat.png" alt="Featured image of post Play With Openmanus.md" /&gt;&lt;p&gt;Manus 最近很火爆，我部署了 &lt;a class="link" href="https://github.com/mannaandpoem/OpenManus" target="_blank" rel="noopener"
+&lt;/ul&gt;</description></item><item><title>Play With Openmanus.md</title><link>https://svtter.cn/p/play-with-openmanus.md/</link><pubDate>Mon, 10 Mar 2025 20:21:44 +0800</pubDate><guid>https://svtter.cn/p/play-with-openmanus.md/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/54cb73b46db70219.png" alt="Featured image of post Play With Openmanus.md" /&gt;&lt;p&gt;Manus 最近很火爆，我部署了 &lt;a class="link" href="https://github.com/mannaandpoem/OpenManus" target="_blank" rel="noopener"
  &gt;OpenManus&lt;/a&gt;，来体验一下 Manus 这种通用的 Agent。&lt;/p&gt;
 &lt;p&gt;为此，我构建了一个镜像，可以无痛拉起 &lt;a class="link" href="https://github.com/mannaandpoem/OpenManus" target="_blank" rel="noopener"
  &gt;OpenManus&lt;/a&gt;，可以从 &lt;a class="link" href="https://hub.docker.com/r/svtter/openmanus" target="_blank" rel="noopener"
@@ -1003,17 +825,17 @@
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="费用"&gt;费用
 &lt;/h2&gt;&lt;p&gt;一次性花了我一块钱，恐怖如斯。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="price" class="gallery-image" data-flex-basis="2758px" data-flex-grow="1149" height="63" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/play-with-openmanus.md/pics/price.png" width="724"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="price" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/8191f735fadd13cd.png"&gt;&lt;/p&gt;
 &lt;h2 id="结论和想法"&gt;结论和想法
 &lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;用了 google search，browser，以及 python 作为 agent tools。很有想法，实现也很快。&lt;/li&gt;
 &lt;li&gt;东契奇已经去了湖人，分析的数据还在独行侠，AGI 无法淘汰我们！&lt;/li&gt;
 &lt;li&gt;机会永远留给有准备的人&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img alt="chat" class="gallery-image" data-flex-basis="724px" data-flex-grow="302" height="298" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/play-with-openmanus.md/pics/chat.png" srcset="https://svtter.cn/p/play-with-openmanus.md/pics/chat_hu_9722a63ae3bda1f6.png 800w, https://svtter.cn/p/play-with-openmanus.md/pics/chat.png 900w" width="900"&gt;&lt;/p&gt;</description></item><item><title>Llamaindex Tutorial.md</title><link>https://svtter.cn/p/llamaindex-tutorial.md/</link><pubDate>Sat, 08 Mar 2025 12:04:25 +0800</pubDate><guid>https://svtter.cn/p/llamaindex-tutorial.md/</guid><description>&lt;img src="https://svtter.cn/p/llamaindex-tutorial.md/background.png" alt="Featured image of post Llamaindex Tutorial.md" /&gt;&lt;p&gt;上周为了开发一个新的应用，测试了 langchain，发现全是坑，官方示例很难用。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="chat" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/54cb73b46db70219.png"&gt;&lt;/p&gt;</description></item><item><title>Llamaindex Tutorial.md</title><link>https://svtter.cn/p/llamaindex-tutorial.md/</link><pubDate>Sat, 08 Mar 2025 12:04:25 +0800</pubDate><guid>https://svtter.cn/p/llamaindex-tutorial.md/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/70d504769d044fa0.png" alt="Featured image of post Llamaindex Tutorial.md" /&gt;&lt;p&gt;上周为了开发一个新的应用，测试了 langchain，发现全是坑，官方示例很难用。&lt;/p&gt;
 &lt;p&gt;主要问题在于 langchain 0.1, 0.2, 0.3 版本变化很大。&lt;/p&gt;
 &lt;p&gt;这是一个对比表格：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="compare" class="gallery-image" data-flex-basis="446px" data-flex-grow="186" height="672" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://svtter.cn/p/llamaindex-tutorial.md/llamaindex-vs-langchain-comparison-1.png" srcset="https://svtter.cn/p/llamaindex-tutorial.md/llamaindex-vs-langchain-comparison-1_hu_8f36816f8ef2c4c4.png 800w, https://svtter.cn/p/llamaindex-tutorial.md/llamaindex-vs-langchain-comparison-1.png 1250w" width="1250"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="compare" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6dc44357b329fbbd.png"&gt;&lt;/p&gt;
 &lt;p&gt;这周尝试了一下 llamaindex，调试了一上午，搞定，发个链接出来。&lt;/p&gt;
 &lt;h2 id="源代码"&gt;源代码
 &lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1150,7 +972,7 @@
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://datasciencedojo.com/blog/llamaindex-vs-langchain/#Comparing_LLamaIndex_and_LangChain" target="_blank" rel="noopener"
  &gt;https://datasciencedojo.com/blog/llamaindex-vs-langchain/#Comparing_LLamaIndex_and_LangChain&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Why I Still Write Blog Post About Coding.md</title><link>https://svtter.cn/p/why-i-still-write-blog-post-about-coding.md/</link><pubDate>Mon, 24 Feb 2025 22:12:12 +0800</pubDate><guid>https://svtter.cn/p/why-i-still-write-blog-post-about-coding.md/</guid><description>&lt;img src="https://svtter.cn/p/why-i-still-write-blog-post-about-coding.md/background.webp" alt="Featured image of post Why I Still Write Blog Post About Coding.md" /&gt;&lt;p&gt;这几天几个我关注的高质量公众号都停更了他们原来的内容，转向了 AI。&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Why I Still Write Blog Post About Coding.md</title><link>https://svtter.cn/p/why-i-still-write-blog-post-about-coding.md/</link><pubDate>Mon, 24 Feb 2025 22:12:12 +0800</pubDate><guid>https://svtter.cn/p/why-i-still-write-blog-post-about-coding.md/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/c72d40e8fe1a2305.webp" alt="Featured image of post Why I Still Write Blog Post About Coding.md" /&gt;&lt;p&gt;这几天几个我关注的高质量公众号都停更了他们原来的内容，转向了 AI。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://mp.weixin.qq.com/s/9VtjDwbxu1BxLTbgHVQeXA" target="_blank" rel="noopener"
  &gt;Farewell Go，Hello AI：是时候说再见了&lt;/a&gt;&lt;/li&gt;

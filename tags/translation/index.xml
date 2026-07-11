@@ -11,7 +11,7 @@
 &lt;/ol&gt;
 &lt;p&gt;两个任务可以同时被 CTC 操作完成。对于手写数字系统的描述，可以参见图像 1.&lt;/p&gt;
 &lt;p&gt;我们更进一步看看 CTC 操作，并且讨论一下它如完成的，以及它背后的公式是如此巧妙。最后，我将会指点你来找到 Python 代码以及不复杂的公式，如果你感兴趣的话。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="pics/1_i2OG4hu9EjsyWcVMc4OOvA.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6c071106c852162a.png"&gt;&lt;/p&gt;
 &lt;h2 id="为什么我们使用-ctc"&gt;为什么我们使用 CTC
 &lt;/h2&gt;&lt;p&gt;当然我们可以创建一个数据集，这个数据集有文本行，然后指出每列属于哪一个字符，就像图 2 中展示的那样。然后，我们可以训练一个神经网络来输出每一列的得分。而然，对于这个简单的解法，这里有两个问题。&lt;/p&gt;
 &lt;ol&gt;
@@ -23,7 +23,7 @@
 &lt;li&gt;我们只需要告诉 CTC loss function，文本在图像中出现了，因此我们忽略位置和宽度文中在图像中。&lt;/li&gt;
 &lt;li&gt;不需要更多的文本识别处理&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="pics/1_rfeNj9aNfUSqA-SXB_i4Bw.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/35aecfdf64f4117b.png"&gt;&lt;/p&gt;
 &lt;h2 id="ctc-如何工作的"&gt;CTC 如何工作的
 &lt;/h2&gt;&lt;p&gt;就像是我们已经讨论的，我们不希望在图像的每一列标注数据（这曾经被我们成为时间步）。神经网络的训练将会被 CTC 损失函数所指引。我们只需要把数据矩阵给 CTC 函数，以及对应的真实值即可。但是它是怎么知道每一个字符出现的呢？他不知道。相对而言，它尝试了图片中所有的真实文本，以及计算了所有的加和。通过这个方式， This way, the score of a GT text is high if the sum over the alignment-scores has a high value.&lt;/p&gt;
 &lt;h2 id="编码文本"&gt;编码文本
@@ -33,7 +33,7 @@
 &lt;p&gt;正如你所见，这些模式也允许我们简单的创建一些相同文本串的不同对取，比如 “t-o”, 以及 “too”，以及 “-to”，所有的表示都是同一个文本 “to”，但是通过对图片不同对其获得的。神经网络被训练于输出一个编码的文本（在神经网络的矩阵中编码）。&lt;/p&gt;
 &lt;h2 id="损失计算"&gt;损失计算
 &lt;/h2&gt;&lt;p&gt;我们需要计算每一个损失值，这个损失值是由图像核真实文本给出来训练 NN 的。你已经知道 NN 输出一个矩阵，包含一个得分，为每个文本在每个时间步上。一个小矩阵在图三中展示：有许多的时间步（t0, t1），以及三个字符（”a”, “b”, 以及 blank “-“).&lt;/p&gt;
-&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="pics/1_BFQYgGofh6HOxnGdkJnO-w.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/65ab7d44e2edc332.png"&gt;&lt;/p&gt;
 &lt;p&gt;此外，你已经知道，loss 是通过加和所有积分来进行计算的，通过这个方式，字符出现在图片的哪个位置不重要。&lt;/p&gt;
 &lt;p&gt;对于一个 alignment 的得分（或者 path；在文学中一般这么称呼）通过将相应的字符相乘。在上面的例子中，path”aa” 的得分是：0.4*0.4=0.16，”a-” 的得分是 0.4*0.6=0.24，”-a” 的得分是 0.6*0.4=0.24. 为了获得 GT 文本的得分，我们加和这个文本的所有 path 的得分。我们假设，GT 文本是 “a”，我们已经计算了所有长度为 “2” 的 path，分别是 “aa”，“a-”，“-a”，我们已经计算了这些 path 所有的得分，所以我们只需要把他们加起来，得到 0.4×0.4 + 0.4×0.6 + 0.6×0.4 = 0.64。如 GT 文本可能是 “”，我们可以看到只有一种相关的 path，那么就是 “–”，获得的得分是 0.6×0.6 =0.36.&lt;/p&gt;
 &lt;p&gt;如果仔细看，你已经发现我们计算了 GT 的可能性，但是不是 loss 值，而然，loss 知识概率的负对数。这个 loss 值是反向传播算法以及 NN 的参数更新使用的，我这里没有进行详细的讨论。&lt;/p&gt;
@@ -45,7 +45,7 @@
 &lt;li&gt;首先删除重复的字符，然后删除 path 里面所有的空。这仍然表示了识别的文本。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;正如 FIG4 所展示的，字符是 “a”，“b” 以及 “-”（空），一共有 5 个时间步。让我们应用最佳 path decoder 来处理这个矩阵。在 t0，最可能的是“a”，同样应用于 t1，t2. 空字符在 t3 是最可能的。最后，“b” 是 t4 时刻最可能的。这将给出我们一个 path“aaa-b”，我们删除了重复的字符，这将会返回“a-b”，然后我们删除 path 中的空，这给我们一个“ab”，作为我们输出的识别结果。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="pics/1_1_5KnLvaTkGUFoyat2jHcQ.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/9c033c5a36d4629d.png"&gt;&lt;/p&gt;
 &lt;p&gt;最佳 path 解析是，当容纳，仅仅是一个近似。构建样例容易给出错误的结果，比如用这个方法构建 FIG3，将会得到 “”，作为识别文本。但是，我们已经知道“” 结果的概率是 0.36，而 “a” 的概率是 0.64。而然，近似算法经常在练习的情景下给出比较好的结果。也有许多其他的比较好的 decoder，例如 beam-search，prefix-search 以及 token passing，这些关于语言结构的方法，都有利于提升结果。&lt;/p&gt;
 &lt;h2 id="结论以及展望"&gt;结论以及展望
 &lt;/h2&gt;&lt;p&gt;首先我们看得是，神经网络如何解决这个问题；然后，我们展示了 CTC 如何解决这些问题，然后，我们解释了 CTC 为啥能够工作，如何计算的 loss，以及如何解码 CTC 训练的 NN。&lt;/p&gt;
