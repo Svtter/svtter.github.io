@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>开发环境 on Svtter's Blog</title><link>https://svtter.cn/categories/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</link><description>Recent content in 开发环境 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 14 Jul 2026 16:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/index.xml" rel="self" type="application/rss+xml"/><item><title>我的 Linux 开发环境 — 2026</title><link>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/</link><pubDate>Tue, 14 Jul 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/</guid><description>&lt;p&gt;2019 年写过一篇&lt;a class="link" href="https://svtter.cn/p/%e6%88%91%e7%9a%84-linux-%e5%bc%80%e5%8f%91%e7%8e%af%e5%a2%83/" &gt;我的 Linux 开发环境&lt;/a&gt;，当时还在推荐 Linux Mint + Cinnamon 桌面。七年过去，我的开发方式已经完全变了 — 不再使用桌面环境，所有开发工作都在 KVM 虚拟机里通过 SSH + tmux 完成。&lt;/p&gt;
+&lt;h2 id="操作系统"&gt;操作系统
+&lt;/h2&gt;&lt;p&gt;现在用的是 &lt;strong&gt;Debian 12 (bookworm)&lt;/strong&gt;，跑在 KVM 虚拟机里。没有桌面环境，纯命令行。&lt;/p&gt;
+&lt;p&gt;为什么不折腾桌面了？因为没必要。开发工作全部在终端里完成，日常的 IM（微信、钉钉）、文档编辑、浏览器这些事情在 Windows PC 和 MacBook 上做，Linux 虚拟机只负责跑代码和服务。Debian 稳定、包版本够用、安全更新及时，做开发环境很合适。&lt;/p&gt;
+&lt;p&gt;宿主机是一台 Intel i7-13620H 的 mini 主机，给虚拟机分配了 8 核 18GB 内存，跑起来绰绰有余。&lt;/p&gt;
+&lt;h2 id="shell"&gt;Shell
+&lt;/h2&gt;&lt;p&gt;用的是 &lt;strong&gt;zsh + oh-my-zsh&lt;/strong&gt;，主题 candy。插件装了三个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;zsh-autosuggestions&lt;/code&gt; — 历史命令自动补全&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;zsh-syntax-highlighting&lt;/code&gt; — 命令语法高亮&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;zsh-completions&lt;/code&gt; — 额外的补全规则&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2019 年我推荐过用 antigen 来管理 zsh 插件，现在觉得 oh-my-zsh 够用了，没必要多一层抽象。&lt;/p&gt;
+&lt;p&gt;SSH key 用 &lt;strong&gt;keychain&lt;/strong&gt; 管理，登录时自动加载 &lt;code&gt;id_ed25519&lt;/code&gt;，不用每次输密码。&lt;/p&gt;
+&lt;h2 id="终端复用"&gt;终端复用
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;tmux&lt;/strong&gt; 是整个开发环境的核心。日常开一个 tmux session，里面分几个 window：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;editor — Neovim&lt;/li&gt;
+&lt;li&gt;server — 跑项目服务&lt;/li&gt;
+&lt;li&gt;shell — 杂活&lt;/li&gt;
+&lt;li&gt;docker — 看容器状态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;tmux 配置了鼠标支持、256 色、窗口编号从 1 开始、历史记录 10000 行。还配了一个 systemd user service 做 tmux watchdog，tmux 进程挂了能自动恢复。&lt;/p&gt;
+&lt;h2 id="编辑器"&gt;编辑器
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Neovim 0.11&lt;/strong&gt;，用的是 &lt;strong&gt;LazyVim&lt;/strong&gt; 发行版。之前用过纯手配的 init.vim，后来切到 LazyVim — 开箱即用的 LSP、补全、文件树、git 集成，省了很多配置时间。&lt;/p&gt;
+&lt;p&gt;系统里也装了 vim，偶尔在没有 nvim 的机器上救急用。&lt;/p&gt;
+&lt;h2 id="编程语言和运行时"&gt;编程语言和运行时
+&lt;/h2&gt;&lt;p&gt;同时在用好几门语言，每门都有对应的版本管理工具：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;语言&lt;/th&gt;
+					&lt;th&gt;版本&lt;/th&gt;
+					&lt;th&gt;版本管理&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Python&lt;/td&gt;
+					&lt;td&gt;3.11&lt;/td&gt;
+					&lt;td&gt;系统自带 + &lt;strong&gt;uv&lt;/strong&gt; 管理项目依赖&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Node.js&lt;/td&gt;
+					&lt;td&gt;22&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;nvm&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Go&lt;/td&gt;
+					&lt;td&gt;1.24&lt;/td&gt;
+					&lt;td&gt;系统安装&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Rust&lt;/td&gt;
+					&lt;td&gt;1.94&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;rustup&lt;/strong&gt;（stable + nightly）&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;uv&lt;/strong&gt; 是最近 Python 生态里最大的改善，比 pip 快一个数量级，项目隔离也做得好。nvm 管 Node 版本，按项目切。Go 和 Rust 都是直接装最新稳定版。&lt;/p&gt;
+&lt;h2 id="工具链"&gt;工具链
+&lt;/h2&gt;&lt;p&gt;日常开发用到的工具：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Docker 28.4&lt;/strong&gt; + &lt;strong&gt;Docker Compose v2&lt;/strong&gt; — 数据库和中间件全跑在容器里，Redis、PostgreSQL、RabbitMQ 都有&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;protoc&lt;/strong&gt; + &lt;strong&gt;grpcurl&lt;/strong&gt; — gRPC 开发调试&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;OpenCode&lt;/strong&gt; / &lt;strong&gt;MiMoCode&lt;/strong&gt; / &lt;strong&gt;Kimi Code&lt;/strong&gt; — AI 辅助编程&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;autossh&lt;/strong&gt; — 维护到远程服务器的 SSH 隧道&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;keychain&lt;/strong&gt; — SSH key 管理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="git"&gt;Git
+&lt;/h2&gt;&lt;p&gt;全局配置了一些常用 alias：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;co = checkout
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;br = branch
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ci = commit
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;st = status -sb
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ll = log --oneline
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cm = commit -m
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;没有用 GUI 客户端，全部命令行操作。diff 用 &lt;code&gt;git difftool&lt;/code&gt; 配 vimdiff。&lt;/p&gt;
+&lt;h2 id="远程访问"&gt;远程访问
+&lt;/h2&gt;&lt;p&gt;通过 &lt;strong&gt;autossh&lt;/strong&gt; 维护到远程服务器的持久 SSH 隧道，systemd user service 保活。SSH config 里配了多台服务器的跳板和端口转发。&lt;/p&gt;
+&lt;h2 id="systemd-user-services"&gt;systemd user services
+&lt;/h2&gt;&lt;p&gt;除了 tmux watchdog，还跑着 user service：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;review-server&lt;/code&gt; — PR review webhook 服务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用 systemd user service 而不是 cron 或 screen 来跑常驻进程，好处是日志统一管理（journald），开机自启，进程挂了能自动重启。&lt;/p&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;2026 年的开发环境和 2019 年相比，最大的变化就是 &lt;strong&gt;去掉了桌面环境&lt;/strong&gt;。工具链越来越成熟，终端里的体验已经足够好。不需要在桌面和终端之间切来切去，所有东西都在 tmux 里一个窗口搞定。&lt;/p&gt;
+&lt;p&gt;如果你也在犹豫要不要脱离桌面环境，我的建议是：先把日常工具全换成命令行版本，等你觉得切桌面只是为了开浏览器的时候，就可以考虑去掉它了。&lt;/p&gt;
+&lt;hr&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;旧版文章见：&lt;a class="link" href="https://svtter.cn/p/%e6%88%91%e7%9a%84-linux-%e5%bc%80%e5%8f%91%e7%8e%af%e5%a2%83/" &gt;我的 Linux 开发环境（2019）&lt;/a&gt;。那篇还推荐桌面环境和 LibreOffice，现在回头看恍如隔世。&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item></channel></rss>
