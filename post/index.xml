@@ -1,4 +1,107 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 14 Jul 2026 16:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>我的 Linux 开发环境 — 2026</title><link>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/</link><pubDate>Tue, 14 Jul 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/</guid><description>&lt;p&gt;2019 年写过一篇&lt;a class="link" href="https://svtter.cn/p/%e6%88%91%e7%9a%84-linux-%e5%bc%80%e5%8f%91%e7%8e%af%e5%a2%83/" &gt;我的 Linux 开发环境&lt;/a&gt;，当时还在推荐 Linux Mint + Cinnamon 桌面。七年过去，我的开发方式已经完全变了 — 不再使用桌面环境，所有开发工作都在 KVM 虚拟机里通过 SSH + tmux 完成。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 30 Jul 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>opencode 不够 open；oh-my-pi 才是正确的选择</title><link>https://svtter.cn/p/opencode-%E4%B8%8D%E5%A4%9F-openoh-my-pi-%E6%89%8D%E6%98%AF%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%80%89%E6%8B%A9/</link><pubDate>Thu, 30 Jul 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-%E4%B8%8D%E5%A4%9F-openoh-my-pi-%E6%89%8D%E6%98%AF%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%80%89%E6%8B%A9/</guid><description>&lt;img src="https://svtter.cn/p/opencode-%E4%B8%8D%E5%A4%9F-openoh-my-pi-%E6%89%8D%E6%98%AF%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%80%89%E6%8B%A9/cover.jpg" alt="Featured image of post opencode 不够 open；oh-my-pi 才是正确的选择" /&gt;&lt;blockquote&gt;
+ &lt;p&gt;我写过十几篇推荐 opencode 的文章。今天改口。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="缘起"&gt;缘起
+&lt;/h2&gt;&lt;p&gt;从 1 月起，opencode + 智谱 Coding Plan 是我的主力。我写过它怎么省钱、怎么避开厂商锁定、怎么搭 MCP 工具——这仓库里能翻出十几篇：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;《&lt;a class="link" href="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/" &gt;高效省钱：我的 AI Agent 工作流选择&lt;/a&gt;》— opencode + Gemini 的省钱组合&lt;/li&gt;
+&lt;li&gt;《&lt;a class="link" href="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/" &gt;OpenCode 配置优化记录&lt;/a&gt;》— Token 和配置调优&lt;/li&gt;
+&lt;li&gt;《&lt;a class="link" href="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/" &gt;最近发现好用的 MCP 工具&lt;/a&gt;》— 配套工具推荐&lt;/li&gt;
+&lt;li&gt;《&lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" &gt;使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查&lt;/a&gt;》— CI 自动化&lt;/li&gt;
+&lt;li&gt;《&lt;a class="link" href="https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/" &gt;opencode 插件优化&lt;/a&gt;》— 插件体系深度&lt;/li&gt;
+&lt;li&gt;《&lt;a class="link" href="https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/" &gt;opencode LLM provider 的三个 bug&lt;/a&gt;》— 早期 bug 分析&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;三个月前我还在《&lt;a class="link" href="https://svtter.cn/p/opencode-three-months-reflection/" &gt;从省钱到担忧&lt;/a&gt;》里写&amp;quot;继续用，但保持关注&amp;quot;。两个月前在《&lt;a class="link" href="https://svtter.cn/p/%E4%BB%8E-claude-code-%E8%BD%AC%E5%90%91-omp/opencode/" &gt;从 claude code 转向 omp&lt;/a&gt;》里，我把 opencode 和 omp 并列推荐。&lt;/p&gt;
+&lt;p&gt;四个月用下来，我彻底改主意了。不是 opencode 变差了，是它让我看清了&amp;quot;open&amp;quot;这个字到底值多少。&lt;/p&gt;
+&lt;p&gt;结论先放这：&lt;strong&gt;opencode 不够 open；oh-my-pi (omp) 才是正确的选择。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="一个-bug"&gt;一个 bug
+&lt;/h2&gt;&lt;p&gt;先讲一个真实的故事，&lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/278" target="_blank" rel="noopener"
+ &gt;sun-praise/opencode-actions#278&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;我用 opencode + litellm 跑 DeepSeek 做 multi-review dogfood。发现一个怪事：opencode 永远把 &lt;code&gt;tokens_cache_read&lt;/code&gt; 记成 0——即使上游 DeepSeek 返回了 &lt;code&gt;cached_tokens&lt;/code&gt;，即使 DeepSeek 服务端实际上把约 98% 的 prompt 命中了缓存。&lt;/p&gt;
+&lt;p&gt;听起来像个小 bug，但它的杀伤力是实打实的：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;成本表是错的。&lt;/strong&gt; 多 agent review 贴到 PR 的成本表里，每个 persona 的 Cache Read 列都是 0，而 DeepSeek 实际在按缓存价计费。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;它让人误读成&amp;quot;resume 更贵&amp;quot;。&lt;/strong&gt; PR #277 的 dogfood 测出 session-resume 的 input token 是 fresh 的 2.2 倍（76k → 168k），看上去 resume 反而更烧钱。真相是重复前缀大部分命中了 DeepSeek 缓存（约 10% 价格），但 opencode 把这一列记成 0，造出了&amp;quot;全价翻倍&amp;quot;的错觉。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;对比很扎眼：同一个 opencode 安装里，zhipu/glm 和 minimax 都能正确记录 cache_read，&lt;em&gt;&lt;em&gt;只有 litellm/&lt;/em&gt; 是 0&lt;/em&gt;*。&lt;/p&gt;
+&lt;h2 id="我做了能做的一切"&gt;我做了能做的一切
+&lt;/h2&gt;&lt;p&gt;我查到了 bug 的位置——&lt;code&gt;openai-chat.ts:mapUsage&lt;/code&gt; 把 &lt;code&gt;cached_tokens&lt;/code&gt; 映射到 &lt;code&gt;cacheReadInputTokens&lt;/code&gt;，&lt;code&gt;publish-llm-event.ts&lt;/code&gt; 读这个字段，但 openai-compatible 路径在 mapUsage 到 session 写入之间把值弄丢了。&lt;/p&gt;
+&lt;p&gt;我提了 upstream issue（&lt;a class="link" href="https://github.com/anomalyco/opencode/issues/34022" target="_blank" rel="noopener"
+ &gt;anomalyco/opencode#34022&lt;/a&gt;），附上完整诊断、复现路径、对比数据、验收标准。在自己的 repo 里把 triage 写完，把数据流逐行点清，说明&amp;quot;这个 repo 里改不动——SDK 给我就是 0，我不能凭空造数字&amp;quot;。&lt;/p&gt;
+&lt;h2 id="然后呢"&gt;然后呢
+&lt;/h2&gt;&lt;p&gt;P3，&lt;code&gt;needs-info&lt;/code&gt;，晾着。&lt;/p&gt;
+&lt;p&gt;从 6 月 26 日到今天（7 月 30 日），五个星期。我得到的&amp;quot;解决方案&amp;quot;是：&lt;strong&gt;换 provider。&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Switch the dogfood model to a provider opencode already reads cache for correctly.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这是我自己写在 workaround 里的话。我写的时候没觉得扎心，现在回味过来——&lt;strong&gt;一个开源工具的 bug，最终答案是&amp;quot;你别用这个 provider&amp;quot;。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="这不只是一个-bug"&gt;这不只是一个 bug
+&lt;/h2&gt;&lt;p&gt;我用这个故事想说的，不是&amp;quot;opencode 有 bug&amp;quot;——软件都有 bug。我想说的是，这件事把我对&amp;quot;open&amp;quot;的理解拆成了三层，每一层 opencode 都卡住了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一层：源码可见，不等于你能改掉你正在跑的那个版本。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;opencode 是开源的。我看得见每一行代码，我甚至定位到了 bug 在哪。但我不能改掉我正在用的那个 opencode——除非我自己 fork、维护一个 fork、跟着上游 rebase。这跟&amp;quot;商业软件出了 bug 只能等官方&amp;quot;的区别，远比我以为的小。那个&amp;quot;开源安全垫&amp;quot;是真的，但它是&amp;quot;出事了你可以停在旧版本&amp;quot;，不是&amp;quot;出事了你可以让它变好&amp;quot;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第二层：开源的代码，不等于开源的治理。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;我提了 issue，写了完整诊断，给了验收标准。然后它被压成 P3，挂上 &lt;code&gt;needs-info&lt;/code&gt;，晾五个星期。issue 分类、优先级、谁先修——这些都是核心团队的决策，社区进不去。&lt;/p&gt;
+&lt;p&gt;而且不止是 issue。我在《&lt;a class="link" href="https://svtter.cn/p/opencode-three-months-reflection/" &gt;从省钱到担忧&lt;/a&gt;》里翻 opencode 的 GitHub 时就看到过：大量 PR 堆了几周甚至几个月，没人合并、没人 review。有人愿意贡献，但没人有精力、有流程去接住这些贡献。这就是 issue #278 的另一面——我是 bug 报告者被晾着，那批 PR 的作者是贡献者被拒之门外。开源承诺的是&amp;quot;你可以参与&amp;quot;，但如果 PR 在那儿烂掉，这扇门其实就是关着的。&lt;/p&gt;
+&lt;p&gt;集市模式要运转，前提是有一只&amp;quot;看似松散但始终在运作的手&amp;quot;在合并、在 triage。opencode 这只手停摆了。四个月前我埋的伏笔——&amp;ldquo;如果还是没人管，就开始看别的方案&amp;rdquo;——现在兑现了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第三层：开源的代码，不等于开源的决策。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&amp;ldquo;换 provider&amp;rdquo; 这个 workaround，本质是维护者的优先级在告诉我：litellm/deepseek 的兼容性不值得花时间。我没法影响这个优先级。名字叫 open，但哪些 provider 重要、哪些功能先做、哪些 bug 先修——方向由核心团队单方面拍板。&lt;strong&gt;代码在你面前摊开，决策却在你够不到的地方。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="为什么-omp-才是正确选择"&gt;为什么 omp 才是正确选择
+&lt;/h2&gt;&lt;p&gt;三个理由，按重要性排。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;一、迭代快，这是最直观的。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;omp 几乎每天一个 commit。&lt;code&gt;/goal&lt;/code&gt;、&lt;code&gt;/loop&lt;/code&gt;、&lt;code&gt;workflow&lt;/code&gt; 这些新范式，opencode 还在 issue 里排队，omp 已经全跟上了。对 coding agent 这种高速演化的工具，&amp;ldquo;能力进化速度&amp;quot;本身就是 open 的一部分——一个不再快速进化的开源项目，open 度是归零的，因为没人在迭代了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;二、架构层面真 open。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这个我单独写过（《&lt;a class="link" href="https://svtter.cn/p/oh-my-pi-%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-pi-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/" &gt;oh-my-pi 用到了哪些基础组件&lt;/a&gt;》）。omp 是 pi-mono 的 fork + selective backport，不是闭门自造：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;三个 scope（&lt;code&gt;@oh-my-pi/*&lt;/code&gt;、&lt;code&gt;@mariozechner/*&lt;/code&gt;、&lt;code&gt;@earendil-works/*&lt;/code&gt;）写哪个都解析到同一份代码——上游 pi 的插件可以直接用；&lt;/li&gt;
+&lt;li&gt;完整的 SDK / Extension / Hook 插件体系，15 个 SDK 示例从入门到 Redis 持久化；&lt;/li&gt;
+&lt;li&gt;CLI 和 SDK 是同一个包，没有&amp;quot;SDK 单独卖&amp;quot;的割裂。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这是把&amp;quot;开放&amp;quot;做进了架构，不是停在&amp;quot;代码挂在 GitHub 上&amp;rdquo;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;三、harness 必须攥在自己手里。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这是我 6 月那篇&lt;a class="link" href="https://svtter.cn/p/%E4%B8%8D%E5%90%8C%E7%9A%84-coding-plan-%E8%A6%81%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84-agent/" &gt;暴论&lt;/a&gt;的核心：大模型厂商纷纷自建 harness——MiniMax、Kimi Code、CodeX、DeepSeek——vendor-lock 是厂商追求的，是你该警惕的。作为用户，agent harness 一定要掌握在自己手里。omp 你可以 fork、可以 backport、可以自建独占层（它自己就这么干的：&lt;code&gt;pi-natives&lt;/code&gt;、&lt;code&gt;hashline&lt;/code&gt;、&lt;code&gt;swarm-extension&lt;/code&gt;）。&lt;/p&gt;
+&lt;h2 id="重新定义-open"&gt;重新定义 open
+&lt;/h2&gt;&lt;p&gt;走完这四个月，我重新定义了一下对&amp;quot;open&amp;quot;的要求：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;opencode&lt;/th&gt;
+					&lt;th&gt;omp&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;源码可见&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;治理响应&lt;/td&gt;
+					&lt;td&gt;⚠️ 积压、P3 晾着&lt;/td&gt;
+					&lt;td&gt;✅ 每日迭代&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;能力进化&lt;/td&gt;
+					&lt;td&gt;⚠️ 新功能落地慢&lt;/td&gt;
+					&lt;td&gt;✅ 快速跟进新范式&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;决策参与&lt;/td&gt;
+					&lt;td&gt;❌ 核心团队单方面&lt;/td&gt;
+					&lt;td&gt;✅ fork+backport 可自决&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;open = 源码可见 + 治理响应 + 能力进化 + 决策参与。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;opencode 拿下了第一格，omp 四格全占。&lt;/p&gt;
+&lt;h2 id="收尾"&gt;收尾
+&lt;/h2&gt;&lt;p&gt;我写《从省钱到担忧》的时候，结论是&amp;quot;继续用，但保持关注&amp;quot;。那时候我还愿意等。三个月过去，那只&amp;quot;合并的手&amp;quot;没有回来。&lt;/p&gt;
+&lt;p&gt;所以我不再等了。历史版本的安全垫还在——我没法用 opencode 最新版时，旧版本确实还能跑。但&amp;quot;还能跑&amp;quot;不是我要的，我要的是&amp;quot;还在变好，而且我够得着&amp;quot;。&lt;/p&gt;
+&lt;p&gt;这不是 opencode 的失败。是我对&amp;quot;open&amp;quot;这个字的要求，变高了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;opencode 不够 open；oh-my-pi 才是正确的选择。&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>我的 Linux 开发环境 — 2026</title><link>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/</link><pubDate>Tue, 14 Jul 2026 16:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/</guid><description>&lt;p&gt;2019 年写过一篇&lt;a class="link" href="https://svtter.cn/p/%e6%88%91%e7%9a%84-linux-%e5%bc%80%e5%8f%91%e7%8e%af%e5%a2%83/" &gt;我的 Linux 开发环境&lt;/a&gt;，当时还在推荐 Linux Mint + Cinnamon 桌面。七年过去，我的开发方式已经完全变了 — 不再使用桌面环境，所有开发工作都在 KVM 虚拟机里通过 SSH + tmux 完成。&lt;/p&gt;
 &lt;h2 id="操作系统"&gt;操作系统
 &lt;/h2&gt;&lt;p&gt;现在用的是 &lt;strong&gt;Debian 12 (bookworm)&lt;/strong&gt;，跑在 KVM 虚拟机里。没有桌面环境，纯命令行。&lt;/p&gt;
 &lt;p&gt;为什么不折腾桌面了？因为没必要。开发工作全部在终端里完成，日常的 IM（微信、钉钉）、文档编辑、浏览器这些事情在 Windows PC 和 MacBook 上做，Linux 虚拟机只负责跑代码和服务。Debian 稳定、包版本够用、安全更新及时，做开发环境很合适。&lt;/p&gt;
