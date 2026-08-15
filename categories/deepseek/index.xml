@@ -1,4 +1,117 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deepseek on Svtter's Blog</title><link>https://svtter.cn/categories/deepseek/</link><description>Recent content in Deepseek on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 30 Apr 2026 15:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/deepseek/index.xml" rel="self" type="application/rss+xml"/><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6fb1856fb50dd9a3.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deepseek on Svtter's Blog</title><link>https://svtter.cn/categories/deepseek/</link><description>Recent content in Deepseek on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 15 Aug 2026 11:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/deepseek/index.xml" rel="self" type="application/rss+xml"/><item><title>实测 DeepSeek 前缀缓存：相同前缀，不同后缀还能命中吗？</title><link>https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/</link><pubDate>Sat, 15 Aug 2026 11:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/</guid><description>&lt;p&gt;做 agent 应用的人都关心 context cache：多轮会话每次都要把全部历史发一遍，如果命中缓存，前缀部分按缓存价计费、延迟也显著下降。但有一个很实际的问题——&lt;strong&gt;同一个 session，前缀（历史消息）完全相同，只在末尾追加了一条不同的新消息，缓存还能命中吗？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;官方文档说缓存按&amp;quot;最长公共前缀&amp;quot;匹配，听起来应该能命中，但口说无凭，直接用 4 个对照请求实测一下。&lt;/p&gt;
+&lt;h2 id="判断依据"&gt;判断依据
+&lt;/h2&gt;&lt;p&gt;DeepSeek 官方接口的 &lt;code&gt;usage&lt;/code&gt; 里会返回两个字段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;prompt_cache_hit_tokens&lt;/code&gt;：命中缓存的 token 数&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;prompt_cache_miss_tokens&lt;/code&gt;：未命中、需要现场计算的 token 数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;判断标准很简单：第二个请求的 &lt;code&gt;cache_hit&lt;/code&gt; 如果接近前缀的 token 数，就是命中了。&lt;/p&gt;
+&lt;h2 id="实验设计"&gt;实验设计
+&lt;/h2&gt;&lt;p&gt;构造一个约 2900 tokens 的公共前缀：system 消息里塞了一份 59 条的《售后手册》，再加两轮确认对话，保证远超缓存的最小匹配块（64 tokens）。然后发 4 个请求：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;请求&lt;/th&gt;
+					&lt;th&gt;内容&lt;/th&gt;
+					&lt;th&gt;预期&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;A&lt;/td&gt;
+					&lt;td&gt;prefix + suffixA（冷启动）&lt;/td&gt;
+					&lt;td&gt;hit ≈ 0，顺便把前缀写入缓存&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;B&lt;/td&gt;
+					&lt;td&gt;prefix + suffixA（与 A 完全相同）&lt;/td&gt;
+					&lt;td&gt;hit ≈ 全部 prompt tokens&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;C&lt;/td&gt;
+					&lt;td&gt;prefix + &lt;strong&gt;suffixB&lt;/strong&gt;（相同前缀，&lt;strong&gt;不同后缀&lt;/strong&gt;）&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;核心问题：hit ≈ 前缀 tokens？&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;D&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;开头改写的 prefix&lt;/strong&gt; + suffixB&lt;/td&gt;
+					&lt;td&gt;负对照：hit ≈ 0&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;A 发完等 15 秒——缓存是服务端异步生成的，立刻发第二个请求可能还没建好。B、C、D 连着发。D 只改了 system 消息的第一句话，后面 2900 多 tokens 的手册原文原封不动。&lt;/p&gt;
+&lt;h2 id="结果"&gt;结果
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;请求&lt;/th&gt;
+					&lt;th style="text-align: right"&gt;prompt_tokens&lt;/th&gt;
+					&lt;th style="text-align: right"&gt;cache_hit&lt;/th&gt;
+					&lt;th style="text-align: right"&gt;cache_miss&lt;/th&gt;
+					&lt;th style="text-align: right"&gt;耗时&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;A&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2910&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;0&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2910&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;4.14s&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;B&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2910&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2816&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;94&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;3.37s&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;C&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2906&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;&lt;strong&gt;2816&lt;/strong&gt;&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;90&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2.76s&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;D&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2905&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;0&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;2905&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;3.86s&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;三个关键观察：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. C 的命中数和 B 一字不差。&lt;/strong&gt; 换了 suffix 之后 hit 依然是 2816 tokens，和完全重复请求的 B 完全相同；miss 的 90 tokens 正好是新 suffix 的长度。结论成立：&lt;strong&gt;缓存严格按公共前缀对齐，前缀之后的尾部内容根本不参与匹配，后缀不同不影响命中。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. D 的命中归零。&lt;/strong&gt; 只改了 system 第一句话，99% 的内容原样不动，hit 还是 0。这说明匹配是逐 token 的前缀对齐，不是内容相似度——前面断了一个字，后面全部作废。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3. B 揭示了一个细节。&lt;/strong&gt; 完全重复的请求也有尾部 94 tokens 未命中（2816 恰好是 44 × 64），印证了缓存按 64-token 块对齐：提示词末尾不满一块、贴近结尾的部分不会进缓存。&lt;/p&gt;
+&lt;p&gt;延迟上，命中 97% 前缀时从 4.14s 降到 2.76s，快了约三分之一，同时命中部分按缓存价计费，省钱和加速是同步发生的。&lt;/p&gt;
+&lt;h2 id="工程启示"&gt;工程启示
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;历史消息只追加、不改写。&lt;/strong&gt; 每轮把原样的历史带上、末尾追加新消息，就能持续命中；任何对历史的改写、重排、摘要替换，都会从断点开始作废后面的全部缓存。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;稳定的内容放前面，多变的内容放后面。&lt;/strong&gt; system prompt、文档、工具定义这些每轮不变的东西放头部；最新的用户消息、动态注入的上下文放尾部。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;前缀最好&amp;quot;块对齐&amp;quot;地稳定。&lt;/strong&gt; 64 tokens 一块，尾部不满一块的部分永远 miss。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;两次请求要同一个 key、同一个模型名&lt;/strong&gt;，缓存不跨账号、跨模型共享。采样参数（temperature 之类）不影响匹配。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;冷启动后留几秒余量。&lt;/strong&gt; 缓存异步生成，写完立刻读大概率 miss。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="复现"&gt;复现
+&lt;/h2&gt;&lt;p&gt;实验脚本在这里：&lt;a class="link" href="https://gist.github.com/Svtter/3e18cab79027c6bcb828d2c10f99e034" target="_blank" rel="noopener"
+ &gt;gist: test_prefix_cache.py&lt;/a&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;DEEPSEEK_API_KEY&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;sk-xxx &lt;span class="c1"&gt;# PowerShell: $env:DEEPSEEK_API_KEY=&amp;#34;sk-xxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;pip install requests
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;python test_prefix_cache.py
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;API key 只从环境变量读取，脚本里不出现明文。如果换模型后 usage 里没有 &lt;code&gt;prompt_cache_hit_tokens&lt;/code&gt; 字段，脚本会把原始 usage 打出来方便排查字段名。&lt;/p&gt;</description></item><item><title>DeepSeek + Claude Code: Thinking Block 兼容性问题分析</title><link>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</link><pubDate>Thu, 30 Apr 2026 18:00:31 +0800</pubDate><guid>https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/6fb1856fb50dd9a3.png" alt="Featured image of post DeepSeek + Claude Code: Thinking Block 兼容性问题分析" /&gt;
  &lt;blockquote&gt;
  &lt;p&gt;现在，你可以通过配置 AUTH_TOKEN 来配置 Claude Code。按照 deepseek 文档配置。一般不会再出现本文所说的问题。
 &lt;a class="link" href="https://api-docs.deepseek.com/zh-cn/quick_start/agent_integrations/claude_code" target="_blank" rel="noopener"
