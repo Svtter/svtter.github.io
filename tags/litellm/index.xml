@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LiteLLM on Svtter's Blog</title><link>https://svtter.cn/tags/litellm/</link><description>Recent content in LiteLLM on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 25 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/litellm/index.xml" rel="self" type="application/rss+xml"/><item><title>SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值</title><link>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</link><pubDate>Tue, 25 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</guid><description>&lt;h1 id="siliconflow-的-deepseek-v4-flash-缓存命中确认但有最小-token-阈值"&gt;SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值
+&lt;/h1&gt;&lt;p&gt;给 LiteLLM 接入 SiliconFlow 的 &lt;code&gt;deepseek-ai/DeepSeek-V4-Flash&lt;/code&gt; 时，想验证它的缓存机制。SiliconFlow 模型页面标注了缓存命中价 &lt;strong&gt;¥0.020/M Tokens&lt;/strong&gt;（输入全价 $0.13/M 的约 1/46），于是按 ¥0.020/M 换算成 &lt;code&gt;$0.0028/1M&lt;/code&gt; 配进了 LiteLLM 的 &lt;code&gt;model_info.cache_read_input_token_cost&lt;/code&gt;。配完想实测验证，结果第一轮测试得出了一个&lt;strong&gt;错误的结论&lt;/strong&gt;，直到把 prompt 拉大到 6.6K tokens 才看到缓存真实命中。&lt;/p&gt;
+&lt;h2 id="第一轮测试得出错误结论"&gt;第一轮测试：得出错误结论
+&lt;/h2&gt;&lt;p&gt;测试方法：完全相同的 prompt 连续请求多次，检查 &lt;code&gt;usage.prompt_tokens_details.cached_tokens&lt;/code&gt; 和 &lt;code&gt;prompt_cache_hit_tokens&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;完整测试脚本（输入/输出速度 + 缓存命中三项，key 走环境变量）：&lt;a class="link" href="https://gist.github.com/Svtter/73dd4d40874d7c062427f706ca8cd442" target="_blank" rel="noopener"
+ &gt;llm-benchmark.py&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;短 prompt（167 token，重复 4 次）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run1: 25.65s cached=0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run2: 5.80s cached=0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run3: 8.82s cached=0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run4: 36.22s cached=0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;长一点（963 token，重复 3 次）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run1: cached=0 hit=0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run2: cached=0 hit=0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;run3: cached=0 hit=0
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;直连 SiliconFlow 和经过 LiteLLM 网关两条路径结果一致，&lt;code&gt;cached_tokens&lt;/code&gt; 恒为 0。当时据此得出&amp;quot;缓存不生效、页面标注是摆设&amp;quot;的结论——&lt;strong&gt;这个结论是错的&lt;/strong&gt;，原因是测试 prompt 太小，根本没达到缓存的触发阈值。&lt;/p&gt;
+&lt;h2 id="为什么错了缓存有最小-token-阈值"&gt;为什么错了：缓存有最小 token 阈值
+&lt;/h2&gt;&lt;p&gt;怀疑是阈值问题（很多平台的缓存要求最小前缀长度，比如 OpenAI 1024、Gemini 2048），于是逐步加大 prompt：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;prompt tokens&lt;/th&gt;
+					&lt;th&gt;cached&lt;/th&gt;
+					&lt;th&gt;命中率&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;167&lt;/td&gt;
+					&lt;td&gt;0&lt;/td&gt;
+					&lt;td&gt;0%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;963&lt;/td&gt;
+					&lt;td&gt;0&lt;/td&gt;
+					&lt;td&gt;0%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1843&lt;/td&gt;
+					&lt;td&gt;0&lt;/td&gt;
+					&lt;td&gt;0%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;6683&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;6656&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;99.6%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;6683 token 的 prompt 连续多次验证，缓存稳定命中（cached=6656，hit=6656），与 DeepSeek 官方 API 的 &lt;code&gt;prompt_cache_hit_tokens&lt;/code&gt; 字段表现一致。&lt;/p&gt;
+&lt;p&gt;所以 SiliconFlow 的 V4-Flash 缓存&lt;strong&gt;真实存在且工作正常&lt;/strong&gt;，只是触发阈值比常见平台更高（实测至少 &amp;gt;1843 token，具体阈值未公开，推测 2K 量级）。这正好解释了一个现象：为什么&amp;quot;短对话永远感受不到缓存&amp;quot;——日常聊天式请求（几百 token）远达不到阈值，只有长上下文场景（文档问答、代码库分析、长 system prompt）才能命中。&lt;/p&gt;
+&lt;h2 id="顺带发现siliconflow-的-v4-flash-响应波动极大"&gt;顺带发现：SiliconFlow 的 V4-Flash 响应波动极大
+&lt;/h2&gt;&lt;p&gt;测试过程中还注意到，SiliconFlow 的 V4-Flash 响应时间波动非常大：同一请求的 TTFT 从 9 秒到 104 秒不等，还出现过 503 Service Unavailable。即使缓存命中，TTFT 也没有明显改善（命中时 9.6s vs 未命中时可能 12s/40s/55s）。与 DeepSeek 官方 API 命中缓存后 TTFT 大幅下降的表现不同。&lt;/p&gt;
+&lt;h2 id="结论"&gt;结论
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;SiliconFlow 的 DeepSeek-V4-Flash 缓存是有效的&lt;/strong&gt;，&lt;code&gt;cached_tokens&lt;/code&gt;/&lt;code&gt;prompt_cache_hit_tokens&lt;/code&gt; 字段正常返回命中值（6683 token 命中 6656）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;但触发阈值很高&lt;/strong&gt;（实测 1843 不命中、6683 命中），短 prompt 永远按全价计费——这正是它页面标注 ¥0.020/M 缓存价但实际很少命中的原因&lt;/li&gt;
+&lt;li&gt;LiteLLM 里配 &lt;code&gt;cache_read_input_token_cost: 2.8e-09&lt;/code&gt;（≈¥0.02/M）是正确的，长上下文请求命中后计费会正确落到缓存价&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="对使用者的建议"&gt;对使用者的建议
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;验证缓存要用大 prompt&lt;/strong&gt;（≥4K tokens），几百 token 的测试测不出来，反而会得出错误结论&lt;/li&gt;
+&lt;li&gt;短对话场景（几百 token/请求）在 SiliconFlow 上&lt;strong&gt;享受不到缓存折扣&lt;/strong&gt;，价格敏感场景优先 DeepSeek 官方 API&lt;/li&gt;
+&lt;li&gt;长上下文场景（文档问答、批量 RAG）SiliconFlow 的缓存才有意义，且要先确认你的前缀是稳定的（前缀一变就全 miss）&lt;/li&gt;
+&lt;li&gt;SiliconFlow 当前 V4-Flash 服务稳定性一般（TTFT 波动大 + 偶发 503），对延迟敏感的应用需要重试和降级策略&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>
