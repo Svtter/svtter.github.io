@@ -14,6 +14,8 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 
 ## Recent Posts
 
+- [用 zcode 跑夜间无人值守：issue → PR 的自动化闭环](https://svtter.cn/p/%E7%94%A8-zcode-%E8%B7%91%E5%A4%9C%E9%97%B4%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88issue-pr-%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF/): Coding Plan 每天有 5 小时额度且没有周上限，晚上不跑就浪费了。最近我把一个完整闭环放进了夜间定时任务：让 zcode 每半小时开一个新 session，自动从 issue 池里挑一个没人认领的开放问题，分析、实现、review，最后 push 并创建 PR。
+
 - [便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash](https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/): 官方峰段涨到 $0.44/$1.32 之后，怎么继续便宜地用 deepseek-v4-flash：OpenRouter 上 17 个端点比价，路由参数 data_collection:"deny" 保证数据不留存，外加快照、量化、回退三个坑。2026-09-01 更新：SiliconFlow、百炼齐涨至官方价位，百炼 10-10 下线全部第三方模型——低价只剩 OpenRouter，与数据不出境二选一
 - [SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值](https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/): 实测 SiliconFlow 的 DeepSeek-V4-Flash Prompt Cache：167/963/1843 token 全部 cached=0，6683 token 命中 6656（99.6%）——缓存真实生效，但存在较高最小 token 阈值，短 prompt 永远按全价计费
 - [实测 DeepSeek 前缀缓存：相同前缀，不同后缀还能命中吗？](https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/): 用 4 个对照请求实测 deepseek-v4-flash 的前缀缓存：相同前缀、不同后缀时 cache_hit 仍为 2816 tokens，与完全重复请求一字不差；前缀从第一个词断开则命中归零。附实验代码与工程实践建议。
@@ -33,7 +35,6 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 - [糟糕的 token plan 隐私保护现状](https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/): 本文对比了2026年6月各AI编程平台的数据训练政策，指出个人版多数默认使用代码训练模型，而企业版或API通常承诺不训练，并提供了使用建议。
 - [Hugo 0.163 升级记录：security.allowContent 拦截了 HTML 内容](https://svtter.cn/p/hugo-0163-%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/): 升级到 Hugo 0.163 后 hugo server 起不来，排查发现是新引入的 security.allowContent 安全策略默认拦截了 content/ 下的 HTML 文件。记录排查过程，以及 allowContent 语义里那个不太直觉的坑。
 - [本地 review 的便宜方案](https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/): 介绍了一个名为 roborev 的本地代码审查工具，用于替代云端 review 以节省 token 成本，配置简单且支持自定义 agent。
-- [AI Agent 时代的 Meta Programming](https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/): 本文探讨了AI时代的元编程概念，强调通过工作流（workflow）而非简单的循环（loop）来编写可靠代码，并给出了具体示例。
 
 ## Categories
 
@@ -45,7 +46,7 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 - [AI/人工智能](https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/): 4 posts
 - [Blog](https://svtter.cn/categories/blog/): 1 posts
 - [ChatGPT](https://svtter.cn/categories/chatgpt/): 1 posts
-- [Coding](https://svtter.cn/categories/coding/): 54 posts
+- [Coding](https://svtter.cn/categories/coding/): 55 posts
 - [Coding, AI, Deep Learning](https://svtter.cn/categories/coding-ai-deep-learning/): 1 posts
 - [Computer Vision](https://svtter.cn/categories/computer-vision/): 2 posts
 - [Coolify](https://svtter.cn/categories/coolify/): 1 posts
@@ -54,7 +55,7 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 - [Deep Learning](https://svtter.cn/categories/deep-learning/): 9 posts
 - [Deepseek](https://svtter.cn/categories/deepseek/): 2 posts
 - [Development](https://svtter.cn/categories/development/): 1 posts
-- [DevOps](https://svtter.cn/categories/devops/): 55 posts
+- [DevOps](https://svtter.cn/categories/devops/): 56 posts
 - [Dify](https://svtter.cn/categories/dify/): 1 posts
 - [Draw](https://svtter.cn/categories/draw/): 1 posts
 - [Editor](https://svtter.cn/categories/editor/): 2 posts
@@ -135,6 +136,7 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 
 ## All Posts
 
+- [用 zcode 跑夜间无人值守：issue → PR 的自动化闭环](https://svtter.cn/p/%E7%94%A8-zcode-%E8%B7%91%E5%A4%9C%E9%97%B4%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88issue-pr-%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF/)
 - [便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash](https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/)
 - [SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值](https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/)
 - [实测 DeepSeek 前缀缓存：相同前缀，不同后缀还能命中吗？](https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/)

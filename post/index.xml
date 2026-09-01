@@ -1,4 +1,47 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 29 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash</title><link>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</link><pubDate>Sat, 29 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</guid><description>&lt;p&gt;DeepSeek 官方 API 从 2026-08-16 起峰谷分时计费。flash 峰段（北京时间 09:00–12:00、14:00–18:00）cache miss $0.44、output $1.32 per 1M（¥3.17/¥9.50），相对旧价 $0.14/$0.28 涨了 3 到 4.6 倍。我的用量，agent 会话和 cron 任务，全在峰段。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 01 Sep 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>用 zcode 跑夜间无人值守：issue → PR 的自动化闭环</title><link>https://svtter.cn/p/%E7%94%A8-zcode-%E8%B7%91%E5%A4%9C%E9%97%B4%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88issue-pr-%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF/</link><pubDate>Tue, 01 Sep 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%94%A8-zcode-%E8%B7%91%E5%A4%9C%E9%97%B4%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88issue-pr-%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF/</guid><description>&lt;p&gt;Coding Plan 每天有 5 小时额度且没有周上限，晚上不跑就浪费了。最近我把一个完整闭环放进了夜间定时任务：让 zcode 每半小时开一个新 session，自动从 issue 池里挑一个没人认领的开放问题，分析、实现、review，最后 push 并创建 PR。&lt;/p&gt;
+&lt;h2 id="核心思路"&gt;核心思路
+&lt;/h2&gt;&lt;p&gt;不是让 agent 无休无止地跑，而是每个 session 只做一个 issue，做完就结束。如果 CI 红了、没有合适 issue、或者信息不足以安全动手，就记录原因然后退出。这样可以控制单次成本，也避免 agent 在模糊需求上硬做半套。&lt;/p&gt;
+&lt;p&gt;下面是我实际用的提示词：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;你在一个无人值守的定时任务中运行,目标是完成一个完整闭环:找一个当前没有关联 PR 的开放 issue → 分析它 → 在独立 worktree 中实现 → 通过 /review-loop → push 并创建修复该 issue 的 PR。全程自主决策,不要向用户提问或等待确认;无法继续时记录原因并结束本次运行。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;流程与约束:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. 先读 AGENTS.md 并严格遵守(尤其:禁止在 main 分支或项目根直接开发,必须在 .worktrees/ 下创建 worktree;创建 PR 前必须通过 /review-loop;先看 main CI 是否绿)。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 检查 main 最近一次 CI 状态(gh run list --branch main --limit 3)。若为 failure/canceled/error:先看最近 commit message / PR / issue 确认是否已有人在修;无人处理则本次运行转为优先修复 CI,不再挑新 issue;已有人在修则直接结束本次运行。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 挑 issue:找一个 open 且没有关联 PR 的 issue(可先 gh repo view 确认远程 owner/name,再 gh search issues &amp;#39;state:open -linked:pr&amp;#39; --repo &amp;lt;owner/name&amp;gt;,或 gh issue list 后逐个核实没有 PR/分支引用它)。排除:已被其他 open PR、已有分支或最近 commit 认领的,以及评论里已有他人留言认领的。只挑一个;若 .worktrees/ 下已有针对该 issue 的未完成 worktree,优先续做它而不是另起炉灶。没有合适的 issue 就直接结束并说明。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. 分析该 issue:bug 修复走 /fix-bug-workflow 技能;功能开发遵循仓库标准流程(可参考 latex-agent-workflow 技能)。若改动属于需要 OpenSpec 流程的结构性变更、或 issue 信息不足以安全动手,跳过换下一个候选(最多再看 2 个),仍不合适则结束本次运行,不要硬做半套。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;5. 编码:遵循 docs/style-guide.md;测试尽量不用 mock/monkeypatch,提交前做「删/改坏实现 → 测试变红」自证;禁止 eslint-disable。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;6. 交付:push 后创建 PR,描述中写 &amp;#34;Closes #&amp;lt;issue号&amp;gt;&amp;#34;;若是 bug 修复,PR 描述必须包含 AGENTS.md 规则 6 要求的四点根因复盘(问题怎么发生/哪个 PR 引入/为什么 review 没拦住/是否沉淀 docs/code-faq)。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;7. 最后输出本次运行摘要:处理了哪个 issue、做了什么、PR 链接;或未产出的原因(CI 红/无合适 issue/信息不足等)。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="几个关键设计"&gt;几个关键设计
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;先看 CI。&lt;/strong&gt; 如果主分支已经红了，新的改动很可能建立在不稳定基线上。此时优先修 CI，而不是继续堆代码。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;只挑无 PR 关联的 issue。&lt;/strong&gt; 用 &lt;code&gt;gh search issues 'state:open -linked:pr'&lt;/code&gt; 可以快速过滤，避免和别人的工作冲突。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;独立 worktree。&lt;/strong&gt; 每个 issue 都在 &lt;code&gt;.worktrees/&lt;/code&gt; 下有自己的工作区，不会污染主分支，也方便断点续做。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;必须过 review-loop。&lt;/strong&gt; 不是写完就 push，而是让 agent 自己先 review 一遍，把明显问题留在本地。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;测试自证。&lt;/strong&gt; 提交前故意改坏实现，确认测试会变红。这比单纯&amp;quot;测试通过&amp;quot;更能保证测试真的在测正确的东西。&lt;/p&gt;
+&lt;h2 id="实际跑法"&gt;实际跑法
+&lt;/h2&gt;&lt;p&gt;我用 cron 每半小时触发一次，每次启动一个新的 zcode session。session 之间不共享上下文，避免长时间运行带来的状态漂移。一个晚上通常能产出 3-5 个 PR，大部分是小 bug 修复和文档改进。&lt;/p&gt;
+&lt;h2 id="注意"&gt;注意
+&lt;/h2&gt;&lt;p&gt;这不是&amp;quot;set and forget&amp;quot;。更理想的节奏是：白天确认今天要处理哪些 issue、优先级和边界，夜间让 agent 在闲时优惠中批量执行。第二天早上再过一遍昨晚的 PR，合并、关闭或要求补充。&lt;/p&gt;
+&lt;p&gt;自动化的价值在于把&amp;quot;找事做 + 初步实现&amp;quot;的耗时环节搬到低价时段，最终决策和代码质量把关仍然需要人。&lt;/p&gt;
+&lt;p&gt;如果你也买了类似的 Coding Plan，每天有固定小时额度且没有周上限，不妨试试把这类低优先级但完整的闭环任务放到夜间跑。当然，如果当前有必须做的任务，按量付费的 API 也完全值得考虑。&lt;/p&gt;</description></item><item><title>便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash</title><link>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</link><pubDate>Sat, 29 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</guid><description>&lt;p&gt;DeepSeek 官方 API 从 2026-08-16 起峰谷分时计费。flash 峰段（北京时间 09:00–12:00、14:00–18:00）cache miss $0.44、output $1.32 per 1M（¥3.17/¥9.50），相对旧价 $0.14/$0.28 涨了 3 到 4.6 倍。我的用量，agent 会话和 cron 任务，全在峰段。&lt;/p&gt;
 &lt;p&gt;v4-flash 我用得很多，之前写过&lt;a class="link" href="https://svtter.cn/p/%e5%ae%9e%e6%b5%8b-deepseek-%e5%89%8d%e7%bc%80%e7%bc%93%e5%ad%98%e7%9b%b8%e5%90%8c%e5%89%8d%e7%bc%80%e4%b8%8d%e5%90%8c%e5%90%8e%e7%bc%80%e8%bf%98%e8%83%bd%e5%91%bd%e4%b8%ad%e5%90%97/" &gt;前缀缓存实测&lt;/a&gt;和 &lt;a class="link" href="https://svtter.cn/p/siliconflow-%e7%9a%84-deepseek-v4-flash-%e7%bc%93%e5%ad%98%e5%91%bd%e4%b8%ad%e7%a1%ae%e8%ae%a4%e4%bd%86%e6%9c%89%e6%9c%80%e5%b0%8f-token-%e9%98%88%e5%80%bc/" &gt;SiliconFlow 缓存阈值&lt;/a&gt;。这次给它找条出路，要求两条：比官方便宜，数据不留存（ZDR）。查下来 OpenRouter 能同时满足，中间踩了几个坑。&lt;/p&gt;
 &lt;h2 id="更新2026-09-01国内平台涨到官方价位低价只剩-openrouter"&gt;更新（2026-09-01）：国内平台涨到官方价位，低价只剩 OpenRouter
 &lt;/h2&gt;&lt;p&gt;SiliconFlow 把 DeepSeek-V4-Flash 从固定价改成了峰谷分时，阿里云百炼 8-17 起也把 DeepSeek-V4-Flash-0731 调到同一张价目表。数据不出境的三个选项的新价（per 1M tokens，人民币，北京时间，2026-09-01 查证：&lt;a class="link" href="https://siliconflow.cn/pricing" target="_blank" rel="noopener"
@@ -3273,162 +3316,4 @@
 
  &lt;/blockquote&gt;
 &lt;h2 id="结语"&gt;结语
-&lt;/h2&gt;&lt;p&gt;我也在摸索 roborev 的其他用法。例如在运行结束后，让 coding agent 通过 roborev 获取结果。欢迎留言讨论。&lt;/p&gt;</description></item><item><title>AI Agent 时代的 Meta Programming</title><link>https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/</link><pubDate>Wed, 10 Jun 2026 01:05:46 +0800</pubDate><guid>https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/e40a19e5ad536ef1.png" alt="Featured image of post AI Agent 时代的 Meta Programming" /&gt;&lt;blockquote&gt;
- &lt;p&gt;AI 时代的 Meta Programming 是 workflow。&lt;/p&gt;
-
- &lt;/blockquote&gt;
-&lt;p&gt;最近很多人在说自己使用 loop 进行编程，但是没有具体说怎么做。&lt;/p&gt;
-&lt;p&gt;本文是我的理解和实践。&lt;/p&gt;
-&lt;h2 id="什么是-meta-programming"&gt;什么是 meta programming
-&lt;/h2&gt;&lt;p&gt;loop 这个说法过于模糊，实际上基于 loop 编程，指的是基于 workflow 来编程。&lt;/p&gt;
-&lt;p&gt;Meta Programming 中文是元编程。元类（metaclass）、C++ 宏编程、泛型，我认为均属于 Meta programming。&lt;/p&gt;
-&lt;h2 id="workflow-为什么是-meta-programmingmp"&gt;Workflow 为什么是 Meta Programming（MP）？
-&lt;/h2&gt;&lt;p&gt;合适的 workflow 可以让 AI 写出更好的代码。&lt;/p&gt;
-&lt;p&gt;假设 MetaG 是一个「元函数」——它接收代码或约束作为输入，输出目标代码。例如 Python 虚拟机、C++ 预处理器都是 MetaG 的实例。&lt;/p&gt;
-&lt;h3 id="c-宏---一种-mp"&gt;C++ 宏 - 一种 MP
-&lt;/h3&gt;&lt;p&gt;以 C++ 宏为例，开发者编写宏模板作为输入，预处理器执行展开。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define BAD(x) x*x &lt;/span&gt;&lt;span class="c1"&gt;// BAD(2+3) → 2+3*2+3 = 11
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define GOOD(x) ((x)*(x)) &lt;/span&gt;&lt;span class="c1"&gt;// GOOD(2+3) → ((2+3)*(2+3)) = 25
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;此时 MetaG 就是 C++ 预处理器。&lt;/p&gt;
-&lt;h3 id="python-元类"&gt;Python 元类
-&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;输入&lt;/strong&gt;：元类定义&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;SingletonMeta&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;_instances&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;cls&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_instances&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_instances&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;super&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="fm"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_instances&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="bp"&gt;cls&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Database&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;metaclass&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;SingletonMeta&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;初始化数据库连接&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# MetaG 接收 metaclass 定义和类定义，输出类 Database&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;此时 MetaG 是 Python 解释器。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;输出&lt;/strong&gt;：受元类控制的单例行为&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;db1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Database&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c1"&gt;# 输出: 初始化数据库连接&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;db2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Database&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c1"&gt;# 无输出&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;db1&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;db2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# True&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h3 id="泛型"&gt;泛型
-&lt;/h3&gt;&lt;p&gt;以 Go 语言为例。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;输入&lt;/strong&gt;：泛型函数定义&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;span class="lnt"&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-golang" data-lang="golang"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 泛型函数：返回两个相同类型值的较小者（要求类型支持 &amp;lt; 运算符）&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;T&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;MetaG 接收泛型定义，根据类型参数生成具体的函数实例。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;输出&lt;/strong&gt;：泛型展开后的具体函数&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-golang" data-lang="golang"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 省略实现细节&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;Min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;float64&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h3 id="总结"&gt;总结
-&lt;/h3&gt;&lt;p&gt;在传统的 Meta Programming 中，MetaG 的输入和输出都是代码。MetaG 本身是一个确定性的程序（编译器、解释器、预处理器），输入模板或类型定义，输出展开后的代码。&lt;/p&gt;
-&lt;h2 id="一个-workflow-例子"&gt;一个 workflow 例子
-&lt;/h2&gt;&lt;p&gt;&lt;code&gt;/goal&lt;/code&gt; 是 Claude Code 中的一个命令，用于设定一个高层目标，让 agent 自主循环工作直到达成。以下是一个基于 &lt;code&gt;/goal&lt;/code&gt; 的 workflow 例子。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;输入&lt;/strong&gt;：一段 workflow 脚本&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# python 例子&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;set_goal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;from user input&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# 目标来自用户输入&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;review_result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="n"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Can exit loop? read the code and confirm the goal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_goal&lt;/span&gt;&lt;span class="p"&gt;()):&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;do programming&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;review_result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;review_result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;do review&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;round_max&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;break&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;agent 在每次循环中检查是否达成目标，未达成则继续编程和 review，直到 goal 完成或达到最大轮次。&lt;/p&gt;
-&lt;p&gt;MetaG 是可以执行 workflow 的 runtime，例如 Claude Code 或者 OMP。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;输出&lt;/strong&gt;：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...当前项目的代码，经过了 LLM 生成和 LLM review 反复改进。
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id="已有的-runtime"&gt;已有的 runtime
-&lt;/h2&gt;&lt;p&gt;目前已有多个 runtime 支持执行 workflow，以下是两个典型的例子。&lt;/p&gt;
-&lt;h3 id="claude-code"&gt;Claude Code
-&lt;/h3&gt;&lt;p&gt;Claude Code 提供了更丰富的 workflow 原语，例如 &lt;code&gt;parallel&lt;/code&gt;、&lt;code&gt;pipeline&lt;/code&gt;、&lt;code&gt;subagent&lt;/code&gt; 等，支持并行、串行和委托等执行模式。&lt;/p&gt;
-&lt;p&gt;上面的例子只用了 &lt;code&gt;agent&lt;/code&gt; 这个原语，实际上 Claude Code 生成的大多数是 &lt;code&gt;parallel(agent1, agent2, agent3)&lt;/code&gt; 或者是 &lt;code&gt;pipeline(agent1, agent2, agent3)&lt;/code&gt;。&lt;/p&gt;
-&lt;h3 id="omp---oh-my-pi"&gt;OMP - oh my pi
-&lt;/h3&gt;&lt;p&gt;workflow 这个功能在 OMP 上体验更好。&lt;/p&gt;
-&lt;p&gt;可以通过对话将 Python workflow 落盘，下一次直接 eval 使用。在 Claude Code 中，workflow 用 JS 表示。&lt;/p&gt;
-&lt;p&gt;如果 py 文件里本身有 loop，那么下次 coding 的过程就是 eval loop 的过程。workflow 本身也可有输入输出。&lt;/p&gt;</description></item></channel></rss>
+&lt;/h2&gt;&lt;p&gt;我也在摸索 roborev 的其他用法。例如在运行结束后，让 coding agent 通过 roborev 获取结果。欢迎留言讨论。&lt;/p&gt;</description></item></channel></rss>
