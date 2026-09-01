@@ -1,15 +1,76 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Svtter's Blog</title><link>https://svtter.cn/post/</link><description>Recent content in Posts on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 29 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/post/index.xml" rel="self" type="application/rss+xml"/><item><title>便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash</title><link>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</link><pubDate>Sat, 29 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</guid><description>&lt;p&gt;DeepSeek 官方 API 从 2026-08-16 起峰谷分时计费。flash 峰段（北京时间 09:00–12:00、14:00–18:00）cache miss $0.44、output $1.32 per 1M（¥3.17/¥9.50），相对旧价 $0.14/$0.28 涨了 3 到 4.6 倍。我的用量，agent 会话和 cron 任务，全在峰段。&lt;/p&gt;
 &lt;p&gt;v4-flash 我用得很多，之前写过&lt;a class="link" href="https://svtter.cn/p/%e5%ae%9e%e6%b5%8b-deepseek-%e5%89%8d%e7%bc%80%e7%bc%93%e5%ad%98%e7%9b%b8%e5%90%8c%e5%89%8d%e7%bc%80%e4%b8%8d%e5%90%8c%e5%90%8e%e7%bc%80%e8%bf%98%e8%83%bd%e5%91%bd%e4%b8%ad%e5%90%97/" &gt;前缀缓存实测&lt;/a&gt;和 &lt;a class="link" href="https://svtter.cn/p/siliconflow-%e7%9a%84-deepseek-v4-flash-%e7%bc%93%e5%ad%98%e5%91%bd%e4%b8%ad%e7%a1%ae%e8%ae%a4%e4%bd%86%e6%9c%89%e6%9c%80%e5%b0%8f-token-%e9%98%88%e5%80%bc/" &gt;SiliconFlow 缓存阈值&lt;/a&gt;。这次给它找条出路，要求两条：比官方便宜，数据不留存（ZDR）。查下来 OpenRouter 能同时满足，中间踩了几个坑。&lt;/p&gt;
 &lt;h2 id="更新2026-09-01国内平台涨到官方价位低价只剩-openrouter"&gt;更新（2026-09-01）：国内平台涨到官方价位，低价只剩 OpenRouter
-&lt;/h2&gt;&lt;p&gt;SiliconFlow 把 DeepSeek-V4-Flash 从固定价改成了峰谷分时（&lt;a class="link" href="https://siliconflow.cn/pricing" target="_blank" rel="noopener"
- &gt;价格页&lt;/a&gt;，2026-09-01 查证，北京时间）：峰段（00:00–02:00、08:00–24:00）输入 ¥3.00、输出 ¥9.00、缓存命中 ¥0.30 per 1M；谷段（每天只有 02:00–08:00 六小时）¥1.50/¥4.50/¥0.15。对照本文写作时的 ¥0.94/¥2.02/缓存 ¥0.02：峰段输入涨 3.2 倍、输出涨 4.5 倍、缓存价涨 15 倍。&lt;/p&gt;
-&lt;p&gt;放到官方旁边看（官方峰段 ¥3.17/¥9.50/缓存 ¥0.10，谷段覆盖工作日夜里、午休和周末全天）：输入输出只便宜 5% 上下，缓存命中价反而贵 3 倍，还叠加 &lt;a class="link" href="https://svtter.cn/p/siliconflow-%e7%9a%84-deepseek-v4-flash-%e7%bc%93%e5%ad%98%e5%91%bd%e4%b8%ad%e7%a1%ae%e8%ae%a4%e4%bd%86%e6%9c%89%e6%9c%80%e5%b0%8f-token-%e9%98%88%e5%80%bc/" &gt;&amp;gt;2K token 才可能命中&lt;/a&gt;的门槛；官方命中后 TTFT 明显下降，SiliconFlow 实测 9–104 秒波动、偶发 503。agent 这类缓存占大头的负载，官方有效单价更便宜也更稳。唯一没跟进的是 OpenRouter 上的 SiliconFlow 端点，2026-09-01 仍报 $0.13/$0.28、cache $0.028。&lt;/p&gt;
-&lt;p&gt;不止 SiliconFlow。阿里云百炼 8-17 起把 DeepSeek-V4-Flash-0731 调到同一张价目表（&lt;a class="link" href="https://www.aliyun.com/notice/118555" target="_blank" rel="noopener"
- &gt;涨价公告&lt;/a&gt;、&lt;a class="link" href="https://www.qianwenai.com/models/deepseek-v4-flash-0731" target="_blank" rel="noopener"
- &gt;模型页&lt;/a&gt;）：忙时 ¥3.00/¥9.00/缓存 ¥0.30，闲时（东八区 22:00–次日 8:00）¥1.50/¥4.50/¥0.15——忙时档和 SiliconFlow 峰段逐分对齐，只差闲时窗口宽窄（百炼 10 小时，SiliconFlow 6 小时，但都比官方谷段窄：官方夜里、午休、周末全算谷段）。百炼还有更狠的一刀：7 月公告宣布 &lt;strong&gt;10 月 10 日下线全部第三方模型代理&lt;/strong&gt;——DeepSeek V3/V3.1/V3.2/R1 全系、Kimi K2、MiniMax M2.1、GLM 4.6/4.7，外加 qwen-turbo、qwen-coder-plus 一大批千问旧型号，且配额从公告日起已在逐步收紧（&lt;a class="link" href="https://www.aliyun.com/notice/118434" target="_blank" rel="noopener"
+&lt;/h2&gt;&lt;p&gt;SiliconFlow 把 DeepSeek-V4-Flash 从固定价改成了峰谷分时，阿里云百炼 8-17 起也把 DeepSeek-V4-Flash-0731 调到同一张价目表。数据不出境的三个选项的新价（per 1M tokens，人民币，北京时间，2026-09-01 查证：&lt;a class="link" href="https://siliconflow.cn/pricing" target="_blank" rel="noopener"
+ &gt;SiliconFlow 价格页&lt;/a&gt;、&lt;a class="link" href="https://www.aliyun.com/notice/118555" target="_blank" rel="noopener"
+ &gt;百炼涨价公告&lt;/a&gt;、&lt;a class="link" href="https://www.qianwenai.com/models/deepseek-v4-flash-0731" target="_blank" rel="noopener"
+ &gt;百炼模型页&lt;/a&gt;）：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;平台&lt;/th&gt;
+					&lt;th&gt;时段&lt;/th&gt;
+					&lt;th&gt;输入 / 输出 / 缓存命中&lt;/th&gt;
+					&lt;th&gt;窗口&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DeepSeek 官方&lt;/td&gt;
+					&lt;td&gt;峰段&lt;/td&gt;
+					&lt;td&gt;¥3.17 / ¥9.50 / ¥0.10&lt;/td&gt;
+					&lt;td&gt;09:00–12:00、14:00–18:00&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;谷段&lt;/td&gt;
+					&lt;td&gt;¥1.58 / ¥4.75&lt;/td&gt;
+					&lt;td&gt;工作日夜里、午休和周末全天（最宽）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;SiliconFlow&lt;/td&gt;
+					&lt;td&gt;峰段&lt;/td&gt;
+					&lt;td&gt;¥3.00 / ¥9.00 / ¥0.30&lt;/td&gt;
+					&lt;td&gt;00:00–02:00、08:00–24:00&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;谷段&lt;/td&gt;
+					&lt;td&gt;¥1.50 / ¥4.50 / ¥0.15&lt;/td&gt;
+					&lt;td&gt;每天仅 02:00–08:00（6 小时）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;阿里云百炼&lt;/td&gt;
+					&lt;td&gt;忙时&lt;/td&gt;
+					&lt;td&gt;¥3.00 / ¥9.00 / ¥0.30&lt;/td&gt;
+					&lt;td&gt;08:00–22:00&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;闲时&lt;/td&gt;
+					&lt;td&gt;¥1.50 / ¥4.50 / ¥0.15&lt;/td&gt;
+					&lt;td&gt;22:00–次日 8:00（东八区，10 小时）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;SiliconFlow 旧价&lt;/td&gt;
+					&lt;td&gt;固定&lt;/td&gt;
+					&lt;td&gt;¥0.94 / ¥2.02 / ¥0.02&lt;/td&gt;
+					&lt;td&gt;2026-08-25 本文写作时，已作废&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;百炼忙时档和 SiliconFlow 峰段逐分对齐，差的只是低价档窗口宽窄：百炼 10 小时、SiliconFlow 6 小时，都不如官方谷段宽。对照旧价，SiliconFlow 峰段输入涨 3.2 倍、输出涨 4.5 倍、缓存价涨 15 倍。&lt;/p&gt;
+&lt;p&gt;价格归价格，表里的差价已经小到没有意义：SiliconFlow/百炼高价档的输入输出只比官方便宜 5% 上下，缓存命中价反而贵 3 倍（¥0.30 对 ¥0.10），还叠加 &lt;a class="link" href="https://svtter.cn/p/siliconflow-%e7%9a%84-deepseek-v4-flash-%e7%bc%93%e5%ad%98%e5%91%bd%e4%b8%ad%e7%a1%ae%e8%ae%a4%e4%bd%86%e6%9c%89%e6%9c%80%e5%b0%8f-token-%e9%98%88%e5%80%bc/" &gt;&amp;gt;2K token 才可能命中&lt;/a&gt;的门槛；官方命中后 TTFT 明显下降，SiliconFlow 实测 9–104 秒波动、偶发 503。agent 这类缓存占大头的负载，官方有效单价更便宜也更稳。唯一没跟进的是 OpenRouter 上的 SiliconFlow 端点，2026-09-01 仍报 $0.13/$0.28、cache $0.028。&lt;/p&gt;
+&lt;p&gt;百炼还有更狠的一刀：7 月公告宣布 &lt;strong&gt;10 月 10 日下线全部第三方模型代理&lt;/strong&gt;，配额从公告日起已在逐步收紧（&lt;a class="link" href="https://www.aliyun.com/notice/118434" target="_blank" rel="noopener"
  &gt;下线公告&lt;/a&gt;、&lt;a class="link" href="https://help.aliyun.com/zh/model-studio/model-depreciation" target="_blank" rel="noopener"
- &gt;完整清单&lt;/a&gt;）。想靠百炼一站式聚合国产模型的路，也到头了。&lt;/p&gt;
-&lt;p&gt;现在拼图齐了。数据不出境的三个选项——官方、SiliconFlow、百炼——基本收敛到同一价位（差价 5% 以内），而官方缓存价只有另两家的 1/3、命中无门槛、TTFT 最低：&lt;strong&gt;不出境，直连官方就是最优解&lt;/strong&gt;，再绕第三方没有任何价格意义。想要明显低于官方的价格，只剩 OpenRouter 上的第三方端点（DeepInfra $0.08/$0.18、DigitalOcean $0.068），代价是请求先过美国转发层。低价和数据不出境，现在只能二选一。文中 SiliconFlow 直连的 $0.13/$0.28 均为 2026-08-25 历史价格（OpenRouter 上其端点暂未跟进，仍 $0.13/$0.28）。&lt;/p&gt;
+ &gt;完整清单&lt;/a&gt;），覆盖：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;DeepSeek V3/V3.1/V3.2/R1 全系&lt;/li&gt;
+&lt;li&gt;Kimi K2、MiniMax M2.1、GLM 4.6/4.7&lt;/li&gt;
+&lt;li&gt;qwen-turbo、qwen-coder-plus 等一大批千问旧型号&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;想靠百炼一站式聚合国产模型的路，也到头了。&lt;/p&gt;
+&lt;p&gt;现在拼图齐了。数据不出境的三个选项基本收敛到同一价位（差价 5% 以内），而官方缓存价只有另两家忙时档的 1/3、命中无门槛、TTFT 最低：&lt;strong&gt;不出境，直连官方就是最优解&lt;/strong&gt;，再绕第三方没有任何价格意义。想要明显低于官方的价格，只剩 OpenRouter 上的第三方端点（DeepInfra $0.08/$0.18、DigitalOcean $0.068），代价是请求先过美国转发层。低价和数据不出境，现在只能二选一。文中 SiliconFlow 直连的 $0.13/$0.28 均为 2026-08-25 历史价格（OpenRouter 上其端点暂未跟进，仍 $0.13/$0.28）。&lt;/p&gt;
 &lt;h2 id="先说结论"&gt;先说结论
 &lt;/h2&gt;&lt;p&gt;DeepInfra 的 fp8 端点，$0.08/$0.18（¥0.58/¥1.30）per 1M，cache $0.016。比峰段新价便宜 5–7 倍，比涨价前的官方旧价 $0.14/$0.28 还便宜，同时 prompt 不留存在任何供应商。靠的是请求体里的三个路由参数（直接调 OpenRouter 的 body）：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -276,7 +337,42 @@
 &lt;/ul&gt;</description></item><item><title>SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值</title><link>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</link><pubDate>Tue, 25 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</guid><description>&lt;img src="https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/cover.jpg" alt="Featured image of post SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值" /&gt;&lt;p&gt;给 LiteLLM 接入 SiliconFlow 的 &lt;code&gt;deepseek-ai/DeepSeek-V4-Flash&lt;/code&gt; 时，想验证它的缓存机制。SiliconFlow 模型页面标注了缓存命中价 &lt;strong&gt;¥0.020/M Tokens&lt;/strong&gt;（输入全价 $0.13/M 的约 1/46），于是按 ¥0.020/M 换算成 &lt;code&gt;$0.0028/1M&lt;/code&gt; 配进了 LiteLLM 的 &lt;code&gt;model_info.cache_read_input_token_cost&lt;/code&gt;。配完想实测验证，结果第一轮测试得出了一个&lt;strong&gt;错误的结论&lt;/strong&gt;，直到把 prompt 拉大到 6.6K tokens 才看到缓存真实命中。&lt;/p&gt;
 &lt;h2 id="更新2026-09-01缓存价涨-15-倍两条结论翻面"&gt;更新（2026-09-01）：缓存价涨 15 倍，两条结论翻面
 &lt;/h2&gt;&lt;p&gt;SiliconFlow 把 DeepSeek-V4-Flash 改成了峰谷分时（&lt;a class="link" href="https://siliconflow.cn/pricing" target="_blank" rel="noopener"
- &gt;价格页&lt;/a&gt;，北京时间）：峰段（00:00–02:00、08:00–24:00）输入 ¥3.00、输出 ¥9.00、缓存 ¥0.30 per 1M；谷段（每天只有 02:00–08:00 六小时）¥1.50/¥4.50/¥0.15。本文写作时的 ¥0.94/¥2.02、缓存 ¥0.020 已作废；阈值实测本身不受影响。影响两处：&lt;/p&gt;
+ &gt;价格页&lt;/a&gt;），本文写作时的 ¥0.94/¥2.02、缓存 ¥0.020 已作废；阈值实测本身不受影响。新价（per 1M tokens，北京时间）：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;时段&lt;/th&gt;
+					&lt;th&gt;窗口&lt;/th&gt;
+					&lt;th&gt;输入&lt;/th&gt;
+					&lt;th&gt;输出&lt;/th&gt;
+					&lt;th&gt;缓存命中&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;旧价（本文写作时，已作废）&lt;/td&gt;
+					&lt;td&gt;固定价，无峰谷&lt;/td&gt;
+					&lt;td&gt;¥0.94&lt;/td&gt;
+					&lt;td&gt;¥2.02&lt;/td&gt;
+					&lt;td&gt;¥0.020&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;峰段&lt;/td&gt;
+					&lt;td&gt;00:00–02:00、08:00–24:00&lt;/td&gt;
+					&lt;td&gt;¥3.00&lt;/td&gt;
+					&lt;td&gt;¥9.00&lt;/td&gt;
+					&lt;td&gt;¥0.30&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;谷段&lt;/td&gt;
+					&lt;td&gt;每天仅 02:00–08:00（6 小时）&lt;/td&gt;
+					&lt;td&gt;¥1.50&lt;/td&gt;
+					&lt;td&gt;¥4.50&lt;/td&gt;
+					&lt;td&gt;¥0.15&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;影响两处：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;缓存命中价 ¥0.020 → ¥0.30（15 倍），LiteLLM 的 &lt;code&gt;cache_read_input_token_cost&lt;/code&gt; 应改为 &lt;code&gt;4.2e-08&lt;/code&gt;（≈$0.042/M，峰段），结论 3 里的 &lt;code&gt;2.8e-09&lt;/code&gt; 作废&lt;/li&gt;
 &lt;li&gt;官方峰段缓存命中 ¥0.10，只有 SiliconFlow 的 1/3，且没有 &amp;gt;2K token 的命中门槛——&amp;ldquo;长上下文场景 SiliconFlow 的缓存才有意义&amp;quot;翻面：要缓存折扣直接用官方，峰段 ¥3.17/¥9.50 也只比 SiliconFlow 贵 5% 上下，还更快更稳（见下文 TTFT 实测）&lt;/li&gt;
