@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AACR-Bench on Svtter's Blog</title><link>https://svtter.cn/tags/aacr-bench/</link><description>Recent content in AACR-Bench on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 13 Sep 2026 23:30:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/aacr-bench/index.xml" rel="self" type="application/rss+xml"/><item><title>pi-review-agent 跑 AACR-Bench 实录:8.1% F1 与三个意料之外</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench-%E5%AE%9E%E5%BD%958.1-f1-%E4%B8%8E%E4%B8%89%E4%B8%AA%E6%84%8F%E6%96%99%E4%B9%8B%E5%A4%96/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench-%E5%AE%9E%E5%BD%958.1-f1-%E4%B8%8E%E4%B8%89%E4%B8%AA%E6%84%8F%E6%96%99%E4%B9%8B%E5%A4%96/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench 实录:8.1% F1 与三个意料之外" /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;pi-review-agent&lt;/a&gt; 是我维护的多 persona AI code review
+agent(上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/2026-06-28-pi-review-agent-%e8%b7%a8-run-%e7%bb%ad%e6%8e%a5-review-%e4%bc%9a%e8%af%9d/" &gt;跨 run 续接会话&lt;/a&gt;)。
+我把它用在实际的代码评审中。
+这个周末我测了一下阿里的 &lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
+ &gt;AACR-Bench&lt;/a&gt;:166 个真实 GitHub PR、
+1231 条专家验证的评审标注。&lt;/p&gt;
+&lt;p&gt;这篇文章记录全程:怎么接入、分数多少、三个跑完才发现的意外。先说结论:语义 F1 8.1%,
+和 Codex + GPT-5.5 同档,离 Open Code Review + Deepseek-V4-Pro 的 17.9% 差 10 个百分点。
+分数不算亮眼,但它便宜:模型用的是便宜一档的 mimo-v2.5,账上 88% 的 token 还走了缓存价。
+拿不准这是不是一个好买卖,至少账算得明白。实验本身也比分数有用:好几个&amp;quot;差距来自哪里&amp;quot;的假设,
+跑完都被证伪了。&lt;/p&gt;
+&lt;h2 id="接入一次-pr-加一个-reviewer-模块"&gt;接入:一次 PR 加一个 reviewer 模块
+&lt;/h2&gt;&lt;p&gt;pi-review-agent 原本强依赖 GitHub/Gitea 环境,PR 评论就是它的输出面;基准 harness 要的却是
+无头模式:给一个 commit 对,吐出结构化 findings。改动有两处:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给 agent 加了 &lt;code&gt;--format json&lt;/code&gt; 免平台模式(&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/pull/70" target="_blank" rel="noopener"
+ &gt;PR #70&lt;/a&gt;):
+不要求 &lt;code&gt;--pr&lt;/code&gt;、不建平台适配器、不发评论,stdout 输出单个 JSON,里面带验证过的 findings、
+逐 persona 用量和 verdict/severity。&lt;code&gt;--session-key&lt;/code&gt; 顶替 PR 号做会话隔离,消毒后落盘,
+防止 benchmark 多实例互相串会话。&lt;/li&gt;
+&lt;li&gt;照着 harness 里 codex reviewer 的模板写了 &lt;code&gt;reviewers/pi.py&lt;/code&gt;:克隆仓库、checkout 到 head、
+&lt;code&gt;git diff base head&lt;/code&gt; 喂进去,把 payload 包成标准结果文件。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接入时顺手做了反作弊审计:评审器收到的输入只有 diff 和仓库工作区,参考标注从不进入任何输入;
+工具面只有 read 和 grep,没有 shell 和网络。跑完又对生成意见和参考标注算了 3-gram 重叠:
+最高 0.31、中位数 0,是&amp;quot;各自表述同一个问题&amp;quot;的形态,不是背题。&lt;/p&gt;
+&lt;h2 id="成绩单"&gt;成绩单
+&lt;/h2&gt;&lt;p&gt;166/196 个实例。30 个实例的 PR 被 rebase 过,head commit 在 GitHub 上已不可达,剔出分母;
+官方基线同样受此约束。语义匹配的判定链:文件相同 → diff 侧相同 → 行号 ±1 → judge 模型
+判定语义一致。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;评审器&lt;/th&gt;
+					&lt;th&gt;模型&lt;/th&gt;
+					&lt;th&gt;语义 P&lt;/th&gt;
+					&lt;th&gt;语义 R&lt;/th&gt;
+					&lt;th&gt;语义 F1&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;pi-review-agent(终版)&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;mimo-v2.5&lt;/td&gt;
+					&lt;td&gt;10.2%&lt;/td&gt;
+					&lt;td&gt;6.7%&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;8.1%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OCR&lt;/td&gt;
+					&lt;td&gt;Deepseek-V4-Pro&lt;/td&gt;
+					&lt;td&gt;30.6%&lt;/td&gt;
+					&lt;td&gt;12.7%&lt;/td&gt;
+					&lt;td&gt;17.9%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OCR&lt;/td&gt;
+					&lt;td&gt;Claude-4.6-Opus&lt;/td&gt;
+					&lt;td&gt;33.9%&lt;/td&gt;
+					&lt;td&gt;20.0%&lt;/td&gt;
+					&lt;td&gt;25.1%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Claude Code&lt;/td&gt;
+					&lt;td&gt;Claude-4.6-Opus&lt;/td&gt;
+					&lt;td&gt;7.2%&lt;/td&gt;
+					&lt;td&gt;28.9%&lt;/td&gt;
+					&lt;td&gt;11.6%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Codex&lt;/td&gt;
+					&lt;td&gt;GPT-5.5&lt;/td&gt;
+					&lt;td&gt;27.8%&lt;/td&gt;
+					&lt;td&gt;4.9%&lt;/td&gt;
+					&lt;td&gt;8.4%&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;(官方数字来自 OCR 仓库排行榜,完整数据集、各自模型与 judge,供量级参照。)&lt;/p&gt;
+&lt;p&gt;两个读数。一是 P/R 均衡(10/6.7),不像 Claude Code 那样靠刷召回(7/29),也不像 Codex 偏科精确(28/5)。
+二是行号 F1(12.5%)高于语义 F1:模型经常站对了行,但对&amp;quot;这行有什么问题&amp;quot;的判断和专家不一致。
+OCR 用规则引擎硬编码高频缺陷模式,多半就是不信任模型的这部分直觉。&lt;/p&gt;
+&lt;p&gt;还有一点表里看不出来:成本。mimo-v2.5 对位的是别家旗舰,本身便宜不少;多 persona 重复的 diff
+输入又被前缀缓存基本吃掉,295 次实例评审的总账单 66M token,88% 按 cacheRead 计价(细账在意外三)。
+所以对这套组合的诚实评价是:评审能力确实不算强,但它花的钱也少。卖的是性价比,不是绝对分数。&lt;/p&gt;
+&lt;h2 id="意外一截断不是主因"&gt;意外一:截断不是主因
+&lt;/h2&gt;&lt;p&gt;pi-review-agent 默认 &lt;code&gt;--diff-max-size-kb 200&lt;/code&gt;。考古了一下,这个值当初是为了防 LiteLLM 代理的
+HTTP 413(6MB 的 dist bundle 曾经直接打挂全员 reviewer),不是按模型上下文算的。基准里
+47.6% 的实例(79/166)被这个默认值截断,我一开始把低分主要归咎于此,于是把这 79 个放开预算重跑:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;预算档&lt;/th&gt;
+					&lt;th&gt;实例&lt;/th&gt;
+					&lt;th&gt;有效率&lt;/th&gt;
+					&lt;th&gt;findings&lt;/th&gt;
+					&lt;th&gt;结果&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;200KB&lt;/td&gt;
+					&lt;td&gt;166&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;796&lt;/td&gt;
+					&lt;td&gt;79 个被截断,基准 F1 7.6%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1MB&lt;/td&gt;
+					&lt;td&gt;79&lt;/td&gt;
+					&lt;td&gt;37%&lt;/td&gt;
+					&lt;td&gt;147&lt;/td&gt;
+					&lt;td&gt;大面积超时(见意外二)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;400KB&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;276&lt;/td&gt;
+					&lt;td&gt;全部有效&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;合并终版&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;166&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;802&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;F1 8.1%,只涨了 0.5 个点&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;1231 条参考标注里,放开截断只多命中 5 条。模型看到了完整代码,依然没把问题挑出来。
+瓶颈在检出能力,不在输入完整性。直觉会高估&amp;quot;给模型更多上下文&amp;quot;的收益,这是这次实验最贵的一课,
+学费约 4000 万 token。相关讨论记在
+&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/71" target="_blank" rel="noopener"
+ &gt;issue #71&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="意外二1mb-输在时间不在容量"&gt;意外二:1MB 输在时间,不在容量
+&lt;/h2&gt;&lt;p&gt;1MB 批 63% 的实例三个 persona 全军覆没,错误是 &lt;code&gt;Request timed out.&lt;/code&gt;。第一反应是代理扛不住。
+直接拿 28.6 万 token 的请求打代理实测:预填充 32 秒完成,没有 413 也没有掐断,链路容量根本不是问题。&lt;/p&gt;
+&lt;p&gt;真凶是超时栈里藏着的两层。&lt;code&gt;--timeout-seconds 1800&lt;/code&gt; 只是外层评审超时;provider 里的 OpenAI SDK
+还有一个默认 600 秒的内层请求超时,不可配置,也不随外层传播。mimo 是推理模型,30 万 token
+的上下文上要先生成长推理链再写评审,单请求轻松超过 10 分钟,内层先爆,重试再爆。400KB 档
+输入砍半,生成时间落回安全区,100% 存活。所谓&amp;quot;400KB 甜点&amp;quot;就是这么来的:它不愁容量,愁的是时间。
+修复方向(超时传播 + 报错区分两层)记在
+&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/72" target="_blank" rel="noopener"
+ &gt;issue #72&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="意外三88-的-token-走了缓存价"&gt;意外三:88% 的 token 走了缓存价
+&lt;/h2&gt;&lt;p&gt;全项目总账,295 次实例评审:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;批次&lt;/th&gt;
+					&lt;th&gt;实例&lt;/th&gt;
+					&lt;th&gt;findings&lt;/th&gt;
+					&lt;th&gt;非缓存输入&lt;/th&gt;
+					&lt;th&gt;输出&lt;/th&gt;
+					&lt;th&gt;cacheRead&lt;/th&gt;
+					&lt;th&gt;小计&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;全量首轮(200KB)&lt;/td&gt;
+					&lt;td&gt;166&lt;/td&gt;
+					&lt;td&gt;796&lt;/td&gt;
+					&lt;td&gt;1.2M&lt;/td&gt;
+					&lt;td&gt;1.0M&lt;/td&gt;
+					&lt;td&gt;24.1M&lt;/td&gt;
+					&lt;td&gt;26.3M&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;补跑 1MB&lt;/td&gt;
+					&lt;td&gt;79&lt;/td&gt;
+					&lt;td&gt;147&lt;/td&gt;
+					&lt;td&gt;3.7M&lt;/td&gt;
+					&lt;td&gt;0.2M&lt;/td&gt;
+					&lt;td&gt;16.4M&lt;/td&gt;
+					&lt;td&gt;20.3M&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;补跑 400KB&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;276&lt;/td&gt;
+					&lt;td&gt;0.2M&lt;/td&gt;
+					&lt;td&gt;0.3M&lt;/td&gt;
+					&lt;td&gt;18.9M&lt;/td&gt;
+					&lt;td&gt;19.5M&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;合计&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;295&lt;/td&gt;
+					&lt;td&gt;1219&lt;/td&gt;
+					&lt;td&gt;5.2M&lt;/td&gt;
+					&lt;td&gt;1.5M&lt;/td&gt;
+					&lt;td&gt;59.4M&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;66.1M(缓存占 88%)&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;66M token 里 88% 是 cacheRead。三个 persona 共享同一份 diff,DeepSeek 式前缀缓存让第二、
+第三个 persona 的 diff 部分几乎全价打折。换句话说,多 persona 架构最被诟病的&amp;quot;重复输入&amp;quot;,
+在正确的计费口径下基本免费。pi-review-agent 的 cacheRead 记账(当初是为了修
+opencode 的 &lt;code&gt;tokens_cache_read&lt;/code&gt; 恒零 bug 做的设计)也因此第一次在外部基准上拿到实据。
+OCR 的榜单只报 token 相对量,没有这层账。&lt;/p&gt;
+&lt;h2 id="局限"&gt;局限
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;judge 同源:语义裁判是 mimo-v2.5-pro,判 mimo-v2.5 的输出,松紧未知;行号指标不受此影响。&lt;/li&gt;
+&lt;li&gt;模型归因:分数上看,mimo-v2.5 和榜上别家旗舰差 10 个点,但模型和架构各贡献多少还没分离。
+干净的归因要用 OCR + mimo 同模型同代理跑同样本,这是下一步。&lt;/li&gt;
+&lt;li&gt;出题人问题:AACR-Bench 和 OCR 同出阿里,标注口径天然贴近 OCR 规则引擎的输出形态。
+它是合格的工程基准(开源、专家交叉验证、强基线同 harness),但&amp;quot;绝对名次&amp;quot;要打折读。&lt;/li&gt;
+&lt;li&gt;30 个不可达实例带着全数据集约四成参考标注,评测子集偏小。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="下一步"&gt;下一步
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;OCR + mimo-v2.5 同条件对照,把&amp;quot;架构值多少分&amp;quot;归因干净;&lt;/li&gt;
+&lt;li&gt;修 &lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/72" target="_blank" rel="noopener"
+ &gt;#72&lt;/a&gt;(超时传播),用真实的长超时
+重测 1MB 档,补全&amp;quot;预算-超时-覆盖&amp;quot;这个三角;&lt;/li&gt;
+&lt;li&gt;更远的事:超大 diff 的文件捆绑分治。OCR 用代码做 bundle、agent 只管推理,这套思路
+和 pi 的 related-context import 图可以拼起来。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;数据都在本地:&lt;code&gt;aacr-bench/evaluation/results/&lt;/code&gt;(逐实例结果 JSON)、&lt;code&gt;evaluation/PI_AACR_RESULTS.md&lt;/code&gt;(汇总表)、
+&lt;code&gt;reviewers/pi.py&lt;/code&gt;(评审器接入,在 aacr-bench 的 &lt;code&gt;pi-reviewer&lt;/code&gt; 分支)。基准本身在
+&lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
+ &gt;alibaba/aacr-bench&lt;/a&gt;,模型是自建 LiteLLM 代理上的 mimo-v2.5。
+有想法欢迎去 pi-review-agent 的 issue 区聊。&lt;/p&gt;</description></item></channel></rss>
