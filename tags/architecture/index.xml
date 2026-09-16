@@ -7,7 +7,7 @@ AACR-Bench，语义 F1 8.1%，距 &lt;a class="link" href="https://github.com/al
 &lt;p&gt;差距还是挺大的。不过，输了之后，自然要问：pi 的架构里，有什么 OCR 没有的东西？所以这篇就盘盘这个。&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;OCR 在“把评审这件事本身做好”上（规则引擎、文件捆绑、评论定位）确实更强，下面列的是考卷之外的结构性差异，每条尽量带实测或源码证据。&lt;/p&gt;
+ &lt;p&gt;OCR 在“把评审这件事本身做好”上（规则引擎、文件捆绑、评论定位）确实更强，下面列的是评测指标之外的结构性差异，每条尽量带实测或源码证据。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;h2 id="1-跨-push-的评审记忆"&gt;1. 跨 push 的评审记忆
@@ -20,7 +20,7 @@ reviewer 依然不知道作者对上次的意见改了什么、哪些 issue 还�
 &lt;p&gt;差异从“有没有”降到“多深”：pi 是会话级记忆，OCR 的连续性停在范围级。这仍是 pi 最早的
 设计动机之一。代价是会话管理的复杂度，收益是评审从“增量去重的快照”变成“持续对话”。
 基准考不出这个：AACR 的每个实例都是孤立的单次评审。&lt;/p&gt;
-&lt;h2 id="2-并行轴不同按视角切不是按文件切"&gt;2. 并行轴不同：按视角切，不是按文件切
+&lt;h2 id="2-并行维度不同按视角切不是按文件切"&gt;2. 并行维度不同：按视角切，不是按文件切
 &lt;/h2&gt;&lt;p&gt;我读了 OCR 的捆绑源码（&lt;code&gt;internal/agent/grouping.go&lt;/code&gt;），它的分治是文件维度的：相关文件打成
 bundle，每个 bundle 一个同质的子 agent。pi 是视角维度的：quality / security / performance
 各自独立评审，再由 coordinator 仲裁：去重、severity 冲突取高、verdict 有降级链，
