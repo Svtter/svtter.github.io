@@ -113,9 +113,8 @@ OCR 的 &lt;code&gt;resume&lt;/code&gt; 是单次任务内的断点续审，中�
 的机制：&lt;code&gt;checkpoint_range&lt;/code&gt; 记录上次审到的 head，新 push 只审 &lt;code&gt;&amp;lt;checkpoint&amp;gt;..&amp;lt;新 head&amp;gt;&lt;/code&gt;；
 &lt;code&gt;incremental&lt;/code&gt; 读现有 bot 评论做重叠去重，不重贴旧意见（两者默认关闭）。但这些到不了会话级——
 reviewer 依然不知道作者对上次的意见改了什么、哪些 issue 还悬着。&lt;/p&gt;
-&lt;p&gt;差异从“有没有”降到“多深”：pi 是会话级记忆，OCR 的连续性停在范围级。这仍是 pi 最早的
-设计动机之一。代价是会话管理的复杂度，收益是评审从“增量去重的快照”变成“持续对话”。
-基准考不出这个：AACR 的每个实例都是孤立的单次评审。&lt;/p&gt;
+&lt;p&gt;差异从“有没有”降到“多深”：pi 是会话级记忆，OCR 的连续性停在范围级。这仍是 pi 最早的设计动机之一。代价是会话管理的复杂度，收益是评审从“增量去重的快照”变成“持续对话”。&lt;/p&gt;
+&lt;p&gt;基准不关注这个：AACR 的每个实例都是孤立的单次评审。这是 pi-review-agent 节省 token 的原因。&lt;/p&gt;
 &lt;h2 id="2-并行维度不同按视角切不是按文件切"&gt;2. 并行维度不同：按视角切，不是按文件切
 &lt;/h2&gt;&lt;p&gt;我读了 OCR 的捆绑源码（&lt;code&gt;internal/agent/grouping.go&lt;/code&gt;），它的分治是文件维度的：相关文件打成
 bundle，每个 bundle 一个同质的子 agent。pi 是视角维度的：quality / security / performance
@@ -125,8 +124,7 @@ bundle，每个 bundle 一个同质的子 agent。pi 是视角维度的：qualit
 （7.2% / 28.9%），也不像 Codex 偏科精确（27.8% / 4.9%）。多视角加仲裁，天然抑制单模型的极端倾向。&lt;/p&gt;
 &lt;p&gt;顺带一个源码级的意外：OCR README 把 “Smart file bundling” 列在“确定性工程”名下，但代码里
 review 路径的语义分组默认是一次真的 LLM 调用（文件数 ≥4 触发，prompt 让模型输出 JSON 分组），
-真正纯代码的是骨架：阈值判定、每组 ≤10 文件、token 预算、失败回退。设计本质是
-“LLM 提议、代码裁决”。两个顺手启发：pi 的 &lt;code&gt;related-context.ts&lt;/code&gt; 已经在算反向 import 图，
+真正纯代码的是骨架：阈值判定、每组 ≤10 文件、token 预算、失败回退。设计本质是“LLM 提议、代码裁决”。两个顺手启发：pi 的 &lt;code&gt;related-context.ts&lt;/code&gt; 已经在算反向 import 图，
 可以纯代码地替代那次 LLM 分组；OCR 组内文件按路径排序求前缀稳定（&lt;code&gt;agent.go&lt;/code&gt; 的注释
 明说为了 prompt cache），和 pi 的缓存路线是同一个思路。两个轴正交，persona × bundle
 双维并行，是两边优势的自然合并点。&lt;/p&gt;
@@ -142,16 +140,9 @@ OCR 报 token 相对量（号称降到通用 agent 的 1/9），但没有把“�
 极性：拿不准就保留，只对“确证错误”降级。被降级的 finding 连同理由渲染进 PR 折叠区，
 用户能看到“我们拦掉了什么、为什么拦”。OCR 有类似的定位/反思模块，但拦截结果没做到这个可见程度。
 评审 agent 的结论反正要人过目，把为什么拦写给人看，不算多余的设计。&lt;/p&gt;
-&lt;h2 id="半件配置面"&gt;半件：配置面
-&lt;/h2&gt;&lt;p&gt;persona 是用户可配置的（&lt;code&gt;.github/reviewers/*.yaml&lt;/code&gt; 即插即用）、仓库 style-guide 自动注入、
-支持 Gitea。OCR 的集成面更宽（官方 GitHub Action 一行 &lt;code&gt;uses:&lt;/code&gt; 接入，外加 GitLab CI /
-Gerrit / MCP / delegation），“一句话接入”并不独有，这算风格差异，不算优势。&lt;/p&gt;
-&lt;h2 id="两本账"&gt;两本账
+&lt;h2 id="对比"&gt;对比
 &lt;/h2&gt;&lt;p&gt;OCR 的护城河在“把评审做好”：规则引擎、文件捆绑、定位工程、两年生产数据打磨，基准分是它的主场。
-pi 的护城河在“评审嵌入工作流的方式”：记忆续接、成本可见、视角可配、平台中立。这些维度
-基准不考，但日常每天用得到。&lt;/p&gt;
-&lt;p&gt;8.1% 对 17.9% 是一本账，“你为什么留着这个工具”是另一本。跑这轮基准，就是把第一本账补上，
-两本都摆出来，用的人自己选。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench " /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+pi 的护城河在“评审嵌入工作流的方式”：记忆续接、成本可见、视角可配。这些维度基准不考，但日常每天用得到。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench " /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; 是我维护的多 persona AI code review
 agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e6%98%af%e6%80%8e%e4%b9%88%e8%ae%b0%e4%bd%8f%e4%b8%8a%e4%b8%80%e6%ac%a1-review-%e7%9a%84/" &gt;跨 run 续接会话&lt;/a&gt;）。&lt;/p&gt;
 &lt;p&gt;我把它用在实际的代码评审中。例如 pi-review-agent 和 pi-review-dashboard 都使用 pi-review-agent 进行代码评审。&lt;/p&gt;
