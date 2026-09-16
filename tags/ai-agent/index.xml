@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI Agent on Svtter's Blog</title><link>https://svtter.cn/tags/ai-agent/</link><description>Recent content in AI Agent on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 14 Sep 2026 09:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/ai-agent/index.xml" rel="self" type="application/rss+xml"/><item><title>pi-review-agent 的架构比 Open Code Review 多了什么</title><link>https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/</link><pubDate>Mon, 14 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-vs-ocr-arch-cover.jpg" alt="Featured image of post pi-review-agent 的架构比 Open Code Review 多了什么" /&gt;&lt;p&gt;&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e8%b7%91-aacr-bench/" &gt;上一篇&lt;/a&gt;里，我把 &lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
- &gt;pi-review-agent&lt;/a&gt; 调整了一下，在 AACR-Bench 上跑一下。跑出语义 F1 8.1% 的性能，距 &lt;a class="link" href="https://github.com/alibaba/open-code-review" target="_blank" rel="noopener"
- &gt;Open Code Review&lt;/a&gt;（OCR）
-加 Deepseek-V4-Pro 的 17.9% 差了 10 个点。&lt;/p&gt;
-&lt;p&gt;虽然差距挺大，但考虑再三，感觉仍可以从创新的角度来分析一下：pi 的架构里，有什么 OCR 没有的东西？&lt;/p&gt;
+ &gt;pi-review-agent&lt;/a&gt; 接上 AACR-Bench 跑了一轮：语义 F1 8.1%，距离 &lt;a class="link" href="https://github.com/alibaba/open-code-review" target="_blank" rel="noopener"
+ &gt;Open Code Review&lt;/a&gt;（OCR）配 Deepseek-V4-Pro 的 17.9% 差了 10 个点。&lt;/p&gt;
+&lt;p&gt;差距不小。但换个角度想，pi 的架构里有哪些 OCR 没有的东西？这值得单独盘一盘。&lt;/p&gt;
 
  &lt;blockquote&gt;
  &lt;p&gt;OCR 在“把评审这件事本身做好”上（规则引擎、文件捆绑、评论定位）确实更强，下面列的是评测指标之外的结构性差异，每条尽量带实测或源码证据。&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;总得来说，pi-review-agent 在设计上有自己注重的地方。精度虽然有所不及，但胜在价格便宜，速度快。&lt;/p&gt;
+&lt;p&gt;总得来说，pi-review-agent 精度上确实不及 OCR，但胜在价格便宜、速度快；更重要的是，它的设计侧重点本来就不在基准考的那些维度上。下面逐项说。&lt;/p&gt;
 &lt;h2 id="1-跨-push-的评审记忆"&gt;1. 跨 push 的评审记忆
 &lt;/h2&gt;&lt;p&gt;pi 的会话是 PR 级持久的：append-only JSONL transcript 加 &lt;code&gt;actions/cache&lt;/code&gt; 恢复，
-同一个 PR 第二次 push 时，reviewer 知道“上次我提了什么、作者改了什么、哪些 issue 还没解决”。
-OCR 的 &lt;code&gt;resume&lt;/code&gt; 是单次任务内的断点续审，中断了接着跑。它官方 GitHub Action 里其实有跨 push
+同一个 PR 第二次 push 时，reviewer 知道“上次我提了什么、作者改了什么、哪些 issue 还没解决”。&lt;/p&gt;
+&lt;p&gt;OCR 的 &lt;code&gt;resume&lt;/code&gt; 是单次任务内的断点续审，中断了接着跑。它官方 GitHub Action 里其实也有跨 push
 的机制：&lt;code&gt;checkpoint_range&lt;/code&gt; 记录上次审到的 head，新 push 只审 &lt;code&gt;&amp;lt;checkpoint&amp;gt;..&amp;lt;新 head&amp;gt;&lt;/code&gt;；
 &lt;code&gt;incremental&lt;/code&gt; 读现有 bot 评论做重叠去重，不重贴旧意见（两者默认关闭）。但这些到不了会话级——
 reviewer 依然不知道作者对上次的意见改了什么、哪些 issue 还悬着。&lt;/p&gt;
-&lt;p&gt;差异从“有没有”降到“多深”：pi 是会话级记忆，OCR 的连续性停在范围级。这仍是 pi 最早的设计动机之一。代价是会话管理的复杂度，收益是评审从“增量去重的快照”变成“持续对话”。&lt;/p&gt;
-&lt;p&gt;基准不关注这个：AACR 的每个实例都是孤立的单次评审。这是 pi-review-agent 节省 token 的原因。&lt;/p&gt;
+&lt;p&gt;所以差异从“有没有”降到了“多深”：pi 是会话级记忆，OCR 的连续性停在范围级。这仍是 pi 最早的设计动机之一。代价是会话管理的复杂度，收益是评审从“增量去重的快照”变成“持续对话”。&lt;/p&gt;
+&lt;p&gt;基准考不到这个：AACR 的每个实例都是孤立的单次评审，跨 push 记忆没有用武之地。&lt;/p&gt;
 &lt;h2 id="2-并行维度不同按视角切不是按文件切"&gt;2. 并行维度不同：按视角切，不是按文件切
 &lt;/h2&gt;&lt;p&gt;我读了 OCR 的捆绑源码（&lt;code&gt;internal/agent/grouping.go&lt;/code&gt;），它的分治是文件维度的：相关文件打成
 bundle，每个 bundle 一个同质的子 agent。&lt;/p&gt;
-&lt;p&gt;相比之下，pi 是视角维度的：quality / security / performance
-各自独立评审，再由 coordinator 仲裁：去重、severity 冲突取高、verdict 有降级链，任何 reviewer 缺席就强制 CANNOT MERGE（fail-closed）。&lt;/p&gt;
+&lt;p&gt;pi 则是视角维度的：quality / security / performance
+各自独立评审，再由 coordinator 仲裁——去重、severity 冲突取高、verdict 有降级链，任何 reviewer 缺席就强制 CANNOT MERGE（fail-closed）。同样一个问题，在三个视角下被独立地看三遍，再由仲裁层收敛。&lt;/p&gt;
 
  &lt;blockquote&gt;
- &lt;p&gt;订正：在之前的描述里，OCR 不是完全基于规则的代码切分。从逻辑上也行不通。&lt;/p&gt;
+ &lt;p&gt;订正：在之前的描述里，我说 OCR 是完全基于规则的代码切分。从逻辑上也行不通。&lt;/p&gt;
 
  &lt;/blockquote&gt;
 &lt;p&gt;OCR README 把 “Smart file bundling” 列在“确定性工程”名下，但代码里 review 路径的语义分组默认是一次真的 LLM 调用（文件数 ≥4 触发，prompt 让模型输出 JSON 分组），真正纯代码的是骨架：阈值判定、每组 ≤10 文件、token 预算、失败回退。设计本质是“LLM 提议、代码裁决”。&lt;/p&gt;
-&lt;h2 id="缓存有效性"&gt;缓存有效性
-&lt;/h2&gt;&lt;p&gt;pi 出生就是为了修 opencode 的 &lt;code&gt;tokens_cache_read&lt;/code&gt; 恒零 bug，逐 persona 的 input / cacheRead / cacheWrite / cost 进了每一条输出面：CI 步骤摘要、&lt;code&gt;GITHUB_OUTPUT&lt;/code&gt;、JSON payload、stats 事件，成本表还能按模型覆写。上一轮基准实测：66M token 里 88% 走缓存价，三个 persona 共享同一份 diff，前缀缓存让“重复输入”在计费上几乎免费。&lt;/p&gt;
+&lt;h2 id="3-缓存有效性"&gt;3. 缓存有效性
+&lt;/h2&gt;&lt;p&gt;pi 出生就是为了修 opencode 的 &lt;code&gt;tokens_cache_read&lt;/code&gt; 恒零 bug，所以逐 persona 的 input / cacheRead / cacheWrite / cost 进了每一条输出面：CI 步骤摘要、&lt;code&gt;GITHUB_OUTPUT&lt;/code&gt;、JSON payload、stats 事件，成本表还能按模型覆写。上一轮基准实测：66M token 里 88% 走缓存价，三个 persona 共享同一份 diff，前缀缓存让“重复输入”在计费上几乎免费。&lt;/p&gt;
 &lt;p&gt;多 persona 架构最被诟病的是“同样的话说三遍”。正确记账下，重复的是缓存价 token，增量的是视角。&lt;/p&gt;
 &lt;p&gt;OCR 报 token 相对量（号称降到通用 agent 的 1/9），但没有把“每条 finding 多少钱”做成可观测面。&lt;/p&gt;
-&lt;h2 id="可见性"&gt;可见性
+&lt;h2 id="4-拦截结果可见"&gt;4. 拦截结果可见
 &lt;/h2&gt;&lt;p&gt;pi 的两层 verifier（规则层查文件与行号、LLM 层拿 read+grep 核对意见正文）是 fail-open。在设计上，pi-review-agent 倾向于拿不准就保留，只对“确证错误”降级。被降级的 finding 连同理由渲染进 PR 折叠区，
-用户能看到“我们拦掉了什么、为什么拦”。OCR 有类似的定位/反思模块，但拦截结果没做到这个可见程度。
-评审 agent 的结论反正要人过目，把为什么拦写给人看，不算多余的设计。&lt;/p&gt;
+用户能看到“我们拦掉了什么、为什么拦”。OCR 有类似的定位/反思模块，但拦截结果没做到这个可见程度。&lt;/p&gt;
+&lt;p&gt;评审 agent 的结论反正要人过目，把为什么拦写给人看，不算多余的设计。&lt;/p&gt;
 &lt;h2 id="对比"&gt;对比
 &lt;/h2&gt;&lt;p&gt;OCR 的护城河在“把评审做好”：规则引擎、文件捆绑、定位工程、两年生产数据打磨，基准分是它的主场。
 pi 的护城河在“评审嵌入工作流的方式”：记忆续接、成本可见、视角可配。这些维度基准不考，但日常每天用得到。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench" /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
