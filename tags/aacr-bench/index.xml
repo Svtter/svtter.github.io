@@ -101,11 +101,10 @@ pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%，差距里混�
 agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e6%98%af%e6%80%8e%e4%b9%88%e8%ae%b0%e4%bd%8f%e4%b8%8a%e4%b8%80%e6%ac%a1-review-%e7%9a%84/" &gt;跨 run 续接会话&lt;/a&gt;）。&lt;/p&gt;
 &lt;p&gt;我把它用在实际的代码评审中。例如 pi-review-agent 和 pi-review-dashboard 都使用 pi-review-agent 进行代码评审。&lt;/p&gt;
 &lt;p&gt;最近了解到阿里的 &lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
- &gt;AACR-Bench&lt;/a&gt;：166 个真实 GitHub PR、1231 条专家验证的评审标注。&lt;/p&gt;
-&lt;p&gt;这篇文章记录全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，和 Codex + GPT-5.5 同档，离 Open Code Review + Deepseek-V4-Pro 的 17.9% 差 10 个百分点。
-分数不算亮眼，但它便宜：模型用的是便宜一档的 mimo-v2.5，账上 88% 的 token 还走了缓存价。
-拿不准这是不是一个好买卖，至少账算得明白。实验本身也比分数有用：好几个“差距来自哪里”的假设，
-跑完都被证伪了。&lt;/p&gt;
+ &gt;AACR-Bench&lt;/a&gt;：166 个真实 GitHub PR、1231 条专家验证的评审标注。我感觉可以测一下 pi-review-agent 的评审性能，来决定后续怎么协调 review 工作。&lt;/p&gt;
+&lt;p&gt;在这篇文章里，我记录了实验全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，和 Codex + GPT-5.5 同档，距离 Open Code Review + Deepseek-V4-Pro 的 17.9% 差 10 个百分点。
+分数不算亮眼，但它便宜：模型用的是便宜一档的 mimo-v2.5。&lt;/p&gt;
+&lt;p&gt;我目前拿不准这是不是一个好买卖（便宜模型跑 review），但至少账算得明白。实验本身也比分数有用：好几个“差距来自哪里”的假设，跑完都被证伪了。&lt;/p&gt;
 &lt;h2 id="接入一次-pr-加一个-reviewer-模块"&gt;接入：一次 PR 加一个 reviewer 模块
 &lt;/h2&gt;&lt;p&gt;pi-review-agent 原本强依赖 GitHub/Gitea 环境，PR 评论就是它的输出面；基准 harness 要的却是
 无头模式：给一个 commit 对，吐出结构化 findings。改动有两处：&lt;/p&gt;
