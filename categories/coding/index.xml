@@ -91,11 +91,6 @@ pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%,差距里混着
 &lt;h3 id="2-差距出在找没找到不在说没说对"&gt;2. 差距出在&amp;quot;找没找到&amp;quot;,不在&amp;quot;说没说对&amp;quot;。
 &lt;/h3&gt;&lt;p&gt;把表里的语义 P 除以行号 P，就是&amp;quot;落对位置的意见里、说中问题的比例：OCR 是62%，pi 是67%。这件事,两家水平相当，pi 甚至略高。&lt;/p&gt;
 &lt;p&gt;意见能落进标注范围的比例，pi 只有 16.1%，OCR 是 44.0%，差了近三倍。定位准不准、关注的缺陷类型对不对、以及 OCR 的规则库和这份标注出自同一家(天然&amp;quot;对题&amp;quot;)，三者都压在这一步上,基准分不出各自占多少。对 pi 来说方向是明确的：补上确定性规则那层,&amp;ldquo;找到地方&amp;quot;和&amp;quot;说对话题&amp;quot;会一起受益。&lt;/p&gt;
-
- &lt;blockquote&gt;
- &lt;p&gt;即错误的类别是确定性的，在确定性的错误类别中，寻找当前错误的错误模式。&lt;/p&gt;
-
- &lt;/blockquote&gt;
 &lt;h3 id="3-单位成本差异"&gt;3. 单位成本差异
 &lt;/h3&gt;&lt;p&gt;每条有效命中，pi 便宜 2.9 倍、快 1.5 倍；OCR 准 2.5 倍。OCR 全程烧了 366M token，相比之下，pi 45M，两家 9 成 token 都走前缀缓存价。&lt;/p&gt;
 &lt;h2 id="结论"&gt;结论
@@ -164,8 +159,7 @@ agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-
 &lt;p&gt;我把它用在实际的代码评审中。例如 pi-review-agent 和 pi-review-dashboard 都使用 pi-review-agent 进行代码评审。&lt;/p&gt;
 &lt;p&gt;最近了解到阿里的 &lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
  &gt;AACR-Bench&lt;/a&gt;：166 个真实 GitHub PR、1231 条专家验证的评审标注。&lt;/p&gt;
-&lt;p&gt;这篇文章记录全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，
-和 Codex + GPT-5.5 同档，离 Open Code Review + Deepseek-V4-Pro 的 17.9% 差 10 个百分点。
+&lt;p&gt;这篇文章记录全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，和 Codex + GPT-5.5 同档，离 Open Code Review + Deepseek-V4-Pro 的 17.9% 差 10 个百分点。
 分数不算亮眼，但它便宜：模型用的是便宜一档的 mimo-v2.5，账上 88% 的 token 还走了缓存价。
 拿不准这是不是一个好买卖，至少账算得明白。实验本身也比分数有用：好几个“差距来自哪里”的假设，
 跑完都被证伪了。&lt;/p&gt;
