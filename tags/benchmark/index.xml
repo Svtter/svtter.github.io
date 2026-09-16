@@ -1,9 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Benchmark on Svtter's Blog</title><link>https://svtter.cn/tags/benchmark/</link><description>Recent content in Benchmark on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 16 Sep 2026 09:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/benchmark/index.xml" rel="self" type="application/rss+xml"/><item><title>同模型对照终版:OCR 与 pi 的架构差距值多少分</title><link>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7%E7%BB%88%E7%89%88ocr-%E4%B8%8E-pi-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</link><pubDate>Wed, 16 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7%E7%BB%88%E7%89%88ocr-%E4%B8%8E-pi-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</guid><description>&lt;p&gt;&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e8%b7%91-aacr-bench/" &gt;第一篇&lt;/a&gt;跑完 AACR-Bench 后留了个尾巴:
-pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%,差距里混着模型档位和评测口径,
-&amp;ldquo;架构本身值多少分&amp;quot;没法归因。这一篇补上最后一块拼图:&lt;strong&gt;把 OCR 拉到和 pi 完全相同的条件下
-对跑&lt;/strong&gt;——同一个模型(mimo-v2.5,同一个 LiteLLM 代理)、同一个语义裁判(mimo-v2.5-pro)、
-同一批实例(两家都有结果的 152 个,1167 条参考标注)。&lt;/p&gt;
-&lt;h2 id="终版对照"&gt;终版对照
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Benchmark on Svtter's Blog</title><link>https://svtter.cn/tags/benchmark/</link><description>Recent content in Benchmark on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 16 Sep 2026 09:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/tags/benchmark/index.xml" rel="self" type="application/rss+xml"/><item><title>同模型对照：OCR 与 pi-review-agent 的架构差距值多少分</title><link>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</link><pubDate>Wed, 16 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</guid><description>&lt;p&gt;简单来说，差的挺多。但是 pi-review-agent 不是一无是处。从成本上来说，pi-review-agent 成本更低，review 速度更快。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e8%b7%91-aacr-bench/" &gt;第一篇&lt;/a&gt;跑完 AACR-Bench 后留了个尾巴:
+pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%,差距里混着模型档位和评测框架,因此无法确定&amp;quot;架构本身值多少分&amp;quot;。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;后面 pi-review-agent 简称为 pi。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这篇文章里，我把&lt;strong&gt;把 OCR 拉到和 pi 完全相同的条件下
+对跑&lt;/strong&gt;——同一个模型(mimo-v2.5,同一个 LiteLLM 代理)、同一个语义裁判(mimo-v2.5-pro)、同一批实例(两家都有结果的 152 个,1167 条参考标注)。&lt;/p&gt;
+&lt;h2 id="不同-frameworkbenchmark-对照"&gt;不同 framework/benchmark 对照
 &lt;/h2&gt;&lt;table&gt;
 	&lt;thead&gt;
 			&lt;tr&gt;
@@ -67,38 +72,27 @@ pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%,差距里混着
 &lt;p&gt;生成量打平是这张表最重要的控制变量:两家说的话一样多(748 对 751),
 差距全部落在&amp;quot;命中质量&amp;quot;上。同模型、同裁判、同题、同话量——
 &lt;strong&gt;2.5 倍就是两个架构的纯粹差距&lt;/strong&gt;。&lt;/p&gt;
-&lt;h2 id="三个值得单独说的发现"&gt;三个值得单独说的发现
-&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;1. OCR 的架构对模型档位近乎免疫——这才是它最狠的地方。&lt;/strong&gt;
+&lt;h2 id="三个发现"&gt;三个发现
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;1. OCR 的架构对模型档位近乎免疫。&lt;/strong&gt;
 OCR 配我们这个便宜模型拿到 21.4%,比它官方榜上配 Deepseek-V4-Pro 的 17.9% 还高
 (跨子集仅供参考,但量级说明问题)。规则引擎把高频缺陷模式硬编码、定位交给字符串匹配、
 LLM 只做剩下的语义推理——模型越便宜,这套确定性工程的杠杆越大。反过来,
 pi 这种 prompt 驱动的架构才吃模型:差距在弱模型上被放大。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;2. pi 的差距在&amp;quot;挑什么&amp;rdquo;,不在&amp;quot;站哪&amp;quot;。&lt;/strong&gt;
-pi 的行号 F1(12.6%)到语义 F1(8.4%)只掉 4 个点,保持率不低;绝对量级上它经常
-站在正确的行前面,但对&amp;quot;这行到底有什么问题&amp;quot;的判断和专家不一致。这正好定位了
-pi 缺的那层:高频缺陷模式的确定性规则——也是 OCR 最值得抄的部分
-(拆过它的捆绑源码,设计本质是&amp;quot;LLM 提议、代码裁决&amp;quot;)。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;3. 单位成本反过来,这是质量-成本曲线上的两个点,不是输赢。&lt;/strong&gt;
+&lt;p&gt;&lt;strong&gt;2. pi 的差距在&amp;quot;是什么&amp;quot;,不在&amp;quot;在哪里&amp;quot;。&lt;/strong&gt;
+pi 的行号 F1(12.6%)到语义 F1(8.4%)只掉 4 个点,保持率不低;绝对量级上它经常找到正确的行,但对&amp;quot;这行到底有什么问题&amp;quot;的判断和专家不一致。这正好定位了 pi 缺的那层:高频缺陷模式的确定性规则——也是 pi-review-agent 最值得从 OCR 的借鉴部分。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;即错误的类别是确定性的，在确定性的错误类别中，寻找当前错误的错误模式。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;3. 单位成本差异&lt;/strong&gt;
 每条有效命中,pi 便宜 2.9 倍、快 1.5 倍;OCR 准 2.5 倍。OCR 全程烧了 366M token
 (pi 45M),两家 9 成 token 都走前缀缓存价——缓存经济学在两种架构上都成立,
 pi 的多 persona 重复输入在正确记账下接近免费,OCR 的深度仓库探索也被缓存兜住。&lt;/p&gt;
-&lt;h2 id="顺带修正一个我之前的说法"&gt;顺带修正一个我之前的说法
-&lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e7%9a%84%e6%9e%b6%e6%9e%84%e6%af%94-open-code-review-%e5%a4%9a%e4%ba%86%e4%bb%80%e4%b9%88/" &gt;上一篇&lt;/a&gt;我曾断言 OCR
-&amp;ldquo;每次评审都是初次见面&amp;rdquo;——这不对,该文后来已直接修订(此处引用修正后的结论)。
-OCR 的 action 提供三个跨 push 的连续性机制(默认关闭):
-&lt;code&gt;checkpoint_range&lt;/code&gt; 只审上次覆盖之后的新提交、&lt;code&gt;incremental&lt;/code&gt; 按行范围去重不重贴旧意见、
-&lt;code&gt;sticky_summary&lt;/code&gt; 原地更新摘要。真实的差异是深度:这些机制停在&lt;strong&gt;范围级&lt;/strong&gt;
-(审到哪了、贴过什么),pi 的会话记忆是&lt;strong&gt;会话级&lt;/strong&gt;(作者对上轮意见改了什么、
-哪些 issue 还开着)。&amp;ldquo;有没有&amp;quot;错,&amp;ldquo;多深&amp;quot;对。&lt;/p&gt;
-&lt;h2 id="收口"&gt;收口
-&lt;/h2&gt;&lt;p&gt;这个系列到这里闭环:pi 的 8.4% 不是模型不够好,也不(主要)是输入不完整,
-是缺一层确定性工程。好消息是方向从未如此具体——规则层可以从 OCR 的公开设计反推,
-bundling 的源码已经拆过,&lt;code&gt;related-context.ts&lt;/code&gt; 的 import 图就是现成的分组器。
-在补上这层之前,pi 的叙事是&amp;quot;质量-成本曲线上的低成本点&amp;rdquo;:每条有效意见便宜 3 倍、
-快一半,会话级记忆和成本可观测是基准考不出的差异。&lt;/p&gt;
+&lt;h2 id="结论"&gt;结论
+&lt;/h2&gt;&lt;p&gt;这个系列到这里闭环:pi 的 8.4% 不是模型不够好,也不(主要)是输入不完整,是缺一层确定性工程。好消息是方向从未如此具体——规则层可以从 OCR 的公开设计反推, bundling 的源码已经拆过,&lt;code&gt;related-context.ts&lt;/code&gt; 的 import 图就是现成的分组器。在补上这层之前,pi 的叙事是&amp;quot;质量-成本曲线上的低成本点&amp;quot;:每条有效意见便宜 3 倍、快一半,会话级记忆和成本可观测是基准考不出的差异。&lt;/p&gt;
 &lt;p&gt;数据与代码:&lt;a class="link" href="https://github.com/Svtter/aacr-bench/pull/1" target="_blank" rel="noopener"
- &gt;实验记录全文&lt;/a&gt;
-(fork 存档,含 152 实例对照、三档预算实验、token 总账与反作弊审计)。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench " /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;实验记录全文&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench " /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; 是我维护的多 persona AI code review
 agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e6%98%af%e6%80%8e%e4%b9%88%e8%ae%b0%e4%bd%8f%e4%b8%8a%e4%b8%80%e6%ac%a1-review-%e7%9a%84/" &gt;跨 run 续接会话&lt;/a&gt;）。&lt;/p&gt;
 &lt;p&gt;我把它用在实际的代码评审中。例如 pi-review-agent 和 pi-review-dashboard 都使用 pi-review-agent 进行代码评审。&lt;/p&gt;
