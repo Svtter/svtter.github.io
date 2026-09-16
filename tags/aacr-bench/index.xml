@@ -96,22 +96,21 @@ pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%，差距里混�
 &lt;h2 id="结论"&gt;结论
 &lt;/h2&gt;&lt;p&gt;这个系列到这里闭环：pi 的 8.4% 不是模型不够好，也不（主要）是输入不完整，是缺一层确定性工程。好消息是方向从未如此具体——规则层可以从 OCR 的公开设计反推，bundling 的源码已经拆过，&lt;code&gt;related-context.ts&lt;/code&gt; 的 import 图就是现成的分组器。在补上这层之前，pi 的叙事是“质量-成本曲线上的低成本点”：每条有效意见便宜 3 倍、快一半，会话级记忆和成本可观测是基准考不出的差异。&lt;/p&gt;
 &lt;p&gt;数据与代码：&lt;a class="link" href="https://github.com/Svtter/aacr-bench/pull/1" target="_blank" rel="noopener"
- &gt;实验记录全文&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench " /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;实验记录全文&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench" /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
  &gt;pi-review-agent&lt;/a&gt; 是我维护的多 persona AI code review
-agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e6%98%af%e6%80%8e%e4%b9%88%e8%ae%b0%e4%bd%8f%e4%b8%8a%e4%b8%80%e6%ac%a1-review-%e7%9a%84/" &gt;跨 run 续接会话&lt;/a&gt;）。&lt;/p&gt;
-&lt;p&gt;我把它用在实际的代码评审中。例如 pi-review-agent 和 pi-review-dashboard 都使用 pi-review-agent 进行代码评审。&lt;/p&gt;
-&lt;p&gt;最近了解到阿里的 &lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
- &gt;AACR-Bench&lt;/a&gt;：166 个真实 GitHub PR、1231 条专家验证的评审标注。我感觉可以测一下 pi-review-agent 的评审性能，来决定后续怎么协调 review 工作。&lt;/p&gt;
-&lt;p&gt;在这篇文章里，我记录了实验全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，和 Codex + GPT-5.5 同档，距离 Open Code Review + Deepseek-V4-Pro 的 17.9% 差 10 个百分点。
-分数不算亮眼，但它便宜：模型用的是便宜一档的 mimo-v2.5。&lt;/p&gt;
-&lt;p&gt;我目前拿不准这是不是一个好买卖（便宜模型跑 review），但至少账算得明白。实验本身也比分数有用：好几个“差距来自哪里”的假设，跑完都被证伪了。&lt;/p&gt;
+agent，上一篇讲过它怎么&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e6%98%af%e6%80%8e%e4%b9%88%e8%ae%b0%e4%bd%8f%e4%b8%8a%e4%b8%80%e6%ac%a1-review-%e7%9a%84/" &gt;跨 run 续接会话&lt;/a&gt;。
+我自己的几个项目——包括 pi-review-agent 和 pi-review-dashboard——日常代码评审都跑在它上面。&lt;/p&gt;
+&lt;p&gt;最近注意到阿里的 &lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
+ &gt;AACR-Bench&lt;/a&gt;：166 个真实 GitHub PR、1231 条专家验证的评审标注。正好拿它测一测 pi-review-agent 的评审水平，也给后续怎么安排 review 工作一个量化依据。&lt;/p&gt;
+&lt;p&gt;这篇文章记录实验全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，和 Codex + GPT-5.5 同档，距离 Open Code Review + Deepseek-V4-Pro 的 17.9% 还有 10 个百分点。分数不算亮眼，但它便宜——模型用的是便宜一档的 mimo-v2.5。&lt;/p&gt;
+&lt;p&gt;便宜模型跑 review 是不是好买卖，我到现在也没完全想清楚，但至少账算得明白。而且实验本身比分数有用：好几个“差距来自哪里”的假设，跑完都被证伪了。&lt;/p&gt;
 &lt;h2 id="接入一次-pr-加一个-reviewer-模块"&gt;接入：一次 PR 加一个 reviewer 模块
 &lt;/h2&gt;&lt;p&gt;pi-review-agent 原本强依赖 GitHub/Gitea 环境，PR 评论就是它的输出面；基准 harness 要的却是
 无头模式：给一个 commit 对，吐出结构化 findings。改动有两处：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;给 agent 加了 &lt;code&gt;--format json&lt;/code&gt; 免平台模式（&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/pull/70" target="_blank" rel="noopener"
  &gt;PR #70&lt;/a&gt;）：
-不要求 &lt;code&gt;--pr&lt;/code&gt;、不建平台适配器、不发评论，stdout 输出单个 JSON，里面带验证过的 findings、
+不再要求 &lt;code&gt;--pr&lt;/code&gt;、不建平台适配器、不发评论，stdout 输出单个 JSON，包含验证过的 findings、
 逐 persona 用量和 verdict/severity。&lt;code&gt;--session-key&lt;/code&gt; 顶替 PR 号做会话隔离，消毒后落盘，
 防止 benchmark 多实例互相串会话。&lt;/li&gt;
 &lt;li&gt;照着 harness 里 codex reviewer 的模板写了 &lt;code&gt;reviewers/pi.py&lt;/code&gt;：克隆仓库、checkout 到 head、
@@ -121,7 +120,7 @@ agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-
 工具面只有 read 和 grep，没有 shell 和网络。跑完又对生成意见和参考标注算了 3-gram 重叠：
 最高 0.31、中位数 0，是“各自表述同一个问题”的形态，不是背题。&lt;/p&gt;
 &lt;h2 id="成绩单"&gt;成绩单
-&lt;/h2&gt;&lt;p&gt;166/196 个实例。30 个实例的 PR 被 rebase 过，head commit 在 GitHub 上已不可达，剔出分母；
+&lt;/h2&gt;&lt;p&gt;166/196 个实例进了评测。30 个实例的 PR 被 rebase 过，head commit 在 GitHub 上已不可达，剔出分母；
 官方基线同样受此约束。语义匹配的判定链：文件相同 → diff 侧相同 → 行号 ±1 → judge 模型
 判定语义一致。&lt;/p&gt;
 &lt;table&gt;
@@ -172,17 +171,17 @@ agent（上一篇讲了它怎么&lt;a class="link" href="https://svtter.cn/p/pi-
 			&lt;/tr&gt;
 	&lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;（官方数字来自 OCR 仓库排行榜，完整数据集、各自模型与 judge，供量级参照。）&lt;/p&gt;
-&lt;p&gt;两个读数。一是 P/R 均衡（10/6.7），不像 Claude Code 那样靠刷召回（7/29），也不像 Codex 偏科精确（28/5）。
+&lt;p&gt;（官方数字来自 OCR 仓库排行榜，各家的数据集、模型与 judge 不完全一致，只供量级参照。）&lt;/p&gt;
+&lt;p&gt;两个读数。一是 P/R 均衡（10/6.7），不像 Claude Code 靠刷召回（7/29），也不像 Codex 偏科精确（28/5）。
 二是行号 F1（12.5%）高于语义 F1：模型经常站对了行，但对“这行有什么问题”的判断和专家不一致。
 OCR 用规则引擎硬编码高频缺陷模式，多半就是不信任模型的这部分直觉。&lt;/p&gt;
-&lt;p&gt;还有一点表里看不出来：成本。mimo-v2.5 对位的是别家旗舰，本身便宜不少；多 persona 重复的 diff
-输入又被前缀缓存基本吃掉，295 次实例评审的总账单 66M token，88% 按 cacheRead 计价（细账在意外三）。
+&lt;p&gt;表里看不出来的还有成本。mimo-v2.5 对位的是别家旗舰，本身便宜不少；多 persona 重复的 diff
+输入又被前缀缓存基本吃掉，295 次实例评审的总账单只有 66M token，88% 按 cacheRead 计价（细账见意外三）。
 所以对这套组合的诚实评价是：评审能力确实不算强，但它花的钱也少。卖的是性价比，不是绝对分数。&lt;/p&gt;
 &lt;h2 id="意外一截断不是主因"&gt;意外一：截断不是主因
 &lt;/h2&gt;&lt;p&gt;pi-review-agent 默认 &lt;code&gt;--diff-max-size-kb 200&lt;/code&gt;。考古了一下，这个值当初是为了防 LiteLLM 代理的
-HTTP 413（6MB 的 dist bundle 曾经直接打挂全员 reviewer），不是按模型上下文算的。基准里
-47.6% 的实例（79/166）被这个默认值截断，我一开始把低分主要归咎于此，于是把这 79 个放开预算重跑：&lt;/p&gt;
+HTTP 413（6MB 的 dist bundle 曾经直接打挂全部 reviewer），不是按模型上下文算的。基准里
+47.6% 的实例（79/166）被这个默认值截断，我一开始把低分主要归咎于此，于是放开预算重跑这 79 个：&lt;/p&gt;
 &lt;table&gt;
 	&lt;thead&gt;
 			&lt;tr&gt;
@@ -225,7 +224,7 @@ HTTP 413（6MB 的 dist bundle 曾经直接打挂全员 reviewer），不是按�
 	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;1231 条参考标注里，放开截断只多命中 5 条。模型看到了完整代码，依然没把问题挑出来。
-瓶颈在检出能力，不在输入完整性。直觉会高估“给模型更多上下文”的收益，这是这次实验最贵的一课，
+瓶颈在检出能力，不在输入完整性。直觉会高估“给模型更多上下文”的收益——这是这次实验最贵的一课，
 学费约 4000 万 token。相关讨论记在
 &lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/71" target="_blank" rel="noopener"
  &gt;issue #71&lt;/a&gt;。&lt;/p&gt;
