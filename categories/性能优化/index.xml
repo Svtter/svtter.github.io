@@ -185,4 +185,11 @@
 &lt;p&gt;治本只有两条路：要么把限速扩到 &lt;code&gt;session-*.scope&lt;/code&gt;（systemd 原生 &lt;code&gt;IOReadBandwidthMax=&lt;/code&gt; unit property，或 logind 会话级配置），要么从根上让多个 worktree 共享同一份 &lt;code&gt;node_modules&lt;/code&gt;（pnpm 软连），消灭&amp;quot;每个 worktree 独立 cache key&amp;quot;这个放大器。光清数量，不够。&lt;/p&gt;
 &lt;h2 id="写在最后"&gt;写在最后
 &lt;/h2&gt;&lt;p&gt;回头看，这趟排查走了不少弯路：先是怀疑 sqlite/WAL，停了 Claude Code；又怀疑病毒，停了所有 agent；再怀疑机械盘想换 SSD。真正卡住诊断的是两个认知盲区——&lt;code&gt;%util&lt;/code&gt; 低不代表没 IO 问题（majflt 才是信号），以及&amp;quot;限速工具没报错&amp;quot;不代表&amp;quot;限速生效&amp;quot;（设备号静默 no-op 坑了四天）。&lt;/p&gt;
-&lt;p&gt;治本是工作集瘦身 + swap/zswap + 关 LSP，治标是 iogo 限速。但架构共性还在——只要 node + 巨大 node_modules + 多实例 + worktree 独立 cache key 这套组合在，工作集 ≫ page cache 就会互害。这不是某一个 coding agent 的 bug，是它们共同的运行模式踩中了同一个坑。&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;治本是工作集瘦身 + swap/zswap + 关 LSP，治标是 iogo 限速。但架构共性还在——只要 node + 巨大 node_modules + 多实例 + worktree 独立 cache key 这套组合在，工作集 ≫ page cache 就会互害。这不是某一个 coding agent 的 bug，是它们共同的运行模式踩中了同一个坑。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;注（2026-09-18）：本文提到的 zcode 已爆出安全事件/违法事件——静默上传全量 Git 历史，详见 &lt;a class="link" href="https://blog.ferstar.org/posts/zcode-silent-workspace-snapshot-upload/" target="_blank" rel="noopener"
+ &gt;ferstar 的取证博客&lt;/a&gt;和&lt;a class="link" href="https://mp.weixin.qq.com/s/LdXekkP-Yb2IQfoMV53uDw" target="_blank" rel="noopener"
+ &gt;事件分析&lt;/a&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;</description></item></channel></rss>
