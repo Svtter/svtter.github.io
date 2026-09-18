@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Django 前端整合之路 on Svtter's Blog</title><link>https://svtter.cn/series/django-%E5%89%8D%E7%AB%AF%E6%95%B4%E5%90%88%E4%B9%8B%E8%B7%AF/</link><description>Recent content in Django 前端整合之路 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 10 Mar 2025 19:34:19 +0800</lastBuildDate><atom:link href="https://svtter.cn/series/django-%E5%89%8D%E7%AB%AF%E6%95%B4%E5%90%88%E4%B9%8B%E8%B7%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>Django Bridge and Telepath Make Decode Easier.md</title><link>https://svtter.cn/p/django-bridge-and-telepath-make-decode-easier.md/</link><pubDate>Mon, 10 Mar 2025 19:34:19 +0800</pubDate><guid>https://svtter.cn/p/django-bridge-and-telepath-make-decode-easier.md/</guid><description>&lt;p&gt;&lt;a class="link" href="https://wagtail.github.io/telepath/" target="_blank" rel="noopener"
+ &gt;telepath&lt;/a&gt;是 wagtail 开发的一个库，可以用于对 python 对象进行转换。&lt;/p&gt;
+&lt;p&gt;其最大的好处是，将原本复杂的 python class -&amp;gt; JSON -&amp;gt; Javascript class，转换成 python class -&amp;gt; Javascript class。&lt;/p&gt;
+&lt;p&gt;更具体的内容可以参考&lt;a class="link" href="https://wagtail.github.io/telepath/tutorial/" target="_blank" rel="noopener"
+ &gt;tutorial&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;那么有没有可能在这个基础上，让 React 和 Django 直通呢？ &lt;a class="link" href="https://django-bridge.org/docs/introduction/" target="_blank" rel="noopener"
+ &gt;Django Bridge&lt;/a&gt; 就是做这个工作的。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://django-bridge.org/docs/introduction/" target="_blank" rel="noopener"
+ &gt;Django Bridge&lt;/a&gt; 允许用户直接返回 JSON 结构，然后 React 根据 JSON 结构进行解析，对应渲染 React Component。&lt;/p&gt;
+&lt;h2 id="问题是什么"&gt;问题是什么
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;学习成本。如果 django bridge 是一个团队中大家都熟悉的东西，那么上手不慢。但是如果大家都不太熟悉，那么引入 django bridge，需要花时间学习。&lt;/li&gt;
+&lt;li&gt;调试成本。相比于 http JSON，这种方式依赖于 Django Bridge 对 JSON 的解析。调试起来可能会有一定的困难。&lt;/li&gt;
+&lt;li&gt;对于已有的项目，代码中可能存在基本通信框架，那么这个库可能会导致旧代码的改造。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;其他的内容，在&lt;a class="link" href="https://django-bridge.org/docs/introduction/#should-i-use-it" target="_blank" rel="noopener"
+ &gt;Should I use it?&lt;/a&gt;中有所提及，可供参考。&lt;/p&gt;
+&lt;h2 id="有什么优势"&gt;有什么优势
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;虽然是前后端分离，但不需要考虑 session 和 cookie 的管理了。也不需要考虑 JWT 的问题。(是不是分离了也不需要管理呢？)&lt;/li&gt;
+&lt;li&gt;官网原文：If you&amp;rsquo;re about to build a web app or SaaS product with Django and React, this library could save you a lot of time. It provides all the necessary tools to integrate a React frontend with Django and includes a project template with simple Vite-based frontend tooling to get you started.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;更多的内容，请移步官网阅读。&lt;/p&gt;</description></item><item><title>Django and Webpack</title><link>https://svtter.cn/p/django-and-webpack/</link><pubDate>Sat, 06 Jul 2024 15:21:55 +0800</pubDate><guid>https://svtter.cn/p/django-and-webpack/</guid><description>&lt;p&gt;Webpack is a modern development method for frontend projects. Django is a common backend development framework for Python developers.&lt;/p&gt;
+&lt;p&gt;I believe that developing with Webpack can make Django development faster.&lt;/p&gt;
+&lt;h2 id="why"&gt;Why
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;webpack&lt;/code&gt; can enable Django developers to use the React ecosystem, and it makes auto-complete and linting available in Django frontend development, especially with VSCode.&lt;/p&gt;
+&lt;p&gt;Django developers should integrate Webpack, similar to what &lt;a class="link" href="https://github.com/rails/webpacker?tab=readme-ov-file#webpacker-has-been-retired-" target="_blank" rel="noopener"
+ &gt;Rails developers did&lt;/a&gt;. At 2024-07-05, Webpack has retired in Rails. They are using &lt;a class="link" href="https://hotwired.dev/" target="_blank" rel="noopener"
+ &gt;Hotwire&lt;/a&gt; now. For more details, you should read the &lt;a class="link" href="https://rubyonrails.org/2021/12/15/Rails-7-fulfilling-a-vision" target="_blank" rel="noopener"
+ &gt;Rails 7 blog&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="what-to-choose"&gt;What to Choose?
+&lt;/h2&gt;&lt;p&gt;I tested two popular projects on GitHub.&lt;/p&gt;
+&lt;p&gt;The first one is &lt;a class="link" href="https://github.com/vintasoftware/django-react-boilerplate" target="_blank" rel="noopener"
+ &gt;django-react-boilerplate&lt;/a&gt;. It has high stars and ranks second.&lt;/p&gt;
+&lt;p&gt;However, as of 2024-07-05, it&amp;rsquo;s not ready. I will continue to track its progress. It is hard and complex to configure the &lt;code&gt;{{ project_name }}&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The second one is &lt;a class="link" href="https://python-webpack-boilerplate.readthedocs.io/en/stable/setup_with_django/" target="_blank" rel="noopener"
+ &gt;python-webpack-boilerplate&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It has a gradual process and a good learning curve. I spent just 5 minutes adding Webpack to my &lt;a class="link" href="https://github.com/Svtter/django-webpack-example" target="_blank" rel="noopener"
+ &gt;example project&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In Django 5.2, &lt;code&gt;simple_block_tag&lt;/code&gt; is &lt;a class="link" href="https://softwarecrafts.co.uk/100-words/day-270" target="_blank" rel="noopener"
+ &gt;supported&lt;/a&gt;!&lt;/p&gt;
+&lt;h2 id="discussion"&gt;Discussion
+&lt;/h2&gt;&lt;p&gt;There is still a long way to go.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;React has not been added to the &lt;a class="link" href="https://github.com/Svtter/django-webpack-example" target="_blank" rel="noopener"
+ &gt;example project&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;A production environment is needed to validate its availability.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;</description></item><item><title>Use Vue with Django, Meet CSRF</title><link>https://svtter.cn/p/use-vue-with-django-meet-csrf/</link><pubDate>Sun, 03 Sep 2023 14:12:47 +0800</pubDate><guid>https://svtter.cn/p/use-vue-with-django-meet-csrf/</guid><description>&lt;p&gt;在使用 Vue 的时候，如何向 Django 提交 form？&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-js" data-lang="js"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;ajax&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;url&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;YOUR_URL_HERE&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;headers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;X-CSRFToken&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;cookie&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;csrftoken&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;dataType&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;json&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;success&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;error&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;xhr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;errMsg&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;django docs: &lt;a class="link" href="https://docs.djangoproject.com/en/1.11/ref/csrf/#ajax" target="_blank" rel="noopener"
+ &gt;https://docs.djangoproject.com/en/1.11/ref/csrf/#ajax&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="reference"&gt;Reference
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://stackoverflow.com/questions/43567052/csrf-token-of-django-into-vuejs-when-seperate-them" target="_blank" rel="noopener"
+ &gt;stackoverflow answer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
