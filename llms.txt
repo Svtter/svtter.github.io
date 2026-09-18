@@ -14,34 +14,38 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 
 ## Recent Posts
 
-- [同模型对照：OCR 与 pi-review-agent 的架构差距值多少分](https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/): OCR 和 pi-review-agent 用同一个模型、同一个裁判、同一批 152 个实例对跑：语义 F1 21.4% vs 8.4%——架构差距 2.5 倍，而单位成本反过来 pi 便宜 2.9 倍。
-- [pi-review-agent 的架构比 Open Code Review 多了什么](https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/): AACR-Bench 上输了 10 个点之后，盘点 pi-review-agent 架构里 Open Code Review 确实没有的东西：会话级评审记忆、视角并行、缓存经济学、验证器透明度。
-- [pi-review-agent 跑 AACR-Bench](https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/): 把 pi-review-agent 接上阿里的 AACR-Bench：166 个真实 PR、三档 diff 预算、66M token，最终语义 F1 8.1%——评审能力不算强，但成本够低；外加截断、超时、缓存三个意料之外的发现。
-- [国产模型追上了多少，以及新 benchmark 又拉开了什么？](https://svtter.cn/p/%E5%9B%BD%E4%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%BD%E4%B8%8A%E4%BA%86%E5%A4%9A%E5%B0%91%E4%BB%A5%E5%8F%8A%E6%96%B0-benchmark-%E5%8F%88%E6%8B%89%E5%BC%80%E4%BA%86%E4%BB%80%E4%B9%88/): 国产模型在很多能力上已经追上了第一梯队，但 Terminal Bench 4.0 启动、数学推理证明榜单上的差距提醒我们还有硬仗要打；反过来研究 benchmark，不跑测试也能大致判断模型能力；编程上国产模型已经够用，剩下的问题交给算力成本。
-- [为什么 mimo-v2.5 仍然是非常受欢迎的模型？](https://svtter.cn/p/%E4%B8%BA%E4%BB%80%E4%B9%88-mimo-v2.5-%E4%BB%8D%E7%84%B6%E6%98%AF%E9%9D%9E%E5%B8%B8%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A8%A1%E5%9E%8B/): mimo-v2.5 在足够用、ZDR 隐私 posture 和 Token Plan 大用量之间取得了少见的平衡，至今仍是 code review 这类高频轻量任务的首选。
-- [用 zcode 跑夜间无人值守：issue → PR 的自动化闭环](https://svtter.cn/p/%E7%94%A8-zcode-%E8%B7%91%E5%A4%9C%E9%97%B4%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88issue-pr-%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF/): 前提：我的 Coding Plan 每天有 5 小时额度且没有周上限。
-基于此，晚上不跑 zcode，这个额度就浪费了。我把一个完整闭环放进了夜间定时任务：让 zcode 每半小时开一个新 session，自动从 issue 池里挑一个没人认领的开放问题，分析、实现、review，最后 push 并 …
-- [便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash](https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/): 官方峰段涨到 $0.44/$1.32 之后，怎么继续便宜地用 deepseek-v4-flash：OpenRouter 上 17 个端点比价，路由参数 data_collection:"deny" 保证数据不留存，外加快照、量化、回退三个坑。2026-09-01 更新：SiliconFlow、百炼齐涨至官方价位，百炼 10-10 下线全部第三方模型——低价只剩 OpenRouter，与数据不出境二选一
-- [SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值](https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/): 实测 SiliconFlow 的 DeepSeek-V4-Flash Prompt Cache：167/963/1843 token 全部 cached=0，6683 token 命中 6656（99.6%）——缓存真实生效，但存在较高最小 token 阈值，短 prompt 永远按全价计费
 - [实测 DeepSeek 前缀缓存：相同前缀，不同后缀还能命中吗？](https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/): 用 4 个对照请求实测 deepseek-v4-flash 的前缀缓存：相同前缀、不同后缀时 cache_hit 仍为 2816 tokens，与完全重复请求一字不差；前缀从第一个词断开则命中归零。附实验代码与工程实践建议。
-- [思考 agent 编程](https://svtter.cn/p/%E6%80%9D%E8%80%83-agent-%E7%BC%96%E7%A8%8B/): 读完亚马逊团队的博客 How frontier teams are reinventing AI-native development，我对 agent 编程有了新的认识：AGENTS.md、skills 与流程是新的代码，harness 是新的编译器。本文整理了关于这一新产业/供应链的思考。
-- [opencode 不够 open；oh-my-pi 才是正确的选择](https://svtter.cn/p/opencode-%E4%B8%8D%E5%A4%9F-openoh-my-pi-%E6%89%8D%E6%98%AF%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%80%89%E6%8B%A9/): 一个被压成 P3 晾了五周的 cache-read bug，让我重新理解了"open"这个字到底值多少——源码可见不等于治理响应，开源代码不等于开源决策。
-- [我的 Linux 开发环境 — 2026](https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/): 2026 年更新的 Linux 开发环境。已经不使用桌面环境，全部通过 KVM 虚拟机 + SSH + tmux 完成开发工作。
-- [Python 类型注解：object 和 Any 不是一回事](https://svtter.cn/p/python-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3object-%E5%92%8C-any-%E4%B8%8D%E6%98%AF%E4%B8%80%E5%9B%9E%E4%BA%8B/): Python 类型注解中 object 和 Any 看似都表示「任意类型」，但 object 会强制 isinstance 收窄保护，Any 则完全关掉类型检查。用错了等于白开 strict 模式。
-- [Linux 中的 inotify 是什么](https://svtter.cn/p/linux-%E4%B8%AD%E7%9A%84-inotify-%E6%98%AF%E4%BB%80%E4%B9%88/): 介绍 Linux inotify 文件系统事件监控机制的工作原理、核心 API、可监控事件类型、典型使用场景与常见坑点，并给出 C 和命令行的最小示例。
-- [oh-my-pi 实现了 Claude Loop Engineering 的几种循环？4 种里 2 种](https://svtter.cn/p/oh-my-pi-%E5%AE%9E%E7%8E%B0%E4%BA%86-claude-loop-engineering-%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BE%AA%E7%8E%AF4-%E7%A7%8D%E9%87%8C-2-%E7%A7%8D/): Claude 官方把 Loop Engineering 分成四种循环类型，对照本机已装的 oh-my-pi (omp) 16.3.11，逐条核对它到底实现了哪几种——结论是 4 种里的 2 种。
-- [oh-my-pi 用到了哪些基础组件？以及它和 pi 到底是什么关系](https://svtter.cn/p/oh-my-pi-%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-pi-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/): 拆解 oh-my-pi (omp) 的依赖栈、澄清 pi-sdk/pi-coding-agent 误解、画出它和上游 pi-mono 的血缘关系图。
-- [pi-review-agent 是怎么"记住"上一次 review 的](https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/): pi-review-agent 用 append-only JSONL + actions/cache 前缀命中 + transcript 重放，让 reviewer 跨 CI run 续接会话，同时踩中 DeepSeek prefix cache 的计费折扣。
-- [使用 CC 时计算机卡死可能是 IO 问题](https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/): 排查并解决了 Linux 上 code agent（OMP/Claude Code/OpenCode）冷缓存预热触发 major page fault 风暴、IO 飙到 500MB/s 并频繁死机的问题。
-- [Token Plan 不够了怎么办](https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/): 本文介绍了在多个 token plan 之间切换时，使用 /export 命令导出上下文文件，再在新 agent 中加载的便捷方法。
-- [迁移到 Gitea Actions：kill-PAT 完整方案](https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/): 本文记录了将代码仓库从 GitHub 迁移到自建 Gitea 过程中遇到的 runner 配置问题及解决方案，重点介绍了如何通过 DEFAULT_ACTIONS_URL=self 机制替代 Personal Access Token，实现跨仓 action 的无缝访问。
+- [使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查](https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/): 一种充分利用 coding plan 的方法
+- [高效省钱：我的 AI Agent 工作流选择](https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/): 分享我使用 OpenCode + Gemini 3 Flash 的高效省钱工作流
+- [[过期] 我现在更多的使用 GLM 4.6 了](https://svtter.cn/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/): 比较 GLM 4.6 与 DeepSeek v3.2 在实际使用中的体验差异
+- [How to Use Claude Code With Deepseek](https://svtter.cn/p/how-to-use-claude-code-with-deepseek/): 如何通过 deepseek api 来使用 claude code
+- [SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值](https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/): 实测 SiliconFlow 的 DeepSeek-V4-Flash Prompt Cache：167/963/1843 token 全部 cached=0，6683 token 命中 6656（99.6%）——缓存真实生效，但存在较高最小 token 阈值，短 prompt 永远按全价计费
+- [opencode-actions - 一个 coding review agent](https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/): 基于 opencode 构建的 GitHub Action，提供自动化 code review 和 runner 执行能力，支持 Z.AI、智谱及 OpenCode Go 订阅。
+- [OpenCode + SiliconFlow DeepSeek-V3.2 配置指南](https://svtter.cn/p/opencode--siliconflow-deepseek-v3.2-%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/): OpenCode + Silicon Flow DeepSeek-V3.2 配置指南 概述 使用 Silicon Flow 的 DeepSeek-V3.2 模型进行 GitHub PR 自动代码审查。
+配置步骤 1. 添加 GitHub Secret 在仓库 Settings → Secrets …
+- [我又买了 Kimi Coding Plan](https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/): kimi 也推出了官方的包月 coding plan. 文章背景图是 glm4.6 生成的。
+- [动态切换 Provider 的 Claude Code](https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/): Claude Code 额度有 5 小时限制（20美元版本），因此如果处理一些简单的任务，通过部分便宜的 API 来做更好。
+我编写了一个脚本，可以完成这个事情：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 …
+- [便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash](https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/): 官方峰段涨到 $0.44/$1.32 之后，怎么继续便宜地用 deepseek-v4-flash：OpenRouter 上 17 个端点比价，路由参数 data_collection:"deny" 保证数据不留存，外加快照、量化、回退三个坑。2026-09-01 更新：SiliconFlow、百炼齐涨至官方价位，百炼 10-10 下线全部第三方模型——低价只剩 OpenRouter，与数据不出境二选一
+- [OpenCode 的 GitHub Actions 自动化体系：27 个 Workflow 背后的工程实践](https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/): 分析 opencode 项目的 27 个 GitHub Actions workflow，拆解 CI/CD、社区治理、AI 集成的自动化策略，以及对开源项目的启示。
+- [OpenCode 配置优化记录](https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/): 优化 OpenCode 配置以减少 token 消耗
+- [通过 docker 使用 claude code](https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/): 部分的系统比较老旧，无法很好的运行 Claude Code (CC)。
+使用一个简单的 docker 镜像 这种情况情况下，可以使用 docker 来运行。可以使用这样的脚本：
+1 2 3 4 5 6 7 8 9 #!/bin/bash docker run --rm -it \ …
+- [Multi-Review：多 Agent 并发代码审查的工程实践](https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/): 从单模型审查到多 Agent 并发审查，参考 Cloudflare 的 orchestrator 架构，在 opencode-actions 中实现多维度并发代码审查。
+- [Codex 和 OpenCode 的上下文压缩](https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/): 最近看到 Codex 文档里提到 server-side compaction，我觉得这个点挺值得说说。顺着这个点，也可以顺便看看 OpenCode 的 compaction 是怎么做的。
+- [大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？](https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/): 从并发限制和吞吐量角度，计算大模型 Coding 套餐的实际可用量，揭示承诺与现实之间的差距。
+- [Claude Code Plugin 使用体验](https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/): 一个简单的描述
+- [本地 review 的便宜方案](https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/): 介绍了一个名为 roborev 的本地代码审查工具，用于替代云端 review 以节省 token 成本，配置简单且支持自定义 agent。
+- [探索 opencode 之后，我的一些思考](https://svtter.cn/p/opencode-three-months-reflection/): 一个开源工具，让我看清了"不被绑定"的价值，也让我重新理解了《大教堂与集市》
 
 ## Categories
 
 - [ACM/ICPC](https://svtter.cn/categories/acm/icpc/): 41 posts
 - [Agent](https://svtter.cn/categories/agent/): 2 posts
 - [Agent 架构](https://svtter.cn/categories/agent-%E6%9E%B6%E6%9E%84/): 3 posts
-- [AI](https://svtter.cn/categories/ai/): 21 posts
+- [AI/人工智能](https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/): 21 posts
 - [AI Agent](https://svtter.cn/categories/ai-agent/): 1 posts
 - [AI/人工智能](https://svtter.cn/categories/ai/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/): 4 posts
 - [Blog](https://svtter.cn/categories/blog/): 1 posts
@@ -137,67 +141,74 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 
 ## All Posts
 
-- [同模型对照：OCR 与 pi-review-agent 的架构差距值多少分](https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/)
-- [pi-review-agent 的架构比 Open Code Review 多了什么](https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
+- [实测 DeepSeek 前缀缓存：相同前缀，不同后缀还能命中吗？](https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/)
+- [使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查](https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/)
+- [高效省钱：我的 AI Agent 工作流选择](https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/)
+- [[过期] 我现在更多的使用 GLM 4.6 了](https://svtter.cn/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/)
+- [How to Use Claude Code With Deepseek](https://svtter.cn/p/how-to-use-claude-code-with-deepseek/)
+- [SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值](https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/)
+- [opencode-actions - 一个 coding review agent](https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/)
+- [OpenCode + SiliconFlow DeepSeek-V3.2 配置指南](https://svtter.cn/p/opencode--siliconflow-deepseek-v3.2-%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/)
+- [我又买了 Kimi Coding Plan](https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/)
+- [动态切换 Provider 的 Claude Code](https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/)
+- [便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash](https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/)
+- [OpenCode 的 GitHub Actions 自动化体系：27 个 Workflow 背后的工程实践](https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/)
+- [OpenCode 配置优化记录](https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/)
+- [通过 docker 使用 claude code](https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/)
+- [Multi-Review：多 Agent 并发代码审查的工程实践](https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/)
+- [Codex 和 OpenCode 的上下文压缩](https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/)
+- [大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？](https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/)
+- [Claude Code Plugin 使用体验](https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/)
+- [本地 review 的便宜方案](https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/)
+- [探索 opencode 之后，我的一些思考](https://svtter.cn/p/opencode-three-months-reflection/)
+- [大模型 Coding Plan 年付，到底值不值？](https://svtter.cn/p/coding-plan-yearly-worth-it/)
+- [Advisor：挂在主会话上的只读审查 Agent](https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/)
+- [糟糕的 token plan 隐私保护现状](https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/)
+- [在虚拟机上运行 Claude Code 实现自动化测试与开发](https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/)
+- [pi-review-agent 是怎么"记住"上一次 review 的](https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/)
+- [Token Plan 性价比分析](https://svtter.cn/p/token-plan-%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/)
 - [pi-review-agent 跑 AACR-Bench](https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/)
+- [Token Plan 不够了怎么办](https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/)
+- [OpenCode 配置之外的优化 — 基于插件的优化](https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/)
+- [给 Claude Code 配置 Python UV 的 Hook 和 Skill](https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/)
+- [pi-review-agent 的架构比 Open Code Review 多了什么](https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/)
+- [OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失](https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/)
+- [DeepSeek + Claude Code: Thinking Block 兼容性问题分析](https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/)
+- [同模型对照：OCR 与 pi-review-agent 的架构差距值多少分](https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/)
+- [opencode 不够 open；oh-my-pi 才是正确的选择](https://svtter.cn/p/opencode-%E4%B8%8D%E5%A4%9F-openoh-my-pi-%E6%89%8D%E6%98%AF%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%80%89%E6%8B%A9/)
 - [国产模型追上了多少，以及新 benchmark 又拉开了什么？](https://svtter.cn/p/%E5%9B%BD%E4%BA%A7%E6%A8%A1%E5%9E%8B%E8%BF%BD%E4%B8%8A%E4%BA%86%E5%A4%9A%E5%B0%91%E4%BB%A5%E5%8F%8A%E6%96%B0-benchmark-%E5%8F%88%E6%8B%89%E5%BC%80%E4%BA%86%E4%BB%80%E4%B9%88/)
 - [为什么 mimo-v2.5 仍然是非常受欢迎的模型？](https://svtter.cn/p/%E4%B8%BA%E4%BB%80%E4%B9%88-mimo-v2.5-%E4%BB%8D%E7%84%B6%E6%98%AF%E9%9D%9E%E5%B8%B8%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A8%A1%E5%9E%8B/)
 - [用 zcode 跑夜间无人值守：issue → PR 的自动化闭环](https://svtter.cn/p/%E7%94%A8-zcode-%E8%B7%91%E5%A4%9C%E9%97%B4%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88issue-pr-%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96%E9%97%AD%E7%8E%AF/)
-- [便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash](https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/)
-- [SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值](https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/)
-- [实测 DeepSeek 前缀缓存：相同前缀，不同后缀还能命中吗？](https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/)
 - [思考 agent 编程](https://svtter.cn/p/%E6%80%9D%E8%80%83-agent-%E7%BC%96%E7%A8%8B/)
-- [opencode 不够 open；oh-my-pi 才是正确的选择](https://svtter.cn/p/opencode-%E4%B8%8D%E5%A4%9F-openoh-my-pi-%E6%89%8D%E6%98%AF%E6%AD%A3%E7%A1%AE%E7%9A%84%E9%80%89%E6%8B%A9/)
 - [我的 Linux 开发环境 — 2026](https://svtter.cn/p/%E6%88%91%E7%9A%84-linux-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-2026/)
 - [Python 类型注解：object 和 Any 不是一回事](https://svtter.cn/p/python-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3object-%E5%92%8C-any-%E4%B8%8D%E6%98%AF%E4%B8%80%E5%9B%9E%E4%BA%8B/)
 - [Linux 中的 inotify 是什么](https://svtter.cn/p/linux-%E4%B8%AD%E7%9A%84-inotify-%E6%98%AF%E4%BB%80%E4%B9%88/)
 - [oh-my-pi 实现了 Claude Loop Engineering 的几种循环？4 种里 2 种](https://svtter.cn/p/oh-my-pi-%E5%AE%9E%E7%8E%B0%E4%BA%86-claude-loop-engineering-%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BE%AA%E7%8E%AF4-%E7%A7%8D%E9%87%8C-2-%E7%A7%8D/)
 - [oh-my-pi 用到了哪些基础组件？以及它和 pi 到底是什么关系](https://svtter.cn/p/oh-my-pi-%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%BB%84%E4%BB%B6%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-pi-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB/)
-- [pi-review-agent 是怎么"记住"上一次 review 的](https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/)
 - [使用 CC 时计算机卡死可能是 IO 问题](https://svtter.cn/p/%E4%BD%BF%E7%94%A8-cc-%E6%97%B6%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%A1%E6%AD%BB%E5%8F%AF%E8%83%BD%E6%98%AF-io-%E9%97%AE%E9%A2%98/)
-- [Token Plan 不够了怎么办](https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/)
 - [迁移到 Gitea Actions：kill-PAT 完整方案](https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/)
-- [Token Plan 性价比分析](https://svtter.cn/p/token-plan-%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/)
-- [Advisor：挂在主会话上的只读审查 Agent](https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/)
-- [糟糕的 token plan 隐私保护现状](https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/)
 - [Hugo 0.163 升级记录：security.allowContent 拦截了 HTML 内容](https://svtter.cn/p/hugo-0163-%E5%8D%87%E7%BA%A7%E8%AE%B0%E5%BD%95/)
-- [本地 review 的便宜方案](https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/)
 - [AI Agent 时代的 Meta Programming](https://svtter.cn/p/ai-agent-%E6%97%B6%E4%BB%A3%E7%9A%84-meta-programming/)
 - [我不喜欢火山引擎](https://svtter.cn/p/%E6%88%91%E4%B8%8D%E5%96%9C%E6%AC%A2%E7%81%AB%E5%B1%B1%E5%BC%95%E6%93%8E/)
 - [不同的 coding plan 要使用不同的 agent](https://svtter.cn/p/%E4%B8%8D%E5%90%8C%E7%9A%84-coding-plan-%E8%A6%81%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%9A%84-agent/)
 - [从 claude code 转向 omp/opencode](https://svtter.cn/p/%E4%BB%8E-claude-code-%E8%BD%AC%E5%90%91-omp/opencode/)
 - [OMP M3 模型补丁：为 pi-ai 添加 MiniMax M3 支持](https://svtter.cn/p/omp-m3-%E6%A8%A1%E5%9E%8B%E8%A1%A5%E4%B8%81%E4%B8%BA-pi-ai-%E6%B7%BB%E5%8A%A0-minimax-m3-%E6%94%AF%E6%8C%81/)
-- [Multi-Review：多 Agent 并发代码审查的工程实践](https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/)
 - [Kimi Code 对 kimi-k2.6 的专用处理：与 OpenCode 的对比](https://svtter.cn/p/kimi-code-%E5%AF%B9-kimi-k2.6-%E7%9A%84%E4%B8%93%E7%94%A8%E5%A4%84%E7%90%86%E4%B8%8E-opencode-%E7%9A%84%E5%AF%B9%E6%AF%94/)
 - [我在 GitHub 上遇到一个 AI bot——它读了我的 issue，理解了问题，然后自己提了个 PR](https://svtter.cn/p/%E6%88%91%E5%9C%A8-github-%E4%B8%8A%E9%81%87%E5%88%B0%E4%B8%80%E4%B8%AA-ai-bot%E5%AE%83%E8%AF%BB%E4%BA%86%E6%88%91%E7%9A%84-issue%E7%90%86%E8%A7%A3%E4%BA%86%E9%97%AE%E9%A2%98%E7%84%B6%E5%90%8E%E8%87%AA%E5%B7%B1%E6%8F%90%E4%BA%86%E4%B8%AA-pr/)
-- [OpenCode LLM Provider 层的三连修：从图片序列化到错误信息丢失](https://svtter.cn/p/opencode-llm-provider-%E5%B1%82%E7%9A%84%E4%B8%89%E8%BF%9E%E4%BF%AE%E4%BB%8E%E5%9B%BE%E7%89%87%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%B0%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%A4%B1/)
-- [OpenCode 的 GitHub Actions 自动化体系：27 个 Workflow 背后的工程实践](https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/)
-- [OpenCode 配置之外的优化 — 基于插件的优化](https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%B9%8B%E5%A4%96%E7%9A%84%E4%BC%98%E5%8C%96-%E5%9F%BA%E4%BA%8E%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BC%98%E5%8C%96/)
 - [新的博客形式](https://svtter.cn/p/%E6%96%B0%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%BD%A2%E5%BC%8F/)
 - [DeepSeek 技术脉络](https://svtter.cn/p/deepseek-%E6%8A%80%E6%9C%AF%E8%84%89%E7%BB%9C/)
 - [sth：一个给 AI Agent 用的 HTML 预览服务器](https://svtter.cn/p/sth%E4%B8%80%E4%B8%AA%E7%BB%99-ai-agent-%E7%94%A8%E7%9A%84-html-%E9%A2%84%E8%A7%88%E6%9C%8D%E5%8A%A1%E5%99%A8/)
-- [DeepSeek + Claude Code: Thinking Block 兼容性问题分析](https://svtter.cn/p/deepseek--claude-code-thinking-block-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/)
 - [如何解决 opencode 中 deepseek 模型的 reasoning 问题](https://svtter.cn/p/%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3-opencode-%E4%B8%AD-deepseek-%E6%A8%A1%E5%9E%8B%E7%9A%84-reasoning-%E9%97%AE%E9%A2%98/)
-- [opencode-actions - 一个 coding review agent](https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/)
 - [我还是自己写文章，以及对 GPT-5.4 的一些想法](https://svtter.cn/p/%E6%88%91%E8%BF%98%E6%98%AF%E8%87%AA%E5%B7%B1%E5%86%99%E6%96%87%E7%AB%A0%E4%BB%A5%E5%8F%8A%E5%AF%B9-gpt-5.4-%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/)
-- [探索 opencode 之后，我的一些思考](https://svtter.cn/p/opencode-three-months-reflection/)
 - [Software Factory：把 PR Review 修复做成一个闭环](https://svtter.cn/p/software-factory-pr-review-loop/)
-- [大模型 Coding Plan 年付，到底值不值？](https://svtter.cn/p/coding-plan-yearly-worth-it/)
 - [自己部署大模型，真的就能肆无忌惮地用吗？](https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E9%83%A8%E7%BD%B2%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%B0%B1%E8%83%BD%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E5%9C%B0%E7%94%A8%E5%90%97/)
-- [Codex 和 OpenCode 的上下文压缩](https://svtter.cn/p/codex-%E5%92%8C-opencode-%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9/)
 - [深入理解 claw 家族：OpenClaw / NanoClaw](https://svtter.cn/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-claw-%E5%AE%B6%E6%97%8Fopenclaw-/-nanoclaw/)
 - [CLI 是更高效的开发工作流](https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/)
 - [OpenClaw 日常问题排查指南](https://svtter.cn/p/openclaw-%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%8D%97/)
 - [Swarm Coding：大模型编程的下一步](https://svtter.cn/p/swarm-coding%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5/)
-- [OpenCode 配置优化记录](https://svtter.cn/p/opencode-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E8%AE%B0%E5%BD%95/)
-- [使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查](https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/)
-- [大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？](https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/)
 - [小型公司的私有云](https://svtter.cn/p/%E5%B0%8F%E5%9E%8B%E5%85%AC%E5%8F%B8%E7%9A%84%E7%A7%81%E6%9C%89%E4%BA%91/)
 - [最近发现好用的 MCP 工具](https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/)
-- [高效省钱：我的 AI Agent 工作流选择](https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/)
 - [编码性能与模型性价比分析](https://svtter.cn/p/%E7%BC%96%E7%A0%81%E6%80%A7%E8%83%BD%E4%B8%8E%E6%A8%A1%E5%9E%8B%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/)
-- [给 Claude Code 配置 Python UV 的 Hook 和 Skill](https://svtter.cn/p/%E7%BB%99-claude-code-%E9%85%8D%E7%BD%AE-python-uv-%E7%9A%84-hook-%E5%92%8C-skill/)
-- [在虚拟机上运行 Claude Code 实现自动化测试与开发](https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/)
 - [Hugo Admin - 轻量级 Hugo 博客管理界面](https://svtter.cn/p/hugo-admin-%E8%BD%BB%E9%87%8F%E7%BA%A7-hugo-%E5%8D%9A%E5%AE%A2%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/)
 - [用 Claude Code 开发 Fried Rice 主题](https://svtter.cn/p/%E7%94%A8-claude-code-%E5%BC%80%E5%8F%91-fried-rice-%E4%B8%BB%E9%A2%98/)
 - [CS146S 是一门好课程](https://svtter.cn/p/cs146s-%E6%98%AF%E4%B8%80%E9%97%A8%E5%A5%BD%E8%AF%BE%E7%A8%8B/)
@@ -206,16 +217,10 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 - [通过 spec kit 加强弱模型的表现](https://svtter.cn/p/%E9%80%9A%E8%BF%87-spec-kit-%E5%8A%A0%E5%BC%BA%E5%BC%B1%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A1%A8%E7%8E%B0/)
 - [豆包 doubao-seed-code 测试](https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/)
 - [一个划算的 kilocode 使用方法](https://svtter.cn/p/%E4%B8%80%E4%B8%AA%E5%88%92%E7%AE%97%E7%9A%84-kilocode-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/)
-- [我又买了 Kimi Coding Plan](https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/)
-- [Claude Code Plugin 使用体验](https://svtter.cn/p/claude-code-plugin-%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C/)
-- [[过期] 我现在更多的使用 GLM 4.6 了](https://svtter.cn/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/)
 - [Why Agent](https://svtter.cn/p/why-agent/)
 - [Real Time Html From Markdown](https://svtter.cn/p/real-time-html-from-markdown/)
 - [智谱 glm-4.5 在编程方面的若干问题](https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/)
-- [通过 docker 使用 claude code](https://svtter.cn/p/%E9%80%9A%E8%BF%87-docker-%E4%BD%BF%E7%94%A8-claude-code/)
-- [动态切换 Provider 的 Claude Code](https://svtter.cn/p/%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2-provider-%E7%9A%84-claude-code/)
 - [开源标注平台的选择](https://svtter.cn/p/%E5%BC%80%E6%BA%90%E6%A0%87%E6%B3%A8%E5%B9%B3%E5%8F%B0%E7%9A%84%E9%80%89%E6%8B%A9/)
-- [How to Use Claude Code With Deepseek](https://svtter.cn/p/how-to-use-claude-code-with-deepseek/)
 - [Qwen3 Coder Plus With Pydantic AI](https://svtter.cn/p/qwen3-coder-plus-with-pydantic-ai/)
 - [使用 Docker 来执行 MinerU](https://svtter.cn/p/%E4%BD%BF%E7%94%A8-docker-%E6%9D%A5%E6%89%A7%E8%A1%8C-mineru/)
 - [Rewrite Code With Roo Code](https://svtter.cn/p/rewrite-code-with-roo-code/)
@@ -617,5 +622,4 @@ The blog is built with Hugo and the Stack theme, featuring articles on:
 - [自己动手写操作系统阅读笔记（一）](https://svtter.cn/p/%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E5%86%99%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%E4%B8%80/)
 - [正则表达式](https://svtter.cn/p/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/)
 - [总结-2014年10月总结](https://svtter.cn/p/%E6%80%BB%E7%BB%93-2014%E5%B9%B410%E6%9C%88%E6%80%BB%E7%BB%93/)
-- [](https://svtter.cn/p/)
 - [](https://svtter.cn/p/)

@@ -1,0 +1,1897 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI 代码审查实践 on Svtter's Blog</title><link>https://svtter.cn/series/ai-%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%AE%9E%E8%B7%B5/</link><description>Recent content in AI 代码审查实践 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 16 Sep 2026 09:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/series/ai-%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml"/><item><title>同模型对照：OCR 与 pi-review-agent 的架构差距值多少分</title><link>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</link><pubDate>Wed, 16 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</guid><description>&lt;p&gt;简单说：差距挺大，但 pi-review-agent 并非一无是处——它更便宜，review 也更快。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由 zcode 协助跑实验。如果有问题，欢迎指正。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e8%b7%91-aacr-bench/" &gt;第一篇&lt;/a&gt;跑完 AACR-Bench 后留了个尾巴：
+pi-review-agent 8.1% 对 OCR 官方配 Deepseek-V4-Pro 的 17.9%，差距里混着模型档位和评测框架，没法回答“架构本身值多少分”。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;后面 pi-review-agent 简称为 pi。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这篇文章里，我把 OCR 拉到和 pi 完全相同的条件下重跑——同一个模型（mimo-v2.5，同一个 LiteLLM 代理）、同一个语义裁判（mimo-v2.5-pro）、同一批实例（两家都有结果的 152 个，1167 条参考标注）。&lt;/p&gt;
+&lt;h2 id="不同-frameworkbenchmark-对照"&gt;不同 framework/benchmark 对照
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th&gt;OCR + mimo-v2.5&lt;/th&gt;
+					&lt;th&gt;pi + mimo-v2.5&lt;/th&gt;
+					&lt;th&gt;倍差&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;生成意见数&lt;/td&gt;
+					&lt;td&gt;748&lt;/td&gt;
+					&lt;td&gt;751&lt;/td&gt;
+					&lt;td&gt;打平&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;行号 Precision&lt;/td&gt;
+					&lt;td&gt;44.0%&lt;/td&gt;
+					&lt;td&gt;16.1%&lt;/td&gt;
+					&lt;td&gt;2.7×&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;语义 Precision&lt;/td&gt;
+					&lt;td&gt;27.4%&lt;/td&gt;
+					&lt;td&gt;10.8%&lt;/td&gt;
+					&lt;td&gt;2.5×&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;语义 Recall&lt;/td&gt;
+					&lt;td&gt;17.6%&lt;/td&gt;
+					&lt;td&gt;6.9%&lt;/td&gt;
+					&lt;td&gt;2.5×&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;语义 F1&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;21.4%&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;8.4%&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;2.5×&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;行号 F1&lt;/td&gt;
+					&lt;td&gt;34.4%&lt;/td&gt;
+					&lt;td&gt;12.6%&lt;/td&gt;
+					&lt;td&gt;2.7×&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;token（同集）&lt;/td&gt;
+					&lt;td&gt;329M&lt;/td&gt;
+					&lt;td&gt;45M&lt;/td&gt;
+					&lt;td&gt;pi 省 7.3×&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;每语义命中 token&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;1.60M&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;0.55M&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;pi 便宜 2.9×&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;平均单实例耗时&lt;/td&gt;
+					&lt;td&gt;9.0 分钟&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;5.8 分钟&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;pi 快 1.5×&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;生成量打平是这张表最重要的控制变量：两家说的话一样多（748 对 751），
+差距全部落在“命中质量”上。同模型、同裁判、同题、同话量——
+&lt;strong&gt;2.5 倍就是两个架构的纯粹差距&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;两行 Precision 的含义：行号 P 是“意见落进某条标注的 ±1 行范围内”的比例，
+语义 P 是其中“内容和标注说的是同一个问题”的比例——后者是前者的子集。&lt;/p&gt;
+&lt;h2 id="三个发现"&gt;三个发现
+&lt;/h2&gt;&lt;h3 id="1-mimo-v25-表现比-deepseek-v4-pro-更好"&gt;1. mimo-v2.5 表现比 deepseek-v4-pro 更好
+&lt;/h3&gt;&lt;p&gt;OCR 配我们这个便宜模型拿到 21.4%，比它官方榜上配 Deepseek-V4-Pro 的 17.9% 还高（部分数据集失效，因此仅供参考）。规则引擎把高频缺陷模式硬编码、定位交给字符串匹配、LLM 只做剩下的语义推理——模型越便宜，这套确定性工程的杠杆越大。反过来，pi 这种 prompt 驱动的架构才吃模型：差距在弱模型上被放大。&lt;/p&gt;
+&lt;h3 id="2-差距出在找没找到不在说没说对"&gt;2. 差距出在“找没找到”，不在“说没说对”
+&lt;/h3&gt;&lt;p&gt;把语义 P 除以行号 P，就是“落对位置的意见里、说中问题”的比例：OCR 是 62%，pi 是 67%。这件事两家水平相当，pi 甚至略高。&lt;/p&gt;
+&lt;p&gt;而意见能落进标注范围的比例，pi 只有 16.1%，OCR 是 44.0%，差了近三倍。定位准不准、关注的缺陷类型对不对、以及 OCR 的规则库和这份标注出自同一家（天然“对题”），三者都压在这一步上，基准分不出各自占多少。对 pi 来说方向是明确的：补上确定性规则那层，“找到地方”和“说对话题”会一起受益。&lt;/p&gt;
+&lt;h3 id="3-单位成本差异"&gt;3. 单位成本差异
+&lt;/h3&gt;&lt;p&gt;每条有效命中，pi 便宜 2.9 倍、快 1.5 倍；OCR 准 2.5 倍。OCR 全程烧了 366M token，pi 只有 45M；两家的 token 都有约 9 成走前缀缓存价。&lt;/p&gt;
+&lt;h2 id="结论"&gt;结论
+&lt;/h2&gt;&lt;p&gt;这个系列到这里闭环：pi 的 8.4% 不是模型不够好，也不（主要）是输入不完整，是缺一层确定性工程。&lt;/p&gt;
+&lt;p&gt;好消息是方向从未如此具体——规则层可以从 OCR 的公开设计反推，bundling 的源码已经拆过，&lt;code&gt;related-context.ts&lt;/code&gt; 的 import 图就是现成的分组器。在补上这层之前，pi 的叙事是“质量-成本曲线上的低成本点”：每条有效意见便宜 3 倍、快一半，会话级记忆和成本可观测是基准考不出的差异。&lt;/p&gt;
+&lt;p&gt;数据与代码：&lt;a class="link" href="https://github.com/Svtter/aacr-bench/pull/1" target="_blank" rel="noopener"
+ &gt;实验记录全文&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>pi-review-agent 的架构比 Open Code Review 多了什么</title><link>https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/</link><pubDate>Mon, 14 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E6%AF%94-open-code-review-%E5%A4%9A%E4%BA%86%E4%BB%80%E4%B9%88/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-vs-ocr-arch-cover.jpg" alt="Featured image of post pi-review-agent 的架构比 Open Code Review 多了什么" /&gt;&lt;p&gt;&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e8%b7%91-aacr-bench/" &gt;上一篇&lt;/a&gt;里，我把 &lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;pi-review-agent&lt;/a&gt; 接上 AACR-Bench 跑了一轮：语义 F1 8.1%，距离 &lt;a class="link" href="https://github.com/alibaba/open-code-review" target="_blank" rel="noopener"
+ &gt;Open Code Review&lt;/a&gt;（OCR）配 Deepseek-V4-Pro 的 17.9% 差了 10 个点。&lt;/p&gt;
+&lt;p&gt;差距不小。但换个角度想，pi 的架构里有哪些 OCR 没有的东西？这值得单独盘一盘。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;OCR 在“把评审这件事本身做好”上（规则引擎、文件捆绑、评论定位）确实更强，下面列的是评测指标之外的结构性差异，每条尽量带实测或源码证据。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;总得来说，pi-review-agent 精度上确实不及 OCR，但胜在价格便宜、速度快；更重要的是，它的设计侧重点本来就不在基准考的那些维度上。下面逐项说。&lt;/p&gt;
+&lt;h2 id="1-跨-push-的评审记忆"&gt;1. 跨 push 的评审记忆
+&lt;/h2&gt;&lt;p&gt;pi 的会话是 PR 级持久的：append-only JSONL transcript 加 &lt;code&gt;actions/cache&lt;/code&gt; 恢复，
+同一个 PR 第二次 push 时，reviewer 知道“上次我提了什么、作者改了什么、哪些 issue 还没解决”。&lt;/p&gt;
+&lt;p&gt;OCR 的 &lt;code&gt;resume&lt;/code&gt; 是单次任务内的断点续审，中断了接着跑。它官方 GitHub Action 里其实也有跨 push
+的机制：&lt;code&gt;checkpoint_range&lt;/code&gt; 记录上次审到的 head，新 push 只审 &lt;code&gt;&amp;lt;checkpoint&amp;gt;..&amp;lt;新 head&amp;gt;&lt;/code&gt;；
+&lt;code&gt;incremental&lt;/code&gt; 读现有 bot 评论做重叠去重，不重贴旧意见（两者默认关闭）。但这些到不了会话级——
+reviewer 依然不知道作者对上次的意见改了什么、哪些 issue 还悬着。&lt;/p&gt;
+&lt;p&gt;所以差异从“有没有”降到了“多深”：pi 是会话级记忆，OCR 的连续性停在范围级。这仍是 pi 最早的设计动机之一。代价是会话管理的复杂度，收益是评审从“增量去重的快照”变成“持续对话”。&lt;/p&gt;
+&lt;p&gt;基准考不到这个：AACR 的每个实例都是孤立的单次评审，跨 push 记忆没有用武之地。&lt;/p&gt;
+&lt;h2 id="2-并行维度不同按视角切不是按文件切"&gt;2. 并行维度不同：按视角切，不是按文件切
+&lt;/h2&gt;&lt;p&gt;我读了 OCR 的捆绑源码（&lt;code&gt;internal/agent/grouping.go&lt;/code&gt;），它的分治是文件维度的：相关文件打成
+bundle，每个 bundle 一个同质的子 agent。&lt;/p&gt;
+&lt;p&gt;pi 则是视角维度的：quality / security / performance
+各自独立评审，再由 coordinator 仲裁——去重、severity 冲突取高、verdict 有降级链，任何 reviewer 缺席就强制 CANNOT MERGE（fail-closed）。同样一个问题，在三个视角下被独立地看三遍，再由仲裁层收敛。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;订正：在之前的描述里，我说 OCR 是完全基于规则的代码切分。从逻辑上也行不通。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;OCR README 把 “Smart file bundling” 列在“确定性工程”名下，但代码里 review 路径的语义分组默认是一次真的 LLM 调用（文件数 ≥4 触发，prompt 让模型输出 JSON 分组），真正纯代码的是骨架：阈值判定、每组 ≤10 文件、token 预算、失败回退。设计本质是“LLM 提议、代码裁决”。&lt;/p&gt;
+&lt;h2 id="3-缓存有效性"&gt;3. 缓存有效性
+&lt;/h2&gt;&lt;p&gt;pi 出生就是为了修 opencode 的 &lt;code&gt;tokens_cache_read&lt;/code&gt; 恒零 bug，所以逐 persona 的 input / cacheRead / cacheWrite / cost 进了每一条输出面：CI 步骤摘要、&lt;code&gt;GITHUB_OUTPUT&lt;/code&gt;、JSON payload、stats 事件，成本表还能按模型覆写。上一轮基准实测：66M token 里 88% 走缓存价，三个 persona 共享同一份 diff，前缀缓存让“重复输入”在计费上几乎免费。&lt;/p&gt;
+&lt;p&gt;多 persona 架构最被诟病的是“同样的话说三遍”。正确记账下，重复的是缓存价 token，增量的是视角。&lt;/p&gt;
+&lt;p&gt;OCR 报 token 相对量（号称降到通用 agent 的 1/9），但没有把“每条 finding 多少钱”做成可观测面。&lt;/p&gt;
+&lt;h2 id="4-拦截结果可见"&gt;4. 拦截结果可见
+&lt;/h2&gt;&lt;p&gt;pi 的两层 verifier（规则层查文件与行号、LLM 层拿 read+grep 核对意见正文）是 fail-open。在设计上，pi-review-agent 倾向于拿不准就保留，只对“确证错误”降级。被降级的 finding 连同理由渲染进 PR 折叠区，
+用户能看到“我们拦掉了什么、为什么拦”。OCR 有类似的定位/反思模块，但拦截结果没做到这个可见程度。&lt;/p&gt;
+&lt;p&gt;评审 agent 的结论反正要人过目，把为什么拦写给人看，不算多余的设计。&lt;/p&gt;
+&lt;h2 id="对比"&gt;对比
+&lt;/h2&gt;&lt;p&gt;OCR 的护城河在“把评审做好”：规则引擎、文件捆绑、定位工程、两年生产数据打磨，基准分是它的主场。
+pi 的护城河在“评审嵌入工作流的方式”：记忆续接、成本可见、视角可配。这些维度基准不考，但日常每天用得到。&lt;/p&gt;</description></item><item><title>pi-review-agent 跑 AACR-Bench</title><link>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</link><pubDate>Sun, 13 Sep 2026 23:30:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E8%B7%91-aacr-bench/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/14/pi-review-aacr-cover.jpg" alt="Featured image of post pi-review-agent 跑 AACR-Bench" /&gt;&lt;p&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;pi-review-agent&lt;/a&gt; 是我维护的多 persona AI code review
+agent，上一篇讲过它怎么&lt;a class="link" href="https://svtter.cn/p/pi-review-agent-%e6%98%af%e6%80%8e%e4%b9%88%e8%ae%b0%e4%bd%8f%e4%b8%8a%e4%b8%80%e6%ac%a1-review-%e7%9a%84/" &gt;跨 run 续接会话&lt;/a&gt;。
+我自己的几个项目——包括 pi-review-agent 和 pi-review-dashboard——日常代码评审都跑在它上面。&lt;/p&gt;
+&lt;p&gt;最近注意到阿里的 &lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
+ &gt;AACR-Bench&lt;/a&gt;：166 个真实 GitHub PR、1231 条专家验证的评审标注。正好拿它测一测 pi-review-agent 的评审水平，也给后续怎么安排 review 工作一个量化依据。&lt;/p&gt;
+&lt;p&gt;这篇文章记录实验全程：怎么接入、分数多少、三个跑完才发现的意外。先说结论：语义 F1 8.1%，和 Codex + GPT-5.5 同档，距离 Open Code Review + Deepseek-V4-Pro 的 17.9% 还有 10 个百分点。分数不算亮眼，但它便宜——模型用的是便宜一档的 mimo-v2.5。&lt;/p&gt;
+&lt;p&gt;便宜模型跑 review 是不是好买卖，我到现在也没完全想清楚，但至少账算得明白。而且实验本身比分数有用：好几个“差距来自哪里”的假设，跑完都被证伪了。&lt;/p&gt;
+&lt;h2 id="接入一次-pr-加一个-reviewer-模块"&gt;接入：一次 PR 加一个 reviewer 模块
+&lt;/h2&gt;&lt;p&gt;pi-review-agent 原本强依赖 GitHub/Gitea 环境，PR 评论就是它的输出面；基准 harness 要的却是
+无头模式：给一个 commit 对，吐出结构化 findings。改动有两处：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给 agent 加了 &lt;code&gt;--format json&lt;/code&gt; 免平台模式（&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/pull/70" target="_blank" rel="noopener"
+ &gt;PR #70&lt;/a&gt;）：
+不再要求 &lt;code&gt;--pr&lt;/code&gt;、不建平台适配器、不发评论，stdout 输出单个 JSON，包含验证过的 findings、
+逐 persona 用量和 verdict/severity。&lt;code&gt;--session-key&lt;/code&gt; 顶替 PR 号做会话隔离，消毒后落盘，
+防止 benchmark 多实例互相串会话。&lt;/li&gt;
+&lt;li&gt;照着 harness 里 codex reviewer 的模板写了 &lt;code&gt;reviewers/pi.py&lt;/code&gt;：克隆仓库、checkout 到 head、
+&lt;code&gt;git diff base head&lt;/code&gt; 喂进去，把 payload 包成标准结果文件。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接入时顺手做了反作弊审计：评审器收到的输入只有 diff 和仓库工作区，参考标注从不进入任何输入；
+工具面只有 read 和 grep，没有 shell 和网络。跑完又对生成意见和参考标注算了 3-gram 重叠：
+最高 0.31、中位数 0，是“各自表述同一个问题”的形态，不是背题。&lt;/p&gt;
+&lt;h2 id="成绩单"&gt;成绩单
+&lt;/h2&gt;&lt;p&gt;166/196 个实例进了评测。30 个实例的 PR 被 rebase 过，head commit 在 GitHub 上已不可达，剔出分母；
+官方基线同样受此约束。语义匹配的判定链：文件相同 → diff 侧相同 → 行号 ±1 → judge 模型
+判定语义一致。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;评审器&lt;/th&gt;
+					&lt;th&gt;模型&lt;/th&gt;
+					&lt;th&gt;语义 P&lt;/th&gt;
+					&lt;th&gt;语义 R&lt;/th&gt;
+					&lt;th&gt;语义 F1&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;pi-review-agent（终版）&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;mimo-v2.5&lt;/td&gt;
+					&lt;td&gt;10.2%&lt;/td&gt;
+					&lt;td&gt;6.7%&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;8.1%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OCR&lt;/td&gt;
+					&lt;td&gt;Deepseek-V4-Pro&lt;/td&gt;
+					&lt;td&gt;30.6%&lt;/td&gt;
+					&lt;td&gt;12.7%&lt;/td&gt;
+					&lt;td&gt;17.9%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OCR&lt;/td&gt;
+					&lt;td&gt;Claude-4.6-Opus&lt;/td&gt;
+					&lt;td&gt;33.9%&lt;/td&gt;
+					&lt;td&gt;20.0%&lt;/td&gt;
+					&lt;td&gt;25.1%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Claude Code&lt;/td&gt;
+					&lt;td&gt;Claude-4.6-Opus&lt;/td&gt;
+					&lt;td&gt;7.2%&lt;/td&gt;
+					&lt;td&gt;28.9%&lt;/td&gt;
+					&lt;td&gt;11.6%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Codex&lt;/td&gt;
+					&lt;td&gt;GPT-5.5&lt;/td&gt;
+					&lt;td&gt;27.8%&lt;/td&gt;
+					&lt;td&gt;4.9%&lt;/td&gt;
+					&lt;td&gt;8.4%&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;（官方数字来自 OCR 仓库排行榜，各家的数据集、模型与 judge 不完全一致，只供量级参照。）&lt;/p&gt;
+&lt;p&gt;两个读数。一是 P/R 均衡（10/6.7），不像 Claude Code 靠刷召回（7/29），也不像 Codex 偏科精确（28/5）。
+二是行号 F1（12.5%）高于语义 F1：模型经常站对了行，但对“这行有什么问题”的判断和专家不一致。
+OCR 用规则引擎硬编码高频缺陷模式，多半就是不信任模型的这部分直觉。&lt;/p&gt;
+&lt;p&gt;表里看不出来的还有成本。mimo-v2.5 对位的是别家旗舰，本身便宜不少；多 persona 重复的 diff
+输入又被前缀缓存基本吃掉，295 次实例评审的总账单只有 66M token，88% 按 cacheRead 计价（细账见意外三）。
+所以对这套组合的诚实评价是：评审能力确实不算强，但它花的钱也少。卖的是性价比，不是绝对分数。&lt;/p&gt;
+&lt;h2 id="意外一截断不是主因"&gt;意外一：截断不是主因
+&lt;/h2&gt;&lt;p&gt;pi-review-agent 默认 &lt;code&gt;--diff-max-size-kb 200&lt;/code&gt;。考古了一下，这个值当初是为了防 LiteLLM 代理的
+HTTP 413（6MB 的 dist bundle 曾经直接打挂全部 reviewer），不是按模型上下文算的。基准里
+47.6% 的实例（79/166）被这个默认值截断，我一开始把低分主要归咎于此，于是放开预算重跑这 79 个：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;预算档&lt;/th&gt;
+					&lt;th&gt;实例&lt;/th&gt;
+					&lt;th&gt;有效率&lt;/th&gt;
+					&lt;th&gt;findings&lt;/th&gt;
+					&lt;th&gt;结果&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;200KB&lt;/td&gt;
+					&lt;td&gt;166&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;796&lt;/td&gt;
+					&lt;td&gt;79 个被截断，基准 F1 7.6%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;1MB&lt;/td&gt;
+					&lt;td&gt;79&lt;/td&gt;
+					&lt;td&gt;37%&lt;/td&gt;
+					&lt;td&gt;147&lt;/td&gt;
+					&lt;td&gt;大面积超时（见意外二）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;400KB&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;276&lt;/td&gt;
+					&lt;td&gt;全部有效&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;合并终版&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;166&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;802&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;F1 8.1%，只涨了 0.5 个点&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;1231 条参考标注里，放开截断只多命中 5 条。模型看到了完整代码，依然没把问题挑出来。
+瓶颈在检出能力，不在输入完整性。直觉会高估“给模型更多上下文”的收益——这是这次实验最贵的一课，
+学费约 4000 万 token。相关讨论记在
+&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/71" target="_blank" rel="noopener"
+ &gt;issue #71&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="意外二1mb-输在时间不在容量"&gt;意外二：1MB 输在时间，不在容量
+&lt;/h2&gt;&lt;p&gt;1MB 批 63% 的实例三个 persona 全军覆没，错误是 &lt;code&gt;Request timed out.&lt;/code&gt;。第一反应是代理扛不住。
+直接拿 28.6 万 token 的请求打代理实测：预填充 32 秒完成，没有 413 也没有掐断，链路容量根本不是问题。&lt;/p&gt;
+&lt;p&gt;真凶是超时栈里藏着的两层。&lt;code&gt;--timeout-seconds 1800&lt;/code&gt; 只是外层评审超时；provider 里的 OpenAI SDK
+还有一个默认 600 秒的内层请求超时，不可配置，也不随外层传播。mimo 是推理模型，30 万 token
+的上下文上要先生成长推理链再写评审，单请求轻松超过 10 分钟，内层先爆，重试再爆。400KB 档
+输入砍半，生成时间落回安全区，100% 存活。所谓“400KB 甜点”就是这么来的：它不愁容量，愁的是时间。
+修复方向（超时传播 + 报错区分两层）记在
+&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/72" target="_blank" rel="noopener"
+ &gt;issue #72&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="意外三88-的-token-走了缓存价"&gt;意外三：88% 的 token 走了缓存价
+&lt;/h2&gt;&lt;p&gt;全项目总账，295 次实例评审：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;批次&lt;/th&gt;
+					&lt;th&gt;实例&lt;/th&gt;
+					&lt;th&gt;findings&lt;/th&gt;
+					&lt;th&gt;非缓存输入&lt;/th&gt;
+					&lt;th&gt;输出&lt;/th&gt;
+					&lt;th&gt;cacheRead&lt;/th&gt;
+					&lt;th&gt;小计&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;全量首轮（200KB）&lt;/td&gt;
+					&lt;td&gt;166&lt;/td&gt;
+					&lt;td&gt;796&lt;/td&gt;
+					&lt;td&gt;1.2M&lt;/td&gt;
+					&lt;td&gt;1.0M&lt;/td&gt;
+					&lt;td&gt;24.1M&lt;/td&gt;
+					&lt;td&gt;26.3M&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;补跑 1MB&lt;/td&gt;
+					&lt;td&gt;79&lt;/td&gt;
+					&lt;td&gt;147&lt;/td&gt;
+					&lt;td&gt;3.7M&lt;/td&gt;
+					&lt;td&gt;0.2M&lt;/td&gt;
+					&lt;td&gt;16.4M&lt;/td&gt;
+					&lt;td&gt;20.3M&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;补跑 400KB&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;276&lt;/td&gt;
+					&lt;td&gt;0.2M&lt;/td&gt;
+					&lt;td&gt;0.3M&lt;/td&gt;
+					&lt;td&gt;18.9M&lt;/td&gt;
+					&lt;td&gt;19.5M&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;合计&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;295&lt;/td&gt;
+					&lt;td&gt;1219&lt;/td&gt;
+					&lt;td&gt;5.2M&lt;/td&gt;
+					&lt;td&gt;1.5M&lt;/td&gt;
+					&lt;td&gt;59.4M&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;66.1M（缓存占 88%）&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;66M token 里 88% 是 cacheRead。三个 persona 共享同一份 diff，DeepSeek 式前缀缓存让第二、
+第三个 persona 的 diff 部分几乎全价打折。换句话说，多 persona 架构最被诟病的“重复输入”，
+在正确的计费口径下基本免费。pi-review-agent 的 cacheRead 记账（当初是为了修
+opencode 的 &lt;code&gt;tokens_cache_read&lt;/code&gt; 恒零 bug 做的设计）也因此第一次在外部基准上拿到实据。
+OCR 的榜单只报 token 相对量，没有这层账。&lt;/p&gt;
+&lt;h2 id="局限"&gt;局限
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;judge 同源：语义裁判是 mimo-v2.5-pro，判 mimo-v2.5 的输出，松紧未知；行号指标不受此影响。&lt;/li&gt;
+&lt;li&gt;模型归因：分数上看，mimo-v2.5 和榜上别家旗舰差 10 个点，但模型和架构各贡献多少还没分离。
+干净的归因要用 OCR + mimo 同模型同代理跑同样本，这是下一步。&lt;/li&gt;
+&lt;li&gt;出题人问题：AACR-Bench 和 OCR 同出阿里，标注口径天然贴近 OCR 规则引擎的输出形态。
+它是合格的工程基准（开源、专家交叉验证、强基线同 harness），但“绝对名次”要打折读。&lt;/li&gt;
+&lt;li&gt;30 个不可达实例带着全数据集约四成参考标注，评测子集偏小。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="下一步"&gt;下一步
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;OCR + mimo-v2.5 同条件对照，把“架构值多少分”归因干净；&lt;/li&gt;
+&lt;li&gt;修 &lt;a class="link" href="https://github.com/sun-praise/pi-review-agent/issues/72" target="_blank" rel="noopener"
+ &gt;#72&lt;/a&gt;（超时传播），用真实的长超时
+重测 1MB 档，补全“预算-超时-覆盖”这个三角；&lt;/li&gt;
+&lt;li&gt;更远的事：超大 diff 的文件捆绑分治。OCR 用代码做 bundle、agent 只管推理，这套思路
+和 pi 的 related-context import 图可以拼起来。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;数据都在本地：&lt;code&gt;aacr-bench/evaluation/results/&lt;/code&gt;（逐实例结果 JSON）、&lt;code&gt;evaluation/PI_AACR_RESULTS.md&lt;/code&gt;（汇总表）、
+&lt;code&gt;reviewers/pi.py&lt;/code&gt;（评审器接入，在 aacr-bench 的 &lt;code&gt;pi-reviewer&lt;/code&gt; 分支）。基准本身在
+&lt;a class="link" href="https://github.com/alibaba/aacr-bench" target="_blank" rel="noopener"
+ &gt;alibaba/aacr-bench&lt;/a&gt;，模型是自建 LiteLLM 代理上的 mimo-v2.5。
+有想法欢迎去 pi-review-agent 的 issue 区聊。&lt;/p&gt;</description></item><item><title>pi-review-agent 是怎么"记住"上一次 review 的</title><link>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</link><pubDate>Sun, 28 Jun 2026 23:10:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3001d2974b19c745.png" alt="Featured image of post pi-review-agent 是怎么"记住"上一次 review 的" /&gt;&lt;p&gt;AI code review 的 GitHub Action 里，&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;pi-review-agent&lt;/a&gt; 有一个不太显眼但很关键的设计——&lt;strong&gt;跨 CI run 续接每个 reviewer 的会话&lt;/strong&gt;：同一个 PR 第二次推送时，reviewer 知道&amp;quot;上次我提了什么、作者改了什么、哪些 issue 还没解决&amp;quot;，而不是每次从零开始。&lt;/p&gt;
+&lt;p&gt;这篇文章拆开它的实现：上一次的对话记录落在哪、下一次 run 怎么加载回来、新 diff 怎么接进去，以及最关键的——为什么非要这么折腾。&lt;/p&gt;
+&lt;h2 id="为什么需要记住上一次"&gt;为什么需要&amp;quot;记住上一次&amp;quot;
+&lt;/h2&gt;&lt;p&gt;两个动机，一个是功能上的，一个是钱。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;功能上&lt;/strong&gt;：增量 review 需要上下文。同一个 PR 第 N 次推送时，reviewer 应该知道&amp;quot;上次我提了什么、作者改了什么、哪些 issue 还没解决&amp;quot;。无状态的 review 每次从零开始，会反复报相同的问题，会漏掉跨 commit 才看得出的 regression。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;钱&lt;/strong&gt;：DeepSeek 做 content-addressed prefix caching——如果请求的前缀（system prompt + 历史对话）和上一次完全一样，这部分 token 按缓存价计费。每次 review 都能把上一轮的 system prompt + history 完整重放给模型，那部分前缀就命中缓存，按 DeepSeek 公开定价里 cached token 大约是普通 input 的 &lt;strong&gt;2%&lt;/strong&gt;（input $0.14/1M，cacheRead $0.0028/1M）计费。PR review 这种高频、长 prompt、内容高度重叠的场景，省下来的钱是实打实的。&lt;/p&gt;
+&lt;p&gt;但这里有个坑：不是所有 OpenAI-compatible 路径都把 &lt;code&gt;cacheRead&lt;/code&gt; 透传出来。opencode 的 openai-compatible 适配层会把它丢成 0（anomalyco/opencode#34022），于是即便上游真的命中了缓存、真的便宜了，账单上也看不出来，更糟的是 agent 自己的 cost 计算会按全价走。pi-review-agent 用 pi-ai 这个库，&lt;code&gt;cacheRead&lt;/code&gt; 字段一路上到 &lt;code&gt;usage&lt;/code&gt;，cost 表也单独列了 &lt;code&gt;cacheRead&lt;/code&gt; 折扣价——这是这个项目存在的直接理由。&lt;/p&gt;
+&lt;p&gt;所以&amp;quot;记住上一次&amp;quot;不只是为了 review 质量，更是为了让 prefix cache 真的能命中、命中的钱真的能省下来。&lt;/p&gt;
+&lt;h2 id="整体数据流"&gt;整体数据流
+&lt;/h2&gt;&lt;pre class="mermaid" style="visibility:hidden"&gt;flowchart LR
+ subgraph "CI run #1 (PR #42, 第一次推送)"
+ A1[gh pr diff] --&gt; B1[prepareDiff 过滤]
+ B1 --&gt; C1[runReview]
+ C1 --&gt;|"新建 Agent, messages=[]"| D1[DeepSeek]
+ D1 --&gt; E1["appendTranscript
+ 42/quality.jsonl"]
+ end
+
+ subgraph "actions/cache"
+ F[(pi-review-session
+ repo-42-run_id_1)]
+ end
+ E1 -.save.-&gt; F
+
+ subgraph "CI run #2 (PR #42, 第二次推送)"
+ F -.restore by prefix.-&gt; G["sessions/
+ 42/quality.jsonl"]
+ A2[gh pr diff 新版] --&gt; B2[prepareDiff]
+ B2 --&gt; C2[runReview]
+ G --&gt;|loadTranscript 当 seed| C2
+ C2 --&gt;|messages=旧transcript| H2[DeepSeek 命中 prefix cache]
+ C2 --&gt;|prompt 追加新 diff| H2
+ H2 --&gt; E2["appendTranscript
+ 追加到同一文件"]
+ end&lt;/pre&gt;&lt;p&gt;三个阶段：&lt;strong&gt;落盘 → 跨 run 搬运 → 加载注入&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id="1-落盘一个-pr-一个目录一个-persona-一个-jsonl"&gt;1. 落盘：一个 PR 一个目录，一个 persona 一个 jsonl
+&lt;/h2&gt;&lt;p&gt;存储布局很简单，&lt;code&gt;src/review.ts&lt;/code&gt; 里 &lt;code&gt;sessionFile()&lt;/code&gt; 决定路径：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;sessionsRoot&amp;gt;/&amp;lt;pr&amp;gt;/&amp;lt;persona&amp;gt;.jsonl
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;每个 &lt;code&gt;(pr, persona)&lt;/code&gt; 一个文件，JSONL，每行一个 &lt;code&gt;AgentMessage&lt;/code&gt;。user / assistant / tool_use / tool_result 全部混在一起按时间顺序排。append-only——只追加不改写：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;appendTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;block&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stringify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;appendFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;block&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;(pr, persona)&lt;/code&gt; 这个二维 key 的选择是有意的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;pr 维度&lt;/strong&gt;隔离不同 PR 的上下文（不能让 PR #42 的 review 记忆串到 PR #43）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;persona 维度&lt;/strong&gt;隔离同一 PR 内不同 reviewer 的上下文（quality reviewer 不该看到 security reviewer 的对话）&lt;/li&gt;
+&lt;li&gt;team 模式下的 coordinator 也是一个&amp;quot;persona&amp;quot;，名字就叫 &lt;code&gt;&amp;quot;coordinator&amp;quot;&lt;/code&gt;，文件 &lt;code&gt;coordinator.jsonl&lt;/code&gt;——它也走同一套 resume 路径&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="2-跨-ci-run-搬运actionscache-的-key-设计"&gt;2. 跨 CI run 搬运：actions/cache 的 key 设计
+&lt;/h2&gt;&lt;p&gt;CI run 之间是无状态的——每次跑在一个全新的 runner 上，文件系统是空的。要让上一次的 jsonl 跨 run 活下来，靠 &lt;code&gt;action.yml&lt;/code&gt; 里这两步：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Restore review session&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;actions/cache@v5&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ ... }}/.pi-review-sessions&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;pi-review-session-${{ github.repository }}-${{ steps.pr.outputs.pr }}-${{ github.run_id }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restore-keys&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; pi-review-session-${{ github.repository }}-${{ steps.pr.outputs.pr }}-&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个 key 设计是整个机制的精妙之处，看一眼可能觉得理所当然，其实每个字段都有用意：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;key&lt;/code&gt; 带 &lt;code&gt;github.run_id&lt;/code&gt;&lt;/strong&gt;：run_id 每次 run 都唯一。这意味着 &lt;code&gt;key&lt;/code&gt; 永远不会精确命中自己——save 总是新建一个 cache entry。如果去掉 run_id，第二次 run 会 restore 命中第一次的 entry，然后 save 时 actions/cache 发现 key 没变就跳过写回，新追加的 transcript 就丢了。带 run_id 强制每次都写。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;restore-keys&lt;/code&gt; 只有前缀（不带 run_id）&lt;/strong&gt;：精确 key 永远 miss，但前缀匹配会把这个 PR &lt;strong&gt;最近一次成功 run&lt;/strong&gt; 的 sessions 目录还原回来。这就是&amp;quot;续接&amp;quot;的实际机制。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;github.repository&lt;/code&gt; 在 key 里&lt;/strong&gt;：fork 的 PR 不会串到上游 repo 的 session（cache 是 repo scope 的，但写上更明确）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;pr 在 key 里，persona/team 不在&lt;/strong&gt;：一个 cache entry 装下这个 PR 的所有 reviewer + coordinator（persona 编码在文件名里）。这样 cache hit 率最高。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;粒度是 &lt;code&gt;(repo, pr)&lt;/code&gt;，不是 &lt;code&gt;(repo, pr, persona)&lt;/code&gt;。如果按 persona 拆 cache entry，N 个 persona 就要 N 次 cache round-trip；现在一次 restore 把整个目录搬回来。&lt;/p&gt;
+&lt;h2 id="3-加载--注入transcript-当种子diff-当新-user-turn"&gt;3. 加载 + 注入：transcript 当种子，diff 当新 user turn
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;runReview()&lt;/code&gt; 是核心。每次调用（每个 persona、每次 run）都走这套：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;runReview&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;file&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;sessionFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;transcript&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;loadTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 不存在 → []
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;resumed&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;transcript&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;attempt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;attempt&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="nx"&gt;maxAttempts&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;attempt&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;agent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Agent&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;initialState&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;tools&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;: &lt;span class="kt"&gt;transcript&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// ← 上轮 transcript 整段当种子
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;sessionId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;streamFn&lt;/span&gt;: &lt;span class="kt"&gt;...&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;done&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;collectFromAgent&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sb"&gt;`Review this diff:&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="sb"&gt;n&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="sb"&gt;n&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;diff&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// ← 新 diff 作为下一条 user turn
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;collected&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;done&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;appendTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 只追加本轮新增的消息
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;usage&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;resumed&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;两步，泾渭分明：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;a. transcript 作为种子塞进 Agent 的 initialState&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;new Agent({ initialState: { messages: transcript } })&lt;/code&gt; 把上一轮的完整对话历史（user + assistant + tool_use + tool_result）作为这个 agent 的初始 messages。从模型的角度看，它&amp;quot;以为&amp;quot;自己刚才已经聊过这些——因为 DeepSeek 做 content-addressed prefix caching，这段重放的前缀会命中缓存，&lt;code&gt;usage.cacheRead &amp;gt; 0&lt;/code&gt;，命中部分按 2% 计费。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;b. 新 diff 作为新的 user turn 接在后面&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;agent.prompt(&amp;quot;Review this diff:\n\n&amp;quot; + diff)&lt;/code&gt; 在 pi-agent-core 里就是把传入文本当作下一条 user message 追加到 messages 末尾然后发起流。所以续接的形状是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;seeded&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;上轮&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;上轮&lt;/span&gt; &lt;span class="n"&gt;assistant&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;上轮&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Review this diff:&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;lt;本轮新 diff&amp;gt;&amp;#34;&lt;/span&gt; &lt;span class="err"&gt;←&lt;/span&gt; &lt;span class="err"&gt;新注入的&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="n"&gt;turn&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;模型看到的是一段连续对话，它的&amp;quot;记忆&amp;quot;完全来自重放的 transcript，不需要任何特殊的 memory API 或向量检索。&lt;/p&gt;
+&lt;p&gt;diff 本身的来历：&lt;code&gt;action.yml&lt;/code&gt; 里先 &lt;code&gt;gh pr diff&lt;/code&gt;（失败回退到 GitHub pulls API 的 &lt;code&gt;.diff&lt;/code&gt; 端点）落到 &lt;code&gt;$RUNNER_TEMP/pi-review-diff.txt&lt;/code&gt; → &lt;code&gt;index.ts&lt;/code&gt; 的 &lt;code&gt;prepareDiff()&lt;/code&gt; 过滤（锁文件必砍、&lt;code&gt;diff-exclude&lt;/code&gt; glob、&lt;code&gt;diff-max-size-kb&lt;/code&gt; 字节预算 + 超了就截断并附 notice）→ 作为 &lt;code&gt;opts.diff&lt;/code&gt; 传进 &lt;code&gt;runReview&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id="几个容易写错的地方"&gt;几个容易写错的地方
+&lt;/h2&gt;&lt;p&gt;这套机制能稳，靠的是几个容易写错的地方都写对了：&lt;/p&gt;
+&lt;h3 id="只持久化成功-attempt-的消息"&gt;只持久化成功 attempt 的消息
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Only persist the transcript of a successful attempt — a partial
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// transcript from a failed run would poison the next session&amp;#39;s cache
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// prefix and confuse the resume path.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;appendTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;retry 循环里，&lt;code&gt;appendTranscript&lt;/code&gt; 只在成功路径调用。一次 attempt 失败（流断了、超时了、429 了），它产生的 &lt;code&gt;newMessages&lt;/code&gt; 直接丢弃。原因在注释里：半截 transcript 写进去，下一轮 resume 时它成了 prefix 的一部分，但这段 prefix 对应的是一个&lt;strong&gt;没有正常结束&lt;/strong&gt;的对话——模型上下文是断的，而且 DeepSeek 的 prefix cache 是按内容寻址的，下次重放这段坏 prefix 还是会&amp;quot;命中&amp;quot;，但模型看到的就是一个没 assistant 回复就突然冒出新的 user turn 的怪状态。宁可丢这次重试的产物，也要保证落盘的 transcript 是干净完整的。&lt;/p&gt;
+&lt;h3 id="retry-每次都新建-agent但种子不变"&gt;retry 每次都新建 Agent，但种子不变
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Fresh Agent per attempt: a half-run agent after a stream error is
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// not safe to continue. The transcript seed is replayed each time;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// DeepSeek&amp;#39;s prefix cache absorbs the replay at a discount.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;agent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Agent&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;一个流出错的 agent 内部状态是脏的（可能停在 tool_use 还没等到 tool_result 的中间态），继续用它会触发各种边界 bug。所以每次 retry 都新建一个干净的 Agent，把同一份 &lt;code&gt;transcript&lt;/code&gt; 种子重放进去。种子不变意味着 prefix cache 仍然命中——retry 不是免费的，但也是打折的。&lt;/p&gt;
+&lt;h3 id="coordinator-也走-resume"&gt;coordinator 也走 resume
+&lt;/h3&gt;&lt;p&gt;前面提过，coordinator 是一个 persona 名为 &lt;code&gt;&amp;quot;coordinator&amp;quot;&lt;/code&gt; 的 reviewer，文件 &lt;code&gt;&amp;lt;pr&amp;gt;/coordinator.jsonl&lt;/code&gt;，跨 run 同样续接。但它的&amp;quot;diff&amp;quot;不是 git diff——&lt;code&gt;orchestrate.ts&lt;/code&gt; 里 &lt;code&gt;buildCoordinatorInput()&lt;/code&gt; 把各 persona 本轮的 review 结果拼成一段文本作为它的输入。所以 coordinator 的&amp;quot;记忆&amp;quot;是&amp;quot;我上轮综合了哪些 persona 的什么结论&amp;quot;，这让它能在新一轮判断&amp;quot;哪些 issue 是新出的、哪些是没解决的&amp;quot;。&lt;/p&gt;
+&lt;h3 id="fail-closed"&gt;fail-closed
+&lt;/h3&gt;&lt;p&gt;如果一个 persona reviewer 整个挂了（产不出内容），&lt;code&gt;runTeamReview&lt;/code&gt; 不是当它&amp;quot;通过&amp;quot;，而是把 verdict 强制改成 &lt;code&gt;CANNOT MERGE&lt;/code&gt;。证据缺失不等于没证据——reviewer 没说话比 reviewer 说&amp;quot;没问题&amp;quot;危险得多。&lt;/p&gt;
+&lt;h2 id="为什么这套设计能省钱把数字摆出来"&gt;为什么这套设计能省钱：把数字摆出来
+&lt;/h2&gt;&lt;p&gt;provider 配置（&lt;code&gt;src/provider.ts&lt;/code&gt;）里 DeepSeek 的 cost 表：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;cost&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;input&lt;/span&gt;: &lt;span class="kt"&gt;0.14&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 普通 input，$ / 1M tokens
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;output&lt;/span&gt;: &lt;span class="kt"&gt;0.28&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cacheRead&lt;/span&gt;: &lt;span class="kt"&gt;0.0028&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 命中缓存的 input，input 的 2%
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cacheWrite&lt;/span&gt;: &lt;span class="kt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;pi-ai 的 &lt;code&gt;calculateCost()&lt;/code&gt; 自动把 &lt;code&gt;usage.cacheRead&lt;/code&gt; 乘上 &lt;code&gt;cost.cacheRead&lt;/code&gt;。所以一个 PR 第二次推送时：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;system prompt（可能几千 token 的 persona 指南 + 语言指令）+ 上一轮 transcript（reviewer 的 reasoning、读过的文件、grep 结果）这部分前缀全部命中 cache，按 $0.0028/1M 计费&lt;/li&gt;
+&lt;li&gt;只有本轮新增的 diff（通常几百到几千 token）按 $0.14/1M&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对一个 review 频繁、persona prompt 又长（quality/security/performance 各一套几千 token 指南）的项目，第二轮开始的 review 成本能降到第一轮的零头。&lt;/p&gt;
+&lt;h2 id="一句话总结"&gt;一句话总结
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;jsonl 当 seed 重放（吃 prefix cache）+ 新 diff 当下一条 user turn 追加&lt;/strong&gt;——这就是 pi-review-agent&amp;quot;加载历史 + 注入新改动&amp;quot;的全部机制。没有向量数据库，没有 memory API，没有 embedding，就是一个 append-only 的 JSONL 文件 + actions/cache 的前缀模糊命中 + pi-agent-core 的 &lt;code&gt;initialState.messages&lt;/code&gt;。简单到几乎不像一个&amp;quot;记忆系统&amp;quot;，但它正好踩中了 prefix caching 的甜点，顺便把账单打了折。&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
+ &gt;pi-review-agent&lt;/a&gt; — 项目仓库&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Advisor：挂在主会话上的只读审查 Agent</title><link>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</link><pubDate>Tue, 16 Jun 2026 13:27:40 +0800</pubDate><guid>https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/87049b8bd48ccecd.png" alt="Featured image of post Advisor：挂在主会话上的只读审查 Agent" /&gt;&lt;blockquote&gt;
+ &lt;p&gt;这篇文章我们还是聊 OMP（oh my pi）。
+实现细节、配置项与 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现机制见 &lt;a class="link" href="./advisor-watchdog.md" &gt;&lt;code&gt;advisor-watchdog.md&lt;/code&gt;&lt;/a&gt;。
+赞美创新。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;p&gt;Claude Code 似乎已经内置这个功能。（Auto mode），但是介入的时机和 OMP 有区别。OMP 通过 &lt;code&gt;/advisor&lt;/code&gt; 来启用。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;术语：turn 指的是一轮操作；可以是 bash 命令，也可以是一次对话。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;coding agent 在长任务中常反复出现一类问题：走错方向、遗漏边界条件、调用不存在的 API、在错误的抽象上继续投入。这些问题事后 review 时容易发现，但在当前的 turn 中很难被 LLM 自己察觉。&lt;/p&gt;
+&lt;p&gt;OMP 的主会话已包含完整 transcript、assistant 私有 thinking、工具调用及结果，足以让一个旁观者判断「当前这一步是否值得继续」。缺少的不是更强的执行者，而是一个独立的、只读的、能在 turn 边界给出意见的角色。&lt;/p&gt;
+&lt;p&gt;我想正是因为如此，从引入 Advisor：挂载在主会话上的第二模型，&lt;strong&gt;默认关闭&lt;/strong&gt;，开启后每个 turn 结束时自动接收 transcript 增量，用只读工具核查，再把建议&lt;strong&gt;注入回主会话&lt;/strong&gt;。边界是只读、不执行、不直接改状态。&lt;/p&gt;
+&lt;h3 id="callback"&gt;Callback
+&lt;/h3&gt;&lt;p&gt;我之前有说 &lt;a class="link" href="https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/" &gt;本地review便宜方案&lt;/a&gt;。但是实际跑下来发现两个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;占用 token 资源。daemon 还是太昂贵了。&lt;/li&gt;
+&lt;li&gt;没有很好的交互机制。不如 omp。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="实践"&gt;实践
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;模型智力差不多的时候（例如都是同一个模型），在执行的时候能及时纠错。&lt;/li&gt;
+&lt;li&gt;Advisor 较弱的时候，会给出一些错误的提醒，但是偶尔也会说正确的事情。各半。&lt;/li&gt;
+&lt;li&gt;Advisor 强的情况暂未测试。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以下是机制分析，不读也可以。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="角色边界"&gt;角色边界
+&lt;/h2&gt;&lt;p&gt;OMP 如何定义 advisor。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;只读，不是第二执行者。&lt;/strong&gt; Advisor 不能编辑文件、不能跑命令、不能批准操作、不能改 session 状态（&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 明确「It is not a second executor」）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;建议可被主 agent 读到，私有上下文读不到。&lt;/strong&gt; Advisor 给出的 &lt;code&gt;note&lt;/code&gt; 会注入主会话 transcript 或 steering channel；但 Advisor 自己的 system prompt、私有 thinking、&lt;code&gt;WATCHDOG.md&lt;/code&gt; 不进主 agent 上下文。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不审查自己。&lt;/strong&gt; 渲染下一轮增量前，已注入的 &lt;code&gt;advisor&lt;/code&gt; 类型消息会被过滤掉，避免递归审查。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这三条决定了 Advisor 的形态：一个能说话、但不能动手的旁观者。&lt;/p&gt;
+&lt;p&gt;就像是你的结对编程伙伴。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="运行机制"&gt;运行机制
+&lt;/h2&gt;&lt;p&gt;Advisor 的触发不是主 agent 主动调用，而是 &lt;strong&gt;turn-end 驱动的后台运行&lt;/strong&gt;。一次完整循环落在 &lt;code&gt;AdvisorRuntime&lt;/code&gt;（&lt;code&gt;src/advisor/runtime.ts&lt;/code&gt;）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;主&lt;/span&gt; &lt;span class="n"&gt;agent&lt;/span&gt; &lt;span class="n"&gt;turn&lt;/span&gt; &lt;span class="err"&gt;结束&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;onTurnEnd&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="err"&gt;：取自上次以来的&lt;/span&gt; &lt;span class="n"&gt;transcript&lt;/span&gt; &lt;span class="err"&gt;增量&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;（过滤掉&lt;/span&gt; &lt;span class="n"&gt;advisor&lt;/span&gt; &lt;span class="err"&gt;自身消息，含&lt;/span&gt; &lt;span class="n"&gt;thinking&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="err"&gt;意图）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;#pending 入队，#backlog++&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;#drain() 后台循环：把增量 markdown 发给 advisor 模型&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;▼&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;advisor&lt;/span&gt; &lt;span class="err"&gt;自行决定是否调用&lt;/span&gt; &lt;span class="n"&gt;advise&lt;/span&gt; &lt;span class="err"&gt;工具&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;├─&lt;/span&gt; &lt;span class="err"&gt;不调用&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="err"&gt;静默（&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="n"&gt;prompt&lt;/span&gt;&lt;span class="err"&gt;：「&lt;/span&gt;&lt;span class="n"&gt;Prefer&lt;/span&gt; &lt;span class="n"&gt;silence&lt;/span&gt; &lt;span class="n"&gt;when&lt;/span&gt; &lt;span class="n"&gt;on&lt;/span&gt; &lt;span class="n"&gt;track&lt;/span&gt;&lt;span class="err"&gt;」）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;│&lt;/span&gt; &lt;span class="err"&gt;└─&lt;/span&gt; &lt;span class="err"&gt;调用&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="n"&gt;onAdvice&lt;/span&gt; &lt;span class="err"&gt;回调&lt;/span&gt; &lt;span class="err"&gt;→&lt;/span&gt; &lt;span class="err"&gt;注入主会话&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;几个关键设计点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;增量而非全量。&lt;/strong&gt; &lt;code&gt;#renderDelta&lt;/code&gt; 只取自上次以来新增的消息（&lt;code&gt;runtime.ts:149-162&lt;/code&gt;）。Advisor 是 append-only 上下文，省 token。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;独立上下文维护。&lt;/strong&gt; Advisor 有自己的上下文窗口；接近上限时，&lt;code&gt;AgentSession&lt;/code&gt; 会按顺序尝试：模型升级（promote）→ 压缩自己的历史 → 仍放不下就 re-prime（清空后回放当前 bounded transcript）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;失败降级。&lt;/strong&gt; 单次 advisor prompt 失败会重试；连续失败 3 次后丢弃 backlog、记 warning、放行主会话（&lt;code&gt;runtime.ts:229-236&lt;/code&gt;）。Advisor 的故障不阻塞主链路。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="工具与隔离"&gt;工具与隔离
+&lt;/h3&gt;&lt;p&gt;Advisor 拿到的是一个&lt;strong&gt;硬隔离的只读工具集&lt;/strong&gt;：&lt;code&gt;read&lt;/code&gt;、&lt;code&gt;search&lt;/code&gt;、&lt;code&gt;find&lt;/code&gt;、&lt;code&gt;advise&lt;/code&gt;（&lt;code&gt;advise-tool.ts:62&lt;/code&gt;）。前三个跑在一个 session id 带 &lt;code&gt;-advisor&lt;/code&gt; 后缀的独立 &lt;code&gt;ToolSession&lt;/code&gt; 上，不共享主 agent 的文件快照、编辑能力或冲突状态。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;advise&lt;/code&gt; 工具本身的返回对 Advisor 是 &lt;code&gt;useless: true&lt;/code&gt; + &lt;code&gt;&amp;quot;Recorded.&amp;quot;&lt;/code&gt;，真正的副作用是触发 &lt;code&gt;onAdvice&lt;/code&gt; 回调——所以 Advisor 调一次工具，等于往主会话送一条建议。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="feature-与用户感官"&gt;Feature 与用户感官
+&lt;/h2&gt;&lt;h3 id="三档-severity两种交付方式"&gt;三档 severity，两种交付方式
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;advise&lt;/code&gt; 工具接受一个 &lt;code&gt;note&lt;/code&gt; 和可选的 &lt;code&gt;severity&lt;/code&gt;（&lt;code&gt;advise-tool.ts:5-13&lt;/code&gt;）。severity 决定&lt;strong&gt;是否打断主 agent&lt;/strong&gt;：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;severity&lt;/th&gt;
+					&lt;th&gt;交付方式&lt;/th&gt;
+					&lt;th&gt;语义&lt;/th&gt;
+					&lt;th&gt;颜色（终端 badge）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;省略 / &lt;code&gt;nit&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;非打断，批次化成一张 transcript 卡片，落点在下个 step boundary&lt;/td&gt;
+					&lt;td&gt;清理、简化、低风险边界&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;muted&lt;/code&gt;（灰）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;concern&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打断式 steering message&lt;/td&gt;
+					&lt;td&gt;方向可能错、漏了关键约束、疑似幻觉 API&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;warning&lt;/code&gt;（黄）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;blocker&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打断式 steering message&lt;/td&gt;
+					&lt;td&gt;继续下去会浪费这个 turn / 产出破损结果&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;error&lt;/code&gt;（红）&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;判定逻辑见 &lt;code&gt;isInterruptingSeverity&lt;/code&gt;（&lt;code&gt;advise-tool.ts:53-55&lt;/code&gt;）：&lt;code&gt;concern&lt;/code&gt; 和 &lt;code&gt;blocker&lt;/code&gt; 打断，&lt;code&gt;nit&lt;/code&gt; 排队。打断式建议走 steering channel，能在下个 steering boundary 中止正在执行的工具。&lt;/p&gt;
+&lt;p&gt;非打断的 &lt;code&gt;nit&lt;/code&gt; 会批次化，卡片正文带固定前缀：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Advisor (a senior reviewer watching your work — weigh it, don&amp;#39;t blindly obey):
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个前缀刻意写成「weigh it, don&amp;rsquo;t blindly obey」——主 agent 被告知这只是一个 senior reviewer 的意见，不是命令。&lt;/p&gt;
+&lt;h3 id="终端里长什么样"&gt;终端里长什么样
+&lt;/h3&gt;&lt;p&gt;Advisor 的建议渲染成一张独立的 transcript 卡片（&lt;code&gt;src/modes/components/advisor-message.ts&lt;/code&gt;），复用 IRC 卡片的 glyph + 引用边框约定，让它读起来像「一段旁白」，而不是一轮用户输入：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ℹ Advisor — 2 notes, 1 blocker
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ [blocker] 这里继续写会引用到已被 compaction 删掉的 session entry，先停下确认
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ [nit] 用 map 替代 forEach 更贴合返回值约定
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ … +2 more notes
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;渲染细节：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;标题行带 meta：&lt;code&gt;N notes&lt;/code&gt;，有 blocker 时额外标 &lt;code&gt;N blocker&lt;/code&gt;（红色）。&lt;/li&gt;
+&lt;li&gt;每条 note 前是按 severity 着色的 badge（&lt;code&gt;blocker=error&lt;/code&gt; / &lt;code&gt;concern=warning&lt;/code&gt; / &lt;code&gt;nit=muted&lt;/code&gt;，&lt;code&gt;advisor-message.ts:32-41&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;正文走引用边框（quote border），换行而非两行截断（&lt;code&gt;ecccff62&lt;/code&gt; 修过这个折叠 bug）。&lt;/li&gt;
+&lt;li&gt;默认折叠，只显示前 3 条，多出来的折叠成 &lt;code&gt;… +N more notes&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="状态栏的--标志"&gt;状态栏的 &lt;code&gt;++&lt;/code&gt; 标志
+&lt;/h3&gt;&lt;p&gt;Advisor 活跃时，状态栏会出现一个 &lt;code&gt;++&lt;/code&gt; badge，提示主会话背后有一个 reviewer 在跑（&lt;code&gt;src/modes/components/status-line/segments.ts:90&lt;/code&gt;）。它和模型名一起作为 &lt;code&gt;statusLineModel&lt;/code&gt; 着色显示。&lt;/p&gt;
+&lt;h3 id="advisor-命令"&gt;&lt;code&gt;/advisor&lt;/code&gt; 命令
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;命令&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;切换持久化的 &lt;code&gt;advisor.enabled&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor on&lt;/code&gt; / &lt;code&gt;off&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;开/关，并启停 runtime&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor status&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;显示 Advisor 的模型、上下文用量、token、cost&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor dump&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打印 Advisor 的精简 transcript&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;/advisor dump raw&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;打印含 system prompt、工具、thinking、调用的完整 dump&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="配置"&gt;配置
+&lt;/h2&gt;&lt;p&gt;启用需要同时满足两个条件（&lt;code&gt;advisor-watchdog.md:22-35&lt;/code&gt;）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;modelRoles&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;advisor&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;anthropic/claude-sonnet-4-5:medium&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;advisor&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enabled&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;modelRoles.advisor&lt;/code&gt; 走正常的 model-role 解析（支持 provider 前缀、canonical id、thinking 后缀）。光开 &lt;code&gt;enabled&lt;/code&gt; 但没分配 advisor 模型，status 会报告「已启用但没有 advisor model」。&lt;/p&gt;
+&lt;p&gt;其他开关：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;advisor.subagents&lt;/code&gt;&lt;/strong&gt;（默认 &lt;code&gt;false&lt;/code&gt;）：是否给派生出的 task/eval subagent 也挂 Advisor。开了之后每个 subagent 会建自己的 Advisor runtime，并在该 subagent 的 cwd 重新跑 &lt;code&gt;WATCHDOG.md&lt;/code&gt; 发现。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;advisor.syncBacklog&lt;/code&gt;&lt;/strong&gt;（&lt;code&gt;off&lt;/code&gt; / &lt;code&gt;1&lt;/code&gt; / &lt;code&gt;3&lt;/code&gt; / &lt;code&gt;5&lt;/code&gt;，默认偏向吞吐）：turn 结束时主 agent 是否、等多久让 Advisor 追平。&lt;code&gt;off&lt;/code&gt; 完全不等；&lt;code&gt;1&lt;/code&gt; 最接近「每步同步审查」（30 秒上限）。注意它&lt;strong&gt;不是&lt;/strong&gt;让主 agent 等建议内容，而是等 Advisor 处理完增量；建议本身始终异步送达。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="设计边界与降级"&gt;设计边界与降级
+&lt;/h2&gt;&lt;p&gt;把容易踩的几条边界收在一起：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;用户主动中断时，Advisor 停止自动 resume。&lt;/strong&gt; Esc、collab / ACP / RPC / SDK / extension 的 cancel 都算。一条 &lt;code&gt;concern&lt;/code&gt;/&lt;code&gt;blocker&lt;/code&gt; 在 run 已停止时只会记成可见卡片，不会强行重启 turn；这条建议会在下次 resume 时（新消息、&lt;code&gt;.&lt;/code&gt;/&lt;code&gt;c&lt;/code&gt; 续接、steer）重新进入上下文（&lt;code&gt;advisor-watchdog.md:94&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;历史重写会重置 Advisor。&lt;/strong&gt; compaction、session 切换/resume、branch/fork 这类 history 替换，以及上下文维护的 re-prime，都会清空 Advisor 私有上下文、回卷游标，下一轮回放当前 bounded transcript。这样 Advisor 不会停留在过时上下文里（&lt;code&gt;runtime.ts:125-134&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;mid-session 启用不会重放全史。&lt;/strong&gt; 开启时游标 seed 到当前 transcript 长度，避免第一次就把整段旧对话塞给 Advisor（&lt;code&gt;runtime.ts:136-147&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;独立计费。&lt;/strong&gt; Advisor 的 token 和 cost 是单独统计的，&lt;code&gt;/advisor status&lt;/code&gt; 报的是 Advisor 自己 transcript 的用量，不和主 agent 混算。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;Advisor 把「事后 review 能发现的问题」前移到 turn 边界。它解决的不是「主 agent 不够强」，而是「同一个执行者难以在执行中审视自己」——因此它被设计成只读、可被主 agent 读到建议、且不参与执行的独立角色。&lt;/p&gt;
+&lt;p&gt;实现上值得注意的取舍是&lt;strong&gt;隔离&lt;/strong&gt;与&lt;strong&gt;异步&lt;/strong&gt;：Advisor 跑在隔离的工具会话里、用增量 transcript、后台 drain、失败即降级，保证它给主链路带来的只有收益（意见）而不引入新的阻塞或竞态。&lt;code&gt;advisor-watchdog.md&lt;/code&gt; 里有完整的配置、发现机制与上下文维护说明，本文不再重复。&lt;/p&gt;</description></item><item><title>本地 review 的便宜方案</title><link>https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/</link><pubDate>Thu, 11 Jun 2026 11:01:44 +0800</pubDate><guid>https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/865f922b48ec7800.png" alt="Featured image of post 本地 review 的便宜方案" /&gt;&lt;blockquote&gt;
+ &lt;p&gt;结果想要实现结对编程，通过 roborev 还是不太方便。最好还是考虑 &lt;a class="link" href="https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/" &gt;Advisor 审查&lt;/a&gt; 这个方案。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;2026 年 6 月 26 日更新：&lt;strong&gt;我不再推荐这个方案。在频繁改动部分代码库的时候，roborev 可能造成 IO 风暴&lt;/strong&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;直接在云端 review 大量消耗 token，伴随高额账单。这种 token 往往是没有 token plan 保障的。&lt;/p&gt;
+&lt;p&gt;因此我找了找一个本地 coding agent review 代码的方案，&lt;a class="link" href="https://github.com/kenn-io/roborev" target="_blank" rel="noopener"
+ &gt;roborev&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;p&gt;能不能直接用 code review 工具在本地 review 代码？可以。使用 &lt;a class="link" href="https://github.com/kenn-io/roborev" target="_blank" rel="noopener"
+ &gt;roborev&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="高额的-api-费用"&gt;高额的 API 费用
+&lt;/h2&gt;&lt;p&gt;我之前直接使用 deepseek 进行 code review。但是月账单还是比较吓人的。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/11/b25a4234-32f2-48ed-8394-7f1b266e2712.png"&gt;&lt;/p&gt;
+&lt;p&gt;尽管 deepseek 已经足够便宜了。但还是顶不住啊。&lt;/p&gt;
+&lt;h2 id="什么是-roborev"&gt;什么是 &lt;a class="link" href="https://github.com/kenn-io/roborev" target="_blank" rel="noopener"
+ &gt;roborev&lt;/a&gt;
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;Continuous background code review database for agents, work faster and smarter with accountability for every line of generated code.&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;为智能体提供的持续背景代码审查数据库，让工作更快速、更智能，并对每一行生成的代码负责。&lt;/p&gt;
+&lt;p&gt;roborev 之所以好，就是因为配置相当简单，而且是 go 语言编写。go 语言，真好。&lt;/p&gt;
+&lt;h2 id="配置和使用"&gt;配置和使用
+&lt;/h2&gt;&lt;p&gt;roborev 配置相当简单。只需要。&lt;code&gt;roborev init&lt;/code&gt; 一下。&lt;/p&gt;
+&lt;p&gt;如果对 coding agent 有特殊要求，例如，我想使用 codex 之外的本地 review。可以 &lt;code&gt;roborev config default_agent opencode&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这样你的所有提交都会被自动 review。如果你是按量计费而不是 token plan，此时可能要额外注意。&lt;/p&gt;
+&lt;h3 id="查看-commit-评审意见"&gt;查看 commit 评审意见
+&lt;/h3&gt;&lt;p&gt;上一步，roborev init 做好之后，即可通过 &lt;code&gt;roborev tui&lt;/code&gt; 来查看不同的 review 结果。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/11/c404f396-ad88-4949-b122-115765b58523.png"&gt;&lt;/p&gt;
+&lt;h3 id="自动化修复"&gt;自动化修复
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;roborev refine &lt;span class="c1"&gt;# Fix, re-review, repeat until passing&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;直接执行，robo 可以自动化修复 bug。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;实不相瞒，我也在做同样的方案。并且是闭源的方案。但是这个开源方案已经做的这么好了，惭愧惭愧。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="结语"&gt;结语
+&lt;/h2&gt;&lt;p&gt;我也在摸索 roborev 的其他用法。例如在运行结束后，让 coding agent 通过 roborev 获取结果。欢迎留言讨论。&lt;/p&gt;</description></item><item><title>Multi-Review：多 Agent 并发代码审查的工程实践</title><link>https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link><pubDate>Fri, 29 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/multi-review%E5%A4%9A-agent-%E5%B9%B6%E5%8F%91%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/c94c2c9d4bca61b1.png" alt="Featured image of post Multi-Review：多 Agent 并发代码审查的工程实践" /&gt;&lt;p&gt;在&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;上一篇文章&lt;/a&gt;中，我介绍了 opencode-actions——一个基于 OpenCode 构建的 GitHub Action，用来做自动化的 PR 代码审查。那个版本的 review action 用的是一个模型、一个 prompt，针对整个 PR diff 做一次综合审查。&lt;/p&gt;
+&lt;p&gt;这个方案能用，但有个明显的问题：&lt;strong&gt;一个 prompt 要同时关注代码质量、安全漏洞、性能问题和架构设计，每一项都不够深入。&lt;/strong&gt; 就像让一个工程师同时扮演 QA、安全审计、DBA 和架构师——每个角色都能说两句，但都不专业。&lt;/p&gt;
+&lt;p&gt;Cloudflare 在今年四月发了一篇&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+ &gt;博客&lt;/a&gt;，详细介绍了他们用 OpenCode 构建的多 Agent 并发代码审查系统。他们用了 7 个专业 reviewer 加 1 个 coordinator，在 5169 个仓库上跑了 13 万次审查。核心思路是：&lt;strong&gt;不要让一个模型什么都看，而是让多个专业模型各看各的，最后用一个 coordinator 统一汇总。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;看完这篇文章，我决定在 opencode-actions 中实现类似的能力。这篇文章就是 multi-review action 的设计记录。&lt;/p&gt;
+&lt;h2 id="为什么需要多-agent-并发审查"&gt;为什么需要多 Agent 并发审查？
+&lt;/h2&gt;&lt;p&gt;单模型审查的问题不只是&amp;quot;不够深入&amp;quot;。实际使用中有几个具体的痛点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;维度冲突&lt;/strong&gt;：安全审查要求严格（宁可误报不能漏报），性能审查要求务实（关注可测量的指标而非理论风险）。一个 prompt 很难同时表达两种截然不同的审查哲学。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;上下文稀释&lt;/strong&gt;：当 prompt 中塞了太多&amp;quot;你要检查 A、B、C、D、E&amp;quot;时，模型的注意力被分散，每个维度的审查质量都打折扣。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;结果模糊&lt;/strong&gt;：一个模型输出的&amp;quot;有条件合并&amp;quot;到底是因为安全问题还是性能问题？很难区分。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Cloudflare 的做法是把审查拆成独立的维度，每个 reviewer 只关注自己擅长的领域。他们的 security reviewer 有明确的 &amp;ldquo;What to Flag&amp;rdquo; 和 &amp;ldquo;What NOT to Flag&amp;rdquo; 指令——告诉模型什么该忽略，比告诉它什么该检查更重要。&lt;/p&gt;
+&lt;h2 id="架构并发-reviewer--coordinator"&gt;架构：并发 Reviewer + Coordinator
+&lt;/h2&gt;&lt;p&gt;multi-review 的核心架构用一句话概括：&lt;strong&gt;N 个专业 reviewer 并发审查，1 个 coordinator 汇总去重。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整个流程是这样的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PR 触发 → 获取 diff
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 启动 OpenCode Server（单实例）
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ┌───────────┼───────────┐───────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓ ↓ ↓ ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Quality Security Performance Architecture
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;(reviewer) (reviewer) (reviewer) (reviewer)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └───────────┴───────────┴───────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓ (Promise.all)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Coordinator
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; (去重 + 交叉验证)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; PR Comment
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;关键设计选择：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;单 Server 多 Session&lt;/strong&gt;：只启动一个 OpenCode Server 实例，所有 reviewer 和 coordinator 共享。这样避免了 N 个 reviewer 各自冷启动 MCP server 的开销。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Promise.all 并发&lt;/strong&gt;：所有 reviewer 通过 &lt;code&gt;Promise.all&lt;/code&gt; 同时启动，不排队。实际运行时间取决于最慢的那个 reviewer，而不是所有 reviewer 的总和。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;全局超时 + 自适应余量&lt;/strong&gt;：一个全局 deadline，每个 reviewer 的剩余时间 = &lt;code&gt;max(30s, deadline - now)&lt;/code&gt;。先完成的 reviewer 不影响后面的，后面的 reviewer 自然获得更少的时间。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="四个专业-reviewer"&gt;四个专业 Reviewer
+&lt;/h2&gt;&lt;p&gt;默认启动四个 reviewer，每个有独立的 YAML 定义：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;Reviewer&lt;/th&gt;
+					&lt;th&gt;关注领域&lt;/th&gt;
+					&lt;th&gt;决策标签&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Quality&lt;/td&gt;
+					&lt;td&gt;代码质量、bug、逻辑错误、风格一致性、错误处理&lt;/td&gt;
+					&lt;td&gt;可合并 / 有条件合并 / 不可合并&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Security&lt;/td&gt;
+					&lt;td&gt;输入验证、认证授权、注入漏洞、数据暴露、OWASP Top 10&lt;/td&gt;
+					&lt;td&gt;安全无虞 / 存在风险 / 高危漏洞&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Performance&lt;/td&gt;
+					&lt;td&gt;算法复杂度、内存模式、N+1 查询、缓存、并发&lt;/td&gt;
+					&lt;td&gt;性能良好 / 性能有疑虑 / 性能问题严重&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Architecture&lt;/td&gt;
+					&lt;td&gt;耦合度、模块划分、分层、接口设计、霰弹式修改&lt;/td&gt;
+					&lt;td&gt;架构合理 / 架构有疑虑 / 架构有问题&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;每个 reviewer 的 prompt 都遵循同一个约束：&lt;strong&gt;第一行必须是决策标签&lt;/strong&gt;，然后是总结、阻塞项和建议项。这让 coordinator 能结构化地解析每个 reviewer 的输出。&lt;/p&gt;
+&lt;p&gt;和 Cloudflare 的做法一样，每个 reviewer 的 prompt 都明确告诉它&lt;strong&gt;只看当前代码中存在的问题&lt;/strong&gt;，不要重复早期版本的问题，不要建议修改未变更的代码。&lt;/p&gt;
+&lt;h3 id="team-配置"&gt;Team 配置
+&lt;/h3&gt;&lt;p&gt;reviewer 的组合通过 &lt;code&gt;default-team&lt;/code&gt; 参数配置，格式是 &lt;code&gt;persona:count&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 默认：每种角色各一个&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1,performance:1,architecture:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 自定义：加强安全审查&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:2,performance:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 极简：只看质量和安全&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当 count &amp;gt; 1 时，同角色的 reviewer 会带上编号（如 &lt;code&gt;security-1&lt;/code&gt;、&lt;code&gt;security-2&lt;/code&gt;），用同一个 prompt 但独立运行。相同 prompt 的多次运行可以起到交叉验证的效果——如果两个 security reviewer 都发现了同一个漏洞，可信度自然更高。&lt;/p&gt;
+&lt;p&gt;Cloudflare 有个类似的&amp;quot;风险分层&amp;quot;机制：trivial 改动（≤10 行）只跑 2 个 agent，full 改动（&amp;gt;100 行）跑全部 7 个。multi-review 目前靠用户手动配置 team，未来可以加入自动分层。&lt;/p&gt;
+&lt;h2 id="coordinator去重和交叉验证"&gt;Coordinator：去重和交叉验证
+&lt;/h2&gt;&lt;p&gt;并发审查带来的直接问题是&lt;strong&gt;多个 reviewer 可能发现同一个问题&lt;/strong&gt;。比如一个 SQL 注入，quality reviewer 可能从 bug 角度报告，security reviewer 从安全角度报告。如果不处理，最终报告会有重复。&lt;/p&gt;
+&lt;p&gt;coordinator 的工作就是整合：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;跨 reviewer 去重&lt;/strong&gt;：同一问题只报告一次&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;交叉验证&lt;/strong&gt;：至少 2 个 reviewer 同意的问题标记为&amp;quot;已确认&amp;quot;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;冲突处理&lt;/strong&gt;：意见不一致时取多数意见&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;保留领域见解&lt;/strong&gt;：安全发现即使只有一个 reviewer 提到，也要保留&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;最严重决策&lt;/strong&gt;：如果任何一个 reviewer 认为不可合并，最终决策就是不可合并&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;coordinator 的 prompt 模板支持自定义，通过 &lt;code&gt;{{REVIEWS}}&lt;/code&gt; 占位符注入各 reviewer 的输出：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;你是一个代码审查协调员。以下审查由独立的专家 reviewer 生成。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;你的任务是整合为一个去重后的综合报告。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;规则：
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. 跨 reviewer 去重（同一问题只提一次）
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 交叉验证：至少 2 个 reviewer 同意的问题标记为&amp;#34;已确认&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. 冲突时取多数意见
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;最终生成的 PR comment 包含两部分：coordinator 的综合报告在上，各 reviewer 的详细审查结果折叠在 &lt;code&gt;&amp;lt;details&amp;gt;&lt;/code&gt; 标签中。&lt;/p&gt;
+&lt;h2 id="和-cloudflare-方案的对比"&gt;和 Cloudflare 方案的对比
+&lt;/h2&gt;&lt;p&gt;两者使用了相同的思路——多 Agent 并发 + Coordinator 汇总——但在规模和复杂度上有明显差异：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;维度&lt;/th&gt;
+					&lt;th&gt;Cloudflare&lt;/th&gt;
+					&lt;th&gt;multi-review&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Agent 数量&lt;/td&gt;
+					&lt;td&gt;7 个专业 agent + coordinator&lt;/td&gt;
+					&lt;td&gt;4 个（可配置） + coordinator&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;并发模型&lt;/td&gt;
+					&lt;td&gt;SDK 多 session，circuit breaker + failback&lt;/td&gt;
+					&lt;td&gt;SDK 多 session，Promise.all + 全局超时&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;模型路由&lt;/td&gt;
+					&lt;td&gt;按任务复杂度分配不同模型（Opus/Sonnet/Kimi）&lt;/td&gt;
+					&lt;td&gt;单一模型，通过 &lt;code&gt;model&lt;/code&gt; 参数指定&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;弹性&lt;/td&gt;
+					&lt;td&gt;三级 circuit breaker，provider 级别的 failback chain&lt;/td&gt;
+					&lt;td&gt;超时 + fallback comment（coordinator 失败时直接展示原始结果）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;风险分层&lt;/td&gt;
+					&lt;td&gt;自动（trivial/lite/full）&lt;/td&gt;
+					&lt;td&gt;手动配置 team&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;扩展性&lt;/td&gt;
+					&lt;td&gt;插件架构，7 个 plugin 组合&lt;/td&gt;
+					&lt;td&gt;YAML persona 定义，内置 4 种&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Token 优化&lt;/td&gt;
+					&lt;td&gt;共享 context file，7x 的 MR 上下文不重复&lt;/td&gt;
+					&lt;td&gt;每个 reviewer 独立接收完整 diff&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;适用场景&lt;/td&gt;
+					&lt;td&gt;内部 GitLab，5169 仓库，企业级&lt;/td&gt;
+					&lt;td&gt;GitHub/Gitea，开源项目，开箱即用&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;最核心的差异在&lt;strong&gt;弹性&lt;/strong&gt;上。Cloudflare 的 circuit breaker 和 failback chain 是为生产环境设计的——7 个并发 AI 调用，provider 限频和宕机是必然事件。multi-review 的规模小得多，4 个并发的失败概率可控，用超时 + fallback comment 就够了。&lt;/p&gt;
+&lt;p&gt;另一个差异是 &lt;strong&gt;token 优化&lt;/strong&gt;。Cloudflare 把 MR diff 写到一个共享文件，7 个 reviewer 读同一个文件而不是各拷一份。注意这里共享的是&lt;strong&gt;原始 diff（输入数据）&lt;/strong&gt;，而不是 reviewer 之间的审查结论。每个 reviewer 的审查过程仍然是完全独立的。这个优化在 7 个 reviewer 的情况下能省 85% 的重复 token。multi-review 目前每个 reviewer 都接收完整 diff，在 4 个 reviewer 的规模下重复还能接受，但如果 team 配置到 7+ 就需要考虑类似优化了。&lt;/p&gt;
+&lt;h2 id="reasoning-effort-和-thinking"&gt;Reasoning Effort 和 Thinking
+&lt;/h2&gt;&lt;p&gt;multi-review 支持 &lt;code&gt;reasoning-effort&lt;/code&gt; 和 &lt;code&gt;enable-thinking&lt;/code&gt; 两个参数，直接传递给 OpenCode SDK 的 agent 配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Run Multi-Review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;sun-praise/opencode-actions/multi-review@v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;reasoning-effort&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;max &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# low / medium / high / max&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enable-thinking&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 启用思维链&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;默认 &lt;code&gt;reasoning-effort: max&lt;/code&gt; 和 &lt;code&gt;enable-thinking: true&lt;/code&gt;，这意味着每个 reviewer 和 coordinator 都会用最大推理力度并输出思维链。对于代码审查这种需要深度分析的任务，这个默认值是合理的。&lt;/p&gt;
+&lt;p&gt;Cloudflare 也有类似的分层：coordinator 用 Opus（最强推理），code quality 和 security 用 Sonnet（平衡速度和能力），文档审查用 Kimi（便宜）。multi-review 暂时没有按角色分配不同模型的能力，但这是一个明确的优化方向。&lt;/p&gt;
+&lt;h2 id="使用方式"&gt;使用方式
+&lt;/h2&gt;&lt;p&gt;在 &lt;code&gt;.github/workflows/&lt;/code&gt; 中添加：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Multi Review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;issue_comment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;types&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;created]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;multi-review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;if&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; github.event.issue.pull_request &amp;amp;&amp;amp;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; contains(fromJSON(&amp;#39;[&amp;#34;/multi-review&amp;#34;, &amp;#34;/mr&amp;#34;]&amp;#39;), github.event.comment.body)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runs-on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ubuntu-latest&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;steps&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;sun-praise/opencode-actions/multi-review@v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;github-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;zhipu-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.ZHIPU_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 可选配置&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1,security:1,performance:1,architecture:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;reasoning-effort&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;max&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;enable-thinking&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这段配置的效果是：在 PR 中评论 &lt;code&gt;/multi-review&lt;/code&gt; 或 &lt;code&gt;/mr&lt;/code&gt;，就会触发多 Agent 并发审查。&lt;/p&gt;
+&lt;h2 id="代码实现"&gt;代码实现
+&lt;/h2&gt;&lt;p&gt;核心实现在 &lt;code&gt;orchestrator.ts&lt;/code&gt; 中的两个函数。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;并发审查&lt;/strong&gt;——&lt;code&gt;runParallelReviewers&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-typescript" data-lang="typescript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;promises&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;reviewers&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;sessionId&lt;/span&gt;: &lt;span class="kt"&gt;string&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="kc"&gt;undefined&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;try&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;Math&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="nx"&gt;_000&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;deadline&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nb"&gt;Date&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;now&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 1. 创建独立 session
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;sessionResult&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;create&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;throwOnError&lt;/span&gt;: &lt;span class="kt"&gt;true&lt;/span&gt; &lt;span class="p"&gt;}),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;sessionId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;sessionResult&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 2. 发送 persona + diff
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;parts&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;text&lt;/span&gt;: &lt;span class="kt"&gt;reviewer.prompt&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;\n\nPR Diff:\n```\n&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;prDiff&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;\n```&amp;#34;&lt;/span&gt; &lt;span class="p"&gt;}],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 3. 提取结果
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;withTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;}),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;remaining&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;: &lt;span class="kt"&gt;reviewer.name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;: &lt;span class="kt"&gt;extractText&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nx"&gt;success&lt;/span&gt;: &lt;span class="kt"&gt;true&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;catch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;reviewer&lt;/span&gt;: &lt;span class="kt"&gt;reviewer.name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;success&lt;/span&gt;: &lt;span class="kt"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;error&lt;/span&gt;: &lt;span class="kt"&gt;err.message&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;finally&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 4. 清理 session
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;sessionId&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;client&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;session&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;: &lt;span class="kt"&gt;sessionId&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;Promise&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;all&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;promises&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Coordinator 汇总&lt;/strong&gt;——&lt;code&gt;runCoordinator&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-typescript" data-lang="typescript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 把各 reviewer 的结果拼接成 {{REVIEWS}}
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;reviewsText&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;reviews&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="sb"&gt;`## &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;reviewer&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="sb"&gt;n&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;success&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;content&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="sb"&gt;`（失败: &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;error&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;）`&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n\n---\n\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;fullPrompt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;coordinatorPrompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;{{REVIEWS}}&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reviewsText&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 创建 session、发送 prompt、提取结果...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果 coordinator 本身失败了，还有个 fallback：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-typescript" data-lang="typescript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;buildFallbackComment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;reviews&lt;/span&gt;: &lt;span class="kt"&gt;ReviewResult&lt;/span&gt;&lt;span class="p"&gt;[])&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;string&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// coordinator 挂了，直接把各 reviewer 的原始输出拼起来
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;**Multi-Review (fallback — coordinator failed)**\n\n&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;parts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n\n---\n\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这确保了即使汇总环节出问题，审查结果也不会丢失。&lt;/p&gt;
+&lt;h2 id="和单模型-review-的关系"&gt;和单模型 Review 的关系
+&lt;/h2&gt;&lt;p&gt;multi-review 和之前&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;单模型 review action&lt;/a&gt; 不是替代关系，而是互补：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;review&lt;/th&gt;
+					&lt;th&gt;multi-review&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;定位&lt;/td&gt;
+					&lt;td&gt;快速审查，适合每次 PR 都跑&lt;/td&gt;
+					&lt;td&gt;深度审查，适合关键 PR 或手动触发&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;模型数&lt;/td&gt;
+					&lt;td&gt;1 个&lt;/td&gt;
+					&lt;td&gt;4+ 个（可配置）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;耗时&lt;/td&gt;
+					&lt;td&gt;1-3 分钟&lt;/td&gt;
+					&lt;td&gt;3-8 分钟&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Token 消耗&lt;/td&gt;
+					&lt;td&gt;低&lt;/td&gt;
+					&lt;td&gt;中（N 倍于单模型）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;触发方式&lt;/td&gt;
+					&lt;td&gt;PR 创建/更新自动触发&lt;/td&gt;
+					&lt;td&gt;手动评论触发&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;适合场景&lt;/td&gt;
+					&lt;td&gt;日常迭代，快速反馈&lt;/td&gt;
+					&lt;td&gt;重要功能、安全相关、大型重构&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;日常开发用 review 做快速检查，关键 PR 用 multi-review 做深度审查。两个 action 可以共存于同一个仓库。&lt;/p&gt;
+&lt;h2 id="未来优化方向"&gt;未来优化方向
+&lt;/h2&gt;&lt;p&gt;参考 Cloudflare 的经验和当前实现的局限，有几个明确的优化方向：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;自动风险分层&lt;/strong&gt;：根据 diff 行数和文件类型自动决定跑几个 reviewer。typo 修改变动不需要 4 个 agent 并发审查。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;共享上下文&lt;/strong&gt;：把 diff 写到文件而不是每个 reviewer 都拷贝一份，减少 token 消耗。但需要注意一个微妙的问题：&lt;strong&gt;共享的边界在哪里？&lt;/strong&gt; 共享原始 diff（输入数据）是安全的，但如果过早共享 reviewer 之间的中间结论，会导致严重的偏差问题——确认偏差、锚定效应、同质化审查。正确的设计是：reviewer 阶段完全隔离，只共享输入；coordinator 阶段才汇总结论。这不仅是 token 优化的问题，更是一个审查独立性的架构决策。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模型路由&lt;/strong&gt;：coordinator 用强模型，文档审查用轻量模型，按角色分配不同 provider。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;增量审查&lt;/strong&gt;：push 新 commit 后，只审查变更的部分，不从头开始。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;multi-review 的核心思路来自 Cloudflare 的文章：&lt;strong&gt;把一个复杂任务拆成多个专业子任务，并发执行后统一汇总&lt;/strong&gt;。这比一个全能模型覆盖所有维度更有效，因为每个子任务的 prompt 更聚焦，模型的注意力更集中。&lt;/p&gt;
+&lt;p&gt;实现上，multi-review 用 OpenCode SDK 的多 session 能力做并发，用 Promise.all 做编排，用全局超时做兜底，用 coordinator 做去重和交叉验证。这是一个在开源项目规模下足够实用的架构——没有 circuit breaker 和 failback chain 的复杂度，但覆盖了并发审查的核心需求。&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
+ &gt;opencode-actions&lt;/a&gt; — GitHub Action 仓库&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://blog.cloudflare.com/ai-code-review/" target="_blank" rel="noopener"
+ &gt;Cloudflare: Orchestrating AI Code Review at Scale&lt;/a&gt; — 设计灵感的来源&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-actions-%e4%b8%80%e4%b8%aa-coding-review-agent/" &gt;opencode-actions - 一个 coding review agent&lt;/a&gt; — 单模型 review action 的介绍&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/opencode-%e9%85%8d%e7%bd%ae%e4%b9%8b%e5%a4%96%e7%9a%84%e4%bc%98%e5%8c%96-%e5%9f%ba%e4%ba%8e%e6%8f%92%e4%bb%b6%e7%9a%84%e4%bc%98%e5%8c%96/" &gt;OpenCode 配置之外的优化&lt;/a&gt; — opencode-review 插件的设计，session 内的代码审查&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>OpenCode 的 GitHub Actions 自动化体系：27 个 Workflow 背后的工程实践</title><link>https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</link><pubDate>Fri, 22 May 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/opencode-%E7%9A%84-github-actions-%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BD%93%E7%B3%BB27-%E4%B8%AA-workflow-%E8%83%8C%E5%90%8E%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3000903cf560f83f.jpg" alt="Featured image of post OpenCode 的 GitHub Actions 自动化体系：27 个 Workflow 背后的工程实践" /&gt;&lt;p&gt;opencode 是一个 16 万 star 的 AI 编码工具，它的 &lt;code&gt;.github/workflows/&lt;/code&gt; 目录下有 27 个 workflow 文件。这个数量在开源项目里不算少，但真正有意思的不是数量，而是这些 workflow 覆盖的范围：从常规的 CI/CD 到 AI 驱动的社区治理，几乎把 GitHub Actions 能做的事情都做了一遍。&lt;/p&gt;
+&lt;p&gt;这篇文章逐类分析这些 workflow 的设计，讨论这种自动化程度的利弊，以及对我们自己项目的启示。&lt;/p&gt;
+&lt;h2 id="总览"&gt;总览
+&lt;/h2&gt;&lt;p&gt;27 个 workflow 可以分成四类：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;类别&lt;/th&gt;
+					&lt;th&gt;数量&lt;/th&gt;
+					&lt;th&gt;作用&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CI/测试&lt;/td&gt;
+					&lt;td&gt;4&lt;/td&gt;
+					&lt;td&gt;typecheck、单元测试、e2e、Nix 构建&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;发布/交付&lt;/td&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;CLI 发布、容器构建、VS Code 插件、GitHub Action 发布&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自动化/Bot&lt;/td&gt;
+					&lt;td&gt;16&lt;/td&gt;
+					&lt;td&gt;issue 治理、PR 合规、AI code review、文档更新&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;文档/其他&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+					&lt;td&gt;统计、Discord 通知&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;16 个自动化 workflow 占了总数的 60%。opencode 不只是用 Actions 来跑测试和发布，而是把社区治理和代码质量审查也交给了自动化系统。&lt;/p&gt;
+&lt;h2 id="ci测试扎实但克制"&gt;CI/测试：扎实但克制
+&lt;/h2&gt;&lt;p&gt;四个测试相关的 workflow：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;typecheck.yml&lt;/strong&gt; — PR 和 push 到 dev 时跑 &lt;code&gt;bun typecheck&lt;/code&gt;。简单直接，没有多余动作。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;test.yml&lt;/strong&gt; — 跨平台测试矩阵（Linux + Windows），跑单元测试和 Playwright e2e。有 concurrency 控制，同一个 PR 的新 commit 会取消旧运行。测试结果生成 JUnit 报告上传为 artifact。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;nix-eval.yml&lt;/strong&gt; — 验证 Nix flake 在四种架构（x86_64-linux, aarch64-linux, x86_64-darwin, aarch64-darwin）下的构建。必选包失败会阻断，可选包失败只是警告。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;storybook.yml&lt;/strong&gt; — UI 组件的 Storybook 构建，只在 storybook/ui 相关文件变更时触发。路径触发避免了不必要的运行。&lt;/p&gt;
+&lt;p&gt;几个值得注意的设计选择：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;concurrency group + cancel-in-progress&lt;/strong&gt;：多个 workflow 都用了这个模式，同一个 PR 不会堆叠多次运行。对于一个接受大量社区 PR 的项目，这能省下不少 CI 资源。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;路径触发&lt;/strong&gt;：containers.yml 只在容器文件变更时运行，storybook.yml 只在 UI 变更时运行。不是所有东西都全量跑。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;混合 Runner 策略&lt;/strong&gt;：大部分 workflow 使用 &lt;a class="link" href="https://blacksmith.sh/" target="_blank" rel="noopener"
+ &gt;Blacksmith&lt;/a&gt; 提供的第三方托管 runner（&lt;code&gt;blacksmith-4vcpu-ubuntu-2404&lt;/code&gt;、&lt;code&gt;blacksmith-4vcpu-windows-2025&lt;/code&gt;）。Blacksmith 是一个兼容 GitHub Actions API 的加速 runner 服务，底层用自建基础设施，比 GitHub 免费 runner 快不少。只有轻量级 bot 任务（close-issues、close-prs、compliance-close、pr-standards、deploy）留在 GitHub 原生的 &lt;code&gt;ubuntu-latest&lt;/code&gt; 上。计算密集的编译、测试、发布全走 Blacksmith，简单的脚本任务用 GitHub 原生 runner，按任务负载分配资源。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="发布交付全平台覆盖"&gt;发布/交付：全平台覆盖
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;publish.yml&lt;/strong&gt; 是最复杂的 workflow，一个文件处理了完整的发布流程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;版本号计算&lt;/li&gt;
+&lt;li&gt;CLI 构建矩阵（多平台多架构）&lt;/li&gt;
+&lt;li&gt;Windows 代码签名（Azure Signing）&lt;/li&gt;
+&lt;li&gt;macOS 代码签名（Apple Developer）&lt;/li&gt;
+&lt;li&gt;Electron 应用构建&lt;/li&gt;
+&lt;li&gt;npm 发布&lt;/li&gt;
+&lt;li&gt;GitHub Release 创建&lt;/li&gt;
+&lt;li&gt;AUR（Arch Linux）发布&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;一个 workflow 覆盖了 CLI、桌面应用、npm 包、Linux 包的分发。这种&amp;quot;全平台一次发布&amp;quot;的模式对用户友好——无论什么平台都能在同一天拿到新版本。&lt;/p&gt;
+&lt;p&gt;其他发布 workflow 按产物类型拆分：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;publish-github-action.yml&lt;/strong&gt; — 监听 &lt;code&gt;github-v*&lt;/code&gt; tag，发布 GitHub Action 到 Marketplace&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;publish-vscode.yml&lt;/strong&gt; — 监听 &lt;code&gt;vscode-v*&lt;/code&gt; tag，同时发布到 VS Code Marketplace 和 Open VSX&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;containers.yml&lt;/strong&gt; — 多架构容器镜像构建，推送到 GHCR&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;release-github-action.yml&lt;/strong&gt; — dev 分支有 github 目录变更时创建预发布&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;tag 触发是一个好的实践：发布是显式动作，不会因为误推代码就触发。&lt;code&gt;publish.yml&lt;/code&gt; 会在 push 到 &lt;code&gt;ci/dev/beta/fix&lt;/code&gt; 分支时自动构建 snapshot，但正式发布需要手动 dispatch 或 tag。&lt;/p&gt;
+&lt;h2 id="自动化botai-驱动的社区治理"&gt;自动化/Bot：AI 驱动的社区治理
+&lt;/h2&gt;&lt;p&gt;这是 opencode 最有特色的部分。16 个自动化 workflow 中，多个直接调用了 opencode 自己的 AI 能力来处理社区事务。&lt;/p&gt;
+&lt;h3 id="issue-管理"&gt;Issue 管理
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;triage.yml&lt;/strong&gt; — 新 issue 创建时，用 opencode AI 自动分流，添加标签和分类。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;duplicate-issues.yml&lt;/strong&gt; — 新 issue 创建/编辑时，用 opencode AI 分析是否与已有 issue 重复。同时检查是否遵循了三种 issue 模板之一，是否包含 AI 生成内容。不合规的会被加上 &lt;code&gt;needs:compliance&lt;/code&gt; 标签。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;compliance-close.yml&lt;/strong&gt; — 每 30 分钟检查一次，带有 &lt;code&gt;needs:compliance&lt;/code&gt; 标签的 issue/PR 如果 2 小时内没有修正，自动关闭。关闭时会根据是 issue 还是 PR 给出不同的提示信息。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;close-issues.yml&lt;/strong&gt; — 每天凌晨 2 点 UTC 关闭过期的 stale issue。&lt;/p&gt;
+&lt;p&gt;这四层形成了完整的 issue 生命周期管理：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;新 issue → AI 分流(triage) → 重复/合规检查(duplicate) → 合规宽限期(compliance) → 过期清理(close)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="pr-管理"&gt;PR 管理
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;pr-standards.yml&lt;/strong&gt; 是最长的 workflow 之一，做了两件事：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;标题格式检查&lt;/strong&gt;：强制 conventional commits 格式（feat/fix/refactor/&amp;hellip;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模板合规检查&lt;/strong&gt;：PR 描述必须包含 issue 引用、变更类型、验证方法等必要章节&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;不合规的 PR 会被加上 &lt;code&gt;needs:compliance&lt;/code&gt; 标签，2 小时后自动关闭。team 成员和 bot 豁免。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;pr-management.yml&lt;/strong&gt; — PR 创建时查重，并为社区贡献者添加标签。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;close-prs.yml&lt;/strong&gt; — 每天晚上 10 点 UTC 关闭超过 1 个月且点赞数不够的 PR。默认阈值是 2 个 reaction，可配置。&lt;/p&gt;
+&lt;h3 id="ai-code-review"&gt;AI Code Review
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;review.yml&lt;/strong&gt; — 在 PR 评论中输入 &lt;code&gt;/review&lt;/code&gt;，opencode AI 会分析代码并在具体的行上留下 review 评论。只对 repo owner/member 开放。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;opencode.yml&lt;/strong&gt; — 在 issue 或 PR 评论中输入 &lt;code&gt;/oc&lt;/code&gt; 或 &lt;code&gt;/opencode&lt;/code&gt;，触发 opencode AI 进行更通用的交互。&lt;/p&gt;
+&lt;p&gt;这两个 workflow 展示了&amp;quot;AI 作为协作者&amp;quot;的思路：不是全自动的 code review，而是按需触发，人在回路中做最终决定。&lt;/p&gt;
+&lt;h3 id="文档与维护"&gt;文档与维护
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;docs-update.yml&lt;/strong&gt; — 每 12 小时检查最近的 commit，用 opencode AI 判断是否需要更新文档。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;generate.yml&lt;/strong&gt; — push 到 dev 时运行代码生成脚本，自动提交变更。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;beta.yml&lt;/strong&gt; — 每小时同步 beta 分支。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;stats.yml&lt;/strong&gt; — 每天更新下载统计到 STATS.md。&lt;/p&gt;
+&lt;h2 id="值得借鉴的设计模式"&gt;值得借鉴的设计模式
+&lt;/h2&gt;&lt;h3 id="1-分层治理"&gt;1. 分层治理
+&lt;/h3&gt;&lt;p&gt;opencode 没有把所有自动化塞进一个 workflow，而是按职责拆分。issue 从创建到关闭经过了四个 workflow 的接力处理。每个 workflow 只做一件事，组合起来形成完整的治理链。&lt;/p&gt;
+&lt;p&gt;这种设计的好处是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;单个 workflow 可以独立修改、禁用，不影响其他环节&lt;/li&gt;
+&lt;li&gt;每个 workflow 的触发条件、权限范围都是最小化的&lt;/li&gt;
+&lt;li&gt;出问题时容易定位是哪个环节&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-合规宽限期"&gt;2. 合规宽限期
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;compliance-close.yml&lt;/code&gt; 不是检测到不合规就立即关闭，而是给 2 小时的宽限期。这对全球不同时区的贡献者来说是合理的——你可能正好在睡觉的时候提交了一个 issue，醒来发现有时间修正。&lt;/p&gt;
+&lt;h3 id="3-ai-用在决策点而不是执行点"&gt;3. AI 用在决策点而不是执行点
+&lt;/h3&gt;&lt;p&gt;triage、duplicate 检测、code review 这些都是 AI 做初步判断，人做最终决定。而代码构建、发布这些执行层面的事情完全不用 AI。这是一个务实的分工：AI 擅长模式识别和初步分类，但不擅长精确执行。&lt;/p&gt;
+&lt;h3 id="4-显式触发-vs-自动触发"&gt;4. 显式触发 vs 自动触发
+&lt;/h3&gt;&lt;p&gt;发布用 tag 触发，日常维护用 schedule 触发，社区治理用事件触发。三种触发方式对应三种不同的自动化信任等级：发布需要人工确认，维护可以定时自动，治理需要即时响应。&lt;/p&gt;
+&lt;h2 id="过度自动化的风险"&gt;过度自动化的风险
+&lt;/h2&gt;&lt;p&gt;opencode 的自动化体系很完善，但也有需要注意的地方：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;社区门槛&lt;/strong&gt;：新贡献者提交 issue 需要遵循特定模板，PR 需要符合 conventional commits，否则 2 小时后自动关闭。对于一个 16 万 star 的项目，这种严格是合理的——它能过滤掉大量低质量贡献。但对于小项目，这种程度的自动化会吓跑潜在贡献者。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;维护成本&lt;/strong&gt;：27 个 workflow 意味着 27 个需要维护的自动化脚本。opencode 有专门的自定义 runner 和专用脚本。如果某个 workflow 的逻辑需要调整，维护者需要在 GitHub Actions 的 YAML + 自定义脚本之间来回切换。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AI 的不确定性&lt;/strong&gt;：duplicate-issues 和 triage 用 AI 做判断，但 AI 可能误判。一个合理的 issue 被标记为 duplicate 并关闭，对贡献者的体验是负面的。opencode 用宽限期和人工复核来缓解这个问题，但风险依然存在。&lt;/p&gt;
+&lt;h2 id="对我们项目的启示"&gt;对我们项目的启示
+&lt;/h2&gt;&lt;p&gt;不是每个项目都需要 27 个 workflow。但 opencode 的分层治理和&amp;quot;AI 在决策点&amp;quot;的思路值得参考：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;从 issue 模板开始&lt;/strong&gt;：如果项目开始收到大量重复或低质量 issue，先加模板和 duplicate 检查，而不是手动处理每一个。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;合规检查用宽限期&lt;/strong&gt;：自动关闭不合规贡献时，始终给一个宽限期。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;AI 用于分类不用于执行&lt;/strong&gt;：让 AI 帮你分流 issue、检查 PR 格式，但不要让 AI 自动合并代码或发布版本。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;发布用 tag 触发&lt;/strong&gt;：这是最安全的做法。自动发布的 snapshot 可以接受，正式版本需要人工确认。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;按需添加&lt;/strong&gt;：先有痛点再加自动化。opencode 的 27 个 workflow 不是一天建成的，是随着社区规模增长逐步增加的。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;opencode 的 GitHub Actions 体系展示了大型开源项目的自动化实践：CI/CD 覆盖全平台发布，社区治理用多层 workflow 接力处理，AI 被用在分流和审查等决策环节。这套系统的核心不是技术复杂度，而是&amp;quot;分层、宽限、显式触发&amp;quot;这三个原则。对于自己的项目，不需要照搬 27 个 workflow，但这些原则可以直接用上。&lt;/p&gt;</description></item><item><title>opencode-actions - 一个 coding review agent</title><link>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</link><pubDate>Thu, 23 Apr 2026 11:59:05 +0800</pubDate><guid>https://svtter.cn/p/opencode-actions-%E4%B8%80%E4%B8%AA-coding-review-agent/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/69d2f962b6f77f8e.jpg" alt="Featured image of post opencode-actions - 一个 coding review agent" /&gt;&lt;p&gt;为了方便引入 opencode 来做 code review，我构建了一个 github action repo。和 opencode 一起编程来做这个事情不难。&lt;/p&gt;
+&lt;p&gt;目前主要提供两个功能，一个是 review，另一个是借助 runner 来执行 opencode （也就是直接用 runner 跑 opencode 的 prompt），来跑一下其他的功能。例如改代码，创建新的 issue，根据 issue 创建 PR 等。&lt;/p&gt;
+&lt;h2 id="稳定性怎么样"&gt;稳定性怎么样？
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;这个 repo 已经经过多个项目的验证，release 的版本是可靠的。&lt;/li&gt;
+&lt;li&gt;但是要注意 main 分支的版本是快速迭代版本。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="如何引入"&gt;如何引入？
+&lt;/h2&gt;&lt;p&gt;在你的 &lt;code&gt;.github/workflows/opencode-review.yml&lt;/code&gt; 下添加：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yml" data-lang="yml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Run OpenCode review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;sun-praise/opencode-actions/review@v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;github-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# only one is enough.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;zhipu-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.ZHIPU_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;opencode-go-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.OPENCODE_GO_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;现在，这个 actions 主要支持的是 Z.AI，ZHIPU，以及 OPENCODE GO 订阅。因此，如果用 ZHIPU，那么在项目中的 secrets 加上自己的 ZHIPU_API_KEY 即可。如果用的是 opencode go 订阅，则需要加上 OPENCODE_GO_API_KEY。&lt;/p&gt;
+&lt;p&gt;其他的都可以根据默认配置来。默认模型是 &lt;code&gt;zhipuai-coding-plan/glm-5-turbo&lt;/code&gt;。如果有更多的配置要求，建议去看原仓库的 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions" target="_blank" rel="noopener"
+ &gt;README&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;我之前在 &lt;a class="link" href="https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/" target="_blank" rel="noopener"
+ &gt;代码审查文章中也有讲过&lt;/a&gt;，这个快速地 review 脚本。&lt;/p&gt;
+&lt;h2 id="差异性"&gt;差异性
+&lt;/h2&gt;&lt;p&gt;实际上 opencode 自己也有 actions，那么为什么我要再做一个呢？&lt;/p&gt;
+&lt;p&gt;与官方的差异主要体现在几个方面：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;功能&lt;/th&gt;
+					&lt;th&gt;上游状态&lt;/th&gt;
+					&lt;th&gt;本仓库&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model 默认值 fallback&lt;/td&gt;
+					&lt;td&gt;仅 required input&lt;/td&gt;
+					&lt;td&gt;三级 fallback（input → MODEL_NAME → 硬编码默认）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Provider 便捷字段&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipu-api-key&lt;/code&gt;、&lt;code&gt;opencode-go-api-key&lt;/code&gt; 等&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Review prompt 模板&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;中文格式化 review（可合并/有条件合并/不可合并）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Retry 逻辑&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;attempts / retry-profile / retry-on-regex / retry-delay&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;执行超时&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;timeout-seconds&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;版本检查&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;OPENCODE_MIN_VERSION&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;安装重试&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;install-attempts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;XDG cache 缓存&lt;/td&gt;
+					&lt;td&gt;仅缓存 bin&lt;/td&gt;
+					&lt;td&gt;同时缓存 bin + XDG cache&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;在 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/issues/29" target="_blank" rel="noopener"
+ &gt;sun-praise/opencode-actions#29&lt;/a&gt; 中有详细的说明。&lt;/p&gt;
+&lt;h2 id="review-效果"&gt;review 效果
+&lt;/h2&gt;&lt;p&gt;可以从 repo 本身的 PR 看到 &lt;a class="link" href="https://github.com/sun-praise/opencode-actions/pull/30" target="_blank" rel="noopener"
+ &gt;opencode-actions#30&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;大概是这个效果：&lt;/p&gt;
+&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/9f8b42c4e5623fb4.png"&gt;&lt;/p&gt;
+&lt;h2 id="未来"&gt;未来
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;尝试集成 gemini cli。现在 google 的 GEM 3.1 PRO 模型性价比很高，单位智能是最高的。&lt;/li&gt;
+&lt;li&gt;集成 MCP 插件功能。opencode review 的时候 MCP 如果有，可能会带来更好的 review 效果。&lt;/li&gt;
+&lt;li&gt;商业化的插件功能集成&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查</title><link>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://svtter.cn/p/%E4%BD%BF%E7%94%A8-opencode--glm-5-%E5%AE%9E%E7%8E%B0-github-pr-%E8%87%AA%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AE%A1%E6%9F%A5/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/275f8d9c38cad437.png" alt="Featured image of post 使用 OpenCode + GLM-5 实现 GitHub PR 自动代码审查" /&gt;&lt;blockquote&gt;
+ &lt;p&gt;大模型会磨洋工，需要另一个 agent 或 AI 来监督。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;最近在项目中集成了 OpenCode 的 AI 代码审查功能，使用智谱 AI 的 GLM-5 模型自动 review PR 代码。本文记录完整的集成过程和踩过的坑。&lt;/p&gt;
+&lt;h2 id="背景"&gt;背景
+&lt;/h2&gt;&lt;p&gt;项目需要一个自动化的代码审查机制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当 PR 创建或更新时，自动触发 AI 审查&lt;/li&gt;
+&lt;li&gt;AI 只提供 review 建议，不修改代码&lt;/li&gt;
+&lt;li&gt;将审查结果以 comment 形式添加到 PR 中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="技术选型"&gt;技术选型
+&lt;/h2&gt;&lt;h3 id="opencode"&gt;OpenCode
+&lt;/h3&gt;&lt;p&gt;&lt;a class="link" href="https://opencode.ai" target="_blank" rel="noopener"
+ &gt;OpenCode&lt;/a&gt; 是一个开源的 AI coding agent，支持：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;多种 LLM 提供商（OpenAI、Anthropic、智谱等）&lt;/li&gt;
+&lt;li&gt;GitHub/GitLab 集成&lt;/li&gt;
+&lt;li&gt;在 CI 环境中运行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="glm-5-coding-plan"&gt;GLM-5 Coding Plan
+&lt;/h3&gt;&lt;p&gt;选择智谱 AI 的 &lt;a class="link" href="https://docs.z.ai/guides/llm/glm-5" target="_blank" rel="noopener"
+ &gt;GLM Coding Plan&lt;/a&gt; 原因：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;专为 AI 编程优化，支持 OpenCode&lt;/li&gt;
+&lt;li&gt;价格实惠（$3/月起）&lt;/li&gt;
+&lt;li&gt;国内访问稳定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;p&gt;如果只是想快速引入 code review，不需要处理权限、凭据等配置，可以直接使用封装好的 action。这是最快引入 code review 的方法，review 结果是中文：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Run OpenCode review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Svtter/opencode-actions/review@v1&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;github-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# only one is enough.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;zhipu-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.ZHIPU_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;opencode-go-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.OPENCODE_GO_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;只需要配置对应的 secret 即可使用。&lt;/p&gt;
+&lt;h2 id="配置详解"&gt;配置详解
+&lt;/h2&gt;&lt;h3 id="1-确定模型格式"&gt;1. 确定模型格式
+&lt;/h3&gt;&lt;p&gt;OpenCode 的模型格式为 &lt;code&gt;provider_id/model_id&lt;/code&gt;。对于智谱 GLM-5：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;配置项&lt;/th&gt;
+					&lt;th&gt;值&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;环境变量&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Model 格式&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;zhipuai-coding-plan/glm-5&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="2-创建-workflow-文件"&gt;2. 创建 Workflow 文件
+&lt;/h3&gt;&lt;p&gt;创建 &lt;code&gt;.github/workflows/opencode-review.yml&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;span class="lnt"&gt;41
+&lt;/span&gt;&lt;span class="lnt"&gt;42
+&lt;/span&gt;&lt;span class="lnt"&gt;43
+&lt;/span&gt;&lt;span class="lnt"&gt;44
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;OpenCode PR Review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;types&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;opened, synchronize, reopened, ready_for_review]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;AI Code Review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 仅在 PR 准备就绪时运行（跳过 draft PR）&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;if&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;github.event.pull_request.draft == false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runs-on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;self-hosted&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;id-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;write&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;contents&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;read&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull-requests&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;write&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;issues&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;write&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;steps&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Checkout repository&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;actions/checkout@v6&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;persist-credentials&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Run OpenCode Review&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;anomalyco/opencode/github@latest&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;env&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ZHIPU_API_KEY&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.ZHIPU_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;GITHUB_TOKEN&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;model&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;zhipuai-coding-plan/glm-5&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;use_github_token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Review this pull request (read-only mode, DO NOT modify any code):
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Please check:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Code quality issues
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Potential bugs or logic errors
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Code style consistency
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Security concerns
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Performance issues
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; - Suggest improvements
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; Please respond in Chinese. DO NOT modify any code, only provide review comments.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="3-配置-github-secrets"&gt;3. 配置 GitHub Secrets
+&lt;/h3&gt;&lt;p&gt;在仓库 Settings → Secrets and variables → Actions 中添加：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ZHIPU_API_KEY&lt;/code&gt;: 从 &lt;a class="link" href="https://z.ai/manage-apikey/apikey-list" target="_blank" rel="noopener"
+ &gt;Z.AI Console&lt;/a&gt; 获取&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="踩坑记录"&gt;踩坑记录
+&lt;/h2&gt;&lt;h3 id="坑-1-权限不足-403-forbidden"&gt;坑 1: 权限不足 (403 Forbidden)
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;错误信息&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Resource not accessible by integration - https://docs.github.com/rest/issues/comments#create-an-issue-comment
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;原因&lt;/strong&gt;：permissions 配置为 &lt;code&gt;read&lt;/code&gt;，无法写入 PR comment。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决&lt;/strong&gt;：将权限改为 &lt;code&gt;write&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull-requests&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;write &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 不是 read&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;issues&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;write &lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 不是 read&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="坑-2-git-凭据问题"&gt;坑 2: Git 凭据问题
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;错误信息&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fatal: could not read Username for &amp;#39;https://github.com&amp;#39;: No such device or address
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;原因&lt;/strong&gt;：checkout 时 &lt;code&gt;persist-credentials: false&lt;/code&gt; 导致后续 git 操作无法认证。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;actions/checkout@v6&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;persist-credentials&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 不是 false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="坑-3-draft-pr-不应触发审查"&gt;坑 3: Draft PR 不应触发审查
+&lt;/h3&gt;&lt;p&gt;Draft PR 还在开发中，不需要 AI 审查，浪费资源。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;解决&lt;/strong&gt;：添加条件判断：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;if&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;github.event.pull_request.draft == false&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="工作流程"&gt;工作流程
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PR opened/updated
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;检查是否为 Draft PR
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓ (非 Draft)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GitHub Actions 触发
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;OpenCode 下载并分析 diff
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GLM-5 生成审查意见
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;自动添加 PR comment
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;开发者查看建议，手动决定是否采纳
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="效果展示"&gt;效果展示
+&lt;/h2&gt;&lt;p&gt;配置完成后，每次 PR 更新都会自动触发 AI 审查，审查结果会以 comment 形式出现在 PR 页面。&lt;/p&gt;
+&lt;p&gt;审查内容包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;代码质量问题&lt;/li&gt;
+&lt;li&gt;潜在 bug&lt;/li&gt;
+&lt;li&gt;风格一致性&lt;/li&gt;
+&lt;li&gt;安全隐患&lt;/li&gt;
+&lt;li&gt;性能问题&lt;/li&gt;
+&lt;li&gt;改进建议&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="成本估算"&gt;成本估算
+&lt;/h2&gt;&lt;p&gt;使用 GLM Coding Plan：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基础套餐 $3/月&lt;/li&gt;
+&lt;li&gt;中等项目每月约 10-20 次 PR，成本可控&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;通过 OpenCode + GLM-5 实现自动代码审查：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;配置简单&lt;/strong&gt;：一个 workflow 文件即可&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;成本低&lt;/strong&gt;：GLM Coding Plan 价格友好&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;效果好&lt;/strong&gt;：GLM-5 在编程任务上表现优秀&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;安全&lt;/strong&gt;：只读模式，不会修改代码&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="参考链接"&gt;参考链接
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/" target="_blank" rel="noopener"
+ &gt;OpenCode 官方文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/github/" target="_blank" rel="noopener"
+ &gt;OpenCode GitHub 集成&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.z.ai/guides/llm/glm-5" target="_blank" rel="noopener"
+ &gt;GLM-5 文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.z.ai/coding-plan/overview" target="_blank" rel="noopener"
+ &gt;GLM Coding Plan&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="相关文章"&gt;相关文章
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%9C%80%E8%BF%91%E5%8F%91%E7%8E%B0%E5%A5%BD%E7%94%A8%E7%9A%84-mcp-%E5%B7%A5%E5%85%B7/" &gt;最近发现好用的 MCP 工具&lt;/a&gt; - OpenCode/Claude Code 配套工具推荐&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E9%AB%98%E6%95%88%E7%9C%81%E9%92%B1%E6%88%91%E7%9A%84-ai-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%80%89%E6%8B%A9/" &gt;高效省钱：我的 AI Agent 工作流选择&lt;/a&gt; - OpenCode + Gemini 的高性价比工作流&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E8%BF%90%E8%A1%8C-claude-code-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%BC%80%E5%8F%91/" &gt;在虚拟机上运行 Claude Code 实现自动化测试与开发&lt;/a&gt; - 使用 VM + Playwright MCP 实现自动化测试&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/git-mcp-tools.md/" &gt;Git MCP Tools&lt;/a&gt; - 让大模型操作 Git 的 MCP 服务&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

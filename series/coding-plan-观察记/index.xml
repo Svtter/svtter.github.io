@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Coding Plan 观察记 on Svtter's Blog</title><link>https://svtter.cn/series/coding-plan-%E8%A7%82%E5%AF%9F%E8%AE%B0/</link><description>Recent content in Coding Plan 观察记 on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 26 Jun 2026 14:50:22 +0800</lastBuildDate><atom:link href="https://svtter.cn/series/coding-plan-%E8%A7%82%E5%AF%9F%E8%AE%B0/index.xml" rel="self" type="application/rss+xml"/><item><title>Token Plan 不够了怎么办</title><link>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</link><pubDate>Fri, 26 Jun 2026 14:53:13 +0800</pubDate><guid>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/da2b10239a806659.png" alt="Featured image of post Token Plan 不够了怎么办" /&gt;&lt;p&gt;我现在订阅了多个 token plan，除了高可用（笑）以外，最大的好处是高并发。&lt;/p&gt;
+&lt;p&gt;问题是有时候用量到了切换起来比较麻烦。例如 claude code，配置的时候一般是通过配置 &lt;code&gt;OPUS_MODEL&lt;/code&gt; 等来实现的。需要退出 claude，然后加载新的 plan，然后继续工作。这样速度比较慢。目前我试过体验最好的方案是用 &lt;code&gt;/export&lt;/code&gt; 命令来导出文件。这个命令在不同的 coding agent 中都可以使用。opencode，kimi-code，以及 omp 都可以。&lt;/p&gt;
+&lt;p&gt;基于此，我们可以在 token plan 用光后，直接 export，然后可以在新的 agent 里输入：&lt;code&gt;加载上下文 @&amp;lt;file-name&amp;gt;&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>Token Plan 性价比分析</title><link>https://svtter.cn/p/token-plan-%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/</link><pubDate>Wed, 17 Jun 2026 17:51:07 +0800</pubDate><guid>https://svtter.cn/p/token-plan-%E6%80%A7%E4%BB%B7%E6%AF%94%E5%88%86%E6%9E%90/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/0d5e07d71b2caa34.png" alt="Featured image of post Token Plan 性价比分析" /&gt;&lt;p&gt;我订阅了几个大模型供应商，现在算一算性价比，给大家伙做参考。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;订正：2026年7月8日。GLM MAX 套餐应该是 2.88 元/亿 token。我之前计算的时候将 B 按照亿来计算了，应该是 10亿。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="tldr"&gt;TL;DR
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;供应商&lt;/th&gt;
+					&lt;th&gt;套餐&lt;/th&gt;
+					&lt;th&gt;价格（元/亿 token）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;MiniMax&lt;/td&gt;
+					&lt;td&gt;MiniMax 119 套餐&lt;/td&gt;
+					&lt;td&gt;16.08&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;XiaoMi MiMo&lt;/td&gt;
+					&lt;td&gt;MiMo 39 套餐&lt;/td&gt;
+					&lt;td&gt;10.54&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Deepseek&lt;/td&gt;
+					&lt;td&gt;无套餐，用量订阅&lt;/td&gt;
+					&lt;td&gt;35.61&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;GLM&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;Max 套餐&lt;/td&gt;
+					&lt;td&gt;2.88&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;综合下来应该是 &lt;strong&gt;GLM&lt;/strong&gt; 最划算。&lt;/p&gt;
+&lt;h2 id="minimax"&gt;MiniMax
+&lt;/h2&gt;&lt;p&gt;套餐：MiniMax 119 套餐
+价格：用量大概是 16.08元/亿 token。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/17/02cf27d1-be31-409f-8895-4ac4b5c4d4ff.png"&gt;&lt;/p&gt;
+&lt;h2 id="xiaomi-mimo"&gt;XiaoMi MiMo
+&lt;/h2&gt;&lt;p&gt;套餐：MiMo 39 套餐
+价格：10.54元/亿 token&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/17/b0625aa1-6d06-4b0e-bb7a-356768138411.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/17/d78dccdd-19d4-42a9-8750-858331ab203a.png"&gt;&lt;/p&gt;
+&lt;h2 id="deepseek"&gt;Deepseek
+&lt;/h2&gt;&lt;p&gt;套餐：无套餐，用量订阅。
+价格：35.61元/亿 token&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/17/77196c53-20c0-4ae0-84a3-7f129f5c4f11.png"&gt;&lt;/p&gt;
+&lt;h2 id="kimi"&gt;Kimi
+&lt;/h2&gt;&lt;p&gt;订阅：199 套餐
+价格：无法计算。&lt;/p&gt;
+&lt;p&gt;个人体感下来 Kimi 是比较方便，能力更强。&lt;/p&gt;
+&lt;h2 id="glm"&gt;GLM
+&lt;/h2&gt;&lt;p&gt;套餐：Max 4500
+价格：2.88元/亿 token。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;更新：这里计算错误，应该是 2.88元/亿；375/130。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img alt="图片" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/2026/06/17/9837ecf6-d155-4a75-8fe5-a06ad9582416.png"&gt;&lt;/p&gt;</description></item><item><title>糟糕的 token plan 隐私保护现状</title><link>https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/</link><pubDate>Mon, 15 Jun 2026 00:28:33 +0800</pubDate><guid>https://svtter.cn/p/%E7%B3%9F%E7%B3%95%E7%9A%84-token-plan-%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E7%8E%B0%E7%8A%B6/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d1e30369dfbbd969.png" alt="Featured image of post 糟糕的 token plan 隐私保护现状" /&gt;&lt;p&gt;这篇文章是 AI Coding 数据训练政策对比（2026年6月）&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;核心结论：各平台在“是否使用你的代码训练模型”上政策差异极大。&lt;strong&gt;个人版多数默认用于训练，企业/API版通常承诺不用。&lt;/strong&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="tldr"&gt;TLDR
+&lt;/h2&gt;&lt;p&gt;不想代码被训练，要么付钱买企业版/API，要么选小米 token plan。&lt;/p&gt;
+&lt;h2 id="一平台政策速览表"&gt;一、平台政策速览表
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;平台&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;普通版 / 个人版&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;API / 企业版&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;退出/关闭机制&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;备注&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;智谱 GLM&lt;/strong&gt; (Coding Plan)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;默认用于训练&lt;/strong&gt;&lt;br&gt;（协议明确允许）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;团队版承诺不用&lt;/strong&gt;&lt;br&gt;API 国际版有豁免&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;个人版无法一键关闭&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;团队版需额外付费购买&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;Kimi&lt;/strong&gt; (Kimi Code)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;默认用于训练&lt;/strong&gt;&lt;br&gt;（协议允许，且无法关闭）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;API 承诺不用&lt;/strong&gt;&lt;br&gt;（官方FAQ明确）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;个人版无退出开关&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;个人工具定位，不推荐输敏感代码&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;小米&lt;/strong&gt; (MiMo Token Plan)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;–&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;承诺不用&lt;/strong&gt;&lt;br&gt;（隐私政策写明“未经同意不用于训练”）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;可联系客服退出&lt;br&gt;（理论途径）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;主要面向API场景，个人助理政策可能不同&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;MiniMax&lt;/strong&gt; (Coding Plan)&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;默认用于训练&lt;/strong&gt;&lt;br&gt;（隐私政策允许）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;个人数据不用于训练&lt;/strong&gt;&lt;br&gt;（API隐私政策部分保护）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;strong&gt;提供退出机制&lt;/strong&gt;&lt;br&gt;（联系客服 Opt-out）&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;目前唯一明确给个人版退出通道的平台&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;腾讯云 TokenHub&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;-&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;不用于训练&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;-&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;不用于训练&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="二关键区别总结"&gt;二、关键区别总结
+&lt;/h2&gt;&lt;h3 id="1-最安全的选择数据绝对不训练"&gt;1. 最安全的选择（数据绝对不训练）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;小米 Token Plan (API)&lt;/strong&gt;：隐私政策直接承诺“未经同意不用于训练”&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kimi API&lt;/strong&gt;：官方FAQ明文承诺不训练&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;智谱 GLM 团队版&lt;/strong&gt;：协议写入“数据默认不用于训练”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-有退出权个人版可申请关闭"&gt;2. 有退出权（个人版可申请关闭）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;MiniMax&lt;/strong&gt;：个人用户可联系客服选择退出训练（&lt;strong&gt;唯一有此机制的个人版&lt;/strong&gt;）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="3-无退出权个人版强制参与训练"&gt;3. 无退出权（个人版强制参与训练）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Kimi Code&lt;/strong&gt;、&lt;strong&gt;智谱 GLM 普通版&lt;/strong&gt;：协议允许训练，且无一键关闭开关 → &lt;strong&gt;请勿输入敏感代码&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="三使用建议"&gt;三、使用建议
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;个人开发者 / 实验性项目&lt;/strong&gt;：可以用普通版，但不要上传核心商业代码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;闭源商业项目 / 公司核心资产&lt;/strong&gt;：&lt;strong&gt;必须购买企业版、团队版或使用 API&lt;/strong&gt;，并确认协议中“不用于训练”的承诺&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;最佳隐私保护方案&lt;/strong&gt;：优先选择 &lt;strong&gt;小米 API&lt;/strong&gt; 或 &lt;strong&gt;Kimi API&lt;/strong&gt;（承诺清晰）或 &lt;strong&gt;智谱团队版&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;如果必须用个人版&lt;/strong&gt;：&lt;strong&gt;MiniMax&lt;/strong&gt; 是你唯一可以主动选择退出训练的平台&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="四注意事项"&gt;四、注意事项
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;各平台的隐私政策可能随时更新，&lt;strong&gt;使用前请务必自行查阅最新官方文本&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;“不用于训练”通常仅限 API/企业版，个人版默认都会用你的数据优化模型。&lt;/li&gt;
+&lt;li&gt;部分平台（如 Kimi）连退出通道都没有，输入即同意训练。&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>大模型 Coding Plan 年付，到底值不值？</title><link>https://svtter.cn/p/coding-plan-yearly-worth-it/</link><pubDate>Sun, 22 Mar 2026 16:30:00 +0800</pubDate><guid>https://svtter.cn/p/coding-plan-yearly-worth-it/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/141bc20d6d117477.jpg" alt="Featured image of post 大模型 Coding Plan 年付，到底值不值？" /&gt;&lt;p&gt;前段时间我写过一篇文章：&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;那篇文章讨论的是一个偏“供给侧”的问题：厂商宣传的海量额度，在并发、吞吐和 agent 调用膨胀的现实里，到底能不能兑现。&lt;/p&gt;
+&lt;p&gt;但这还不是全部。&lt;/p&gt;
+&lt;p&gt;对用户来说，另一个同样重要的问题是：&lt;strong&gt;即便套餐的理论承诺很难完全兑现，这种年付制 Coding Plan 到底值不值钱？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;我的结论是：&lt;strong&gt;对轻度用户，大概率不值得；对重度用户，往往非常值。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="问题不仅仅只有一个"&gt;问题不仅仅只有一个
+&lt;/h2&gt;&lt;p&gt;“值不值”其实不是一个问题，而是两个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;这个套餐的&lt;strong&gt;承诺量&lt;/strong&gt;能不能真的给到你？&lt;/li&gt;
+&lt;li&gt;这个套餐的&lt;strong&gt;价格&lt;/strong&gt;，和你按量付费相比，划不划算？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;上一篇文章主要在算第一个问题。&lt;/p&gt;
+&lt;p&gt;这一篇，我只算第二个。&lt;/p&gt;
+&lt;p&gt;因为这两个问题并不矛盾。一个套餐完全可能同时满足下面两点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;它宣传的“海量额度”在工程上很难 100% 打满；&lt;/li&gt;
+&lt;li&gt;但对某些真实重度用户来说，它依然比按量 API 便宜很多。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="以一个供应商的高配年付套餐为例"&gt;以一个供应商的高配年付套餐为例
+&lt;/h2&gt;&lt;p&gt;为了把账算清楚，我还是拿一个具体套餐举例。这里用 &lt;code&gt;GLM-5 Max&lt;/code&gt;，只是因为它的价格、按量定价和套餐规则相对明确，方便计算。&lt;/p&gt;
+&lt;p&gt;更准确地说，&lt;strong&gt;这篇文章复用的是分析框架，不是直接复用结论&lt;/strong&gt;。如果换成别家的 Coding Plan，价格、支持工具、限额窗口和扣减规则都可能不一样，参数必须重新代入。&lt;/p&gt;
+&lt;p&gt;截至 &lt;code&gt;2026-03-22&lt;/code&gt;，我看到的实际价格是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;GLM-5 Max&lt;/code&gt;：&lt;code&gt;4800 元 / 年&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;折合下来：&lt;code&gt;400 元 / 月&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;官方 API 定价则是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;输入：&lt;code&gt;$1 / 1M tokens&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;输出：&lt;code&gt;$3.2 / 1M tokens&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果你只是偶尔用一下，这个年费其实不低。&lt;/p&gt;
+&lt;p&gt;但我最近 30 天的实际 token 用量是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;662,106,588 tokens / 30 天
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这就不是“偶尔用一下”的问题了。&lt;/p&gt;
+&lt;p&gt;不过这里也要先说明：&lt;strong&gt;这是我的个人重度使用样本，不是平均用户画像。&lt;/strong&gt; 这组数字更适合回答“像我这种高负载用户会不会回本”，不适合直接外推成所有人的结论。&lt;/p&gt;
+&lt;h2 id="直接算账"&gt;直接算账
+&lt;/h2&gt;&lt;p&gt;如果这 &lt;code&gt;6.62 亿 tokens&lt;/code&gt; 全部走 &lt;code&gt;GLM-5&lt;/code&gt; 按量 API，那么成本下限是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;662.1 × $1 / 1M = $662
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;也就是说，&lt;strong&gt;哪怕全部按输入 token 计费&lt;/strong&gt;，一个月也已经是 &lt;code&gt;600 多美元&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;而如果考虑更接近真实编码场景的输入输出比例，账单会更高。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style="text-align: left"&gt;输入 / 输出占比&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;估算单价（每 1M）&lt;/th&gt;
+					&lt;th style="text-align: left"&gt;月成本（USD）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;80% / 20%&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1.44&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$953&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;70% / 30%&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1.66&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1,099&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style="text-align: left"&gt;50% / 50%&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$2.10&lt;/code&gt;&lt;/td&gt;
+					&lt;td style="text-align: left"&gt;&lt;code&gt;$1,390&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如果粗略按 &lt;code&gt;1 USD ≈ 6.9 RMB&lt;/code&gt; 来看，大概就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;极保守下限：&lt;code&gt;约 4,500 元 / 月&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;常见编码场景：&lt;code&gt;约 6,500 - 9,600 元 / 月&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而 &lt;code&gt;GLM-5 Max&lt;/code&gt; 的月均成本只有：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4800 / 12 = 400 元 / 月
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;所以从纯价格上看，结论非常直接：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;对我这种每月稳定消耗数亿 tokens 的重度样本来说，&lt;code&gt;GLM-5 Max&lt;/code&gt; 不是“省一点”，而是“省很多”。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;但这句话还有一个隐含前提：&lt;strong&gt;这些工作负载必须大部分能落进套餐支持的工具链和额度规则里。&lt;/strong&gt; 如果你的大量 token 消耗其实发生在通用 API、非支持工具，或者持续撞到 5 小时/周限额，那这笔账就要重算。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="GLM-5 Max 年费订阅与按量 API 账单之间的成本反差示意图" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/601951ea74676ff0.jpg"&gt;&lt;/p&gt;
+&lt;h2 id="但这里有一个前提省钱不等于一定够用"&gt;但这里有一个前提：省钱，不等于一定够用
+&lt;/h2&gt;&lt;p&gt;这正是上一篇文章想表达的重点。&lt;/p&gt;
+&lt;p&gt;这类高配年付套餐之所以可能非常省钱，不代表它就没有边界。官方文档里依然写了不少限制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;套餐只能在支持的 coding tools 中使用&lt;/li&gt;
+&lt;li&gt;有 &lt;code&gt;5 小时&lt;/code&gt; 的资源窗口限制&lt;/li&gt;
+&lt;li&gt;有 &lt;code&gt;每周&lt;/code&gt; 的额度限制&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GLM-5&lt;/code&gt; 会比历史模型消耗更多套餐配额&lt;/li&gt;
+&lt;li&gt;高峰时段和非高峰时段的扣减效率并不一样&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也就是说，&lt;strong&gt;省钱和吞吐，是两个维度。&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从“账单”角度看，重度用户买订阅非常容易回本；&lt;/li&gt;
+&lt;li&gt;从“体验”角度看，你还是可能撞到周限额、窗口限额和并发限制。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这不是数学矛盾，而是两个不同的问题。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="便宜订阅卡通过狭窄闸机、背后堆满 token 的示意图" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/19776410221858e8.jpg"&gt;&lt;/p&gt;
+&lt;h2 id="什么人适合买这类高配年付套餐"&gt;什么人适合买这类高配年付套餐
+&lt;/h2&gt;&lt;p&gt;我觉得比较适合买这类高配年付 Coding Plan 的，是下面这类用户：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;几乎每天都在 IDE 或终端里跑 coding agent&lt;/li&gt;
+&lt;li&gt;经常做多轮修复、重构、读大仓库、批量改代码&lt;/li&gt;
+&lt;li&gt;token 用量长期稳定，而不是偶尔冲高&lt;/li&gt;
+&lt;li&gt;愿意把套餐主要用在受支持的工具链里&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果你符合这些条件，那么这类高配年付套餐更像一个“压低边际成本”的工具。&lt;/p&gt;
+&lt;p&gt;尤其当你已经进入“每个月稳定烧几亿 tokens”的阶段时，继续按量 API 付费，往往才是更贵的那条路。&lt;/p&gt;
+&lt;h2 id="什么人不适合买这类高配年付套餐"&gt;什么人不适合买这类高配年付套餐
+&lt;/h2&gt;&lt;p&gt;反过来，如果你属于下面几种情况，那这种 &lt;code&gt;4800 / 年&lt;/code&gt; 左右的高配套餐不一定划算：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;只是偶尔写代码时让模型帮一下忙&lt;/li&gt;
+&lt;li&gt;月度用量波动很大，忙的时候很多，不忙的时候几乎不用&lt;/li&gt;
+&lt;li&gt;主要需求不是 coding tool，而是通用 API 集成&lt;/li&gt;
+&lt;li&gt;你真正常用的是更便宜的模型，而不是长期打 &lt;code&gt;GLM-5&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对这些人来说，&lt;code&gt;Pro&lt;/code&gt; 或者干脆按量付费，通常会更稳。&lt;/p&gt;
+&lt;h2 id="所以上一篇文章是不是错了"&gt;所以，上一篇文章是不是错了？
+&lt;/h2&gt;&lt;p&gt;不是。&lt;/p&gt;
+&lt;p&gt;上一篇文章的核心观点依然成立：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;厂商宣传的“海量额度”，并不等于你在现实工作流里可以无摩擦、无上限地把它全部跑出来。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;但这不妨碍这类套餐对重度用户依然有价值。&lt;/p&gt;
+&lt;p&gt;换句话说：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;上一篇文章是在揭穿宣传口径。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;这一篇文章是在计算用户回本。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一个东西可以宣传得夸张，但价格依然可能划算。判断它值不值钱，不能只看厂商文案，也不能只看我上一篇的“吞吐上限”分析，还要看你自己的真实用量。&lt;/p&gt;
+&lt;h2 id="我的结论"&gt;我的结论
+&lt;/h2&gt;&lt;p&gt;如果你每个月的 token 用量只有几百万、几千万，这种高配年付套餐很可能买大了。&lt;/p&gt;
+&lt;p&gt;但如果你已经到了我这种量级，&lt;code&gt;30 天 6.62 亿 tokens&lt;/code&gt;，那 &lt;code&gt;4800 / 年&lt;/code&gt; 的高配 Coding Plan 从价格上看是很值的。这里的 &lt;code&gt;GLM-5 Max&lt;/code&gt; 只是一个算账样本，而且这个结论成立的前提是：你的主要工作负载确实发生在套餐支持的 coding 工具里，没有被窗口限额严重截断。真正需要担心的，不是它会不会回本，而是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;你会不会先撞到窗口限额和周限额；&lt;/li&gt;
+&lt;li&gt;你的工作流是不是主要发生在套餐支持的工具里；&lt;/li&gt;
+&lt;li&gt;你有没有必要全程都用 &lt;code&gt;GLM-5&lt;/code&gt;，还是可以让更便宜的模型承担大部分日常任务。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所以我最后的判断很简单：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;对轻度用户，这类高配年付套餐更像预付费焦虑。&lt;/p&gt;
+&lt;p&gt;对重度用户，它更像一张非常便宜、但带限流的通行证。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;最后补一个现实问题。&lt;/p&gt;
+&lt;p&gt;就算这笔账算下来很值，我们最后也未必买得到那个限购的 Coding Plan。&lt;/p&gt;
+&lt;h2 id="参考"&gt;参考
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.z.ai/guides/overview/pricing" target="_blank" rel="noopener"
+ &gt;Z.AI Pricing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.z.ai/devpack/faq" target="_blank" rel="noopener"
+ &gt;Z.AI GLM Coding Plan FAQ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="相关文章"&gt;相关文章
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/" &gt;大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？</title><link>https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/</link><pubDate>Fri, 23 Jan 2026 11:52:52 +0800</pubDate><guid>https://svtter.cn/p/%E5%A4%A7%E6%A8%A1%E5%9E%8B-coding-plan-%E5%A5%97%E9%A4%90%E7%9A%84%E6%95%B0%E5%AD%A6%E9%99%B7%E9%98%B1%E5%B9%B6%E5%8F%91%E9%99%90%E5%88%B6%E4%B8%8B%E7%9A%84%E6%89%BF%E8%AF%BA%E9%87%8F%E8%83%BD%E5%90%A6%E5%85%91%E7%8E%B0/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/55138db755d62d4e.png" alt="Featured image of post 大模型 Coding Plan 套餐的数学陷阱：并发限制下的承诺量能否兑现？" /&gt;&lt;h2 id="前言"&gt;前言
+&lt;/h2&gt;&lt;p&gt;最近，国内多家大模型厂商纷纷推出面向开发者的 Coding Plan 订阅套餐，主打&amp;quot;低价享受海量用量&amp;quot;，宣称每月仅需几十到几百元，即可获得&amp;quot;数百亿 tokens&amp;quot;的使用额度。&lt;/p&gt;
+&lt;p&gt;听起来很美好，但作为一个习惯用数据说话的开发者，我决定算一笔账：&lt;strong&gt;在并发限制下，这些承诺的用量真的能用完吗？&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="典型套餐结构"&gt;典型套餐结构
+&lt;/h2&gt;&lt;p&gt;以市面上常见的三档套餐为例：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;套餐&lt;/th&gt;
+					&lt;th&gt;月费&lt;/th&gt;
+					&lt;th&gt;承诺用量（每 5 小时）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Lite&lt;/td&gt;
+					&lt;td&gt;~20 元&lt;/td&gt;
+					&lt;td&gt;约 120 次 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Pro&lt;/td&gt;
+					&lt;td&gt;~100 元&lt;/td&gt;
+					&lt;td&gt;约 600 次 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Max&lt;/td&gt;
+					&lt;td&gt;~200 元&lt;/td&gt;
+					&lt;td&gt;约 2,400 次 prompts&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;官方还会补充说明：&amp;ldquo;每次 prompt 预计可调用模型 15-20 次，每月总计可用总量高达几十亿到数百亿 tokens。&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;看起来性价比爆表，但魔鬼藏在细节里。&lt;/p&gt;
+&lt;h2 id="关键限制并发数"&gt;关键限制：并发数
+&lt;/h2&gt;&lt;p&gt;大多数厂商的文档中会轻描淡写地提到：&amp;ldquo;套餐使用受到并发数（在途请求任务数量）的限制。&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;但具体是多少？往往不会明确告知。根据社区反馈和实测，典型的并发限制如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;套餐&lt;/th&gt;
+					&lt;th&gt;并发数（在途请求）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Lite&lt;/td&gt;
+					&lt;td&gt;2&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Pro&lt;/td&gt;
+					&lt;td&gt;~4-5&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Max&lt;/td&gt;
+					&lt;td&gt;~7&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这个数字，直接决定了你的实际吞吐量上限。&lt;/p&gt;
+&lt;h2 id="数学时间max-套餐能否用完-2400-prompts"&gt;数学时间：Max 套餐能否用完 2,400 prompts？
+&lt;/h2&gt;&lt;p&gt;让我们以最高档的 Max 套餐为例，做一个简单的计算。&lt;/p&gt;
+&lt;h3 id="已知条件"&gt;已知条件
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;承诺用量&lt;/strong&gt;：每 5 小时 2,400 次 prompts&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;并发限制&lt;/strong&gt;：7&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;每 prompt 触发的模型调用次数&lt;/strong&gt;：15-20 次（官方数据）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模型生成速度&lt;/strong&gt;：约 50-60 tokens/秒&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;5 小时 = 18,000 秒&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="计算过程"&gt;计算过程
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Step 1：估算单次 API 调用耗时&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;一次完整的 API 调用包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;输入处理：~1 秒&lt;/li&gt;
+&lt;li&gt;模型推理生成（假设输出 500 tokens）：500 ÷ 55 ≈ 9 秒&lt;/li&gt;
+&lt;li&gt;网络往返延迟：~1 秒&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;合计：约 10-12 秒/次调用&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Step 2：计算 5 小时内的最大调用次数&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;最大调用次数 = 并发数 × (总时间 ÷ 单次耗时)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; = 7 × (18,000 ÷ 10)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; = 12,600 次
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Step 3：换算为 prompts 数量&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;按官方说法，每 prompt 触发 15-20 次调用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;可完成 prompts = 12,600 ÷ 17.5 ≈ 720 次
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="结论"&gt;结论
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th&gt;官方承诺&lt;/th&gt;
+					&lt;th&gt;并发上限&lt;/th&gt;
+					&lt;th&gt;达成率&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
+					&lt;td&gt;2,400&lt;/td&gt;
+					&lt;td&gt;~720&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;30%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;即使在理想条件下，Max 套餐的实际可用量也只有承诺的 30% 左右。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="更残酷的现实agent-模式下的调用膨胀"&gt;更残酷的现实：Agent 模式下的调用膨胀
+&lt;/h2&gt;&lt;p&gt;上面的计算还是基于官方宣称的&amp;quot;每 prompt 15-20 次调用&amp;quot;。但在实际的 AI Coding Agent（如 Claude Code、Cline 等）场景中，情况要糟糕得多。&lt;/p&gt;
+&lt;h3 id="agent-模式的工作方式"&gt;Agent 模式的工作方式
+&lt;/h3&gt;&lt;p&gt;当你给 AI 编程助手一个任务时，它通常会：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;分析需求，制定计划&lt;/li&gt;
+&lt;li&gt;读取相关文件（每个文件可能触发一次调用）&lt;/li&gt;
+&lt;li&gt;编写代码&lt;/li&gt;
+&lt;li&gt;运行测试&lt;/li&gt;
+&lt;li&gt;发现错误，修复&lt;/li&gt;
+&lt;li&gt;重复 3-5 直到成功&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;一个看似简单的 prompt，在 Agent 循环中可能触发 &lt;strong&gt;50-100+ 次模型调用&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="实测案例"&gt;实测案例
+&lt;/h3&gt;&lt;p&gt;有用户反馈：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;2 条简单 prompt，80 秒，消耗 38M Tokens，用掉 97% 的 5 小时限额&amp;rdquo;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;反推计算：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每个 prompt 消耗约 19M tokens&lt;/li&gt;
+&lt;li&gt;如果按 128K 上下文计算，相当于 &lt;strong&gt;~127 次模型调用/prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这比官方说的&amp;quot;15-20 次&amp;quot;高出 &lt;strong&gt;6-8 倍&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id="修正后的实际可用量"&gt;修正后的实际可用量
+&lt;/h3&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;场景&lt;/th&gt;
+					&lt;th&gt;每 prompt 调用次数&lt;/th&gt;
+					&lt;th&gt;5 小时可用 prompts&lt;/th&gt;
+					&lt;th&gt;达成率&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;官方理想值&lt;/td&gt;
+					&lt;td&gt;17.5&lt;/td&gt;
+					&lt;td&gt;720&lt;/td&gt;
+					&lt;td&gt;30%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;轻度使用&lt;/td&gt;
+					&lt;td&gt;50&lt;/td&gt;
+					&lt;td&gt;252&lt;/td&gt;
+					&lt;td&gt;10.5%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;中度使用&lt;/td&gt;
+					&lt;td&gt;75&lt;/td&gt;
+					&lt;td&gt;168&lt;/td&gt;
+					&lt;td&gt;7%&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;重度 Agent&lt;/td&gt;
+					&lt;td&gt;100+&lt;/td&gt;
+					&lt;td&gt;&amp;lt;126&lt;/td&gt;
+					&lt;td&gt;&amp;lt;5%&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="为什么会这样"&gt;为什么会这样？
+&lt;/h2&gt;&lt;h3 id="1-token-计算包含-context"&gt;1. Token 计算包含 Context
+&lt;/h3&gt;&lt;p&gt;大模型的 token 消耗不仅仅是输出，还包括输入。在 Coding 场景下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每次调用都要发送完整的对话历史&lt;/li&gt;
+&lt;li&gt;代码项目的上下文动辄几十 K tokens&lt;/li&gt;
+&lt;li&gt;128K 上下文窗口意味着每次调用可能消耗 100K+ tokens&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="2-并发是硬约束"&gt;2. 并发是硬约束
+&lt;/h3&gt;&lt;p&gt;无论你的套餐额度有多大，并发数决定了单位时间内的最大吞吐量。这是一个&lt;strong&gt;物理瓶颈&lt;/strong&gt;，不是商业策略能绕过的。&lt;/p&gt;
+&lt;h3 id="3-承诺基于理想假设"&gt;3. 承诺基于理想假设
+&lt;/h3&gt;&lt;p&gt;厂商的宣传数字，往往基于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每次调用只用很小的 context&lt;/li&gt;
+&lt;li&gt;每个 prompt 只触发少量调用&lt;/li&gt;
+&lt;li&gt;用户不会连续高强度使用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但这些假设在真实的 AI Coding 场景中几乎不成立。&lt;/p&gt;
+&lt;h2 id="一张表看清真相"&gt;一张表看清真相
+&lt;/h2&gt;&lt;p&gt;以 Max 套餐（~200 元/月）为例：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;指标&lt;/th&gt;
+					&lt;th&gt;官方宣传&lt;/th&gt;
+					&lt;th&gt;理论上限&lt;/th&gt;
+					&lt;th&gt;实际预期&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每 5 小时 prompts&lt;/td&gt;
+					&lt;td&gt;2,400&lt;/td&gt;
+					&lt;td&gt;720&lt;/td&gt;
+					&lt;td&gt;150-400&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每月 prompts&lt;/td&gt;
+					&lt;td&gt;345,600&lt;/td&gt;
+					&lt;td&gt;103,680&lt;/td&gt;
+					&lt;td&gt;21,600-57,600&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;每月 tokens&lt;/td&gt;
+					&lt;td&gt;&amp;ldquo;数百亿&amp;rdquo;&lt;/td&gt;
+					&lt;td&gt;~100 亿&lt;/td&gt;
+					&lt;td&gt;10-30 亿&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;达成率&lt;/td&gt;
+					&lt;td&gt;100%&lt;/td&gt;
+					&lt;td&gt;30%&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;5-17%&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="给开发者的建议"&gt;给开发者的建议
+&lt;/h2&gt;&lt;h3 id="1-别被数百亿-tokens忽悠"&gt;1. 别被&amp;quot;数百亿 tokens&amp;quot;忽悠
+&lt;/h3&gt;&lt;p&gt;Token 数量是一个极具误导性的指标。在 Coding Agent 场景下，context 占了大头，真正有效的输出 tokens 可能只有 1-5%。&lt;/p&gt;
+&lt;h3 id="2-关注并发数"&gt;2. 关注并发数
+&lt;/h3&gt;&lt;p&gt;这才是决定实际体验的核心指标。如果厂商不公开并发限制，大概率是因为数字不好看。&lt;/p&gt;
+&lt;h3 id="3-计算单-prompt-成本"&gt;3. 计算单 prompt 成本
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;实际单 prompt 成本 = 月费 ÷ 实际可用 prompts
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以 Max 套餐为例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;官方宣传：200 ÷ 345,600 = 0.0006 元/prompt&lt;/li&gt;
+&lt;li&gt;实际情况：200 ÷ 30,000 = &lt;strong&gt;0.007 元/prompt&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;差了 10 倍。&lt;/p&gt;
+&lt;h3 id="4-考虑按量付费"&gt;4. 考虑按量付费
+&lt;/h3&gt;&lt;p&gt;如果你的使用量不大，按量付费可能比包月更划算。至少不会为&amp;quot;用不完的额度&amp;quot;买单。&lt;/p&gt;
+&lt;h2 id="结语"&gt;结语
+&lt;/h2&gt;&lt;p&gt;大模型 Coding Plan 套餐的出现本身是好事，降低了开发者使用 AI 编程助手的门槛。但在选择套餐时，请务必：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;要求厂商公开并发限制&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自己动手算一算吞吐量上限&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不要被&amp;quot;数百亿 tokens&amp;quot;的大数字迷惑&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;毕竟，&lt;strong&gt;承诺的用量用不完，就等于变相涨价&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;本文基于公开信息和数学推导，具体数值可能因厂商调整而变化。建议读者以实测为准。&lt;/em&gt;&lt;/p&gt;</description></item><item><title>我又买了 Kimi Coding Plan</title><link>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</link><pubDate>Fri, 24 Oct 2025 17:03:48 +0800</pubDate><guid>https://svtter.cn/p/%E6%88%91%E5%8F%88%E4%B9%B0%E4%BA%86-kimi-coding-plan/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/183c22b7606a9896.svg" alt="Featured image of post 我又买了 Kimi Coding Plan" /&gt;&lt;p&gt;kimi 的包月计划推出了。&lt;/p&gt;
+&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;😋, it&amp;#39;s coming. &lt;a href="https://twitter.com/Kimi_Moonshot?ref_src=twsrc%5Etfw"&gt;@Kimi_Moonshot&lt;/a&gt; now has a subscription-based plan now!&lt;br&gt;&lt;br&gt;Start from $7/month up to $28.5/month, about 1/7 compared to Claude Code 😋 &lt;a href="https://t.co/hTnIbVjebg"&gt;https://t.co/hTnIbVjebg&lt;/a&gt; &lt;a href="https://t.co/Mi3EjOl346"&gt;pic.twitter.com/Mi3EjOl346&lt;/a&gt;&lt;/p&gt;&amp;mdash; Xuanwo (@OnlyXuanwo) &lt;a href="https://twitter.com/OnlyXuanwo/status/1981586444658548736?ref_src=twsrc%5Etfw"&gt;October 24, 2025&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;p&gt;我试用了一下，感觉 kimi 集成 claude code 相比于 glm 要好很多。例如，不需要单独配置 web search。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;gt; 尝试搜索一下 svtter
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;● Web Search(&amp;#34;svtter&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ⎿  Did 1 search in 19s
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在配置好 kimi 之后，即可使用。&lt;/p&gt;
+&lt;p&gt;此外，在封闭测试中，kimi k2 的性能得到了&lt;a class="link" href="https://mp.weixin.qq.com/s/nil-kRM2Ef1tV3CQ-6t7Ag" target="_blank" rel="noopener"
+ &gt;Vercel CEO的认可&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;公开的测试结果大概是这样：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="coding model performance" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/d64f70365013df67.png"&gt;&lt;/p&gt;
+&lt;h2 id="cli"&gt;CLI
+&lt;/h2&gt;&lt;p&gt;kimi 也有自己的 cli，具体可以看&lt;a class="link" href="https://mp.weixin.qq.com/s/M9m7vZoG8uEtGpKddAA4ZA" target="_blank" rel="noopener"
+ &gt;这里&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://www.kimi.com/coding/docs/kimi-cli.html" target="_blank" rel="noopener"
+ &gt;官方文档&lt;/a&gt;中讲了如何购买以及使用。不过从习惯上讲我更喜欢使用 claude code。&lt;/p&gt;
+&lt;h2 id="额外知识"&gt;额外知识
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;不同 kimi k2 的提供商，&lt;a class="link" href="https://mp.weixin.qq.com/s/v_r42j9YuXY7zYff6z4eXw" target="_blank" rel="noopener"
+ &gt;性能是不一样的&lt;/a&gt;。所以某种程度上说，cache 是必然的。如果价格差距不大，并且网络访问没有问题，还是用原厂的最好。&lt;/li&gt;
+&lt;li&gt;现在这么多厂商都推出了自己的 coding plan 以及订阅计划。此时，如果希望动态修改 claude code 的 provider，可以通过 &lt;a class="link" href="https://github.com/farion1231/cc-switch" target="_blank" rel="noopener"
+ &gt;cc-switch 项目&lt;/a&gt;。&lt;/li&gt;
+&lt;li&gt;同时发布的还有快手的 &lt;a class="link" href="https://kwaipilot.github.io/KAT-Coder/" target="_blank" rel="noopener"
+ &gt;kwaipilot&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当然，还有其他的 coding 工具。这里有个总结：&lt;/p&gt;
+&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="zh" dir="ltr"&gt;现在各种编程的Vibe CLI多到程序和程序员都不够了。我列下，还来不及进行ranking。&lt;br&gt;1）CC系的：Claude、Deepseek、GLM（包月）、Kimi、KAT-coder（限免）；&lt;br&gt;2）Codex&lt;br&gt;3）Gemini系的：Gemini、Qwen Code（限免）、iflow（限免）、Qodercli（限免）、Cursor-Agent。&lt;/p&gt;&amp;mdash; Michael Anti (@mranti) &lt;a href="https://twitter.com/mranti/status/1981381099889840358?ref_src=twsrc%5Etfw"&gt;October 23, 2025&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt;
+&lt;h2 id="顾虑"&gt;顾虑
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;回到 kimi。现在 kimi 提供的默认模型是 &lt;code&gt;kimi-for-coding&lt;/code&gt;，我们无法确定这个模型是哪一个级别的模型。如果是个笨蛋模型，那我们采购的意义就很小了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;最后，我现在不推荐 glm4.6（虽然已经充了 2400 的年付），如果我的 claude code 超过使用限制，我会直接切换到 deepseek chat。&lt;/p&gt;
+&lt;h2 id="相关-coding-plan-文章"&gt;相关 Coding Plan 文章
+&lt;/h2&gt;&lt;p&gt;如果你对其他 AI coding plan 的体验感兴趣，可以阅读我的其他文章：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E6%99%BA%E8%B0%B1-glm-4.5-%E5%9C%A8%E7%BC%96%E7%A8%8B%E6%96%B9%E9%9D%A2%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener"
+ &gt;智谱 glm-4.5 在编程方面的若干问题&lt;/a&gt; - GLM 4.5 coding plan 的实际问题总结&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://svtter.cn/p/%E8%B1%86%E5%8C%85-doubao-seed-code-%E6%B5%8B%E8%AF%95/" target="_blank" rel="noopener"
+ &gt;豆包 doubao-seed-code 测试&lt;/a&gt; - 字节豆包 coding plan 的深度测试和 Trae CN 集成&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>[过期] 我现在更多的使用 GLM 4.6 了</title><link>https://svtter.cn/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/</link><pubDate>Thu, 09 Oct 2025 15:36:00 +0800</pubDate><guid>https://svtter.cn/p/%E8%BF%87%E6%9C%9F-%E6%88%91%E7%8E%B0%E5%9C%A8%E6%9B%B4%E5%A4%9A%E7%9A%84%E4%BD%BF%E7%94%A8-glm-4.6-%E4%BA%86/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/a42bb75209d1b5c5.svg" alt="Featured image of post [过期] 我现在更多的使用 GLM 4.6 了" /&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;updated at: 2025-10-27
+只有在很简单的任务上我才会使用 glm4.6。实际体验上，经常会出现小问题。例如使用 claude code 的时候无法更新文件。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;● Update&lt;span class="o"&gt;(&lt;/span&gt;content/post/2025-10-24-我又买了-kimi-coding-plan/pics/bg.svg&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ⎿  Error editing file
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ⎿  Interrupted · What should Claude &lt;span class="k"&gt;do&lt;/span&gt; instead?
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;p&gt;这是近期使用 code agent 一些体会。&lt;/p&gt;
+&lt;h2 id="模型对比"&gt;模型对比
+&lt;/h2&gt;&lt;p&gt;在我的实际使用体验下来，相比于 DeepSeek v3.2，GLM 4.6 还是要更强一些。&lt;/p&gt;
+&lt;p&gt;例如，我在 nextjs 的项目中，创建了配置 nextjs config -&amp;gt; baseUrl 192.168.2.14:8080，GLM 4.6 在不提供明确上下文的前提下，能识别这个预先配置，但是 DeepSeek v3.2 无法做到。&lt;/p&gt;
+&lt;p&gt;但 GLM 4.6 并非全面领先的。在问题相对不确定的情况下，DeepSeek v3.2 更加保守，不会去突破我在任务完成时预先提出的限制。GLM 4.6 则视我的限制于无物，大胆的修改然后改崩。&lt;/p&gt;
+&lt;h2 id="工具"&gt;工具
+&lt;/h2&gt;&lt;p&gt;相比于在 claude code / cline 中使用 GLM 4.6，在 kilo code 中使用体验是最好的。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;kilo code 可以并行读取文件，cc 只能串行一个个读取&lt;/li&gt;
+&lt;li&gt;kilo code 强制要求生成 plan，相比于 cc 对 big model 限制更多。&lt;/li&gt;
+&lt;li&gt;可视化界面更好操作。我可以直接 ban 掉 python 命令（我需要执行 uv run 而不是直接执行 python 命令）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但是 kilo code 本身也有问题。无法使用 input; http 类型的 mcpServer。这使得 web-search-prime 在 kilo code 上无法使用。&lt;/p&gt;
+&lt;h2 id="相关阅读"&gt;相关阅读
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://atbug.com/budget-efficiency-kilo-code-choice/" target="_blank" rel="noopener"
+ &gt;预算有限，效率拉满：为什么 Kilo Code 成了我的首选 Coding Agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://kilocode.ai/" target="_blank" rel="noopener"
+ &gt;kilo code&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
