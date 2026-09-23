@@ -1,4 +1,256 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 16 Sep 2026 09:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/index.xml" rel="self" type="application/rss+xml"/><item><title>同模型对照：OCR 与 pi-review-agent 的架构差距值多少分</title><link>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</link><pubDate>Wed, 16 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</guid><description>&lt;p&gt;简单说：差距挺大，但 pi-review-agent 并非一无是处——它更便宜，review 也更快。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Svtter's Blog</title><link>https://svtter.cn/</link><description>Recent content on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 23 Sep 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/index.xml" rel="self" type="application/rss+xml"/><item><title>omp 的 skill 是怎么被加载的：发现靠代码，触发靠模型</title><link>https://svtter.cn/p/omp-%E7%9A%84-skill-%E6%98%AF%E6%80%8E%E4%B9%88%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%8F%91%E7%8E%B0%E9%9D%A0%E4%BB%A3%E7%A0%81%E8%A7%A6%E5%8F%91%E9%9D%A0%E6%A8%A1%E5%9E%8B/</link><pubDate>Wed, 23 Sep 2026 10:00:00 +0800</pubDate><guid>https://svtter.cn/p/omp-%E7%9A%84-skill-%E6%98%AF%E6%80%8E%E4%B9%88%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%8F%91%E7%8E%B0%E9%9D%A0%E4%BB%A3%E7%A0%81%E8%A7%A6%E5%8F%91%E9%9D%A0%E6%A8%A1%E5%9E%8B/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/23/omp-skill-loading-cover.jpg" alt="Featured image of post omp 的 skill 是怎么被加载的：发现靠代码，触发靠模型" /&gt;&lt;p&gt;我的 omp（oh-my-pi）里现在装了一百多个 skill。某天在会话里顺手问了一句：「omp 是怎么判断一个 skill 是否被加载的？还是说完全依赖模型实现？」&lt;/p&gt;
+&lt;p&gt;这个问题背后是一组更具体的问题：skill 从磁盘到模型上下文，中间经过几步？每一步是代码在决定，还是模型在决定？如果模型跳过了该读的 skill，会发生什么？&lt;/p&gt;
+&lt;p&gt;这篇文章把当时的问答整理成一篇完整记录。结论都对照两处来源核对过：omp 的内置文档（&lt;code&gt;skills.md&lt;/code&gt;、&lt;code&gt;rulebook-matching-pipeline.md&lt;/code&gt;、&lt;code&gt;task-agent-discovery.md&lt;/code&gt;），以及本机安装的 &lt;code&gt;@oh-my-pi/pi-coding-agent@18.2.7&lt;/code&gt; 的实际代码和 bundled agent 定义文件。&lt;/p&gt;
+&lt;h2 id="skill-在-omp-里是什么"&gt;skill 在 omp 里是什么
+&lt;/h2&gt;&lt;p&gt;一个 skill 是一个目录，目录里放一个 &lt;code&gt;SKILL.md&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;skills-root&amp;gt;/&amp;lt;skill-name&amp;gt;/SKILL.md
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;SKILL.md&lt;/code&gt; 的 frontmatter 支持这些字段：&lt;code&gt;name&lt;/code&gt;、&lt;code&gt;description&lt;/code&gt;、&lt;code&gt;globs&lt;/code&gt;、&lt;code&gt;alwaysApply&lt;/code&gt;、&lt;code&gt;hide&lt;/code&gt;、&lt;code&gt;disableModelInvocation&lt;/code&gt;。对运行时真正要紧的是 &lt;code&gt;name&lt;/code&gt; 和 &lt;code&gt;description&lt;/code&gt;；文档里专门补了一句 &amp;ldquo;matching quality depends on &lt;code&gt;description&lt;/code&gt; being meaningful&amp;rdquo;——这句话的分量要到第三节才显出来。&lt;/p&gt;
+&lt;p&gt;skill 的来源有多个 provider：omp 自己的 &lt;code&gt;.omp&lt;/code&gt; 目录、Claude Code / Codex / Agents / OpenCode 各自的布局、GitHub 的 &lt;code&gt;.github/skills/&lt;/code&gt;、插件，以及 omp 自动学习的 managed skills。多来源意味着重名，重名意味着需要优先级——这已经是「发现」阶段的事了。&lt;/p&gt;
+&lt;h2 id="发现阶段纯代码模型不参与"&gt;发现阶段：纯代码，模型不参与
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;loadSkills()&lt;/code&gt;（&lt;code&gt;packages/coding-agent/src/extensibility/skills.ts&lt;/code&gt;）在会话创建时跑三趟扫描：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;capability providers（managed/auto-learn 除外）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;skills.customDirectories&lt;/code&gt; 自定义目录&lt;/li&gt;
+&lt;li&gt;omp-managed（auto-learn）skill，永远最后解析，同名时让位于任何手写的 skill&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;provider 有明确优先级，数字大的先来：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;优先级&lt;/th&gt;
+					&lt;th&gt;provider&lt;/th&gt;
+					&lt;th&gt;位置&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;100&lt;/td&gt;
+					&lt;td&gt;native&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;.omp&lt;/code&gt; 用户/项目目录&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;90&lt;/td&gt;
+					&lt;td&gt;omp-plugins&lt;/td&gt;
+					&lt;td&gt;扩展包与已安装插件&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;80&lt;/td&gt;
+					&lt;td&gt;claude&lt;/td&gt;
+					&lt;td&gt;Claude 布局&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;70&lt;/td&gt;
+					&lt;td&gt;claude-plugins / agents / codex&lt;/td&gt;
+					&lt;td&gt;三者同优先级，按注册顺序&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;55&lt;/td&gt;
+					&lt;td&gt;opencode&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;30&lt;/td&gt;
+					&lt;td&gt;github&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;.github/skills/&lt;/code&gt;（仅项目级）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;5&lt;/td&gt;
+					&lt;td&gt;omp-managed&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;~/.omp/agent/managed-skills&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;去重按 &lt;code&gt;name&lt;/code&gt; 精确匹配，同名第一个胜出；此外还有按 &lt;code&gt;realpath&lt;/code&gt; 的去重（防 symlink 重复）和重名告警。之后过四道过滤：&lt;code&gt;disabledExtensions&lt;/code&gt;、source 开关、&lt;code&gt;ignoredSkills&lt;/code&gt;、&lt;code&gt;includeSkills&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这一趟里没有任何语义判断。唯一和「内容质量」沾边的检查是 &lt;code&gt;requireDescription&lt;/code&gt;：部分 provider 要求 &lt;code&gt;description&lt;/code&gt; 字段必须存在，否则不加载。存在性是布尔检查，description 写得好不好，代码不看。&lt;/p&gt;
+&lt;p&gt;时间点也值得强调：以上全部发生在会话创建时、第一次模型调用之前。它就是一段文件系统扫描加配置过滤的代码，与 LLM 无关。&lt;/p&gt;
+&lt;h2 id="加载阶段决策靠模型执行靠代码强制没有"&gt;加载阶段：决策靠模型，执行靠代码，强制没有
+&lt;/h2&gt;&lt;p&gt;发现阶段结束后，得到一批「已发现的 skill」。它们进入模型视野的方式很克制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;系统提示里只放 name + description（&lt;code&gt;hide: true&lt;/code&gt; 的不列出）&lt;/li&gt;
+&lt;li&gt;正文不进系统提示，按需通过 &lt;code&gt;read skill://&amp;lt;name&amp;gt;&lt;/code&gt; 读取&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;把「加载」拆成三个环节看。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;决策（要不要读）是模型的。&lt;/strong&gt; 系统提示里的驱动文字是一句指令：&lt;code&gt;Matching skill → MUST read skill://&amp;lt;name&amp;gt; first&lt;/code&gt;。模型对着 description 目录，自己判断当前任务和哪条相关。这是一条提示层的约束：没有任何 hook 会校验「你动了这类文件却没读对应的 skill」，frontmatter 里的 &lt;code&gt;globs&lt;/code&gt; 字段也不参与任何执行期检查。模型跳过它，什么都不会发生。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;执行（怎么取）是代码的。&lt;/strong&gt; 模型决定后发出的工具调用是 &lt;code&gt;read(&amp;quot;skill://&amp;lt;name&amp;gt;&amp;quot;)&lt;/code&gt;，剩下的交给 &lt;code&gt;src/internal-urls/skill-protocol.ts&lt;/code&gt;：名字精确匹配、拒绝绝对路径、拒绝 &lt;code&gt;..&lt;/code&gt; 穿越、解析结果必须留在 skill 目录内。这条通道没有语义成分。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;强制（不读会怎样）不存在。&lt;/strong&gt; 这是 skill 和 rule 在 omp 里最大的差异。rules 管线（&lt;code&gt;bucketRules&lt;/code&gt;）有真正的确定性分桶：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;/th&gt;
+					&lt;th&gt;skill&lt;/th&gt;
+					&lt;th&gt;rule（TTSR）&lt;/th&gt;
+					&lt;th&gt;rule（alwaysApply）&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;触发判定&lt;/td&gt;
+					&lt;td&gt;模型自行判断&lt;/td&gt;
+					&lt;td&gt;代码对输出流做 regex / ast-grep 匹配&lt;/td&gt;
+					&lt;td&gt;无条件&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;注入方式&lt;/td&gt;
+					&lt;td&gt;模型主动 &lt;code&gt;read&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;代码中断流并注入&lt;/td&gt;
+					&lt;td&gt;代码把全文注入系统提示&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;不触发后果&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;规则仍生效&lt;/td&gt;
+					&lt;td&gt;规则仍生效&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;TTSR 指 Time Traveling Stream Rules：带 &lt;code&gt;condition&lt;/code&gt;（正则）或 &lt;code&gt;astCondition&lt;/code&gt;（ast-grep 模式）的 rule 会注册进运行时，由代码实时匹配模型的输出流。甚至 rulebook 部分（只在系统提示里列目录的 rule）在文档里也明确标注 &amp;ldquo;code does not enforce glob applicability&amp;rdquo;，同样是提示层约束。skill 连提示层之外的执行层都没有。&lt;/p&gt;
+&lt;p&gt;回到开头的问题，答案到这里可以给出：&lt;strong&gt;除两条旁路外，skill 触发与否主要靠模型自身判断。&lt;/strong&gt; 由此有三个实操推论：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;description 是 skill 的全部接口。&lt;/strong&gt; 模型决策时只看这一行文字，写得含糊或过窄，skill 就等于不存在。触发率取决于 description 和任务表述的语义重叠度，代码层没有任何补偿机制。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模型弱则机制弱。&lt;/strong&gt; 换一个指令跟随差的模型，&lt;code&gt;MUST read&lt;/code&gt; 就只是建议。可靠性敏感的约束应该写成 rule（&lt;code&gt;alwaysApply&lt;/code&gt; 或 TTSR 的 &lt;code&gt;condition&lt;/code&gt;），那才是代码强制的通道。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;失败是静默的。&lt;/strong&gt; 模型跳过该读的 skill，不报错、不告警，omp 不追踪「放了几个 skill、实际读了几个」。调试触发问题只能从 description 入手。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="两条不经模型判断的路径"&gt;两条不经模型判断的路径
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;&lt;code&gt;/skill:&amp;lt;name&amp;gt;&lt;/code&gt;，用户手动。&lt;/strong&gt; 交互模式下每个已发现的 skill 注册一个 slash command，正文直接注入为消息。决策者是用户。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;autoloadSkills&lt;/code&gt;，agent 作者预声明。&lt;/strong&gt; 这是子代理（task agent）定义文件 frontmatter 里的字段：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;name: latex-writer
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;description: LaTeX 排版专家
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systemPrompt: ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autoloadSkills: [latex-builder, technical-writing]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;语义：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;引用域是父会话的已发现 skill 列表，未知名字静默忽略，不报错&lt;/li&gt;
+&lt;li&gt;注入格式用专门的 Autoloaded 模板（&lt;code&gt;src/prompts/skills/autoload.md&lt;/code&gt;）：正文加 &lt;code&gt;Skill: &amp;lt;path&amp;gt;&lt;/code&gt; 出处，作为隐藏消息注入，且明确不得声称是用户调用的&lt;/li&gt;
+&lt;li&gt;注入时机在子代理的第一条 prompt 之前&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;它回答的问题：子代理是空白会话，没有主会话历史；默认路径下它会不会主动去读 skill，取决于它的模型。对职责固定的专家 agent，作者可以用这个字段把「模型判断」换成「代码保证」。&lt;/p&gt;
+&lt;h2 id="子代理的-skill一张分工表"&gt;子代理的 skill：一张分工表
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;决策&lt;/th&gt;
+					&lt;th&gt;谁做&lt;/th&gt;
+					&lt;th&gt;依据&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;子代理能看到哪些 skill&lt;/td&gt;
+					&lt;td&gt;代码，继承父会话&lt;/td&gt;
+					&lt;td&gt;文档原话：&amp;ldquo;there is no per-task skill pinning override&amp;rdquo;——Task 工具没有按任务挑 skill 的参数&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;哪些正文必须预载&lt;/td&gt;
+					&lt;td&gt;agent 作者，frontmatter 静态声明&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;autoloadSkills&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;其余正文读不读&lt;/td&gt;
+					&lt;td&gt;子代理自己的模型&lt;/td&gt;
+					&lt;td&gt;提示层指令&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;父 LLM&lt;/td&gt;
+					&lt;td&gt;无任何干预手段&lt;/td&gt;
+					&lt;td&gt;—&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;补充一点：rules 的 &lt;code&gt;agents&lt;/code&gt; frontmatter 字段（如 &lt;code&gt;agents: [scout]&lt;/code&gt;）会在子代理会话创建时按 agent 名重新过滤，&lt;code&gt;agents: main&lt;/code&gt; 的规则对子代理不生效。这是 rules 侧的机制，但同样说明每个子代理都会重新评估一遍自己的上下文构成。&lt;/p&gt;
+&lt;h2 id="本机核对bundled-agents-与-reviewer"&gt;本机核对：bundled agents 与 reviewer
+&lt;/h2&gt;&lt;p&gt;omp 内置 5 个 agent：&lt;code&gt;scout&lt;/code&gt;（只读调研）、&lt;code&gt;reviewer&lt;/code&gt;（代码审查）、&lt;code&gt;security-reviewer&lt;/code&gt;（安全审查）、&lt;code&gt;task&lt;/code&gt;（通用）、&lt;code&gt;sonic&lt;/code&gt;（低推理的机械任务）。&lt;/p&gt;
+&lt;p&gt;reviewer 的定义文件在 &lt;code&gt;src/prompts/agents/reviewer.md&lt;/code&gt;，frontmatter 摘录：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;reviewer&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Code review specialist for quality/security analysis&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;tools&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;read, find, grep, glob, bash, lsp, web_search, ast_grep&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;spawns&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;scout&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;model&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;@slow&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nn"&gt;---&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;没有 &lt;code&gt;autoloadSkills&lt;/code&gt; 字段。对照定义文件的 frontmatter 模板（&lt;code&gt;frontmatter.md&lt;/code&gt;，&lt;code&gt;autoloadSkills&lt;/code&gt; 是其中的条件分支），bundled 的 5 个 agent 全部没有使用它。所以：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;reviewer 的 skill 预载数量：零&lt;/li&gt;
+&lt;li&gt;它的 tools 里有 &lt;code&gt;read&lt;/code&gt;，满足「read 可用则系统提示含 skill 目录」的条件，所以它看得到父会话的全部 skill 列表；读不读，由它的模型（&lt;code&gt;@slow&lt;/code&gt; 解析出的模型）决定&lt;/li&gt;
+&lt;li&gt;想让 reviewer 必带某个 skill，做法是写同名定义覆盖 bundled。同名优先级：项目 &lt;code&gt;.omp/agents/&lt;/code&gt; &amp;gt; 用户 &lt;code&gt;~/.omp/agent/agents/&lt;/code&gt; &amp;gt; bundled&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="收束"&gt;收束
+&lt;/h2&gt;&lt;p&gt;把整条链路按「谁在做决定」排一遍：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;环节&lt;/th&gt;
+					&lt;th&gt;决定者&lt;/th&gt;
+					&lt;th&gt;机制&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;哪些 skill 存在、进目录&lt;/td&gt;
+					&lt;td&gt;代码&lt;/td&gt;
+					&lt;td&gt;文件系统扫描 + 配置过滤&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;目录里哪条适用于当前任务&lt;/td&gt;
+					&lt;td&gt;模型&lt;/td&gt;
+					&lt;td&gt;提示层指令 + description&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;正文怎么进入上下文&lt;/td&gt;
+					&lt;td&gt;代码（read + skill:// 协议）&lt;/td&gt;
+					&lt;td&gt;确定性&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;读不读的后果&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+					&lt;td&gt;无强制&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;子代理必载哪些&lt;/td&gt;
+					&lt;td&gt;agent 作者&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;autoloadSkills&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;用户点名加载&lt;/td&gt;
+					&lt;td&gt;用户&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;/skill:&amp;lt;name&amp;gt;&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;omp 把 skill 做成「系统提示里的目录」，把 rule 做成「运行时强制执行的规则」。写的时候值得按这个分工分配内容：方法论、参考资料、可跳过的工作流放 skill；必须生效的约束放 rule。&lt;/p&gt;</description></item><item><title>同模型对照：OCR 与 pi-review-agent 的架构差距值多少分</title><link>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</link><pubDate>Wed, 16 Sep 2026 09:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E5%90%8C%E6%A8%A1%E5%9E%8B%E5%AF%B9%E7%85%A7ocr-%E4%B8%8E-pi-review-agent-%E7%9A%84%E6%9E%B6%E6%9E%84%E5%B7%AE%E8%B7%9D%E5%80%BC%E5%A4%9A%E5%B0%91%E5%88%86/</guid><description>&lt;p&gt;简单说：差距挺大，但 pi-review-agent 并非一无是处——它更便宜，review 也更快。&lt;/p&gt;
 
  &lt;blockquote&gt;
  &lt;p&gt;本文由 zcode 协助跑实验。如果有问题，欢迎指正。&lt;/p&gt;
@@ -2916,372 +3168,4 @@ OCR 的榜单只报 token 相对量，没有这层账。&lt;/p&gt;
 
  &lt;/blockquote&gt;</description></item><item><title>Token Plan 不够了怎么办</title><link>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</link><pubDate>Fri, 26 Jun 2026 14:53:13 +0800</pubDate><guid>https://svtter.cn/p/token-plan-%E4%B8%8D%E5%A4%9F%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/da2b10239a806659.png" alt="Featured image of post Token Plan 不够了怎么办" /&gt;&lt;p&gt;我现在订阅了多个 token plan，除了高可用（笑）以外，最大的好处是高并发。&lt;/p&gt;
 &lt;p&gt;问题是有时候用量到了切换起来比较麻烦。例如 claude code，配置的时候一般是通过配置 &lt;code&gt;OPUS_MODEL&lt;/code&gt; 等来实现的。需要退出 claude，然后加载新的 plan，然后继续工作。这样速度比较慢。目前我试过体验最好的方案是用 &lt;code&gt;/export&lt;/code&gt; 命令来导出文件。这个命令在不同的 coding agent 中都可以使用。opencode，kimi-code，以及 omp 都可以。&lt;/p&gt;
-&lt;p&gt;基于此，我们可以在 token plan 用光后，直接 export，然后可以在新的 agent 里输入：&lt;code&gt;加载上下文 @&amp;lt;file-name&amp;gt;&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>迁移到 Gitea Actions：kill-PAT 完整方案</title><link>https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/</link><pubDate>Wed, 17 Jun 2026 23:55:31 +0800</pubDate><guid>https://svtter.cn/p/%E8%BF%81%E7%A7%BB%E5%88%B0-gitea-actionskill-pat-%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/837c02d2f1d64d75.png" alt="Featured image of post 迁移到 Gitea Actions：kill-PAT 完整方案" /&gt;&lt;blockquote&gt;
- &lt;p&gt;由于 GitHub 近期的不稳定，以及自建的 runner 消耗比较多的上下行流量，我尝试将代码仓库迁移到 gitea。在这个过程中，我踩了不少 runner 的坑。这里记录一下。&lt;/p&gt;
-
- &lt;/blockquote&gt;
-&lt;h2 id="tldr"&gt;TL;DR
-&lt;/h2&gt;&lt;p&gt;如果读者希望自己的 LLM 不踩坑，可以这样：&lt;/p&gt;
-
- &lt;blockquote&gt;
- &lt;p&gt;这是别人迁移 gitea 的时候踩的坑，我希望你做参考。&amp;lt;本文链接&amp;gt;&lt;/p&gt;
-
- &lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;状态&lt;/strong&gt;：闭环验证通过（2026-06-17，run #39404 / PR #5）(inside id)
-&lt;strong&gt;适用&lt;/strong&gt;：self-hosted Gitea 1.26.x + gitea-runner 1.0.8 + 自签证书环境
-&lt;strong&gt;详细调查记录&lt;/strong&gt;：&lt;code&gt;journal/2026-06-17-default-actions-url-self-investigation.md&lt;/code&gt;（续一~续四）(svtter/ops journal)&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="背景"&gt;背景
-&lt;/h2&gt;&lt;p&gt;把 GitHub Actions workflow（&lt;code&gt;sun-praise/latex-agent&lt;/code&gt; 21 个 workflow）迁到内网 Gitea。目标是&lt;strong&gt;杀掉 Personal Access Token（PAT）&lt;/strong&gt;，让所有跨仓 action 访问用 gitea 原生的 job token + &lt;code&gt;DEFAULT_ACTIONS_URL=self&lt;/code&gt; 机制。&lt;/p&gt;
-&lt;p&gt;PAT 方案（06-14 journal 记录）能用但脏：每个消费方仓要存 &lt;code&gt;OPENCODE_ACTIONS_PAT&lt;/code&gt; secret，action 代码要做本地 checkout workaround。kill-PAT 后 workflow 写法干净（&lt;code&gt;uses: org/action@ref&lt;/code&gt; 直接生效），跟 GitHub Actions 一致。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="前置条件"&gt;前置条件
-&lt;/h2&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;项&lt;/th&gt;
-					&lt;th&gt;要求&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Gitea 版本&lt;/td&gt;
-					&lt;td&gt;≥ 1.26.2（含 PR #32562 collaborative owners + #36173 job token 跨仓权限）&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;Runner&lt;/td&gt;
-					&lt;td&gt;gitea-runner 1.0.8（act_runner 改名后的新仓 &lt;code&gt;gitea.com/gitea/runner&lt;/code&gt;）&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;网络&lt;/td&gt;
-					&lt;td&gt;runner host 能访问 gitea server（同内网）&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;证书&lt;/td&gt;
-					&lt;td&gt;自签或受信任 CA（本方案处理自签场景）&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;hr&gt;
-&lt;h2 id="核心配置5-处改动"&gt;核心配置（5 处改动）
-&lt;/h2&gt;&lt;h3 id="1-gitea-server启用-self-模式"&gt;1. Gitea server：启用 self 模式
-&lt;/h3&gt;&lt;p&gt;&lt;code&gt;/volume1/docker/gitea/gitea/gitea/conf/app.ini&lt;/code&gt;（容器内 &lt;code&gt;/data/gitea/conf/app.ini&lt;/code&gt;）：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[actions]&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;ENABLED&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;true&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;DEFAULT_ACTIONS_URL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;self&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;重启 gitea：&lt;code&gt;docker compose restart server&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;验证&lt;/strong&gt;：改成 &lt;code&gt;bogus_value&lt;/code&gt; 重启应启动失败，证明配置在读。&lt;/p&gt;
-&lt;h3 id="2-runner-注册地址对齐-gitea-appurl"&gt;2. Runner 注册地址对齐 gitea AppURL
-&lt;/h3&gt;&lt;p&gt;&lt;code&gt;/var/lib/act_runner/.runner&lt;/code&gt;（runner host 上）：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;address&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://gitea.my-nas.lan&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="err"&gt;...&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;必须跟 gitea 的 &lt;code&gt;ROOT_URL&lt;/code&gt; / &lt;code&gt;AppURL&lt;/code&gt; host 完全一致&lt;/strong&gt;。否则 &lt;code&gt;shouldCloneURLUseToken&lt;/code&gt;（&lt;code&gt;act/runner/reusable_workflow.go:306&lt;/code&gt;）做 host 字符串比较会 mismatch → 跨仓 clone 不带 token → 401。&lt;/p&gt;
-&lt;p&gt;我们这里 &lt;code&gt;gitea.local&lt;/code&gt;（旧注册）→ &lt;code&gt;gitea.my-nas.lan&lt;/code&gt;（gitea AppURL）。&lt;/p&gt;
-&lt;h3 id="3-runner-image自构建cert--gitconfig--curlrc"&gt;3. Runner image：自构建（cert + gitconfig + curlrc）
-&lt;/h3&gt;&lt;p&gt;官方 &lt;code&gt;gitea/runner-images:ubuntu-latest&lt;/code&gt; 在自签证书环境会撞 TLS 校验。自构建一层 overlay：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;span class="lnt"&gt;7
-&lt;/span&gt;&lt;span class="lnt"&gt;8
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-dockerfile" data-lang="dockerfile"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;gitea/runner-images:ubuntu-latest&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;COPY&lt;/span&gt; gitea-my-nas.crt /usr/local/share/ca-certificates/gitea-my-nas.crt&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; update-ca-certificates&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; git config --global http.sslVerify false&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; git config --system http.sslVerify false&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# curl 单独一条线，跟 git 的 TLS 校验独立&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;insecure&amp;#34;&lt;/span&gt; &amp;gt; /root/.curlrc&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;insecure&amp;#34;&lt;/span&gt; &amp;gt; /home/ubuntu/.curlrc &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; chown ubuntu:ubuntu /home/ubuntu/.curlrc&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;构建 + 打 tag：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo docker build -t gitea/runner-images:ubuntu-latest-gitea-self ~/runner-image-build
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;关键&lt;/strong&gt;：&lt;code&gt;gitea-my-nas.crt&lt;/code&gt; 是 gitea 的 self-signed leaf 证书（NAS 上 &lt;code&gt;/volume1/docker/gitea/gitea/gitea/npm-gitea.cert.pem&lt;/code&gt;）。&lt;code&gt;update-ca-certificates&lt;/code&gt; 装它其实无效（leaf 不是 CA），但留着没坏处。真正起作用的是 git/curl 的 sslVerify/insecure。&lt;/p&gt;
-&lt;h3 id="4-runner-configyamllabels--force_pull"&gt;4. Runner config.yaml：labels + force_pull
-&lt;/h3&gt;&lt;p&gt;&lt;code&gt;/var/lib/act_runner/config.yaml&lt;/code&gt;：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;runner&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;ubuntu-latest:docker://gitea/runner-images:ubuntu-latest-gitea-self&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;ubuntu-22.04:docker://gitea/runner-images:ubuntu-22.04&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;ubuntu-20.04:docker://gitea/runner-images:ubuntu-20.04&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;container&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;force_pull&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 默认 true，离线环境必须关&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;options&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;--&lt;span class="l"&gt;user ubuntu -v /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;valid_volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s1"&gt;&amp;#39;**&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;两个关键点&lt;/strong&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;config.yaml&lt;/code&gt; 是 source of truth，daemon 启动时&lt;strong&gt;覆盖&lt;/strong&gt; &lt;code&gt;.runner&lt;/code&gt; 文件。改 &lt;code&gt;.runner&lt;/code&gt; labels 无效。&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;force_pull: true&lt;/code&gt; 每次都去 docker hub 拉 image，runner host 访问不了 hub 就全挂。离线必须 &lt;code&gt;false&lt;/code&gt;。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id="5-actions-org--公共-action-镜像"&gt;5. actions org + 公共 action 镜像
-&lt;/h3&gt;&lt;p&gt;消费方 workflow 里 &lt;code&gt;uses: actions/cache@v5&lt;/code&gt; 这种&lt;strong&gt;裸写&lt;/strong&gt;的公共 action，在 &lt;code&gt;self&lt;/code&gt; 模式下会解析到 &lt;code&gt;gitea.local/actions/cache&lt;/code&gt;。需要镜像。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 建 org（用 admin token）&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -X POST &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$GITEA&lt;/span&gt;&lt;span class="s2"&gt;/api/v1/orgs&amp;#34;&lt;/span&gt; -H &lt;span class="s2"&gt;&amp;#34;Authorization: token &lt;/span&gt;&lt;span class="nv"&gt;$TOKEN&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -d &lt;span class="s1"&gt;&amp;#39;{&amp;#34;username&amp;#34;:&amp;#34;actions&amp;#34;,&amp;#34;visibility&amp;#34;:&amp;#34;public&amp;#34;}&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 镜像 actions/cache（pull mirror，168h 自动同步）&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -X POST &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$GITEA&lt;/span&gt;&lt;span class="s2"&gt;/api/v1/repos/migrate&amp;#34;&lt;/span&gt; -H &lt;span class="s2"&gt;&amp;#34;Authorization: token &lt;/span&gt;&lt;span class="nv"&gt;$TOKEN&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -d &lt;span class="s1"&gt;&amp;#39;{
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;clone_addr&amp;#34;: &amp;#34;https://github.com/actions/cache.git&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;repo_owner&amp;#34;: &amp;#34;actions&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;repo_name&amp;#34;: &amp;#34;cache&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;service&amp;#34;: &amp;#34;github&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;mirror&amp;#34;: true,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;mirror_interval&amp;#34;: &amp;#34;168h&amp;#34;,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;private&amp;#34;: false,
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; &amp;#34;releases&amp;#34;: true
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; }&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;org 必须是 public&lt;/strong&gt;——private org 即使 repo 标 public，对外仍不可见（anonymous git 访问 401）。&lt;/p&gt;
-&lt;p&gt;按 workflow 实际 &lt;code&gt;uses:&lt;/code&gt; 列表镜像。常见需要：&lt;code&gt;actions/checkout&lt;/code&gt;（如果不用绝对 URL）、&lt;code&gt;actions/cache&lt;/code&gt;、&lt;code&gt;actions/setup-node&lt;/code&gt; 等。我们这次 workflow 对 &lt;code&gt;actions/checkout&lt;/code&gt; 用了绝对 URL（&lt;code&gt;uses: https://github.com/actions/checkout@v4&lt;/code&gt;），只需镜像 &lt;code&gt;actions/cache&lt;/code&gt;（multi-review 传递依赖）。&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="workflow-改造"&gt;Workflow 改造
-&lt;/h2&gt;&lt;p&gt;消费方仓的 workflow 从 PAT+local-checkout 配方改成干净 native uses：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;span class="lnt"&gt;19
-&lt;/span&gt;&lt;span class="lnt"&gt;20
-&lt;/span&gt;&lt;span class="lnt"&gt;21
-&lt;/span&gt;&lt;span class="lnt"&gt;22
-&lt;/span&gt;&lt;span class="lnt"&gt;23
-&lt;/span&gt;&lt;span class="lnt"&gt;24
-&lt;/span&gt;&lt;span class="lnt"&gt;25
-&lt;/span&gt;&lt;span class="lnt"&gt;26
-&lt;/span&gt;&lt;span class="lnt"&gt;27
-&lt;/span&gt;&lt;span class="lnt"&gt;28
-&lt;/span&gt;&lt;span class="lnt"&gt;29
-&lt;/span&gt;&lt;span class="lnt"&gt;30
-&lt;/span&gt;&lt;span class="lnt"&gt;31
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;review&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;pull_request]&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;contents&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;read&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;pull-requests&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;write&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;review&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;runs-on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ubuntu-latest&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;env&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;GIT_SSL_NO_VERIFY&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;1&amp;#39;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# action 内部 git 的 TLS 兜底&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;steps&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 公共 action：绝对 URL 绕过 self 解析，直接从 github 拉&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.com/actions/checkout@v4&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;fetch-depth&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# 自有 action：裸写，self 解析到本地 gitea&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;sun-praise/opencode-actions/multi-review@v4&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;model&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;litellm/deepseek-v4-flash&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cache&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;default-team&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quality:1&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;timeout-seconds&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;300&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;gitea-token&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;litellm-url&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.LITELLM_URL }}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;litellm-api-key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.LITELLM_API_KEY }}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;env&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;GITEA_API_URL&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ github.server_url }}/api/v1&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;GITEA_TOKEN&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;关键约定&lt;/strong&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;GITHUB_TOKEN&lt;/code&gt;（gitea Actions 自动注入的 job token）替代 PAT。所有跨仓认证用它。&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;permissions:&lt;/code&gt; 显式声明，受 org/repo Actions 设置 clamp（PR #36173）。&lt;/li&gt;
-&lt;li&gt;公共 action 用绝对 URL 或镜像——二选一，看是否要 forward compat（绝对 URL 写法在 GitHub 上也认，镜像写法只在 gitea 上认）。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h2 id="gitea-仓级配置"&gt;Gitea 仓级配置
-&lt;/h2&gt;&lt;p&gt;消费方仓的 &lt;code&gt;Settings → Actions → General&lt;/code&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Actions enabled&lt;/strong&gt;：开&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Default Actions Permissions&lt;/strong&gt;：Allow all actions（或按需 restrict）&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Cross-Repository Access&lt;/strong&gt;：Selected，勾上消费方要用的所有自有 action repo（如 &lt;code&gt;opencode-actions&lt;/code&gt;）——这是 PR #32562 collaborative owners 功能，让 job token 能跨仓读&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;自有 action 仓（&lt;code&gt;sun-praise/opencode-actions&lt;/code&gt;）：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;可以是 private（job token 通过 collaborative owners 有读权限）&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h2 id="验证"&gt;验证
-&lt;/h2&gt;&lt;h3 id="闭环验证推荐"&gt;闭环验证（推荐）
-&lt;/h3&gt;&lt;p&gt;消费方仓提一个测试 PR，触发 &lt;code&gt;on: pull_request&lt;/code&gt; workflow。预期：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;workflow run status → success&lt;/li&gt;
-&lt;li&gt;PR 上出现 review 评论（或 action 的预期产出）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id="分层验证debug-用"&gt;分层验证（debug 用）
-&lt;/h3&gt;&lt;table&gt;
-	&lt;thead&gt;
-			&lt;tr&gt;
-					&lt;th&gt;层&lt;/th&gt;
-					&lt;th&gt;验证方法&lt;/th&gt;
-			&lt;/tr&gt;
-	&lt;/thead&gt;
-	&lt;tbody&gt;
-			&lt;tr&gt;
-					&lt;td&gt;gitea self 配置&lt;/td&gt;
-					&lt;td&gt;&lt;code&gt;app.ini&lt;/code&gt; 改 &lt;code&gt;bogus_value&lt;/code&gt; 重启应失败&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;runner URL 对齐&lt;/td&gt;
-					&lt;td&gt;&lt;code&gt;.runner&lt;/code&gt; address == gitea &lt;code&gt;AppURL&lt;/code&gt; host&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;runner image TLS&lt;/td&gt;
-					&lt;td&gt;container 内 &lt;code&gt;curl -sI https://gitea.../api/v1/version&lt;/code&gt; 不报证书错&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;actions mirror&lt;/td&gt;
-					&lt;td&gt;&lt;code&gt;curl https://gitea.local/actions/cache.git/info/refs?service=git-upload-pack&lt;/code&gt; 匿名 200&lt;/td&gt;
-			&lt;/tr&gt;
-			&lt;tr&gt;
-					&lt;td&gt;job token 跨仓&lt;/td&gt;
-					&lt;td&gt;DB 查 &lt;code&gt;action_run_job.token_permissions&lt;/code&gt;，Code unit 有 read 权限&lt;/td&gt;
-			&lt;/tr&gt;
-	&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;hr&gt;
-&lt;h2 id="真正-kill-pat闭环验证通过后"&gt;真正 kill PAT（闭环验证通过后）
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;删消费方仓的 &lt;code&gt;OPENCODE_ACTIONS_PAT&lt;/code&gt; secret&lt;/strong&gt;：
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -X DELETE &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$GITEA&lt;/span&gt;&lt;span class="s2"&gt;/api/v1/repos/&amp;lt;owner&amp;gt;/&amp;lt;repo&amp;gt;/actions/secrets/OPENCODE_ACTIONS_PAT&amp;#34;&lt;/span&gt; &lt;span class="se"&gt;\
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -H &lt;span class="s2"&gt;&amp;#34;Authorization: token &lt;/span&gt;&lt;span class="nv"&gt;$ADMIN_TOKEN&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;删 org 级 PAT&lt;/strong&gt;（如果之前配在 org）：同上换 &lt;code&gt;/orgs/&amp;lt;org&amp;gt;/actions/secrets/&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;revoke admin 用户 token&lt;/strong&gt;：web UI → Settings → Applications → Revoke&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;workflow 文件清理&lt;/strong&gt;：去掉 PAT 相关的 &lt;code&gt;with:&lt;/code&gt; 和本地 checkout workaround&lt;/li&gt;
-&lt;/ol&gt;
-&lt;hr&gt;
-&lt;h2 id="踩坑总结按踩中顺序"&gt;踩坑总结（按踩中顺序）
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;以为 act_runner 有 bug&lt;/strong&gt;——读了三仓源码，写了 patch，最后发现是配置问题。教训：先怀疑配置，再怀疑代码。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&lt;code&gt;.runner&lt;/code&gt; 文件改了不生效&lt;/strong&gt;——daemon 用 &lt;code&gt;config.yaml&lt;/code&gt; 覆盖。改 labels 要改 config.yaml。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&lt;code&gt;update-ca-certificates&lt;/code&gt; 装自签 leaf 无效&lt;/strong&gt;——leaf 不是 CA，不能签其他证书。要靠 sslVerify/insecure 绕。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;git 和 curl 的 TLS 校验独立&lt;/strong&gt;——git 的 sslVerify=false 不管 curl。curl 读 &lt;code&gt;~/.curlrc&lt;/code&gt;（不是 &lt;code&gt;/etc/curlrc&lt;/code&gt;）。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&lt;code&gt;force_pull: true&lt;/code&gt; 离线致命&lt;/strong&gt;——每次 run 强拉 docker hub。离线必关。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;private org 的 public repo 仍不可见&lt;/strong&gt;——org visibility 是外层约束。镜像公共 action 的 org 必须 public。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;host 字符串严格相等&lt;/strong&gt;——&lt;code&gt;gitea.local&lt;/code&gt; ≠ &lt;code&gt;gitea.my-nas.lan&lt;/code&gt;，即使解析到同 IP。runner 注册地址必须跟 gitea AppURL 完全一致。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;闭环验证才算数&lt;/strong&gt;——每层&amp;quot;通了&amp;quot;都是局部判断。multi-review 真跑通 PR review + post 评论，端到端通了才算。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;hr&gt;
-&lt;h2 id="参考链接"&gt;参考链接
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;调查 journal：&lt;code&gt;journal/2026-06-17-default-actions-url-self-investigation.md&lt;/code&gt;（续一~续四）&lt;/li&gt;
-&lt;li&gt;gitea PR #32562（collaborative owners）：https://github.com/go-gitea/gitea/pull/32562&lt;/li&gt;
-&lt;li&gt;gitea PR #36173（job token 权限）：https://github.com/go-gitea/gitea/pull/36173&lt;/li&gt;
-&lt;li&gt;gitea issue #36817（self 模式的误报）：https://github.com/go-gitea/gitea/issues/36817&lt;/li&gt;
-&lt;li&gt;act_runner 源码：https://gitea.com/gitea/runner&lt;/li&gt;
-&lt;li&gt;runner image 源码：https://gitea.com/gitea/runner_images&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h2 id="附录本次验证的实际-run"&gt;附录：本次验证的实际 run
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;PR&lt;/strong&gt;：https://gitea.my-nas.lan/sun-praise/test-opencode-consumer/pulls/5&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Run&lt;/strong&gt;：https://gitea.my-nas.lan/sun-praise/test-opencode-consumer/actions/runs/39404&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;结果&lt;/strong&gt;：multi-review 拿到 PR diff（1282 chars）→ 调 LiteLLM/DeepSeek review → post 评论到 PR。全程零 PAT。&lt;/li&gt;
-&lt;/ul&gt;</description></item></channel></rss>
+&lt;p&gt;基于此，我们可以在 token plan 用光后，直接 export，然后可以在新的 agent 里输入：&lt;code&gt;加载上下文 @&amp;lt;file-name&amp;gt;&lt;/code&gt;。&lt;/p&gt;</description></item></channel></rss>
