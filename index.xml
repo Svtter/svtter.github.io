@@ -235,7 +235,549 @@
 &lt;/ul&gt;
 &lt;h2 id="收束"&gt;收束
 &lt;/h2&gt;&lt;p&gt;上云买的是弹性和省心，云下买的是单位成本和控制权。&lt;/p&gt;
-&lt;p&gt;对当前这个规模，我的选择是混合：常驻大头放云下，海外和公网入口留在云上，每月总现金成本几百块。如果哪天 CI 负载涨十倍，或者我不再愿意花时间守着这些机器，这笔账会立刻反转——到那时候再迁，云上按量计费的门一直开着。&lt;/p&gt;</description></item><item><title>简单入门 coding agent</title><link>https://svtter.cn/p/%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8-coding-agent/</link><pubDate>Fri, 09 Oct 2026 22:54:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8-coding-agent/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/23/coding-agent-intro-cover.svg" alt="Featured image of post 简单入门 coding agent" /&gt;&lt;blockquote&gt;
+&lt;p&gt;对当前这个规模，我的选择是混合：常驻大头放云下，海外和公网入口留在云上，每月总现金成本几百块。如果哪天 CI 负载涨十倍，或者我不再愿意花时间守着这些机器，这笔账会立刻反转——到那时候再迁，云上按量计费的门一直开着。&lt;/p&gt;</description></item><item><title>ZCode 的 Prompt 缓存架构,以及它和 oh-my-pi 的殊途同归</title><link>https://svtter.cn/p/zcode-%E7%9A%84-prompt-%E7%BC%93%E5%AD%98%E6%9E%B6%E6%9E%84%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-oh-my-pi-%E7%9A%84%E6%AE%8A%E9%80%94%E5%90%8C%E5%BD%92/</link><pubDate>Sat, 10 Oct 2026 12:39:00 +0800</pubDate><guid>https://svtter.cn/p/zcode-%E7%9A%84-prompt-%E7%BC%93%E5%AD%98%E6%9E%B6%E6%9E%84%E4%BB%A5%E5%8F%8A%E5%AE%83%E5%92%8C-oh-my-pi-%E7%9A%84%E6%AE%8A%E9%80%94%E5%90%8C%E5%BD%92/</guid><description>&lt;img src="https://svtter.cn/images/2026/10/10/zcode-prompt-cache-cover.svg" alt="Featured image of post ZCode 的 Prompt 缓存架构,以及它和 oh-my-pi 的殊途同归" /&gt;&lt;h2 id="背景为什么要反编译一个-agent-harness"&gt;背景:为什么要反编译一个 agent harness
+&lt;/h2&gt;&lt;p&gt;最近在用 ZCode(智谱出的 AI 编程 agent,Electron 桌面应用形态)。用多了会好奇一个问题:&lt;strong&gt;它在&amp;quot;驱动模型&amp;quot;这件事上,和市面上其他 agent harness(claude-code、oh-my-pi、codex)到底有什么不一样?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;很多 harness 是&amp;quot;套壳&amp;quot;——把上游 claude-code 包一层 UI 就完事。但反编译后我发现 ZCode 不是。它的核心是一个 9.2MB 的 minified bundle(Linux 3.3.5 / 3.3.6 deb 包实测,Windows 安装下大小可能不同):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;C:\Users\&amp;lt;user&amp;gt;\AppData\Local\Programs\ZCode\resources\glm\zcode.cjs
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;把它和上游 claude-code 的 &lt;code&gt;cli.js&lt;/code&gt;(2.0.28,实测 9.9MB)做关键词交叉对比,结论很清晰:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;关键词&lt;/th&gt;
+					&lt;th&gt;zcode.cjs&lt;/th&gt;
+					&lt;th&gt;claude-code cli.js (2.0.28)&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;injectionTarget&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;34 处&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;0&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;cacheHint&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;26 处&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;0&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;ContextBuilder&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;13 处&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;0&lt;/strong&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;&amp;quot;You are ZCode...&amp;quot;&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;有&lt;/td&gt;
+					&lt;td&gt;无&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;(两个 ZCode 版本的计数一致。)&lt;/p&gt;
+&lt;p&gt;ZCode 把 claude-code / codex / gemini-cli / opencode 当作&lt;strong&gt;可选的底层 runtime&lt;/strong&gt;(app.asar 里有 &lt;code&gt;bundled-agents/&amp;lt;plat&amp;gt;-&amp;lt;arch&amp;gt;&lt;/code&gt; 的路径拼接和 &lt;code&gt;claude / opencode / gemini / codex / glm&lt;/code&gt; 的 runtime 枚举;Linux 包里并没有 manifest.json 这个文件,结构都在 asar 内),但 harness 本体——prompt 组装、工具调度、权限、hooks、skills、上下文压缩——是&lt;strong&gt;从零自研&lt;/strong&gt;的。&lt;/p&gt;
+&lt;p&gt;在所有自研设计里,最让我眼前一亮、也最经得起推敲的一点是:&lt;strong&gt;它的 system prompt 不是拼出来的,而是按&amp;quot;缓存边界&amp;quot;组装出来的。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="先讲清楚anthropic-的-prompt-cache-怎么计费"&gt;先讲清楚:Anthropic 的 prompt cache 怎么计费
+&lt;/h2&gt;&lt;p&gt;要理解这套架构为什么有用,得先对齐 prompt cache 的工作原理。&lt;/p&gt;
+&lt;p&gt;Anthropic 的 prompt cache 按&lt;strong&gt;前缀&lt;/strong&gt;计费,而且是以断点为单位&lt;strong&gt;分段&lt;/strong&gt;的:你在请求里打一个 &lt;code&gt;cache_control: { type: &amp;quot;ephemeral&amp;quot; }&lt;/code&gt; 断点,从请求开头到这个断点为止的内容就构成一段可缓存的嵌套前缀。一个请求最多可以打 &lt;strong&gt;4 个断点&lt;/strong&gt;,也就是 4 层逐级嵌套的前缀。&lt;/p&gt;
+&lt;p&gt;下次请求时,系统按&lt;strong&gt;最长前缀匹配&lt;/strong&gt;:逐字节比对,找到最长的那段仍然一字不差的已缓存前缀,命中部分按约 &lt;strong&gt;10%&lt;/strong&gt; 的 input 价格计费(默认 TTL 5 分钟;另有 1 小时档,是较新的 cache_control 类型,读价约 20%,和 5 分钟档不同价)。&lt;/p&gt;
+&lt;p&gt;关键规则是:&lt;strong&gt;从第一处字节分歧开始,之后的断点全部 miss,之前的断点照常命中。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;所以如果整个请求只在最末尾打一个断点,那么断点之前任何一处变化——哪怕只是一个日期字段——都会让这唯一的断点 miss,整段前缀全价重算。反过来,把稳定内容和易变内容用多个断点隔开,&amp;ldquo;变的部分&amp;quot;就只会废掉它后面的断点。&lt;/p&gt;
+&lt;p&gt;缓存优化的核心问题始终是:&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;稳定不变的内容&amp;quot;和&amp;quot;每轮都变的内容&amp;rdquo;,在请求里是怎么排布的?断点打在哪?&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;(还有个小约束:缓存段有最小可缓存长度(5 分钟档约 1024 token),太短的段单独打断点不会真的被缓存——后文会看到 ZCode 的第一段就踩在这条线上。)&lt;/p&gt;
+&lt;h2 id="oh-my-pi-的做法模板拼接断点甩给线路层"&gt;oh-my-pi 的做法:模板拼接,断点甩给线路层
+&lt;/h2&gt;&lt;p&gt;作为对照,先看 oh-my-pi(&lt;code&gt;@oh-my-pi/pi-coding-agent&lt;/code&gt;)是怎么做的。它有完整 TypeScript 源码,可以直接读(本文基于 2026-08-01 之前的版本阅读,下面会解释为什么这个时间点重要)。&lt;/p&gt;
+&lt;p&gt;它的 system prompt 组装在 &lt;code&gt;pi-coding-agent/src/system-prompt.ts&lt;/code&gt; 的 &lt;code&gt;buildSystemPrompt()&lt;/code&gt; 里,产出是 &lt;strong&gt;3~4 个粗粒度的字符串块&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;rendered&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;resolvedCustomPrompt&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="nx"&gt;customSystemPromptTemplate&lt;/span&gt; : &lt;span class="kt"&gt;systemPromptTemplate&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;data&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;rendered&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;toolNames&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;includes&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;computer&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;computerSafetyPrompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;trim&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;projectPrompt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;projectPromptTemplate&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;trim&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;projectPrompt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;projectPrompt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;activeRepoContextPrompt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;activeRepoContextPrompt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;排布大致是:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[ main 模板 ] ← 身份 + 规则 + 工具列表 + skills
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[ computer-safety ] ← 仅当用 computer 工具
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[ project-footer ] ← 工作站信息 + 上下文文件 + 工作区树(含 cwd / 日期等易变字段)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[ active-repo ] ← 仓库上下文(git 分支 / 状态)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;内容排布本身是缓存友好的:身份和规则这类稳定内容都在 main 模板里,每轮都变的 cwd / git / 日期被推到了后面的 footer 块。真正会改动 main 模板的动态内容只有 skills 列表(以及规则、工具清单的变化)。&lt;/p&gt;
+&lt;p&gt;问题出在&lt;strong&gt;断点位置&lt;/strong&gt;。缓存控制被整个甩给了 provider 线路层:在 &lt;code&gt;pi-ai/src/providers/anthropic.ts&lt;/code&gt; 里(下面是修复前行为的简化示意,合并了 &lt;code&gt;applyClaudeCodeSystemCache&lt;/code&gt; / &lt;code&gt;applyCacheControlToLastBlock&lt;/code&gt; 的逻辑):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;prompt&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="nx"&gt;sanitizedPrompts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;blocks&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="kr"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;text&lt;/span&gt;: &lt;span class="kt"&gt;prompt&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;lastIndex&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;blocks&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;cacheControl&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;lastIndex&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;blocks&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;lastIndex&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nx"&gt;cache_control&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;blocks&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;lastIndex&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="nx"&gt;blocks&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;lastIndex&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cache_control&lt;/span&gt;: &lt;span class="kt"&gt;cloneAnthropicCacheControl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;cacheControl&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;整个 system prompt &lt;strong&gt;只在最后一个块(active-repo)末尾打一个断点&lt;/strong&gt;。总共有 4 个断点配额,其余分给最近的 message turn。&lt;/p&gt;
+&lt;p&gt;这种排布的后果很直接:&lt;strong&gt;唯一断点打在了所有易变内容之后。footer 里的 cwd、git 状态、日期只要有一处变了,从请求开头到这个断点的前缀就不再一字不差,整段缓存全部失效&lt;/strong&gt;——尽管 main 模板里几 K token 的身份 + 规则其实一个字都没变。&lt;/p&gt;
+&lt;p&gt;它本质上是&amp;quot;赌 system prompt 的尾部基本不变&amp;rdquo;。可惜在真实编程场景里,cwd、git 每轮都可能变——这个赌注经常输。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;oh-my-pi 后来也意识到了这一点,并且修得很快。&lt;/strong&gt; 2026-08-01,omp 落了 &lt;a class="link" href="https://github.com/can1357/oh-my-pi/commit/79a7f309a49a089d72ed462eab03ed23f0bbf283" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;79a7f309a4&lt;/code&gt;&lt;/a&gt;(&amp;ldquo;cache stable system prefix across cwd/date footer changes&amp;rdquo;,修 &lt;a class="link" href="https://github.com/can1357/oh-my-pi/issues/7324" target="_blank" rel="noopener"
+ &gt;&lt;code&gt;#7324&lt;/code&gt;&lt;/a&gt;)和 &lt;code&gt;1488be016d&lt;/code&gt;,在稳定前缀(main 模板)末尾加了第二个断点;2026-09-03 又加了 &lt;code&gt;applyHeadCaching&lt;/code&gt;,把断点锚定到最后一个稳定的 system 块上。&lt;strong&gt;当前的 18.8.7 在 cwd / git / 日期变化时,同样能保住稳定前缀的缓存。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;所以下文的对比里,对照组是&amp;quot;oh-my-pi 修复前 / 修复后&amp;quot;两个版本——这恰好让对比更有意思:一边是 day-one 就把缓存边界做进架构的自研设计,一边是靠补丁快速收敛的开源实现。&lt;/p&gt;
+&lt;h2 id="zcode-的做法语义级-stabledynamic-分段"&gt;ZCode 的做法:语义级 stable/dynamic 分段
+&lt;/h2&gt;&lt;p&gt;ZCode 的做法完全不同。它把 system prompt 拆成 &lt;strong&gt;9 个带元数据的离散注入块(section)&lt;/strong&gt;,每个 section 标注两个属性:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;injectionTarget&lt;/code&gt;&lt;/strong&gt;:&lt;code&gt;&amp;quot;system&amp;quot;&lt;/code&gt;(塞进 system message)或 &lt;code&gt;&amp;quot;meta_user&amp;quot;&lt;/code&gt;(塞进 user message 的附加内容)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;cacheHint&lt;/code&gt;&lt;/strong&gt;:&lt;code&gt;&amp;quot;stable&amp;quot;&lt;/code&gt;(基本不变)或 &lt;code&gt;&amp;quot;dynamic&amp;quot;&lt;/code&gt;(每轮可能变)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这 9 个 section 是:&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;section&lt;/th&gt;
+					&lt;th&gt;source&lt;/th&gt;
+					&lt;th&gt;target&lt;/th&gt;
+					&lt;th&gt;cacheHint&lt;/th&gt;
+					&lt;th&gt;内容&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CLI Prefix&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;cli_prefix&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;system&lt;/td&gt;
+					&lt;td&gt;stable&lt;/td&gt;
+					&lt;td&gt;短身份串 &amp;ldquo;You are ZCode, an interactive coding agent&amp;rdquo;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Agent Identity&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;identity&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;system&lt;/td&gt;
+					&lt;td&gt;stable&lt;/td&gt;
+					&lt;td&gt;长身份 prompt(&lt;code&gt;buildIdentityPrompt&lt;/code&gt; 输出,含整段 &lt;code&gt;# Harness&lt;/code&gt; 规则)&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Custom System Prompt&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;custom_system_prompt&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;system&lt;/td&gt;
+					&lt;td&gt;stable&lt;/td&gt;
+					&lt;td&gt;用户自定义 prompt&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Environment Info&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;env_info&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;system&lt;/td&gt;
+					&lt;td&gt;dynamic&lt;/td&gt;
+					&lt;td&gt;cwd / 是否 git / platform / shell / 模型名&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;System Context&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;system_context&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;system&lt;/td&gt;
+					&lt;td&gt;dynamic&lt;/td&gt;
+					&lt;td&gt;git 分支 / 主分支 / git 用户 / git 状态&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Skills&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;skills&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;meta_user&lt;/td&gt;
+					&lt;td&gt;dynamic&lt;/td&gt;
+					&lt;td&gt;可用 skill 列表&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Request User Context&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;request_user_context&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;meta_user&lt;/td&gt;
+					&lt;td&gt;dynamic&lt;/td&gt;
+					&lt;td&gt;CLAUDE.md 等用户指令&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Memory&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;memory&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;system&lt;/td&gt;
+					&lt;td&gt;dynamic&lt;/td&gt;
+					&lt;td&gt;记忆注入&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Current Date&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;current_date&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;meta_user&lt;/td&gt;
+					&lt;td&gt;dynamic&lt;/td&gt;
+					&lt;td&gt;当前日期&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;每个 section 的构造都很规整,长这样(从 bundle 里还原):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-js" data-lang="js"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;buildIdentitySection&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;buildIdentityPrompt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Agent Identity&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;source&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;identity&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;injectionTarget&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cacheHint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;stable&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// ← 关键:标注为稳定
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;chars&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;tokens&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;countTokens&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;而 identity 段的实际内容(&lt;code&gt;buildIdentityPrompt&lt;/code&gt; 的输出)就是你现在看到的 Harness 指令——注意它和 cli_prefix 里那句短身份串是两段不同的内容:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-zed" data-lang="zed"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;You&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;are&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;an&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;interactive&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ZCode&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;agent&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;that&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;helps&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;users&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;with&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;software&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;engineering&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Harness&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Text&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;you&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;outside&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tool&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;use&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;is&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;displayed&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Github&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;flavored&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;markdown&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;terminal&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Tools&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;behind&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;selected&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;permission&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;mode&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;denied&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;means&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;declined&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;—&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;adjust&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;don&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;retry&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;verbatim&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;`&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;reminder&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="err"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tags&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;messages&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;and&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tool&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;results&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;are&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;injected&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;by&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;harness&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;not&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Prefer&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dedicated&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nn"&gt;file/&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tools&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;over&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;shell&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;commands&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;when&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;one&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fits&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Reference&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;code&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;`&lt;/span&gt;&lt;span class="n"&gt;file_path&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;line_number&lt;/span&gt;&lt;span class="err"&gt;`&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;—&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;clickable&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;...&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="关键魔法三桶分段断点全打"&gt;关键魔法:三桶分段,断点全打
+&lt;/h2&gt;&lt;p&gt;光拆成 section 还不够,真正值钱的是 &lt;code&gt;ContextBuilder.assembleSystemMessages()&lt;/code&gt; 的组装逻辑。它把 &lt;code&gt;injectionTarget === &amp;quot;system&amp;quot;&lt;/code&gt; 的 6 个 section 按 &lt;code&gt;cacheHint&lt;/code&gt; &lt;strong&gt;分桶成三条独立的 system message&lt;/strong&gt;,并且&lt;strong&gt;每一条都打 cacheControl 断点&lt;/strong&gt;(bundle 里是同一个常量,&lt;code&gt;Hbe = { type: &amp;quot;ephemeral&amp;quot; }&lt;/code&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-js" data-lang="js"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;assembleSystemMessages&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 桶 1:cli_prefix 单独成段(最稳定的前缀)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;o&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;joinSections&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;injectionTarget&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;source&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;cli_prefix&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;o&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;role&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;o&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;cacheControl&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;ENABLED&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 桶 2:其余所有 stable section 一起(身份 + 规则 + 自定义)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;joinSections&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;injectionTarget&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;cacheHint&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;stable&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;source&lt;/span&gt; &lt;span class="o"&gt;!==&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;cli_prefix&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;role&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;cacheControl&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;ENABLED&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 桶 3:所有 dynamic section 一起(环境 / git / memory)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// ← 同样打断点
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;joinSections&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;t&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;s&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;injectionTarget&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;cacheHint&lt;/span&gt; &lt;span class="o"&gt;===&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;dynamic&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="nx"&gt;role&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;system&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;cacheControl&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;ENABLED&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;r&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;(&lt;code&gt;joinSections&lt;/code&gt; / &lt;code&gt;ENABLED&lt;/code&gt; 是还原时起的名字:前者拼接 section 内容,后者对应 &lt;code&gt;{ type: &amp;quot;ephemeral&amp;quot; }&lt;/code&gt; 断点。&lt;code&gt;cacheControl&lt;/code&gt; 在这里是 ZCode 内部的 message 级表示,发送前会被转成 &lt;code&gt;providerOptions.anthropic.cacheControl&lt;/code&gt;,最终落到对应 content block 的 &lt;code&gt;cache_control&lt;/code&gt; 上——也就是 Anthropic API 的真实语义,断点真实生效。)&lt;/p&gt;
+&lt;p&gt;最终发给 API 的请求结构是这样的:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt; &lt;span class="c1"&gt;#1: cli_prefix(短身份串) ← cache_control ✓&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt; &lt;span class="c1"&gt;#2: identity + custom_system_prompt ← cache_control ✓&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt; &lt;span class="c1"&gt;#3: env_info + system_context + memory ← cache_control ✓&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;─────────────────────────────────────────────────────────&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="n"&gt;message&lt;/span&gt; &lt;span class="c1"&gt;#1: [meta_user: skills + request_user_context + current_date]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;用户实际输入&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;assistant&lt;/span&gt; &lt;span class="n"&gt;messages&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;svg viewBox="0 0 800 420" width="100%" style="max-width:800px;height:auto;display:block;margin:1.5rem auto;" role="img" aria-label="ZCode 三桶分段请求结构:三条 system message 按稳定度递减排列,每条末尾都打 cache_control 断点;user message 内含 meta_user 三段与用户输入;单请求 4 个断点配额,system 占 3"&gt;
+ &lt;text x="40" y="38" font-size="17" font-weight="700" fill="currentColor"&gt;ZCode 请求结构:三桶分段,断点全打&lt;/text&gt;
+ &lt;rect x="584" y="20" width="176" height="26" rx="13" fill="#8B5CF6" fill-opacity="0.12" stroke="#8B5CF6" stroke-opacity="0.45"/&gt;
+ &lt;text x="672" y="37" text-anchor="middle" font-size="12.5" fill="#8B5CF6"&gt;4 断点配额 · system 占 3&lt;/text&gt;
+ &lt;line x1="48" y1="84" x2="48" y2="374" stroke="currentColor" stroke-opacity="0.35"/&gt;
+ &lt;polygon points="48,382 43,370 53,370" fill="currentColor" fill-opacity="0.35"/&gt;
+ &lt;text x="66" y="229" transform="rotate(90 66 229)" text-anchor="middle" font-size="13" fill="currentColor" fill-opacity="0.55"&gt;稳定度递减 →&lt;/text&gt;
+ &lt;rect x="96" y="76" width="524" height="46" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25"/&gt;
+ &lt;rect x="112" y="89" width="58" height="20" rx="10" fill="#14B8A6" fill-opacity="0.12" stroke="#14B8A6" stroke-opacity="0.5"/&gt;
+ &lt;text x="141" y="103" text-anchor="middle" font-size="12" fill="#14B8A6"&gt;stable&lt;/text&gt;
+ &lt;text x="186" y="104" font-size="14" fill="currentColor"&gt;&lt;tspan font-weight="700"&gt;system #1&lt;/tspan&gt;&lt;tspan fill-opacity="0.75"&gt; · cli_prefix(短身份串)&lt;/tspan&gt;&lt;/text&gt;
+ &lt;g transform="translate(646 99)"&gt;&lt;rect x="-8" y="-8" width="16" height="16" rx="2.5" transform="rotate(45)" fill="#F59E0B" fill-opacity="0.15" stroke="#F59E0B" stroke-opacity="0.8"/&gt;&lt;polygon points="1.5,-6.5 -4.5,0.5 -1.2,0.5 -1.8,6.5 4.5,-0.5 1.2,-0.5" fill="#F59E0B"/&gt;&lt;/g&gt;
+ &lt;text x="664" y="103" font-size="12" fill="#F59E0B"&gt;cache_control&lt;/text&gt;
+ &lt;rect x="96" y="134" width="524" height="46" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25"/&gt;
+ &lt;rect x="112" y="147" width="58" height="20" rx="10" fill="#14B8A6" fill-opacity="0.12" stroke="#14B8A6" stroke-opacity="0.5"/&gt;
+ &lt;text x="141" y="161" text-anchor="middle" font-size="12" fill="#14B8A6"&gt;stable&lt;/text&gt;
+ &lt;text x="186" y="162" font-size="14" fill="currentColor"&gt;&lt;tspan font-weight="700"&gt;system #2&lt;/tspan&gt;&lt;tspan fill-opacity="0.75"&gt; · identity + custom_system_prompt&lt;/tspan&gt;&lt;/text&gt;
+ &lt;g transform="translate(646 157)"&gt;&lt;rect x="-8" y="-8" width="16" height="16" rx="2.5" transform="rotate(45)" fill="#F59E0B" fill-opacity="0.15" stroke="#F59E0B" stroke-opacity="0.8"/&gt;&lt;polygon points="1.5,-6.5 -4.5,0.5 -1.2,0.5 -1.8,6.5 4.5,-0.5 1.2,-0.5" fill="#F59E0B"/&gt;&lt;/g&gt;
+ &lt;text x="664" y="161" font-size="12" fill="#F59E0B"&gt;cache_control&lt;/text&gt;
+ &lt;rect x="96" y="192" width="524" height="46" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25"/&gt;
+ &lt;rect x="112" y="205" width="64" height="20" rx="10" fill="#F59E0B" fill-opacity="0.12" stroke="#F59E0B" stroke-opacity="0.5"/&gt;
+ &lt;text x="144" y="219" text-anchor="middle" font-size="12" fill="#F59E0B"&gt;dynamic&lt;/text&gt;
+ &lt;text x="192" y="220" font-size="14" fill="currentColor"&gt;&lt;tspan font-weight="700"&gt;system #3&lt;/tspan&gt;&lt;tspan fill-opacity="0.75"&gt; · env_info + system_context + memory&lt;/tspan&gt;&lt;/text&gt;
+ &lt;g transform="translate(646 215)"&gt;&lt;rect x="-8" y="-8" width="16" height="16" rx="2.5" transform="rotate(45)" fill="#F59E0B" fill-opacity="0.15" stroke="#F59E0B" stroke-opacity="0.8"/&gt;&lt;polygon points="1.5,-6.5 -4.5,0.5 -1.2,0.5 -1.8,6.5 4.5,-0.5 1.2,-0.5" fill="#F59E0B"/&gt;&lt;/g&gt;
+ &lt;text x="664" y="219" font-size="12" fill="#F59E0B"&gt;cache_control&lt;/text&gt;
+ &lt;rect x="96" y="250" width="524" height="82" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25"/&gt;
+ &lt;text x="112" y="271" font-size="13" font-weight="700" fill="currentColor"&gt;user message&lt;/text&gt;
+ &lt;rect x="112" y="278" width="494" height="28" rx="6" fill="#8B5CF6" fill-opacity="0.08" stroke="#8B5CF6" stroke-opacity="0.4"/&gt;
+ &lt;text x="122" y="296" font-size="12" fill="#8B5CF6"&gt;meta_user&lt;/text&gt;
+ &lt;rect x="188" y="283" width="54" height="18" rx="9" fill="#8B5CF6" fill-opacity="0.14" stroke="#8B5CF6" stroke-opacity="0.45"/&gt;
+ &lt;text x="215" y="296" text-anchor="middle" font-size="12" fill="#8B5CF6"&gt;skills&lt;/text&gt;
+ &lt;rect x="250" y="283" width="148" height="18" rx="9" fill="#8B5CF6" fill-opacity="0.14" stroke="#8B5CF6" stroke-opacity="0.45"/&gt;
+ &lt;text x="324" y="296" text-anchor="middle" font-size="12" fill="#8B5CF6"&gt;request_user_context&lt;/text&gt;
+ &lt;rect x="406" y="283" width="96" height="18" rx="9" fill="#8B5CF6" fill-opacity="0.14" stroke="#8B5CF6" stroke-opacity="0.45"/&gt;
+ &lt;text x="454" y="296" text-anchor="middle" font-size="12" fill="#8B5CF6"&gt;current_date&lt;/text&gt;
+ &lt;text x="112" y="325" font-size="12.5" fill="#3B82F6"&gt;+ 用户实际输入&lt;/text&gt;
+ &lt;rect x="96" y="346" width="524" height="34" rx="8" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/&gt;
+ &lt;text x="112" y="368" font-size="12.5" fill="currentColor" fill-opacity="0.6"&gt;tool / assistant messages…(对话与工具轮次)&lt;/text&gt;
+ &lt;text x="96" y="406" font-size="12" fill="currentColor" fill-opacity="0.6"&gt;stable = 基本不变 · dynamic = 每轮可能变 · 断点全打,交给最长前缀匹配&lt;/text&gt;
+&lt;/svg&gt;
+&lt;p&gt;剩下三个 &lt;code&gt;injectionTarget: &amp;quot;meta_user&amp;quot;&lt;/code&gt; 的 section 不进 system 段,而是作为附加内容拼进 user message——9 个 section 到此全部有了落点。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;核心思想:三条 system message 按&amp;quot;稳定度递减&amp;quot;排列,断点全打,把命运交给最长前缀匹配。&lt;/strong&gt; git 状态变了,只有 message #3 从分歧点开始作废,#1 / #2 的断点照常命中;环境连续几轮没变,#3 自己的断点也能命中;skills 列表变了,system 段一个字节都不动(它在 meta_user 里)。顺带一提:cli_prefix 那一段很短,单独看可能低于约 1024 token 的最小可缓存长度——好在第二段的断点把它整段覆盖,不影响大局。&lt;/p&gt;
+&lt;h2 id="同样的场景修复前后的差距"&gt;同样的场景,修复前后的差距
+&lt;/h2&gt;&lt;p&gt;把 oh-my-pi 修复前后的版本和 ZCode 放到同一个对比里:&lt;/p&gt;
+&lt;svg viewBox="0 0 800 400" width="100%" style="max-width:800px;height:auto;display:block;margin:1.5rem auto;" role="img" aria-label="唯一断点与多断点的命中对比:omp 修复前唯一断点打在最末尾,易变段一变整条前缀全量重算;ZCode 与 omp 修复后在稳定段末尾打断点,稳定段照常命中约一折价格,只废掉后面的断点"&gt;
+ &lt;text x="40" y="34" font-size="17" font-weight="700" fill="currentColor"&gt;唯一断点 vs 多断点:命中范围对比&lt;/text&gt;
+ &lt;text x="40" y="66" font-size="14" font-weight="700" fill="currentColor"&gt;omp 修复前(单断点打在末尾)&lt;/text&gt;
+ &lt;rect x="412" y="74" width="72" height="20" rx="10" fill="#EF4444" fill-opacity="0.12" stroke="#EF4444" stroke-opacity="0.5"/&gt;
+ &lt;text x="448" y="88" text-anchor="middle" font-size="12" fill="#EF4444"&gt;变了 ✗&lt;/text&gt;
+ &lt;rect x="40" y="98" width="290" height="48" rx="6" fill="#EF4444" fill-opacity="0.06" stroke="#EF4444" stroke-opacity="0.6"/&gt;
+ &lt;text x="185" y="127" text-anchor="middle" font-size="12.5" fill="#EF4444"&gt;稳定段:identity + 规则&lt;/text&gt;
+ &lt;line x1="116" y1="122" x2="254" y2="122" stroke="#EF4444" stroke-opacity="0.7"/&gt;
+ &lt;rect x="358" y="98" width="180" height="48" rx="6" fill="#EF4444" fill-opacity="0.06" stroke="#EF4444" stroke-opacity="0.6"/&gt;
+ &lt;text x="448" y="127" text-anchor="middle" font-size="12.5" fill="#EF4444"&gt;易变段:cwd / git / 日期&lt;/text&gt;
+ &lt;line x1="374" y1="122" x2="522" y2="122" stroke="#EF4444" stroke-opacity="0.7"/&gt;
+ &lt;line x1="46" y1="141" x2="534" y2="105" stroke="#EF4444" stroke-opacity="0.3"/&gt;
+ &lt;g transform="translate(552 122)"&gt;&lt;rect x="-8" y="-8" width="16" height="16" rx="2.5" transform="rotate(45)" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444" stroke-opacity="0.8"/&gt;&lt;polygon points="1.5,-6.5 -4.5,0.5 -1.2,0.5 -1.8,6.5 4.5,-0.5 1.2,-0.5" fill="#EF4444"/&gt;&lt;/g&gt;
+ &lt;text x="568" y="126" font-size="12" fill="#EF4444"&gt;cache_control&lt;/text&gt;
+ &lt;path d="M40 157 L40 164 L552 164 L552 157" fill="none" stroke="#EF4444" stroke-opacity="0.7"/&gt;
+ &lt;text x="296" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#EF4444"&gt;全部 miss → 全量重算 💸&lt;/text&gt;
+ &lt;line x1="60" y1="212" x2="200" y2="212" stroke="currentColor" stroke-opacity="0.2"/&gt;
+ &lt;line x1="600" y1="212" x2="740" y2="212" stroke="currentColor" stroke-opacity="0.2"/&gt;
+ &lt;text x="400" y="216" text-anchor="middle" font-size="13" font-weight="700" fill="#3B82F6"&gt;「从第一处字节分歧开始,之后的断点全部 miss,之前的断点照常命中」&lt;/text&gt;
+ &lt;text x="40" y="248" font-size="14" font-weight="700" fill="currentColor"&gt;ZCode / omp 修复后(稳定段末尾打断点)&lt;/text&gt;
+ &lt;rect x="149" y="256" width="72" height="20" rx="10" fill="#22C55E" fill-opacity="0.12" stroke="#22C55E" stroke-opacity="0.5"/&gt;
+ &lt;text x="185" y="270" text-anchor="middle" font-size="12" fill="#22C55E"&gt;没变 ✓&lt;/text&gt;
+ &lt;rect x="412" y="256" width="72" height="20" rx="10" fill="#EF4444" fill-opacity="0.12" stroke="#EF4444" stroke-opacity="0.5"/&gt;
+ &lt;text x="448" y="270" text-anchor="middle" font-size="12" fill="#EF4444"&gt;变了 ✗&lt;/text&gt;
+ &lt;rect x="40" y="282" width="290" height="48" rx="6" fill="#22C55E" fill-opacity="0.07" stroke="#22C55E" stroke-opacity="0.6"/&gt;
+ &lt;text x="185" y="311" text-anchor="middle" font-size="12.5" fill="#22C55E"&gt;稳定段:identity + 规则&lt;/text&gt;
+ &lt;g transform="translate(344 306)"&gt;&lt;rect x="-8" y="-8" width="16" height="16" rx="2.5" transform="rotate(45)" fill="#22C55E" fill-opacity="0.15" stroke="#22C55E" stroke-opacity="0.8"/&gt;&lt;polygon points="1.5,-6.5 -4.5,0.5 -1.2,0.5 -1.8,6.5 4.5,-0.5 1.2,-0.5" fill="#22C55E"/&gt;&lt;/g&gt;
+ &lt;rect x="358" y="282" width="180" height="48" rx="6" fill="#EF4444" fill-opacity="0.06" stroke="#EF4444" stroke-opacity="0.6"/&gt;
+ &lt;text x="448" y="311" text-anchor="middle" font-size="12.5" fill="#EF4444"&gt;易变段:cwd / git / 日期&lt;/text&gt;
+ &lt;line x1="364" y1="325" x2="532" y2="289" stroke="#EF4444" stroke-opacity="0.3"/&gt;
+ &lt;g transform="translate(552 306)" opacity="0.55"&gt;&lt;rect x="-8" y="-8" width="16" height="16" rx="2.5" transform="rotate(45)" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444" stroke-opacity="0.8"/&gt;&lt;polygon points="1.5,-6.5 -4.5,0.5 -1.2,0.5 -1.8,6.5 4.5,-0.5 1.2,-0.5" fill="#EF4444"/&gt;&lt;/g&gt;
+ &lt;path d="M40 345 L40 352 L330 352 L330 345" fill="none" stroke="#22C55E" stroke-opacity="0.7"/&gt;
+ &lt;text x="185" y="372" text-anchor="middle" font-size="13" font-weight="700" fill="#22C55E"&gt;命中 ✓ · 按 ~10% 价格计费&lt;/text&gt;
+ &lt;text x="448" y="372" text-anchor="middle" font-size="13" font-weight="700" fill="#EF4444"&gt;易变段起全部 miss → 只废掉后面的断点&lt;/text&gt;
+ &lt;text x="40" y="394" font-size="12" fill="currentColor" fill-opacity="0.6"&gt;命中范围由最长前缀匹配逐字节判定&lt;/text&gt;
+&lt;/svg&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;变化场景&lt;/th&gt;
+					&lt;th&gt;omp 修复前(17.2.4)&lt;/th&gt;
+					&lt;th&gt;omp 当前(18.8.7)&lt;/th&gt;
+					&lt;th&gt;ZCode(3.3.6)&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;用户改了 cwd&lt;/td&gt;
+					&lt;td&gt;❌ 唯一断点前已变,全失效&lt;/td&gt;
+					&lt;td&gt;✅ 稳定前缀断点命中&lt;/td&gt;
+					&lt;td&gt;✅ #1 / #2 断点命中&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;git 状态变了(几乎每轮)&lt;/td&gt;
+					&lt;td&gt;❌ 全失效&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;跨天(date 变了)&lt;/td&gt;
+					&lt;td&gt;❌ 全失效&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;skills 列表变&lt;/td&gt;
+					&lt;td&gt;❌ 全失效&lt;/td&gt;
+					&lt;td&gt;❌ skills 渲染进 main 模板,稳定前缀失效&lt;/td&gt;
+					&lt;td&gt;✅ skills 在 meta_user,system 段不动&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;纯对话推进(啥都没变)&lt;/td&gt;
+					&lt;td&gt;✅ 全命中&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+					&lt;td&gt;✅&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;保住的&amp;quot;身份 + 规则&amp;quot;段往往有几 K token——Harness 指令、安全策略、工具说明,每轮省下来的是实打实的钱和延迟。修好断点位置之后,oh-my-pi 在环境类变化上已经和 ZCode 打平;ZCode 仍然占优的是 skills 这类场景,以及一个更根本的区别:ZCode 的&amp;quot;哪段内容属于哪个缓存桶&amp;quot;是 section 元数据里声明好的,边界和内容写在一起;omp 的断点锚定在线路层,&amp;ldquo;哪些块算稳定&amp;quot;的判断维护在离内容更远的地方。&lt;/p&gt;
+&lt;h2 id="这套架构不是没代价"&gt;这套架构不是没代价
+&lt;/h2&gt;&lt;p&gt;为了不变成单方面吹捧,得说清楚 ZCode 这套设计的成本:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. 实现复杂度上去了。&lt;/strong&gt; 要给每个 section 打元数据(&lt;code&gt;source&lt;/code&gt; / &lt;code&gt;injectionTarget&lt;/code&gt; / &lt;code&gt;cacheHint&lt;/code&gt;),写一个 &lt;code&gt;ContextBuilder&lt;/code&gt; 维护这些 section,再写分桶组装逻辑。相比 oh-my-pi 的&amp;quot;一个 Handlebars 模板 + join&amp;rdquo;,工程量明显更大。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. 依赖 provider 支持&amp;quot;多 system message + 多断点&amp;quot;。&lt;/strong&gt; 这套分段只有 Anthropic 风格的 API(支持多个 system block、每个都能打 &lt;code&gt;cache_control&lt;/code&gt;)才吃得满。一旦换到只支持单条 system message 的 OpenAI 兼容端点,stable/dynamic 分段就退化成普通拼接,架构优势消失。而且单请求 4 个断点配额,system 段就固定占掉 3 个,给 message 历史留的余量更小。ZCode 的 model provider 配置里确实专门标了 &lt;code&gt;kind: &amp;quot;anthropic&amp;quot;&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;provider&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;builtin:bigmodel&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Bigmodel&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;kind&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;anthropic&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;options&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;baseURL&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://open.bigmodel.cn/api/anthropic&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这侧面印证了:这套架构是为 Anthropic 兼容端点量身定做的。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3. 缓存省的钱有上限。&lt;/strong&gt; 身份 + 规则段大概几 K token,而一个长会话的 message history 可能有几十 K 到上百 K。ZCode 保住的是 system 段的缓存,message 段两边都得重新缓存推进。所以它对总成本的影响是&amp;quot;system 部分更稳&amp;quot;,&lt;strong&gt;不是&amp;quot;整体翻天覆地&amp;quot;&lt;/strong&gt;——在长会话里占比有限,在频繁开新会话 / 短会话的场景下收益最明显。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4. oh-my-pi 也一直在管缓存,而且追得很快。&lt;/strong&gt; 它的内容排布从一开始就是缓存友好的(稳定内容在前,易变字段在 footer),2026-08-01 修断点位置、9 月再加 &lt;code&gt;applyHeadCaching&lt;/code&gt;,两次小改动就补齐了差距——这是&amp;quot;模板拼接 + 线路层补丁&amp;quot;架构的迭代速度优势。ZCode 这套设计换来的不是&amp;quot;对手做不到&amp;quot;的护城河,而是 day-one 的结构性保证和更细的分段粒度。&lt;/p&gt;
+&lt;h2 id="一个更深的观察两种-harness-哲学"&gt;一个更深的观察:两种 harness 哲学
+&lt;/h2&gt;&lt;p&gt;扒完两边代码,我觉得这不止是&amp;quot;谁缓存做得好&amp;quot;的技术差异,而是两种 harness 设计哲学的缩影:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;oh-my-pi:模板驱动 + 按需加载。&lt;/strong&gt; 用一堆 &lt;code&gt;.md&lt;/code&gt; 模板 + Handlebars 渲染,功能面铺得极广(autolearn / autoresearch / hindsight / dap 调试 / live / irc / stt / tts / vibe / lsp / collab),skill 用 &lt;code&gt;skill://&lt;/code&gt; URL 协议让模型按需拉取而非预注入。它的哲学是&lt;strong&gt;功能丰富、灵活、按需&lt;/strong&gt;,缓存交给线路层兜底。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;ZCode:工程优化 + 精确控制。&lt;/strong&gt; 功能面不比 oh-my-pi 多,但在每个关键路径(prompt 组装、上下文压缩的两阶段防抖、权限的 5 模式 + 风险分级)都做了精细的工程优化。它的哲学是&lt;strong&gt;在少数关键点上做到极致&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这两种没有绝对的高下。oh-my-pi 的方式更适合&amp;quot;一个 harness 适配多种 provider、功能要全&amp;quot;的场景;ZCode 的方式更适合&amp;quot;锁定单一 provider 生态、把单点优化榨干&amp;quot;的场景。&lt;/p&gt;
+&lt;p&gt;单看&amp;quot;prompt 缓存利用率&amp;quot;这一项,修复后的双方已经殊途同归。差异在过程:ZCode 把缓存边界当成架构原语,day-one 就有结构性保证(连 skills 都被挪出了 system 段);oh-my-pi 在问题暴露后,用线路层的最小改动收敛到了近似效果。如果你在做锁定 Anthropic 兼容端点的 harness,前者值得抄;如果你的 harness 要适配多种 provider,后者的演进路径可能更务实。&lt;/p&gt;
+&lt;h2 id="附证据链与复现方法"&gt;附:证据链与复现方法
+&lt;/h2&gt;&lt;p&gt;本文所有结论都基于真实代码,可复现:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ZCode bundle&lt;/strong&gt;:ZCode 3.3.5 / 3.3.6(Linux deb 包)&lt;code&gt;resources/glm/zcode.cjs&lt;/code&gt;,实测 9.2MB(Windows 安装包大小可能不同)。关键词 &lt;code&gt;ContextBuilder&lt;/code&gt; / &lt;code&gt;cacheHint&lt;/code&gt; / &lt;code&gt;injectionTarget&lt;/code&gt; / &lt;code&gt;assembleSystemMessages&lt;/code&gt; 可定位核心逻辑;关键词计数用 &lt;code&gt;grep -o &amp;lt;关键词&amp;gt; zcode.cjs | wc -l&lt;/code&gt; 统计,两个版本结果一致。文中代码块是去混淆后的简化还原,变量名(如 &lt;code&gt;joinSections&lt;/code&gt; / &lt;code&gt;ENABLED&lt;/code&gt;)为还原时所起,可能与实际实现存在出入。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;oh-my-pi 源码&lt;/strong&gt;:基于修复前的版本(约 17.2.4,2026-08-01 之前)阅读,涉及文件 &lt;code&gt;pi-coding-agent/src/system-prompt.ts&lt;/code&gt;(&lt;code&gt;buildSystemPrompt&lt;/code&gt;)、&lt;code&gt;pi-ai/src/providers/anthropic.ts&lt;/code&gt;(&lt;code&gt;buildAnthropicSystemBlocks&lt;/code&gt; / &lt;code&gt;applyPromptCaching&lt;/code&gt;)。修复及后续演进的锚点:&lt;code&gt;79a7f309a4&lt;/code&gt; + &lt;code&gt;1488be016d&lt;/code&gt;(2026-08-01,稳定前缀末尾加第二断点)、&lt;code&gt;applyHeadCaching&lt;/code&gt;(2026-09-03,锚定最后一个稳定 system 块);omp 几乎每日迭代,当前 18.8.7 的行为已实机核对。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;交叉验证&lt;/strong&gt;:&lt;code&gt;injectionTarget&lt;/code&gt; / &lt;code&gt;cacheHint&lt;/code&gt; / &lt;code&gt;ContextBuilder&lt;/code&gt; 三个关键词在 claude-code 2.0.28 的 &lt;code&gt;cli.js&lt;/code&gt;(实测 9.9MB)里均为 0 处出现,证实这是 ZCode 自研设计而非继承自上游。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;计费事实&lt;/strong&gt;(5 分钟档读价 0.1x、1 小时档读价 0.2x、4 断点配额、约 1024 token 最小可缓存长度)对照 Anthropic 官方 prompt caching 文档核对过;omp 侧 &lt;code&gt;ANTHROPIC_MAX_BREAKPOINTS = 4&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;修订记录:初稿写于 2026-08-02,所引 oh-my-pi 源码阅读于其 2026-08-01 断点修复落地之前(约 17.2.4);2026-10-10 依据实测逐条复核后修订(补齐该修复与 2026-09-03 &lt;code&gt;applyHeadCaching&lt;/code&gt; 的后续核对,并改正两处机制表述),发布日期以修订日为准。&lt;/p&gt;
+&lt;p&gt;一个提醒:ZCode 的 bundle 是 minified 的,变量名会被混淆(比如 &lt;code&gt;Q6n&lt;/code&gt; = CLI Prefix 的内容变量,&lt;code&gt;Hbe&lt;/code&gt; = ephemeral 断点常量),但字符串常量和对象结构(&lt;code&gt;name&lt;/code&gt; / &lt;code&gt;source&lt;/code&gt; / &lt;code&gt;injectionTarget&lt;/code&gt; / &lt;code&gt;cacheHint&lt;/code&gt;)是保留的,靠这些可以精确定位每一段逻辑。&lt;/p&gt;</description></item><item><title>简单入门 coding agent</title><link>https://svtter.cn/p/%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8-coding-agent/</link><pubDate>Fri, 09 Oct 2026 22:54:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8-coding-agent/</guid><description>&lt;img src="https://svtter.cn/images/2026/09/23/coding-agent-intro-cover.svg" alt="Featured image of post 简单入门 coding agent" /&gt;&lt;blockquote&gt;
  &lt;p&gt;这篇文章的目标读者是初级工程师和计算机类专业的本科生。&lt;/p&gt;
 
  &lt;/blockquote&gt;
@@ -3031,248 +3573,4 @@ OCR 的榜单只报 token 相对量，没有这层账。&lt;/p&gt;
 &lt;li&gt;上游 7 个包里丢了 3 个（&lt;code&gt;pi-mom&lt;/code&gt; / &lt;code&gt;pi-web-ui&lt;/code&gt; / &lt;code&gt;pi-pods&lt;/code&gt;），替换了 1 个（&lt;code&gt;pi-web-ui&lt;/code&gt; → &lt;code&gt;collab-web&lt;/code&gt;）。&lt;/li&gt;
 &lt;li&gt;三 scope（&lt;code&gt;@mariozechner&lt;/code&gt; / &lt;code&gt;@earendil-works&lt;/code&gt; / &lt;code&gt;@oh-my-pi&lt;/code&gt;）通过 shim 等价，老 plugin 不用改一行代码就能跑在 omp 上。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;如果想看具体的 &amp;ldquo;哪些 pi-mono PR/issue 被 backport 进来&amp;rdquo;，可以翻 &lt;code&gt;packages/*/CHANGELOG.md&lt;/code&gt; 里那些 &lt;code&gt;backported pi-mono changes (...)&lt;/code&gt; 条目，或者 &lt;code&gt;git log --grep=&amp;quot;backport&amp;quot;&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>pi-review-agent 是怎么"记住"上一次 review 的</title><link>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</link><pubDate>Sun, 28 Jun 2026 23:10:00 +0800</pubDate><guid>https://svtter.cn/p/pi-review-agent-%E6%98%AF%E6%80%8E%E4%B9%88%E8%AE%B0%E4%BD%8F%E4%B8%8A%E4%B8%80%E6%AC%A1-review-%E7%9A%84/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/3001d2974b19c745.png" alt="Featured image of post pi-review-agent 是怎么"记住"上一次 review 的" /&gt;&lt;p&gt;AI code review 的 GitHub Action 里，&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
- &gt;pi-review-agent&lt;/a&gt; 有一个不太显眼但很关键的设计——&lt;strong&gt;跨 CI run 续接每个 reviewer 的会话&lt;/strong&gt;：同一个 PR 第二次推送时，reviewer 知道&amp;quot;上次我提了什么、作者改了什么、哪些 issue 还没解决&amp;quot;，而不是每次从零开始。&lt;/p&gt;
-&lt;p&gt;这篇文章拆开它的实现：上一次的对话记录落在哪、下一次 run 怎么加载回来、新 diff 怎么接进去，以及最关键的——为什么非要这么折腾。&lt;/p&gt;
-&lt;h2 id="为什么需要记住上一次"&gt;为什么需要&amp;quot;记住上一次&amp;quot;
-&lt;/h2&gt;&lt;p&gt;两个动机，一个是功能上的，一个是钱。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;功能上&lt;/strong&gt;：增量 review 需要上下文。同一个 PR 第 N 次推送时，reviewer 应该知道&amp;quot;上次我提了什么、作者改了什么、哪些 issue 还没解决&amp;quot;。无状态的 review 每次从零开始，会反复报相同的问题，会漏掉跨 commit 才看得出的 regression。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;钱&lt;/strong&gt;：DeepSeek 做 content-addressed prefix caching——如果请求的前缀（system prompt + 历史对话）和上一次完全一样，这部分 token 按缓存价计费。每次 review 都能把上一轮的 system prompt + history 完整重放给模型，那部分前缀就命中缓存，按 DeepSeek 公开定价里 cached token 大约是普通 input 的 &lt;strong&gt;2%&lt;/strong&gt;（input $0.14/1M，cacheRead $0.0028/1M）计费。PR review 这种高频、长 prompt、内容高度重叠的场景，省下来的钱是实打实的。&lt;/p&gt;
-&lt;p&gt;但这里有个坑：不是所有 OpenAI-compatible 路径都把 &lt;code&gt;cacheRead&lt;/code&gt; 透传出来。opencode 的 openai-compatible 适配层会把它丢成 0（anomalyco/opencode#34022），于是即便上游真的命中了缓存、真的便宜了，账单上也看不出来，更糟的是 agent 自己的 cost 计算会按全价走。pi-review-agent 用 pi-ai 这个库，&lt;code&gt;cacheRead&lt;/code&gt; 字段一路上到 &lt;code&gt;usage&lt;/code&gt;，cost 表也单独列了 &lt;code&gt;cacheRead&lt;/code&gt; 折扣价——这是这个项目存在的直接理由。&lt;/p&gt;
-&lt;p&gt;所以&amp;quot;记住上一次&amp;quot;不只是为了 review 质量，更是为了让 prefix cache 真的能命中、命中的钱真的能省下来。&lt;/p&gt;
-&lt;h2 id="整体数据流"&gt;整体数据流
-&lt;/h2&gt;&lt;pre class="mermaid" style="visibility:hidden"&gt;flowchart LR
- subgraph "CI run #1 (PR #42, 第一次推送)"
- A1[gh pr diff] --&gt; B1[prepareDiff 过滤]
- B1 --&gt; C1[runReview]
- C1 --&gt;|"新建 Agent, messages=[]"| D1[DeepSeek]
- D1 --&gt; E1["appendTranscript
- 42/quality.jsonl"]
- end
-
- subgraph "actions/cache"
- F[(pi-review-session
- repo-42-run_id_1)]
- end
- E1 -.save.-&gt; F
-
- subgraph "CI run #2 (PR #42, 第二次推送)"
- F -.restore by prefix.-&gt; G["sessions/
- 42/quality.jsonl"]
- A2[gh pr diff 新版] --&gt; B2[prepareDiff]
- B2 --&gt; C2[runReview]
- G --&gt;|loadTranscript 当 seed| C2
- C2 --&gt;|messages=旧transcript| H2[DeepSeek 命中 prefix cache]
- C2 --&gt;|prompt 追加新 diff| H2
- H2 --&gt; E2["appendTranscript
- 追加到同一文件"]
- end&lt;/pre&gt;&lt;p&gt;三个阶段：&lt;strong&gt;落盘 → 跨 run 搬运 → 加载注入&lt;/strong&gt;。&lt;/p&gt;
-&lt;h2 id="1-落盘一个-pr-一个目录一个-persona-一个-jsonl"&gt;1. 落盘：一个 PR 一个目录，一个 persona 一个 jsonl
-&lt;/h2&gt;&lt;p&gt;存储布局很简单，&lt;code&gt;src/review.ts&lt;/code&gt; 里 &lt;code&gt;sessionFile()&lt;/code&gt; 决定路径：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;sessionsRoot&amp;gt;/&amp;lt;pr&amp;gt;/&amp;lt;persona&amp;gt;.jsonl
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;每个 &lt;code&gt;(pr, persona)&lt;/code&gt; 一个文件，JSONL，每行一个 &lt;code&gt;AgentMessage&lt;/code&gt;。user / assistant / tool_use / tool_result 全部混在一起按时间顺序排。append-only——只追加不改写：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;appendTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;block&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;map&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stringify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;&lt;span class="nx"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;\n&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;appendFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;block&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;code&gt;(pr, persona)&lt;/code&gt; 这个二维 key 的选择是有意的：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;pr 维度&lt;/strong&gt;隔离不同 PR 的上下文（不能让 PR #42 的 review 记忆串到 PR #43）&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;persona 维度&lt;/strong&gt;隔离同一 PR 内不同 reviewer 的上下文（quality reviewer 不该看到 security reviewer 的对话）&lt;/li&gt;
-&lt;li&gt;team 模式下的 coordinator 也是一个&amp;quot;persona&amp;quot;，名字就叫 &lt;code&gt;&amp;quot;coordinator&amp;quot;&lt;/code&gt;，文件 &lt;code&gt;coordinator.jsonl&lt;/code&gt;——它也走同一套 resume 路径&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="2-跨-ci-run-搬运actionscache-的-key-设计"&gt;2. 跨 CI run 搬运：actions/cache 的 key 设计
-&lt;/h2&gt;&lt;p&gt;CI run 之间是无状态的——每次跑在一个全新的 runner 上，文件系统是空的。要让上一次的 jsonl 跨 run 活下来，靠 &lt;code&gt;action.yml&lt;/code&gt; 里这两步：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;span class="lnt"&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;- &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Restore review session&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;actions/cache@v5&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;${{ ... }}/.pi-review-sessions&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;key&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;pi-review-session-${{ github.repository }}-${{ steps.pr.outputs.pr }}-${{ github.run_id }}&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restore-keys&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="sd"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; pi-review-session-${{ github.repository }}-${{ steps.pr.outputs.pr }}-&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;这个 key 设计是整个机制的精妙之处，看一眼可能觉得理所当然，其实每个字段都有用意：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;&lt;code&gt;key&lt;/code&gt; 带 &lt;code&gt;github.run_id&lt;/code&gt;&lt;/strong&gt;：run_id 每次 run 都唯一。这意味着 &lt;code&gt;key&lt;/code&gt; 永远不会精确命中自己——save 总是新建一个 cache entry。如果去掉 run_id，第二次 run 会 restore 命中第一次的 entry，然后 save 时 actions/cache 发现 key 没变就跳过写回，新追加的 transcript 就丢了。带 run_id 强制每次都写。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&lt;code&gt;restore-keys&lt;/code&gt; 只有前缀（不带 run_id）&lt;/strong&gt;：精确 key 永远 miss，但前缀匹配会把这个 PR &lt;strong&gt;最近一次成功 run&lt;/strong&gt; 的 sessions 目录还原回来。这就是&amp;quot;续接&amp;quot;的实际机制。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&lt;code&gt;github.repository&lt;/code&gt; 在 key 里&lt;/strong&gt;：fork 的 PR 不会串到上游 repo 的 session（cache 是 repo scope 的，但写上更明确）。&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;pr 在 key 里，persona/team 不在&lt;/strong&gt;：一个 cache entry 装下这个 PR 的所有 reviewer + coordinator（persona 编码在文件名里）。这样 cache hit 率最高。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;粒度是 &lt;code&gt;(repo, pr)&lt;/code&gt;，不是 &lt;code&gt;(repo, pr, persona)&lt;/code&gt;。如果按 persona 拆 cache entry，N 个 persona 就要 N 次 cache round-trip；现在一次 restore 把整个目录搬回来。&lt;/p&gt;
-&lt;h2 id="3-加载--注入transcript-当种子diff-当新-user-turn"&gt;3. 加载 + 注入：transcript 当种子，diff 当新 user turn
-&lt;/h2&gt;&lt;p&gt;&lt;code&gt;runReview()&lt;/code&gt; 是核心。每次调用（每个 persona、每次 run）都走这套：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;span class="lnt"&gt;19
-&lt;/span&gt;&lt;span class="lnt"&gt;20
-&lt;/span&gt;&lt;span class="lnt"&gt;21
-&lt;/span&gt;&lt;span class="lnt"&gt;22
-&lt;/span&gt;&lt;span class="lnt"&gt;23
-&lt;/span&gt;&lt;span class="lnt"&gt;24
-&lt;/span&gt;&lt;span class="lnt"&gt;25
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="kr"&gt;async&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;runReview&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;file&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;sessionFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;transcript&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;loadTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 不存在 → []
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;resumed&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;transcript&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;attempt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;attempt&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="nx"&gt;maxAttempts&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nx"&gt;attempt&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;agent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Agent&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;initialState&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;systemPrompt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;tools&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;: &lt;span class="kt"&gt;transcript&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// ← 上轮 transcript 整段当种子
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;sessionId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;streamFn&lt;/span&gt;: &lt;span class="kt"&gt;...&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;done&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;collectFromAgent&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;agent&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prompt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sb"&gt;`Review this diff:&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="sb"&gt;n&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="sb"&gt;n&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nx"&gt;opts&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;diff&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// ← 新 diff 作为下一条 user turn
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;collected&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;done&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// ...
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;appendTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 只追加本轮新增的消息
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;usage&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;resumed&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;两步，泾渭分明：&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;a. transcript 作为种子塞进 Agent 的 initialState&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;new Agent({ initialState: { messages: transcript } })&lt;/code&gt; 把上一轮的完整对话历史（user + assistant + tool_use + tool_result）作为这个 agent 的初始 messages。从模型的角度看，它&amp;quot;以为&amp;quot;自己刚才已经聊过这些——因为 DeepSeek 做 content-addressed prefix caching，这段重放的前缀会命中缓存，&lt;code&gt;usage.cacheRead &amp;gt; 0&lt;/code&gt;，命中部分按 2% 计费。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;b. 新 diff 作为新的 user turn 接在后面&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;agent.prompt(&amp;quot;Review this diff:\n\n&amp;quot; + diff)&lt;/code&gt; 在 pi-agent-core 里就是把传入文本当作下一条 user message 追加到 messages 末尾然后发起流。所以续接的形状是：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;seeded&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;system&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;上轮&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;上轮&lt;/span&gt; &lt;span class="n"&gt;assistant&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;上轮&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Review this diff:&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;lt;本轮新 diff&amp;gt;&amp;#34;&lt;/span&gt; &lt;span class="err"&gt;←&lt;/span&gt; &lt;span class="err"&gt;新注入的&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="n"&gt;turn&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;模型看到的是一段连续对话，它的&amp;quot;记忆&amp;quot;完全来自重放的 transcript，不需要任何特殊的 memory API 或向量检索。&lt;/p&gt;
-&lt;p&gt;diff 本身的来历：&lt;code&gt;action.yml&lt;/code&gt; 里先 &lt;code&gt;gh pr diff&lt;/code&gt;（失败回退到 GitHub pulls API 的 &lt;code&gt;.diff&lt;/code&gt; 端点）落到 &lt;code&gt;$RUNNER_TEMP/pi-review-diff.txt&lt;/code&gt; → &lt;code&gt;index.ts&lt;/code&gt; 的 &lt;code&gt;prepareDiff()&lt;/code&gt; 过滤（锁文件必砍、&lt;code&gt;diff-exclude&lt;/code&gt; glob、&lt;code&gt;diff-max-size-kb&lt;/code&gt; 字节预算 + 超了就截断并附 notice）→ 作为 &lt;code&gt;opts.diff&lt;/code&gt; 传进 &lt;code&gt;runReview&lt;/code&gt;。&lt;/p&gt;
-&lt;h2 id="几个容易写错的地方"&gt;几个容易写错的地方
-&lt;/h2&gt;&lt;p&gt;这套机制能稳，靠的是几个容易写错的地方都写对了：&lt;/p&gt;
-&lt;h3 id="只持久化成功-attempt-的消息"&gt;只持久化成功 attempt 的消息
-&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Only persist the transcript of a successful attempt — a partial
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// transcript from a failed run would poison the next session&amp;#39;s cache
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// prefix and confuse the resume path.
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="nx"&gt;appendTranscript&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;newMessages&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;retry 循环里，&lt;code&gt;appendTranscript&lt;/code&gt; 只在成功路径调用。一次 attempt 失败（流断了、超时了、429 了），它产生的 &lt;code&gt;newMessages&lt;/code&gt; 直接丢弃。原因在注释里：半截 transcript 写进去，下一轮 resume 时它成了 prefix 的一部分，但这段 prefix 对应的是一个&lt;strong&gt;没有正常结束&lt;/strong&gt;的对话——模型上下文是断的，而且 DeepSeek 的 prefix cache 是按内容寻址的，下次重放这段坏 prefix 还是会&amp;quot;命中&amp;quot;，但模型看到的就是一个没 assistant 回复就突然冒出新的 user turn 的怪状态。宁可丢这次重试的产物，也要保证落盘的 transcript 是干净完整的。&lt;/p&gt;
-&lt;h3 id="retry-每次都新建-agent但种子不变"&gt;retry 每次都新建 Agent，但种子不变
-&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// Fresh Agent per attempt: a half-run agent after a stream error is
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// not safe to continue. The transcript seed is replayed each time;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// DeepSeek&amp;#39;s prefix cache absorbs the replay at a discount.
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;agent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Agent&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;一个流出错的 agent 内部状态是脏的（可能停在 tool_use 还没等到 tool_result 的中间态），继续用它会触发各种边界 bug。所以每次 retry 都新建一个干净的 Agent，把同一份 &lt;code&gt;transcript&lt;/code&gt; 种子重放进去。种子不变意味着 prefix cache 仍然命中——retry 不是免费的，但也是打折的。&lt;/p&gt;
-&lt;h3 id="coordinator-也走-resume"&gt;coordinator 也走 resume
-&lt;/h3&gt;&lt;p&gt;前面提过，coordinator 是一个 persona 名为 &lt;code&gt;&amp;quot;coordinator&amp;quot;&lt;/code&gt; 的 reviewer，文件 &lt;code&gt;&amp;lt;pr&amp;gt;/coordinator.jsonl&lt;/code&gt;，跨 run 同样续接。但它的&amp;quot;diff&amp;quot;不是 git diff——&lt;code&gt;orchestrate.ts&lt;/code&gt; 里 &lt;code&gt;buildCoordinatorInput()&lt;/code&gt; 把各 persona 本轮的 review 结果拼成一段文本作为它的输入。所以 coordinator 的&amp;quot;记忆&amp;quot;是&amp;quot;我上轮综合了哪些 persona 的什么结论&amp;quot;，这让它能在新一轮判断&amp;quot;哪些 issue 是新出的、哪些是没解决的&amp;quot;。&lt;/p&gt;
-&lt;h3 id="fail-closed"&gt;fail-closed
-&lt;/h3&gt;&lt;p&gt;如果一个 persona reviewer 整个挂了（产不出内容），&lt;code&gt;runTeamReview&lt;/code&gt; 不是当它&amp;quot;通过&amp;quot;，而是把 verdict 强制改成 &lt;code&gt;CANNOT MERGE&lt;/code&gt;。证据缺失不等于没证据——reviewer 没说话比 reviewer 说&amp;quot;没问题&amp;quot;危险得多。&lt;/p&gt;
-&lt;h2 id="为什么这套设计能省钱把数字摆出来"&gt;为什么这套设计能省钱：把数字摆出来
-&lt;/h2&gt;&lt;p&gt;provider 配置（&lt;code&gt;src/provider.ts&lt;/code&gt;）里 DeepSeek 的 cost 表：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ts" data-lang="ts"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;cost&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;input&lt;/span&gt;: &lt;span class="kt"&gt;0.14&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 普通 input，$ / 1M tokens
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;output&lt;/span&gt;: &lt;span class="kt"&gt;0.28&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cacheRead&lt;/span&gt;: &lt;span class="kt"&gt;0.0028&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 命中缓存的 input，input 的 2%
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;cacheWrite&lt;/span&gt;: &lt;span class="kt"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;pi-ai 的 &lt;code&gt;calculateCost()&lt;/code&gt; 自动把 &lt;code&gt;usage.cacheRead&lt;/code&gt; 乘上 &lt;code&gt;cost.cacheRead&lt;/code&gt;。所以一个 PR 第二次推送时：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;system prompt（可能几千 token 的 persona 指南 + 语言指令）+ 上一轮 transcript（reviewer 的 reasoning、读过的文件、grep 结果）这部分前缀全部命中 cache，按 $0.0028/1M 计费&lt;/li&gt;
-&lt;li&gt;只有本轮新增的 diff（通常几百到几千 token）按 $0.14/1M&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;对一个 review 频繁、persona prompt 又长（quality/security/performance 各一套几千 token 指南）的项目，第二轮开始的 review 成本能降到第一轮的零头。&lt;/p&gt;
-&lt;h2 id="一句话总结"&gt;一句话总结
-&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;jsonl 当 seed 重放（吃 prefix cache）+ 新 diff 当下一条 user turn 追加&lt;/strong&gt;——这就是 pi-review-agent&amp;quot;加载历史 + 注入新改动&amp;quot;的全部机制。没有向量数据库，没有 memory API，没有 embedding，就是一个 append-only 的 JSONL 文件 + actions/cache 的前缀模糊命中 + pi-agent-core 的 &lt;code&gt;initialState.messages&lt;/code&gt;。简单到几乎不像一个&amp;quot;记忆系统&amp;quot;，但它正好踩中了 prefix caching 的甜点，顺便把账单打了折。&lt;/p&gt;
-&lt;hr&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a class="link" href="https://github.com/sun-praise/pi-review-agent" target="_blank" rel="noopener"
- &gt;pi-review-agent&lt;/a&gt; — 项目仓库&lt;/li&gt;
-&lt;/ul&gt;</description></item></channel></rss>
+&lt;p&gt;如果想看具体的 &amp;ldquo;哪些 pi-mono PR/issue 被 backport 进来&amp;rdquo;，可以翻 &lt;code&gt;packages/*/CHANGELOG.md&lt;/code&gt; 里那些 &lt;code&gt;backported pi-mono changes (...)&lt;/code&gt; 条目，或者 &lt;code&gt;git log --grep=&amp;quot;backport&amp;quot;&lt;/code&gt;。&lt;/p&gt;</description></item></channel></rss>
