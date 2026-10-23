@@ -1,211 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Docker on Svtter's Blog</title><link>https://svtter.cn/en/tags/docker/</link><description>Recent content in Docker on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 13 Dec 2025 11:02:40 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/docker/index.xml" rel="self" type="application/rss+xml"/><item><title>Use Emerging Open Source Software with Caution</title><link>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/5406e826e1c3cde7.png" alt="Featured image of post Use Emerging Open Source Software with Caution" /&gt;&lt;p&gt;Recently, I had an incident with Dify/Langchain and reached this conclusion.&lt;/p&gt;
-&lt;h2 id="retrospective"&gt;Retrospective
-&lt;/h2&gt;&lt;p&gt;About 7 months ago, I deployed the open-source Dify to the server and started an instance through the official docker compose. However, recently, due to a sandbox escape vulnerability in Dify&amp;rsquo;s code node (CVE-2025-3466), I was privilege-escalated via webshell and had a Monero mining program implanted.&lt;/p&gt;
-&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/307cd31d657d7799.png"&gt;&lt;/p&gt;
-&lt;p&gt;Fortunately, after this privilege escalation, the intruder didn&amp;rsquo;t do much, and the intrusion was in the docker container, with limited damage.&lt;/p&gt;
-&lt;h2 id="cve-2025-3466-details"&gt;CVE-2025-3466 Details
-&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;CVE ID&lt;/strong&gt;: CVE-2025-3466
-&lt;strong&gt;Release Date&lt;/strong&gt;: July 7, 2025
-&lt;strong&gt;CVSS Score&lt;/strong&gt;: 9.8 (Critical)
-&lt;strong&gt;Affected Versions&lt;/strong&gt;: langgenius/dify 1.1.0 - 1.1.2
-&lt;strong&gt;Fixed Version&lt;/strong&gt;: 1.1.3&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Vulnerability Description&lt;/strong&gt;:
-Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attackers to bypass sandbox security restrictions by overwriting global JavaScript functions (such as &lt;code&gt;parseInt&lt;/code&gt;), thereby executing arbitrary code with full root privileges.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Attack Flow&lt;/strong&gt;:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Attacker crafts malicious payload in the code node&amp;rsquo;s input&lt;/li&gt;
-&lt;li&gt;Malicious code overwrites global JavaScript functions before sandbox restrictions are enforced&lt;/li&gt;
-&lt;li&gt;Uses the overwritten functions to bypass security checks&lt;/li&gt;
-&lt;li&gt;Executes arbitrary commands, gaining complete control of the container&lt;/li&gt;
-&lt;li&gt;Implants webshell backdoor and Monero mining program&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;strong&gt;Impact Scope&lt;/strong&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Unauthorized access to secret keys and API keys&lt;/li&gt;
-&lt;li&gt;Access to internal network servers&lt;/li&gt;
-&lt;li&gt;Lateral movement within the dify.ai system&lt;/li&gt;
-&lt;li&gt;Complete takeover of server control&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Related Links&lt;/strong&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a class="link" href="https://nvd.nist.gov/vuln/detail/cve-2025-3466" target="_blank" rel="noopener"
- &gt;NVD Details&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="link" href="https://github.com/advisories/GHSA-x53g-q9xm-rf4m" target="_blank" rel="noopener"
- &gt;GitHub Advisory GHSA-x53g-q9xm-rf4m&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;From this perspective, several key factors are indispensable for protecting server security.&lt;/p&gt;
-&lt;h2 id="personal-server-security"&gt;Personal Server Security
-&lt;/h2&gt;&lt;p&gt;From a security perspective, there are several things that must be done on personal servers. The first thing is to avoid using passwords as much as possible. For example, SSH passwords.&lt;/p&gt;
-&lt;h3 id="ssh-passwords"&gt;SSH Passwords
-&lt;/h3&gt;&lt;p&gt;Password login must be disabled. SSH password cracking is relatively easy. If the password is simple, or if the user changes the password themselves and uses a simple password, the server will be breached.&lt;/p&gt;
-&lt;p&gt;If using Debian/Linux, disabling password login and disabling root login are mandatory:&lt;/p&gt;
-&lt;p&gt;The fewer software packages used, the narrower the attacker&amp;rsquo;s attack surface. Once only nginx is exposed on your server, and port 80 and port 22 (SSH) are not open, the attacker&amp;rsquo;s attack surface is limited to nginx-related content.&lt;/p&gt;
-&lt;h3 id="use-rootless-docker"&gt;Use Rootless Docker
-&lt;/h3&gt;&lt;p&gt;Using container technology is equivalent to further virtualizing on top of the cloud service provider&amp;rsquo;s infrastructure.&lt;/p&gt;
-&lt;p&gt;Using rootless docker can further limit container permissions. Even if the container is breached, the attacker cannot directly gain root privileges on the host. This is the last line of defense.&lt;/p&gt;
-&lt;h3 id="limit-container-network-access"&gt;Limit Container Network Access
-&lt;/h3&gt;&lt;p&gt;Most services don&amp;rsquo;t need unrestricted external network access permissions. Reasonably configuring container network policies to limit unnecessary network access can greatly reduce the attack surface.&lt;/p&gt;
-&lt;p&gt;For example, many services only need to access databases or internal services, and don&amp;rsquo;t need to access the external network at all. If the container doesn&amp;rsquo;t have external network access permissions, even if breached, the attacker cannot download mining programs or communicate with C2 servers.&lt;/p&gt;
-&lt;h2 id="how-to-use-open-source-software-with-caution"&gt;How to Use Open Source Software with Caution
-&lt;/h2&gt;&lt;p&gt;This incident made me reflect on the following points when using emerging open source software:&lt;/p&gt;
-&lt;h3 id="choose-mature-projects"&gt;Choose Mature Projects
-&lt;/h3&gt;&lt;p&gt;Look at the project&amp;rsquo;s star count, commit frequency, and issue handling status. If a project:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Has few stars (less than a few hundred)&lt;/li&gt;
-&lt;li&gt;Hasn&amp;rsquo;t been updated in recent months&lt;/li&gt;
-&lt;li&gt;Has a large number of unresolved issues&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Then the risk of using this project is high.&lt;/p&gt;
-&lt;h3 id="audit-dependencies"&gt;Audit Dependencies
-&lt;/h3&gt;&lt;p&gt;Open source software often depends on a large number of third-party libraries. Like Dify in this incident, there was a serious code node sandbox escape vulnerability. Before deployment, it&amp;rsquo;s best to:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Look at the project&amp;rsquo;s dependency tree&lt;/li&gt;
-&lt;li&gt;Check for known vulnerabilities&lt;/li&gt;
-&lt;li&gt;Regularly update dependencies&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id="regular-updates-and-security-scanning"&gt;Regular Updates and Security Scanning
-&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;Regularly check CVE databases&lt;/li&gt;
-&lt;li&gt;Use tools like &lt;code&gt;snyk&lt;/code&gt;, &lt;code&gt;trivy&lt;/code&gt; for dependency vulnerability scanning&lt;/li&gt;
-&lt;li&gt;Update to fixed versions in a timely manner&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id="limit-permissions"&gt;Limit Permissions
-&lt;/h3&gt;&lt;p&gt;Even if you trust a certain open source software, you should give it minimal permissions:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Don&amp;rsquo;t give containers privileged permissions&lt;/li&gt;
-&lt;li&gt;Limit container resource usage (CPU, memory)&lt;/li&gt;
-&lt;li&gt;Use read-only file systems (if possible)&lt;/li&gt;
-&lt;li&gt;Don&amp;rsquo;t mount the host&amp;rsquo;s sensitive directories into the container&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="monitoring-and-alerting"&gt;Monitoring and Alerting
-&lt;/h2&gt;&lt;p&gt;Security is a continuous process, can&amp;rsquo;t rely solely on prevention. Establishing comprehensive monitoring and alerting mechanisms is crucial:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Monitor system resource usage (CPU, memory, disk IO anomalies may indicate mining programs)&lt;/li&gt;
-&lt;li&gt;Monitor network traffic (abnormal outbound connections)&lt;/li&gt;
-&lt;li&gt;Monitor process list (abnormal processes)&lt;/li&gt;
-&lt;li&gt;Set up log alerts (e.g., failed login attempts)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="conclusion"&gt;Conclusion
-&lt;/h2&gt;&lt;p&gt;Open source software provides us with great convenience, but also brings security risks. Although this incident didn&amp;rsquo;t cause much loss, it gave me an important lesson:&lt;/p&gt;
-&lt;p&gt;Don&amp;rsquo;t blindly trust any software, especially emerging open source projects. Do more investigation before use, give minimal permissions during use, and continuously monitor and update after use.&lt;/p&gt;
-&lt;p&gt;Server security is not a one-time solution, but requires continuous attention and maintenance.&lt;/p&gt;</description></item><item><title>A Docker Image for Computer Vision</title><link>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</link><pubDate>Wed, 26 Mar 2025 19:57:22 +0800</pubDate><guid>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/2bdf0605f2e667f2.png" alt="Featured image of post A Docker Image for Computer Vision" /&gt;&lt;p&gt;When debugging deep learning code, we often face headaches due to environment issues.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Docker on Svtter's Blog</title><link>https://svtter.cn/en/tags/docker/</link><description>Recent content in Docker on Svtter's Blog</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sat, 13 Dec 2025 11:02:40 +0800</lastBuildDate><atom:link href="https://svtter.cn/en/tags/docker/index.xml" rel="self" type="application/rss+xml"/><item><title>Use Emerging Open Source Software with Caution</title><link>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</link><pubDate>Sat, 13 Dec 2025 11:02:40 +0800</pubDate><guid>https://svtter.cn/en/p/use-emerging-open-source-software-with-caution/</guid><description>&lt;p&gt;Recently, I had an incident with Dify/Langchain and reached this conclusion.&lt;/p&gt;
+&lt;h2 id="retrospective"&gt;Retrospective&lt;/h2&gt;
+&lt;p&gt;About 7 months ago, I deployed the open-source Dify to the server and started an instance through the official docker compose. However, recently, due to a sandbox escape vulnerability in Dify&amp;rsquo;s code node (CVE-2025-3466), I was privilege-escalated via webshell and had a Monero mining program implanted.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/307cd31d657d7799.png" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;Fortunately, after this privilege escalation, the intruder didn&amp;rsquo;t do much, and the intrusion was in the docker container, with limited damage.&lt;/p&gt;</description></item><item><title>A Docker Image for Computer Vision</title><link>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</link><pubDate>Wed, 26 Mar 2025 19:57:22 +0800</pubDate><guid>https://svtter.cn/en/p/a-docker-image-for-computer-vision/</guid><description>&lt;p&gt;When debugging deep learning code, we often face headaches due to environment issues.&lt;/p&gt;
 &lt;p&gt;To facilitate debugging, packaging environments like PyTorch and CUDA into a Docker image is an excellent choice.&lt;/p&gt;
-&lt;h2 id="why"&gt;Why?
-&lt;/h2&gt;&lt;ul&gt;
+&lt;h2 id="why"&gt;Why?&lt;/h2&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Time-saving&lt;/strong&gt;: Repeatedly configuring and adjusting versions wastes time, leading to spending a lot of effort on ops tasks.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Environment stability&lt;/strong&gt;: Once a Docker image is built, it is static and can be pulled directly.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Easy migration&lt;/strong&gt;: Pre-configured environments can be migrated across different machines.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id="how-to-build"&gt;How to Build
-&lt;/h2&gt;&lt;p&gt;Here is an example Docker image for packaging a deep learning environment:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-Dockerfile" data-lang="Dockerfile"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Change to your desired pytorch version&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;pytorch/pytorch:2.4.1-cuda11.8-cudnn9-devel&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# These are commonly used packages&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get install git zsh ffmpeg libsm6 libxext6 -y &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get clean &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; rm -rf /var/lib/apt/lists/*&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;WORKDIR&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;/app&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Place at the root of the codebase to install requirements.txt&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;COPY&lt;/span&gt; requirements.txt .&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; pip install -r requirements.txt&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# install jupyterlab&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;RUN&lt;/span&gt; pip install jupyterlab&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# COPY . .&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# Use jupyterlab to host, can start quickly, token is `yourtoken`. If you use it on the public network, consider using a more complex token.&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CMD&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;jupyter&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;lab&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--ip=0.0.0.0&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--port=8888&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--no-browser&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--allow-root&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;--NotebookApp.token=yourtoken&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;notebook&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;build&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;context&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;.&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;dockerfile&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;Dockerfile&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# You can also mount the dataset you need&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;.:/app&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;~/.ssh:/root/.ssh&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c"&gt;# Support ssh&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="m"&gt;8888&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="m"&gt;8888&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;shm_size&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;32gb&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;resources&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;reservations&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;devices&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;driver&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;nvidia&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;count&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;all&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;capabilities&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="l"&gt;gpu]&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;This example installs some basic libraries, and &lt;code&gt;opencv-python&lt;/code&gt; can be installed via pip.&lt;/p&gt;
-&lt;p&gt;Place the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory, then you can start it using &lt;code&gt;docker compose&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The startup command is: &lt;code&gt;docker compose up -d&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id="download-from-dockerhub"&gt;Download from Dockerhub
-&lt;/h2&gt;&lt;p&gt;To make it convenient for everyone to use directly, I have packaged this image and uploaded it to Dockerhub. The download command is:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;docker pull svtter/debian-pytorch
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;The source code can be obtained from here:&lt;/p&gt;
-&lt;script src="https://svtter.cn/js/repo-card.js"&gt;&lt;/script&gt;
-&lt;!-- inside body, where you want to create the card --&gt;
-&lt;div class="repo-card" data-repo="Svtter/debian-pytorch"&gt;&lt;/div&gt;
-&lt;h2 id="using-on-runpod"&gt;Using on Runpod
-&lt;/h2&gt;&lt;p&gt;For everyone&amp;rsquo;s convenience, I have created a template on Runpod.&lt;/p&gt;
-&lt;p&gt;&lt;a class="link" href="https://console.runpod.io/deploy?template=m0shpm3vgg&amp;amp;ref=g5qp1x9x" target="_blank" rel="noopener"
- &gt;https://console.runpod.io/deploy?template=m0shpm3vgg&amp;ref=g5qp1x9x&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;You can directly use this image by using this template.&lt;/p&gt;</description></item><item><title>Create a Never Stop Container</title><link>https://svtter.cn/en/p/create-a-never-stop-container/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/en/p/create-a-never-stop-container/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/99395826a643cf57.png" alt="Featured image of post Create a Never Stop Container" /&gt;&lt;p&gt;Sometimes we need to start a container that does not stop, for debugging our application or using devcontainer.&lt;/p&gt;
+&lt;h2 id="how-to-build"&gt;How to Build&lt;/h2&gt;
+&lt;p&gt;Here is an example Docker image for packaging a deep learning environment:&lt;/p&gt;</description></item><item><title>Create a Never Stop Container</title><link>https://svtter.cn/en/p/create-a-never-stop-container/</link><pubDate>Fri, 14 Mar 2025 16:45:58 +0800</pubDate><guid>https://svtter.cn/en/p/create-a-never-stop-container/</guid><description>&lt;p&gt;Sometimes we need to start a container that does not stop, for debugging our application or using devcontainer.&lt;/p&gt;
 &lt;p&gt;If we want to accomplish this in the &lt;code&gt;Dockerfile&lt;/code&gt;, we can add the following:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;div class="codeblock"&gt;
+ &lt;div class="bar"&gt;&lt;span class="dots"&gt;● ● ●&lt;/span&gt;&lt;span&gt;Dockerfile&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -218,11 +28,14 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;# 其他内容&lt;/span&gt;&lt;span class="err"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ENTRYPOINT&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;tail&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;-f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;/dev/null&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="err"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ENTRYPOINT&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;tail&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;-f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;/dev/null&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;If it&amp;rsquo;s &lt;code&gt;docker-compose.yml&lt;/code&gt;, we can do it like this&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;If it&amp;rsquo;s &lt;code&gt;docker-compose.yml&lt;/code&gt;, we can do it like this&lt;/p&gt;
+&lt;div class="codeblock"&gt;
+ &lt;div class="bar"&gt;&lt;span class="dots"&gt;● ● ●&lt;/span&gt;&lt;span&gt;yaml&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -231,7 +44,8 @@ Dify&amp;rsquo;s code node has a sandbox escape vulnerability, allowing attacker
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;your-app&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;entrypoint&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;tail&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;-f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;/dev/null&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;entrypoint&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;tail&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;-f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;/dev/null&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;This way, the container will not stop.&lt;/p&gt;</description></item></channel></rss>
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;This way, the container will not stop.&lt;/p&gt;</description></item></channel></rss>

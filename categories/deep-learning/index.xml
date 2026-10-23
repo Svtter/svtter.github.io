@@ -1,6 +1,62 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deep Learning on Svtter's Blog</title><link>https://svtter.cn/categories/deep-learning/</link><description>Recent content in Deep Learning on Svtter's Blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 30 May 2025 11:25:39 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/deep-learning/index.xml" rel="self" type="application/rss+xml"/><item><title>Kill Ghost Process</title><link>https://svtter.cn/p/kill-ghost-process/</link><pubDate>Fri, 30 May 2025 11:25:39 +0800</pubDate><guid>https://svtter.cn/p/kill-ghost-process/</guid><description>&lt;p&gt;有时候我们会遇到一些幽灵进程，这些进程占用了显卡资源，但实际上并未发挥作用。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Deep Learning on Svtter's Blog</title><link>https://svtter.cn/categories/deep-learning/</link><description>Recent content in Deep Learning on Svtter's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Fri, 30 May 2025 11:25:39 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/deep-learning/index.xml" rel="self" type="application/rss+xml"/><item><title>Easy LSTM Training Tricks</title><link>https://svtter.cn/p/easy-lstm-training-tricks/</link><pubDate>Mon, 12 Aug 2024 15:35:03 +0800</pubDate><guid>https://svtter.cn/p/easy-lstm-training-tricks/</guid><description>&lt;p&gt;This post introduces how to train the LSTM networks to get correct outputs.&lt;/p&gt;</description></item><item><title>CNN Size Computing</title><link>https://svtter.cn/p/cnn-size-computing/</link><pubDate>Fri, 11 Oct 2024 16:51:14 +0800</pubDate><guid>https://svtter.cn/p/cnn-size-computing/</guid><description>&lt;p&gt;CNNs (Convolutional Neural Networks) is a amazing component of neural network theory. However, to use it efficiently, we need to compute the output shape.&lt;/p&gt;</description></item><item><title>Read Code of CLIP.md</title><link>https://svtter.cn/p/read-code-of-clip.md/</link><pubDate>Wed, 19 Mar 2025 13:23:50 +0800</pubDate><guid>https://svtter.cn/p/read-code-of-clip.md/</guid><description>&lt;p&gt;Contrastive Language-Image Pre-Training (CLIP) 是 openai 的经典工作之一。出自论文&lt;a href="https://arxiv.org/abs/2103.00020"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;为了能够在 CLIP 上完成我的新 idea，我尝试阅读 &lt;a href="https://github.com/openai/CLIP"&gt;openai/clip&lt;/a&gt; 来理解 clip 在 classifier 上的基本工作原理。&lt;/p&gt;
+&lt;p&gt;这是 &lt;a href="https://github.com/openai/CLIP"&gt;openai/clip&lt;/a&gt; 给出的 python 样例代码&lt;/p&gt;
+&lt;div class="codeblock"&gt;
+ &lt;div class="bar"&gt;&lt;span class="dots"&gt;● ● ●&lt;/span&gt;&lt;span&gt;python&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;torch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;clip&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;PIL&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Image&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;device&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;cuda&amp;#34;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;torch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cuda&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_available&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;cpu&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;preprocess&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;clip&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;ViT-B/32&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;image&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;preprocess&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Image&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;CLIP.png&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unsqueeze&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;clip&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tokenize&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;a diagram&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;a dog&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;a cat&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;torch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;no_grad&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;image_features&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode_image&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;text_features&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode_text&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;logits_per_image&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;logits_per_text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;probs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;logits_per_image&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;softmax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dim&lt;/span&gt;&lt;span class="o"&gt;=-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cpu&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Label probs:&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;probs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# prints: [[0.9927937 0.00421068 0.00299572]]&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;load 函数用于加载特定的 openai 模型。这里是基于&lt;code&gt;ViT-B/32&lt;/code&gt;，一个 Vision Transformer 32B。&lt;/p&gt;</description></item><item><title>Diffusion Model.md</title><link>https://svtter.cn/p/diffusion-model.md/</link><pubDate>Sat, 05 Apr 2025 21:51:38 +0800</pubDate><guid>https://svtter.cn/p/diffusion-model.md/</guid><description>&lt;p&gt;深度学习的魅力在于，一旦有新的任务在某些架构上获得了新的性能，许多其他任务可以参考这个架构，进而从中受益。&lt;/p&gt;
+&lt;p&gt;我想，diffusion model 是一个典型的模型。虽然我不进行 diffusion model 的相关研究，目前也没有相关的项目与之有关，但是了解一下这个网络架构并没有坏处。&lt;/p&gt;</description></item><item><title>Knowledge of PPOCR.md</title><link>https://svtter.cn/p/knowledge-of-ppocr.md/</link><pubDate>Mon, 14 Apr 2025 18:11:00 +0800</pubDate><guid>https://svtter.cn/p/knowledge-of-ppocr.md/</guid><description>&lt;p&gt;我在 2.7 版本中使用的 ppocrlabel 组件，被迁移到了单独的 &lt;a href="https://github.com/PFCCLab/PPOCRLabel"&gt;PPOCRLabel&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id="ppocrlabel"&gt;PPOCRLabel&lt;/h2&gt;
+&lt;p&gt;可以通过 ppocrlabel 组件，使用模型对图像进行预标记，然后在手动进行自主标记。&lt;/p&gt;
+&lt;p&gt;这种方式可以极大的降低标注的成本。&lt;/p&gt;
+&lt;p&gt;关于 &lt;a href=""&gt;paddleocr&lt;/a&gt; 的知识，以后都会在这个博客下面更新。&lt;/p&gt;
+&lt;p&gt;在部署 paddle 的时候遇到了一些问题，这里记录一下。&lt;/p&gt;</description></item><item><title>Kill Ghost Process</title><link>https://svtter.cn/p/kill-ghost-process/</link><pubDate>Fri, 30 May 2025 11:25:39 +0800</pubDate><guid>https://svtter.cn/p/kill-ghost-process/</guid><description>&lt;p&gt;有时候我们会遇到一些幽灵进程，这些进程占用了显卡资源，但实际上并未发挥作用。&lt;/p&gt;
 &lt;p&gt;例如这样：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;div class="codeblock"&gt;
+ &lt;div class="bar"&gt;&lt;span class="dots"&gt;● ● ●&lt;/span&gt;&lt;span&gt;bash&lt;/span&gt;&lt;/div&gt;
+ &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -103,299 +159,8 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt; N/A N/A &lt;span class="m"&gt;65559&lt;/span&gt; C python 9406MiB &lt;span class="p"&gt;|&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; N/A N/A &lt;span class="m"&gt;85647&lt;/span&gt; C ...Polyspace/R2020a/bin/glnxa64/MATLAB 400MiB &lt;span class="p"&gt;|&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt; N/A N/A &lt;span class="m"&gt;20759&lt;/span&gt; C rddfg_cent_rw-StarCraft2-debug@syc 9448MiB &lt;span class="p"&gt;|&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+---------------------------------------------------------------------------------------+
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;+---------------------------------------------------------------------------------------+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;明确占用显存的就三个进程，但是其他的显存都被占用了。&lt;/p&gt;
-&lt;h2 id="解决方案"&gt;解决方案
-&lt;/h2&gt;&lt;p&gt;我们保存并运行如下的脚本:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#!/bin/bash
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# nvidia-smi 显示的合法 PID&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 以下 PID 为合法的示例&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;KEEP_PIDS&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;65559&amp;#34;&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;85647&amp;#34;&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;20759&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 所有 GPU 相关的进程（不通过 nvidia-smi 显示）&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;ALL_PIDS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;fuser /dev/nvidia* 2&amp;gt;/dev/null &lt;span class="p"&gt;|&lt;/span&gt; tr &lt;span class="s1"&gt;&amp;#39; &amp;#39;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;\n&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sort -u&lt;span class="k"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;for&lt;/span&gt; pid in &lt;span class="nv"&gt;$ALL_PIDS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; ! &lt;span class="s2"&gt;&amp;#34; &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;KEEP_PIDS&lt;/span&gt;&lt;span class="p"&gt;[@]&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; &amp;#34;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;~ &lt;span class="s2"&gt;&amp;#34; &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;pid&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; &amp;#34;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Killing ghost process PID &lt;/span&gt;&lt;span class="nv"&gt;$pid&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sudo &lt;span class="nb"&gt;kill&lt;/span&gt; -9 &lt;span class="nv"&gt;$pid&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Keeping important process PID &lt;/span&gt;&lt;span class="nv"&gt;$pid&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fi&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;done&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;!-- 参考链接：https://chatgpt.com/share/683925bd-0860-8009-8756-b3b2c067c20b --&gt;</description></item><item><title>Knowledge of PPOCR.md</title><link>https://svtter.cn/p/knowledge-of-ppocr.md/</link><pubDate>Mon, 14 Apr 2025 18:11:00 +0800</pubDate><guid>https://svtter.cn/p/knowledge-of-ppocr.md/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/f8e66aa32bc08836.jpg" alt="Featured image of post Knowledge of PPOCR.md" /&gt;&lt;p&gt;我在 2.7 版本中使用的 ppocrlabel 组件，被迁移到了单独的 &lt;a class="link" href="https://github.com/PFCCLab/PPOCRLabel" target="_blank" rel="noopener"
- &gt;PPOCRLabel&lt;/a&gt;。&lt;/p&gt;
-&lt;h2 id="ppocrlabel"&gt;PPOCRLabel
-&lt;/h2&gt;&lt;p&gt;可以通过 ppocrlabel 组件，使用模型对图像进行预标记，然后在手动进行自主标记。&lt;/p&gt;
-&lt;p&gt;这种方式可以极大的降低标注的成本。&lt;/p&gt;
-&lt;p&gt;关于 &lt;a class="link" href="" &gt;paddleocr&lt;/a&gt; 的知识，以后都会在这个博客下面更新。&lt;/p&gt;
-&lt;p&gt;在部署 paddle 的时候遇到了一些问题，这里记录一下。&lt;/p&gt;
-&lt;h2 id="notebook-related"&gt;Notebook Related
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;我使用镜像&lt;code&gt;registry.baidubce.com/paddlepaddle/paddle:2.4.2&lt;/code&gt;，安装&lt;code&gt;notebook&lt;/code&gt;，无法打开:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;img alt="error" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/38ef81d7aa6c8d36.png"&gt;&lt;/p&gt;
-&lt;ol start="2"&gt;
-&lt;li&gt;paddle:2.4 以上的版本，如果 CPU 不支持 AVX，那么是无法运行的。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;我尝试部署了一个 paddle 模型，最后通过使用&lt;code&gt;PaddleOCR&lt;/code&gt;这个类完成了推理。其他的方法推理都不太行。&lt;/p&gt;
-&lt;p&gt;实际上 paddle 在 ocr 方面做的很出色了，兼顾了很多细节。&lt;/p&gt;
-&lt;p&gt;但是,由于文档使用的工具链上有不够细致的地方，导致用户不太舒服。&lt;/p&gt;</description></item><item><title>Diffusion Model.md</title><link>https://svtter.cn/p/diffusion-model.md/</link><pubDate>Sat, 05 Apr 2025 21:51:38 +0800</pubDate><guid>https://svtter.cn/p/diffusion-model.md/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4a08e074ebe74fe4.png" alt="Featured image of post Diffusion Model.md" /&gt;&lt;p&gt;深度学习的魅力在于，一旦有新的任务在某些架构上获得了新的性能，许多其他任务可以参考这个架构，进而从中受益。&lt;/p&gt;
-&lt;p&gt;我想，diffusion model 是一个典型的模型。虽然我不进行 diffusion model 的相关研究，目前也没有相关的项目与之有关，但是了解一下这个网络架构并没有坏处。&lt;/p&gt;
-&lt;p&gt;diffusion model 是一个从图像处理过程中受益的模型。&lt;/p&gt;
-&lt;p&gt;diffusion model 通过学习图像增加噪声的逆过程，从而学习到了从噪声中生成图像的能力。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="noise-dog" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/4a08e074ebe74fe4.png"&gt;&lt;/p&gt;
-&lt;p&gt;为了能够让模型获得更好的性能，将模型的降噪 step 作为输入之一。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;noise image -&amp;gt; -------------
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; | |----&amp;gt; cleared image
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;step (int) -&amp;gt; | denoiser |
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; | |
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --------------|
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Read Code of CLIP.md</title><link>https://svtter.cn/p/read-code-of-clip.md/</link><pubDate>Wed, 19 Mar 2025 13:23:50 +0800</pubDate><guid>https://svtter.cn/p/read-code-of-clip.md/</guid><description>&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/af7e5490ed1c4d8b.png" alt="Featured image of post Read Code of CLIP.md" /&gt;&lt;p&gt;Contrastive Language-Image Pre-Training (CLIP) 是 openai 的经典工作之一。出自论文&lt;a class="link" href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener"
- &gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;为了能够在 CLIP 上完成我的新 idea，我尝试阅读 &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
- &gt;openai/clip&lt;/a&gt; 来理解 clip 在 classifier 上的基本工作原理。&lt;/p&gt;
-&lt;p&gt;这是 &lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
- &gt;openai/clip&lt;/a&gt; 给出的 python 样例代码&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;torch&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;clip&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;PIL&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Image&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;device&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;cuda&amp;#34;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;torch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cuda&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;is_available&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;cpu&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;preprocess&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;clip&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;ViT-B/32&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;image&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;preprocess&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Image&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;CLIP.png&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unsqueeze&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;clip&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tokenize&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;a diagram&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;a dog&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;a cat&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;device&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;torch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;no_grad&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;image_features&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode_image&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;text_features&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode_text&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;logits_per_image&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;logits_per_text&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;probs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;logits_per_image&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;softmax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dim&lt;/span&gt;&lt;span class="o"&gt;=-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cpu&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;numpy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Label probs:&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;probs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# prints: [[0.9927937 0.00421068 0.00299572]]&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;load 函数用于加载特定的 openai 模型。这里是基于&lt;code&gt;ViT-B/32&lt;/code&gt;，一个 Vision Transformer 32B。&lt;/p&gt;
-&lt;p&gt;可以看到，如果 openai 支持的 vision encoder 大概有如下几种：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;_MODELS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;RN50&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/afeb0e10f9e5a86da6080e35cf09123aca3b358a0c3e3b6c78a7b63bc04b6762/RN50.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;RN101&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/8fa8567bab74a42d41c5915025a8e4538c3bdbe8804a470a72f30b0d94fab599/RN101.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;RN50x4&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/7e526bd135e493cef0776de27d5f42653e6b4c8bf9e0f653bb11773263205fdd/RN50x4.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;RN50x16&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/52378b407f34354e150460fe41077663dd5b39c54cd0bfd2b27167a4a06ec9aa/RN50x16.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;RN50x64&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/be1cfb55d75a9666199fb2206c106743da0f6468c9d327f3e0d0a543a9919d9c/RN50x64.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;ViT-B/32&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/40d365715913c9da98579312b702a82c18be219cc2a73407c4526f58eba950af/ViT-B-32.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;ViT-B/16&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/5806e77cd80f8b59890b7e101eabd078d9fb84e6937f9e85e4ecb61988df416f/ViT-B-16.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;ViT-L/14&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836/ViT-L-14.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;ViT-L/14@336px&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;https://openaipublic.azureedge.net/clip/models/3035c92b350959924f9f00213499208652fc7ea050643e8b385c2dac08641f02/ViT-L-14-336px.pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;我们假设模型已经下载完成，让我们看看 _tranform 预处理工作是如何进行的：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;span class="lnt"&gt;7
-&lt;/span&gt;&lt;span class="lnt"&gt;8
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_px&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Compose&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Resize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_px&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;interpolation&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;BICUBIC&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CenterCrop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_px&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;_convert_image_to_rgb&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;ToTensor&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Normalize&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mf"&gt;0.48145466&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.4578275&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.40821073&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.26862954&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.26130258&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.27577711&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;])&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;也不是很复杂，预处理&lt;code&gt;Normalize&lt;/code&gt;参数虽然不太明白。似乎是用的 ViT 同样的预处理参数。&lt;/p&gt;
-&lt;p&gt;然后进入模型加载阶段，我们可以看到，如果不是 &lt;a class="link" href="https://chenglu.me/blogs/pytorch-jit" target="_blank" rel="noopener"
- &gt;jit 加载&lt;/a&gt; ，那么模型会选择 state_dict 的模式。
-通过加载 state_dict 的过程，我们可以看到 build_model 函数用于加载权重，将权重赋值给已有的模型结构。&lt;/p&gt;
-&lt;p&gt;这个模型结构的文件是&lt;a class="link" href="https://github.com/openai/CLIP/blob/main/clip/model.py" target="_blank" rel="noopener"
- &gt;model.py&lt;/a&gt;。
-因此，CLIP 的主要代码位于&lt;a class="link" href="https://github.com/openai/CLIP/blob/main/clip/model.py#L243" target="_blank" rel="noopener"
- &gt;model.py#L243&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;image_encoder 和 text_encoder 的输出，分别是两个不同的特征 tensor。&lt;/p&gt;
-&lt;p&gt;将两个 tensor 进行矩阵乘积，分别得到一个相似性矩阵。这个相似性矩阵的大小是 &lt;code&gt;(batch_size, batch_size)&lt;/code&gt;。&lt;/p&gt;
-
- &lt;blockquote&gt;
- &lt;p&gt;TIPS: 如果说 batch-size 太小，为1，那么对比学习的性能可能就大打折扣了。&lt;/p&gt;
-
- &lt;/blockquote&gt;
-&lt;p&gt;这两个 tensor 使用 symmetric cross-entropy loss 进行计算，来用于更新网络权重。&lt;/p&gt;
-&lt;p&gt;专门做智能指标的提升，不太在意计算量。不追求最新最高的智能指标，更加关注模型计算的运行效率。&lt;/p&gt;
-
- &lt;blockquote&gt;
- &lt;p&gt;trick: 给参数加一个 log 来使得权重更新没有那么剧烈，计算起来没有那么大。&lt;/p&gt;
-
- &lt;/blockquote&gt;
-&lt;p&gt;&lt;a class="link" href="https://github.com/openai/CLIP" target="_blank" rel="noopener"
- &gt;CLIP&lt;/a&gt; 代码中没有给出能够直接进行训练的代码。下一篇文章，尝试阅读一下 openclip。&lt;/p&gt;</description></item><item><title>Torchvision Cuda Problem.md</title><link>https://svtter.cn/p/torchvision-cuda-problem.md/</link><pubDate>Tue, 04 Mar 2025 18:07:13 +0800</pubDate><guid>https://svtter.cn/p/torchvision-cuda-problem.md/</guid><description>&lt;p&gt;记录一下 torchvision 遇到的问题&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;torch.cuda.DeferredCudaCallError: CUDA call failed lazily at initialization with error: device &amp;gt;= 0 &amp;amp;&amp;amp; device &amp;lt; num_gpus INTERNAL ASSERT FAILED at &amp;#34;/opt/conda/conda-bld/pytorch_1712608839953/work/aten/src/ATen/cuda/CUDAContext.cpp&amp;#34;:50, please report a bug to PyTorch. device=, num_gpus=
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;我调整了代码，遇到了这个问题，结果是因为引入了 &lt;code&gt;from torchvision import transforms&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;这个问题可能是 nvidia 驱动问题导致的。解决这个问题，最好的方法是改一下 torch 的版本，找到一个和驱动接近的。&lt;/p&gt;
-&lt;p&gt;重新安装 nvidia 驱动付出的代价比较大。&lt;/p&gt;</description></item><item><title>实际推理模型和实验中推理模型</title><link>https://svtter.cn/p/%E5%AE%9E%E9%99%85%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%AD%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B/</link><pubDate>Sat, 15 Feb 2025 09:50:49 +0800</pubDate><guid>https://svtter.cn/p/%E5%AE%9E%E9%99%85%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%AD%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B/</guid><description>&lt;p&gt;最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。&lt;/p&gt;
-&lt;p&gt;实验中用于推理的模型，也就是可训练的模型。一般paddle的模型文件是这样的：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root 420M Feb &lt;span class="m"&gt;12&lt;/span&gt; 15:59 model.pdopt
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root 275M Feb &lt;span class="m"&gt;12&lt;/span&gt; 15:59 model.pdparams
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;一个是 pdopt 一个是 pdparams。&lt;/p&gt;
-&lt;p&gt;这个就是用来在实验过程中进行推理的模型。一般用&lt;code&gt;tools/infer_rec.py&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;如果要实际部署到开发环境，需要将现在的实验中的模型做一个转换。&lt;/p&gt;
-&lt;p&gt;需要执行&lt;code&gt;tools/export_model.py&lt;/code&gt;来把模型转换成&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;inference/en_PP-OCRv3_rec/
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├── inference.pdiparams # 识别inference模型的参数文件
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └── inference.json # 识别inference模型的program文件
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;如此一来，就可以使用 paddlex 或者其他的推理服务来推理了。&lt;/p&gt;
-&lt;h2 id="总结"&gt;总结
-&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;实际上国内的深度学习框架技术上并不差，只不过做的太大，也没有很好的入门教程，所以开发者本身不用。&lt;/li&gt;
-&lt;li&gt;百度对于自己的名声维护的太差。从之前的公关老大翻车就能看出来。&lt;/li&gt;
-&lt;li&gt;做个 python web 的类比。如果 torch 是 flask，那么 paddlepaddle 更像是 django。&lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>图片数据集的浏览和存储</title><link>https://svtter.cn/p/%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B5%8F%E8%A7%88%E5%92%8C%E5%AD%98%E5%82%A8/</link><pubDate>Sun, 12 Jan 2025 18:31:12 +0800</pubDate><guid>https://svtter.cn/p/%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B5%8F%E8%A7%88%E5%92%8C%E5%AD%98%E5%82%A8/</guid><description>&lt;p&gt;数据集浏览是个比较麻烦的事情。尤其是数据集比较大的时候。&lt;/p&gt;
-&lt;p&gt;npy (numpy array) ，h5 文件是两种常见的数据存储方式。
-h5 文件的缺点是很容易产生数据损坏。笔者使用的时候多次遇见 h5 文件打不开的问题。
-npy 文件在读取速度，文件传输方面具有很明显的优势。缺点是一次性加载到内存中，如果服务器不行，很容易爆掉。&lt;/p&gt;
-&lt;p&gt;常见的图像数据集一般是将 label 和 image 分开放。例如 COCO 等。这样一来，也可以用文件浏览器去查看图片，可以快速的观察图片的特点。但一般情况下，我们不会在本地的电脑上查看图片，而是更多的在服务上操作数据集。&lt;/p&gt;
-&lt;p&gt;2024，结合 torch，我感觉还是 matplotlib 直接绘图会方便一些。matplotlib 直接绘图一般是展示单张图片。但是如果利用 subplot，可以同时展示更多图片。如果用了 opencv，可以将部分标签值打印上去。不过也有缺点：如果使用的是远程服务器，生成图片的传输过程需要占用较多的带宽。
-具体采用什么方式，还得自己做判断呐！&lt;/p&gt;</description></item><item><title>CNN Size Computing</title><link>https://svtter.cn/p/cnn-size-computing/</link><pubDate>Fri, 11 Oct 2024 16:51:14 +0800</pubDate><guid>https://svtter.cn/p/cnn-size-computing/</guid><description>&lt;p&gt;CNNs (Convolutional Neural Networks) is a amazing component of neural network theory. However, to use it efficiently, we need to compute the output shape.&lt;/p&gt;
-&lt;h3 id="ask-for-chatgpt"&gt;ask for chatgpt
-&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a class="link" href="https://chatgpt.com/share/19be811d-e750-45de-b5bd-ad391c9dba80" target="_blank" rel="noopener"
- &gt;https://chatgpt.com/share/19be811d-e750-45de-b5bd-ad391c9dba80&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id="input-shape"&gt;input shape
-&lt;/h3&gt;&lt;p&gt;Ensure that the input to your network is of the correct shape. The input tensor should have the dimensions &lt;code&gt;[batch_size, channels, height, width]&lt;/code&gt;. For example, if you&amp;rsquo;re using a batch size of 1, the input should be &lt;code&gt;[1, 32, 32, 300]&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;1 is batch size.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;input_data = torch.randn(1, 32, 32, 300) # Example input tensor with the correct shape&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id="compute-of-cnn-output"&gt;Compute of CNN output
-&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;reference: &lt;a class="link" href="https://www.baeldung.com/cs/convolutional-layer-size" target="_blank" rel="noopener"
- &gt;baeldung link&lt;/a&gt;
-&lt;img alt="image.png" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/5b6d3f2b577045b7.png"&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The channels number is the CNN&amp;rsquo;s filters number.&lt;/p&gt;</description></item><item><title>Easy LSTM Training Tricks</title><link>https://svtter.cn/p/easy-lstm-training-tricks/</link><pubDate>Mon, 12 Aug 2024 15:35:03 +0800</pubDate><guid>https://svtter.cn/p/easy-lstm-training-tricks/</guid><description>&lt;p&gt;This post introduces how to train the LSTM networks to get correct outputs.&lt;/p&gt;
-&lt;p&gt;If you use this way, not work.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Just use the last width, like &lt;code&gt;x[-1, :, :]&lt;/code&gt;, select the last piece of width.&lt;/li&gt;
-&lt;li&gt;It&amp;rsquo;s normal way. However, sometimes it will &lt;strong&gt;NOT WORK&lt;/strong&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;img alt="image.png" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/0932826d41340c02.png"&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This way will work.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Flatten all the output&lt;/li&gt;
-&lt;li&gt;&lt;img alt="image.png" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/40d880cdb5af7823.png"&gt;&lt;/li&gt;
-&lt;li&gt;It always works.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Have fun.&lt;/p&gt;
-&lt;p&gt;Besides, I found &lt;a class="link" href="https://marimo.io/use-cases#examples" target="_blank" rel="noopener"
- &gt;marimo&lt;/a&gt;, which is a replacement for jupyter notebooks.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;明确占用显存的就三个进程，但是其他的显存都被占用了。&lt;/p&gt;</description></item><item><title>Torchvision Cuda Problem.md</title><link>https://svtter.cn/p/torchvision-cuda-problem.md/</link><pubDate>Tue, 04 Mar 2025 18:07:13 +0800</pubDate><guid>https://svtter.cn/p/torchvision-cuda-problem.md/</guid><description>&lt;p&gt;记录一下 torchvision 遇到的问题&lt;/p&gt;</description></item><item><title>实际推理模型和实验中推理模型</title><link>https://svtter.cn/p/%E5%AE%9E%E9%99%85%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%AD%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B/</link><pubDate>Sat, 15 Feb 2025 09:50:49 +0800</pubDate><guid>https://svtter.cn/p/%E5%AE%9E%E9%99%85%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%AD%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B/</guid><description>&lt;p&gt;最近使用 paddlepaddle 比较多，发现了 paddleocr 对模型做了一个区分。有时候会给用户带来一些困惑。这里详细说说。&lt;/p&gt;</description></item><item><title>图片数据集的浏览和存储</title><link>https://svtter.cn/p/%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B5%8F%E8%A7%88%E5%92%8C%E5%AD%98%E5%82%A8/</link><pubDate>Sun, 12 Jan 2025 18:31:12 +0800</pubDate><guid>https://svtter.cn/p/%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B5%8F%E8%A7%88%E5%92%8C%E5%AD%98%E5%82%A8/</guid><description>&lt;p&gt;数据集浏览是个比较麻烦的事情。尤其是数据集比较大的时候。&lt;/p&gt;</description></item></channel></rss>
