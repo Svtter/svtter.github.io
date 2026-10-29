@@ -1,3 +1,107 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工具 on Svtter's Blog</title><link>https://svtter.cn/categories/%E5%B7%A5%E5%85%B7/</link><description>Recent content in 工具 on Svtter's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sat, 29 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml"/><item><title>SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值</title><link>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</link><pubDate>Tue, 25 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</guid><description>&lt;p&gt;给 LiteLLM 接入 SiliconFlow 的 &lt;code&gt;deepseek-ai/DeepSeek-V4-Flash&lt;/code&gt; 时，想验证它的缓存机制。SiliconFlow 模型页面标注了缓存命中价 &lt;strong&gt;¥0.020/M Tokens&lt;/strong&gt;（输入全价 $0.13/M 的约 1/46），于是按 ¥0.020/M 换算成 &lt;code&gt;$0.0028/1M&lt;/code&gt; 配进了 LiteLLM 的 &lt;code&gt;model_info.cache_read_input_token_cost&lt;/code&gt;。配完想实测验证，结果第一轮测试得出了一个&lt;strong&gt;错误的结论&lt;/strong&gt;，直到把 prompt 拉大到 6.6K tokens 才看到缓存真实命中。&lt;/p&gt;</description></item><item><title>便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash</title><link>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</link><pubDate>Sat, 29 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</guid><description>&lt;p&gt;DeepSeek 官方 API 从 2026-08-16 起峰谷分时计费。flash 峰段（北京时间 09:00–12:00、14:00–18:00）cache miss $0.44、output $1.32 per 1M（¥3.17/¥9.50），相对旧价 $0.14/$0.28 涨了 3 到 4.6 倍。我的用量，agent 会话和 cron 任务，全在峰段。&lt;/p&gt;
-&lt;p&gt;v4-flash 我用得很多，之前写过&lt;a href="https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/"&gt;前缀缓存实测&lt;/a&gt;和 &lt;a href="https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/"&gt;SiliconFlow 缓存阈值&lt;/a&gt;。这次给它找条出路，要求两条：比官方便宜，数据不留存（ZDR）。查下来 OpenRouter 能同时满足，中间踩了几个坑。&lt;/p&gt;</description></item><item><title>CLI 是更高效的开发工作流</title><link>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</link><pubDate>Fri, 06 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</guid><description>&lt;h1 id="cli-是更高效的开发工作流"&gt;CLI 是更高效的开发工作流&lt;/h1&gt;
-&lt;p&gt;Codex Windows 客户端是一个不错的 AI 编程工具。但用了一段时间后，我开始意识到一件事：每次都要打开窗口、手动建任务、逐条对话，才能推进一个工作流。这不是效率，这是在用鼠标模拟思维。&lt;/p&gt;</description></item><item><title>第三方客户端与大模型 API 结合 -- 性能小测</title><link>https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/</link><pubDate>Wed, 19 Nov 2025 17:03:18 +0800</pubDate><guid>https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/</guid><description>&lt;p&gt;最近一年里，我尝试使用 &lt;a href="https://github.com/ThinkInAIXYZ/deepchat"&gt;deepchat&lt;/a&gt; 和 大模型 API（例如 k2 thinking turbo) 来构成一个相对私有化的聊天工具（或者说 agent 助手），来处理一些私有化的数据。但是，总的来说体验不是很好。大模型答不对。&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工具 on Svtter's Blog</title><link>https://svtter.cn/categories/%E5%B7%A5%E5%85%B7/</link><description>Recent content in 工具 on Svtter's Blog</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sat, 29 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://svtter.cn/categories/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml"/><item><title>SiliconFlow 的 DeepSeek-V4-Flash 缓存：命中确认，但有最小 token 阈值</title><link>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</link><pubDate>Tue, 25 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/</guid><description>&lt;p&gt;给 LiteLLM 接入 SiliconFlow 的 &lt;code&gt;deepseek-ai/DeepSeek-V4-Flash&lt;/code&gt; 时，想验证它的缓存机制。SiliconFlow 模型页面标注了缓存命中价 &lt;strong&gt;¥0.020/M Tokens&lt;/strong&gt;（输入全价 $0.13/M 的约 1/46），于是按 ¥0.020/M 换算成 &lt;code&gt;$0.0028/1M&lt;/code&gt; 配进了 LiteLLM 的 &lt;code&gt;model_info.cache_read_input_token_cost&lt;/code&gt;。配完想实测验证，结果第一轮测试得出了一个&lt;strong&gt;错误的结论&lt;/strong&gt;，直到把 prompt 拉大到 6.6K tokens 才看到缓存真实命中。&lt;/p&gt;</description></item><item><title>How to Use Logseq</title><link>https://svtter.cn/p/how-to-use-logseq/</link><pubDate>Mon, 18 Dec 2023 11:49:12 +0800</pubDate><guid>https://svtter.cn/p/how-to-use-logseq/</guid><description>&lt;p&gt;logseq 是一种新型的知识工具。开源，免费（暂时），可以自己管理数据。&lt;/p&gt;</description></item><item><title>便宜且不留存：用 OpenRouter 路由 DeepSeek-V4-Flash</title><link>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</link><pubDate>Sat, 29 Aug 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E4%BE%BF%E5%AE%9C%E4%B8%94%E4%B8%8D%E7%95%99%E5%AD%98%E7%94%A8-openrouter-%E8%B7%AF%E7%94%B1-deepseek-v4-flash/</guid><description>&lt;p&gt;DeepSeek 官方 API 从 2026-08-16 起峰谷分时计费。flash 峰段（北京时间 09:00–12:00、14:00–18:00）cache miss $0.44、output $1.32 per 1M（¥3.17/¥9.50），相对旧价 $0.14/$0.28 涨了 3 到 4.6 倍。我的用量，agent 会话和 cron 任务，全在峰段。&lt;/p&gt;
+&lt;p&gt;v4-flash 我用得很多，之前写过&lt;a href="https://svtter.cn/p/%E5%AE%9E%E6%B5%8B-deepseek-%E5%89%8D%E7%BC%80%E7%BC%93%E5%AD%98%E7%9B%B8%E5%90%8C%E5%89%8D%E7%BC%80%E4%B8%8D%E5%90%8C%E5%90%8E%E7%BC%80%E8%BF%98%E8%83%BD%E5%91%BD%E4%B8%AD%E5%90%97/"&gt;前缀缓存实测&lt;/a&gt;和 &lt;a href="https://svtter.cn/p/siliconflow-%E7%9A%84-deepseek-v4-flash-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%A1%AE%E8%AE%A4%E4%BD%86%E6%9C%89%E6%9C%80%E5%B0%8F-token-%E9%98%88%E5%80%BC/"&gt;SiliconFlow 缓存阈值&lt;/a&gt;。这次给它找条出路，要求两条：比官方便宜，数据不留存（ZDR）。查下来 OpenRouter 能同时满足，中间踩了几个坑。&lt;/p&gt;</description></item><item><title>Use Logseq as Documentation</title><link>https://svtter.cn/p/use-logseq-as-documentation/</link><pubDate>Sun, 12 May 2024 08:55:42 +0800</pubDate><guid>https://svtter.cn/p/use-logseq-as-documentation/</guid><description>&lt;p&gt;logseq 是一个非常好用的笔记工具。我们之前已经介绍过关于 logseq 的内容。如果想要了解 logseq，可以看我之前的&lt;a href="https://svtter.github.io/post/2023-12-18-how-to-use-logseq/"&gt;文章&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;在本文中，我们介绍如何将 logseq 作为软件的、项目的文档，以及为什么。&lt;/p&gt;</description></item><item><title>本地 review 的便宜方案</title><link>https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/</link><pubDate>Thu, 11 Jun 2026 11:01:44 +0800</pubDate><guid>https://svtter.cn/p/%E6%9C%AC%E5%9C%B0-review-%E7%9A%84%E4%BE%BF%E5%AE%9C%E6%96%B9%E6%A1%88/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;结果想要实现结对编程，通过 roborev 还是不太方便。最好还是考虑 &lt;a href="https://svtter.cn/p/advisor%E6%8C%82%E5%9C%A8%E4%B8%BB%E4%BC%9A%E8%AF%9D%E4%B8%8A%E7%9A%84%E5%8F%AA%E8%AF%BB%E5%AE%A1%E6%9F%A5-agent/"&gt;Advisor 审查&lt;/a&gt; 这个方案。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;2026 年 6 月 26 日更新：&lt;strong&gt;我不再推荐这个方案。在频繁改动部分代码库的时候，roborev 可能造成 IO 风暴&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;直接在云端 review 大量消耗 token，伴随高额账单。这种 token 往往是没有 token plan 保障的。&lt;/p&gt;
+&lt;p&gt;因此我找了找一个本地 coding agent review 代码的方案，&lt;a href="https://github.com/kenn-io/roborev"&gt;roborev&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>CLI 是更高效的开发工作流</title><link>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</link><pubDate>Fri, 06 Mar 2026 00:00:00 +0800</pubDate><guid>https://svtter.cn/p/cli-%E6%98%AF%E6%9B%B4%E9%AB%98%E6%95%88%E7%9A%84%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81/</guid><description>&lt;h1 id="cli-是更高效的开发工作流"&gt;CLI 是更高效的开发工作流&lt;/h1&gt;
+&lt;p&gt;Codex Windows 客户端是一个不错的 AI 编程工具。但用了一段时间后，我开始意识到一件事：每次都要打开窗口、手动建任务、逐条对话，才能推进一个工作流。这不是效率，这是在用鼠标模拟思维。&lt;/p&gt;</description></item><item><title>第三方客户端与大模型 API 结合 -- 性能小测</title><link>https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/</link><pubDate>Wed, 19 Nov 2025 17:03:18 +0800</pubDate><guid>https://svtter.cn/p/%E7%AC%AC%E4%B8%89%E6%96%B9%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B-api-%E7%BB%93%E5%90%88--%E6%80%A7%E8%83%BD%E5%B0%8F%E6%B5%8B/</guid><description>&lt;p&gt;最近一年里，我尝试使用 &lt;a href="https://github.com/ThinkInAIXYZ/deepchat"&gt;deepchat&lt;/a&gt; 和 大模型 API（例如 k2 thinking turbo) 来构成一个相对私有化的聊天工具（或者说 agent 助手），来处理一些私有化的数据。但是，总的来说体验不是很好。大模型答不对。&lt;/p&gt;</description></item><item><title>Visual Studio Code Tips - 2</title><link>https://svtter.cn/p/visual-studio-code-tips-2/</link><pubDate>Wed, 30 Apr 2025 10:54:07 +0800</pubDate><guid>https://svtter.cn/p/visual-studio-code-tips-2/</guid><description>&lt;p&gt;当我们使用 vscode （cursor）进行 python 编码的时候，难免会引入大文件到工作目录里。此时，如果不对分析器加以限制，容易导致整个系统非常卡顿。&lt;/p&gt;
+&lt;h2 id="避免大文件引入"&gt;避免大文件引入&lt;/h2&gt;
+&lt;p&gt;我们可以编辑设置来避免这个问题。&lt;/p&gt;</description></item><item><title>gollum 书写 wiki</title><link>https://svtter.cn/p/gollum-%E4%B9%A6%E5%86%99-wiki/</link><pubDate>Thu, 15 Nov 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/gollum-%E4%B9%A6%E5%86%99-wiki/</guid><description>&lt;p&gt;使用 gollum 书写文档（github, gitlab, wiki)。Gollum 是通过 gitlab 发现的东西，可以把 gitlab 的 wiki 文档放在本地进行书写，对于“小”的wiki，以及API文档实在是再方便不过了。个人感觉比 Sphinx 更加容易上手。&lt;/p&gt;</description></item><item><title>绘制流程图，形成文档</title><link>https://svtter.cn/p/%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B%E5%9B%BE%E5%BD%A2%E6%88%90%E6%96%87%E6%A1%A3/</link><pubDate>Sun, 07 Oct 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B%E5%9B%BE%E5%BD%A2%E6%88%90%E6%96%87%E6%A1%A3/</guid><description>&lt;h2 id="可以使用的工具"&gt;可以使用的工具&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.websequencediagrams.com/"&gt;https://www.websequencediagrams.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;MY CHOICE: &lt;a href="https://mermaidjs.github.io/"&gt;https://mermaidjs.github.io/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Another choice: google key word: &lt;code&gt;sequence graph&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="把-svg-转换成-png-文件"&gt;把 svg 转换成 png 文件&lt;/h2&gt;
+&lt;p&gt;Or without installing anything:&lt;/p&gt;
+&lt;pre class="wp-block-code"&gt;&lt;code lang="bash" class="language-bash"&gt;qlmanage -t -s 1000 -o . picture.svg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It will produce picture.svg.png that is 1000 pixels wide.&lt;/p&gt;
+&lt;p&gt;I have tested it only on OS X 10.6.3.&lt;/p&gt;
+&lt;h2 id="例如"&gt;例如：&lt;/h2&gt;
+&lt;pre class="wp-block-code"&gt;&lt;code class=""&gt;sequenceDiagram
+App-&gt;Server: 请求视频服务
+Server--&gt;Server: 生成支付信息
+Server-&gt;App: 返回支付信息
+Note left of App: 获取支付的相关信息
+App--&gt;支付宝: 完成付款
+支付宝--&gt;App: 支付成功
+Note left of App: 获悉支付结果
+支付宝-&gt;Server: 根据回调URL，发送支付结果
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="https://pub-7004adda461c45dfaa1f3ec95693b444.r2.dev/images/migrated/711bb9e704b77902.png" alt="流程图"&gt;&lt;/p&gt;</description></item><item><title>classifier 文件分类</title><link>https://svtter.cn/p/classifier-%E6%96%87%E4%BB%B6%E5%88%86%E7%B1%BB/</link><pubDate>Thu, 13 Sep 2018 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/classifier-%E6%96%87%E4%BB%B6%E5%88%86%E7%B1%BB/</guid><description>&lt;p&gt;最近没有什么故事要讲，着实有点忙。但是文章太长时间不发也不好，说不定我有那么几个隐藏的很深的不爱说话的粉丝。&lt;/p&gt;
+&lt;p&gt;这里介绍一个小工具好了，·classifier· 是一个文件分类工具，包括音乐，pdf，图像等等。运行之后可以自动归类这些文件，懒人福音。&lt;/p&gt;</description></item><item><title>vim的补全插件</title><link>https://svtter.cn/p/vim%E7%9A%84%E8%A1%A5%E5%85%A8%E6%8F%92%E4%BB%B6/</link><pubDate>Sun, 06 Aug 2017 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/vim%E7%9A%84%E8%A1%A5%E5%85%A8%E6%8F%92%E4%BB%B6/</guid><description>&lt;p&gt;Vim的补全插件大体上分4个阵营，如&lt;code&gt;deoplete&lt;/code&gt;, &lt;code&gt;completor.vim&lt;/code&gt;, &lt;code&gt;YCM&lt;/code&gt;, 以及&lt;code&gt;neocomplete&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;在我想写这篇文章的时候，&lt;code&gt;YCM&lt;/code&gt;即&lt;code&gt;youcompleteme&lt;/code&gt;还认为自己支持了vim8的新特性&lt;code&gt;async&lt;/code&gt;，即非阻塞补全那一套东西。这个特性是怎么回事呢？输入的时候补全插件会进行补全搜索，这个时候如果不用新的特性，会造成UI卡顿。&lt;/p&gt;
+&lt;p&gt;所以，事实上根据我的测试，作者似乎错误的理解了这个新特性，可以看看&lt;a href="https://github.com/Valloric/YouCompleteMe/issues/2376"&gt;工单&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;不过目前没有时间去搞清楚这个问题。因为我直接选择了&lt;code&gt;completor.vim&lt;/code&gt;，这个插件完美实现了这个功能。&lt;/p&gt;</description></item><item><title>那些年我所用过的博客</title><link>https://svtter.cn/p/%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E6%89%80%E7%94%A8%E8%BF%87%E7%9A%84%E5%8D%9A%E5%AE%A2/</link><pubDate>Sat, 23 Apr 2016 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E6%89%80%E7%94%A8%E8%BF%87%E7%9A%84%E5%8D%9A%E5%AE%A2/</guid><description>&lt;p&gt;用过的博客数不胜数，丢掉的博文也是数不过来，在这里自己做一下总结，也是防止自己忘记之前使用过的那些个博客服务。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;博客名&lt;/th&gt;
+					&lt;th&gt;域名&lt;/th&gt;
+					&lt;th&gt;使用时间&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;CSDN&lt;/td&gt;
+					&lt;td&gt;&lt;a href="http://blog.csdn.net/svitter"&gt;http://blog.csdn.net/svitter&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;2012 – 2014&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;博客园&lt;/td&gt;
+					&lt;td&gt;&lt;a href="http://www.cnblogs.com/svitter"&gt;http://www.cnblogs.com/svitter&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;2012 – 至今&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;github.io&lt;/td&gt;
+					&lt;td&gt;&lt;a href="http://svtter.github.io"&gt;http://svtter.github.io&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;2014 – 至今&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Leanote&lt;/td&gt;
+					&lt;td&gt;&lt;a href="http://svtter.leanote.com"&gt;http://svtter.leanote.com&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;2014 – 至今&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;wordpress&lt;/td&gt;
+					&lt;td&gt;缺失&lt;/td&gt;
+					&lt;td&gt;不记得了&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;awesome-python-web&lt;/td&gt;
+					&lt;td&gt;http://139.129.6.1&lt;/td&gt;
+					&lt;td&gt;2016 – 至今&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>Leanote - 一个极简风格的笔记</title><link>https://svtter.cn/p/leanote-%E4%B8%80%E4%B8%AA%E6%9E%81%E7%AE%80%E9%A3%8E%E6%A0%BC%E7%9A%84%E7%AC%94%E8%AE%B0/</link><pubDate>Sat, 14 Feb 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/leanote-%E4%B8%80%E4%B8%AA%E6%9E%81%E7%AE%80%E9%A3%8E%E6%A0%BC%E7%9A%84%E7%AC%94%E8%AE%B0/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;本文出自 &lt;a href="http://svtter.github.io"&gt;http://svtter.github.io&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;本文可以随意转载，但是转载请保留本信息.&lt;/p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://leanote.com/"&gt;leanote&lt;/a&gt; 这个项目很不错,然后看到了免费的套餐十分诱人,已经很久没有更新自己的站了,大部分的更新都在 &lt;a href=""&gt;segmentfault&lt;/a&gt; 上面,另外,很多配置等等leanote的blog做的的确都不错,感觉上要优于hexo,有兴趣的朋友可以看一下.&lt;/p&gt;</description></item><item><title>Java-如何使用vim开发Java</title><link>https://svtter.cn/p/java-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8vim%E5%BC%80%E5%8F%91java/</link><pubDate>Thu, 01 Jan 2015 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/java-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8vim%E5%BC%80%E5%8F%91java/</guid><description>&lt;p _="%" endblockquote="endblockquote"&gt;{% blockquote 本文出自 http://svtter.github.io svtter.github.io %}
+&lt;p&gt;本文可以随意转载，但是转载请保留本信息.&lt;/p&gt;&lt;/p&gt;
+&lt;p&gt;在网上搜索一番，大部分此类文章都是在说配置，而且配置讲的一看就是没有深入的撸vim。这个时候就&lt;/p&gt;</description></item><item><title>vim-另存为</title><link>https://svtter.cn/p/vim-%E5%8F%A6%E5%AD%98%E4%B8%BA/</link><pubDate>Tue, 02 Dec 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/vim-%E5%8F%A6%E5%AD%98%E4%B8%BA/</guid><description>&lt;ul&gt;
+&lt;li&gt;本文出自&lt;a href="http://svtter.github.io"&gt;svtter.github.io&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;想要另存一个文件名，但是vim另存的方法。。然后发现了sav这个东西。&lt;/p&gt;
+&lt;p&gt;help文件中是这么描述的:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p Vi="Vi" 无此功能="无此功能"&gt;_:sav_ _:saveas_
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;:sav&lt;/p&gt;</description></item><item><title>vim的相关记录</title><link>https://svtter.cn/p/vim%E7%9A%84%E7%9B%B8%E5%85%B3%E8%AE%B0%E5%BD%95/</link><pubDate>Thu, 27 Nov 2014 01:00:00 +0800</pubDate><guid>https://svtter.cn/p/vim%E7%9A%84%E7%9B%B8%E5%85%B3%E8%AE%B0%E5%BD%95/</guid><description>&lt;ul&gt;
+&lt;li&gt;本文出自&amp;lt;svtter.github.io&amp;gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="vim的部分插件记录"&gt;vim的部分插件记录&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;snipmate vim中的textmate&lt;/li&gt;
+&lt;li&gt;vimwiki&lt;/li&gt;
+&lt;li&gt;Vimpress : Manage wordpress blog posts from Vim&lt;/li&gt;
+&lt;li&gt;calendar&lt;/li&gt;
+&lt;li&gt;vimmailr.zip : Send (MAPI) mail from vim&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://xbeta.info/vim-voof.htm"&gt;VOom&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

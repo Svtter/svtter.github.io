@@ -27,8 +27,8 @@ n个人分成k组，组内再按特定顺序围圈
 <button data-fs=l>大<span class=fs-demo>A</span></button></div></div><button class=icon-btn id=btn-theme title=切换深浅主题>
 <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
 <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg></button></div></div></header><main><div class=wrap><header class=article-head><div class=breadcrumb><a href=/>~/svtter.cn</a><span class=sep>/</span>
-<a href=/categories/acm/icpc/>ACM/ICPC</a><span class=sep>/</span>
-2015-04-21-山东省第五届省赛hearthstoneii</div><div class=meta-row><span class=cat>ACM/ICPC</span>
+<a href=/categories/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/>算法竞赛</a><span class=sep>/</span>
+2015-04-21-山东省第五届省赛hearthstoneii</div><div class=meta-row><span class=cat>算法竞赛</span>
 <span class=sep>/</span>
 <span>2015-04-21 01:00</span><span class=sep>/</span>
 <span>约 505 字 · 2 min</span></div><h1>山东省第五届省赛 Hearthstone II</h1></header><div class=article-grid><article class=prose><h2 id=斯特林数stirling>斯特林数stirling</h2><ul><li>第一类 stirling数 s(n, k)</li></ul><p>n个人分成k组，组内再按特定顺序围圈</p><p>也就是分成了k组，组内就像是项链颜色一样，</p><ol><li>( {A, B}, {C, D} )</li><li>( {B, A}, {C, D} )</li></ol><p>属于一组</p><ol><li>({A}, {B, C, D})</li><li>({A}, {B, D, C})</li></ol><p>不属于一组</p><p>给定 $s(n,0)=0,s(1,1)=1$，有递归关系$s(n,k)=s(n-1,k-1) + (n-1) s(n-1,k)$</p><ul><li>第二类 stirling数</li></ul><p>S(n, k) 是把p元素集合划分到k个不可区分的盒子里且没有空盒的划分个数。</p><p>公式:</p>$$ S(n, n) = 1 (n >= 0) $$$$ S(n, 0) = 0 (n >= 1) $$$$ S(n,k)=k*S(n-1,k)+S(n-1,k-1),\text (1<=k<=n-1) $$<p>这样题目就好解决了。第五届省赛题目神经病。</p><p>因为每个桌子是不同的，所以还要利用乘法原理，$ans*m!$</p><div class=codehilite><pre><span></span><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp></span>
