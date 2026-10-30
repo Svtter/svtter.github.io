@@ -1,21 +1,43 @@
 window.tarptaeya = {};
 
 window.tarptaeya.reloadRepoCards = async function() {
-  const CACHE_TIMEOUT = 60000;
-  async function get(url) {
-    const now = new Date().getTime();
-    const prevResp = JSON.parse(localStorage.getItem(url));
-    if (prevResp && Math.abs(now - prevResp.time) < CACHE_TIMEOUT) {
-      return prevResp.data;
+  const REPO_CACHE_TIMEOUT = 6 * 60 * 60 * 1000;
+  const STATIC_CACHE_TIMEOUT = 7 * 24 * 60 * 60 * 1000;
+
+  function readCache(url) {
+    try {
+      return JSON.parse(localStorage.getItem(url));
+    } catch (e) {
+      return null;
     }
-    const resp = await fetch(url);
-    const json = await resp.json();
-    localStorage.setItem(url, JSON.stringify({time: now, data: json}));
-    return json;
   }
 
-  const emojis = await get('https://api.github.com/emojis');
-  const colors = await get('https://raw.githubusercontent.com/ozh/github-colors/master/colors.json');
+  // Only successful responses are cached; when a fetch fails, a stale cache
+  // entry is still preferred over leaving the card blank.
+  async function get(url, timeout) {
+    const now = new Date().getTime();
+    const cached = readCache(url);
+    if (cached && now - cached.time < timeout) {
+      return cached.data;
+    }
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status} for ${url}`);
+      }
+      const data = await resp.json();
+      localStorage.setItem(url, JSON.stringify({time: now, data: data}));
+      return data;
+    } catch (e) {
+      if (cached) {
+        return cached.data;
+      }
+      throw e;
+    }
+  }
+
+  const emojis = await get('https://api.github.com/emojis', STATIC_CACHE_TIMEOUT).catch(() => ({}));
+  const colors = await get('https://raw.githubusercontent.com/ozh/github-colors/master/colors.json', STATIC_CACHE_TIMEOUT).catch(() => ({}));
 
   const themes = {
     'light-default': {
@@ -32,10 +54,34 @@ window.tarptaeya.reloadRepoCards = async function() {
     }
   };
 
+  const repoIconSvg = '<svg style="fill: ${color}; margin-right: 8px;" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>';
+
   for (const el of document.querySelectorAll('.repo-card')) {
     const name = el.getAttribute('data-repo');
+    if (!name) {
+      continue;
+    }
     const theme = themes[el.getAttribute('data-theme') || 'light-default'];
-    const data = await get(`https://api.github.com/repos/${name}`);
+
+    let data = null;
+    try {
+      data = await get(`https://api.github.com/repos/${name}`, REPO_CACHE_TIMEOUT);
+      if (!data || !data.name || !data.html_url) {
+        throw new Error(`invalid repo data for ${name}`);
+      }
+    } catch (e) {
+      el.innerHTML = `
+    <div style="font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; border: 1px solid ${theme.borderColor}; border-radius: 6px; background: ${theme.background}; padding: 16px; font-size: 14px; line-height: 1.5; color: #24292e;">
+      <div style="display: flex; align-items: center;">
+        ${repoIconSvg.replace(/\$\{color\}/g, theme.color)}
+        <span style="font-weight: 600; color: ${theme.linkColor};">
+          <a style="text-decoration: none; color: inherit;" href="https://github.com/${name}">${name}</a>
+        </span>
+      </div>
+    </div>
+    `;
+      continue;
+    }
 
     data.description = (data.description || '').replace(/:\w+:/g, function(match) {
       const name = match.substring(1, match.length - 1);
@@ -48,10 +94,12 @@ window.tarptaeya.reloadRepoCards = async function() {
       return match;
     });
 
+    const langColor = (data.language && colors[data.language] && colors[data.language].color) || '#959da5';
+
     el.innerHTML = `
     <div style="font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; border: 1px solid ${theme.borderColor}; border-radius: 6px; background: ${theme.background}; padding: 16px; font-size: 14px; line-height: 1.5; color: #24292e;">
       <div style="display: flex; align-items: center;">
-        <svg style="fill: ${theme.color}; margin-right: 8px;" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
+        ${repoIconSvg.replace(/\$\{color\}/g, theme.color)}
         <span style="font-weight: 600; color: ${theme.linkColor};">
           <a style="text-decoration: none; color: inherit;" href="${data.html_url}">${data.name}</a>
         </span>
@@ -60,7 +108,7 @@ window.tarptaeya.reloadRepoCards = async function() {
       <div style="font-size: 12px; margin-bottom: 16px; margin-top: 8px; color: ${theme.color};">${data.description}</div>
       <div style="font-size: 12px; color: ${theme.color}; display: flex;">
         <div style="${data.language ? '' : 'display: none;'} margin-right: 16px;">
-          <span style="width: 12px; height: 12px; border-radius: 100%; background-color: ${data.language ? colors[data.language].color : ''}; display: inline-block; top: 1px; position: relative;"></span>
+          <span style="width: 12px; height: 12px; border-radius: 100%; background-color: ${data.language ? langColor : 'transparent'}; display: inline-block; top: 1px; position: relative;"></span>
           <span>${data.language}</span>
         </div>
         <div style="display: ${data.stargazers_count === 0 ? 'none' : 'flex'}; align-items: center; margin-right: 16px;">
